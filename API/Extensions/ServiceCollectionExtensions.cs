@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using API.Configuration;
+using BLL.BackgroundServices;
 using BLL.Handlers;
 using BLL.Services;
 using Common.Options;
@@ -33,10 +34,10 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserProfileRepository, UserProfileRepository>();
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
         serviceCollection.AddScoped<IUserToGroupMappingRepository, UserToGroupMappingRepository>();
-        
+
         return serviceCollection;
     }
-    
+
     public static IServiceCollection AddServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<IJsonWebTokenService, JsonWebTokenService>();
@@ -45,23 +46,29 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserGroupPermissionValueService, UserGroupPermissionValueService>();
         serviceCollection.AddScoped<IUserProfileService, UserProfileService>();
         serviceCollection.AddScoped<IUserService, UserService>();
-        
+
         return serviceCollection;
     }
-    
+
     public static IServiceCollection AddHandlers(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<IAuthHandler, AuthHandler>();
 
         return serviceCollection;
     }
-    
+
     public static IServiceCollection AddBackgroundServices(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddHostedService<ConsumeScopedServiceHostedService>();
+        serviceCollection.AddScoped<IScopedProcessingService, JsonWebTokenBackgroundService>();
+
         return serviceCollection;
     }
-    
-    public static IServiceCollection AddCustomDbContext(this IServiceCollection serviceCollection, IConfiguration configuration)
+
+    public static IServiceCollection AddCustomDbContext(
+        this IServiceCollection serviceCollection,
+        IConfiguration configuration
+    )
     {
         serviceCollection.AddScoped<AppDbContext>();
         serviceCollection.AddScoped<IAppDbContextAction, AppDbContextAction>();
@@ -73,10 +80,10 @@ public static class ServiceCollectionExtensions
                     _ => _.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery))
                 .UseLazyLoadingProxies();
         });
-        
+
         return serviceCollection;
     }
-    
+
     public static IServiceCollection AddCustomDbContextInMemory(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<AppDbContext>();
@@ -87,30 +94,39 @@ public static class ServiceCollectionExtensions
             options.UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
         });
-        
+
         return serviceCollection;
     }
-    
+
     public static IServiceCollection AddCustomConfigureOptions(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IConfigureOptions<AuthenticationOptions>, ConfigureAuthenticationOptions>();
         serviceCollection.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>();
-        
+
         return serviceCollection;
     }
-    
-    public static IServiceCollection AddCustomOptions(this IServiceCollection serviceCollection, IConfiguration configuration)
+
+    public static IServiceCollection AddCustomOptions(
+        this IServiceCollection serviceCollection,
+        IConfiguration configuration
+    )
     {
         serviceCollection.AddOptions();
         serviceCollection.Configure<GoogleReCaptchaV2Options>(
             configuration.GetSection(nameof(GoogleReCaptchaV2Options)));
         serviceCollection.Configure<JsonWebTokenOptions>(configuration.GetSection(nameof(JsonWebTokenOptions)));
         serviceCollection.Configure<RefreshTokenOptions>(configuration.GetSection(nameof(RefreshTokenOptions)));
-        
+        serviceCollection.Configure<BackgroundServicesOptions>(
+            configuration.GetSection(nameof(BackgroundServicesOptions)));
+
         return serviceCollection;
     }
-    
-    public static IServiceCollection AddCustomLogging(this IServiceCollection serviceCollection, Serilog.ILogger logger, IWebHostEnvironment env)
+
+    public static IServiceCollection AddCustomLogging(
+        this IServiceCollection serviceCollection,
+        Serilog.ILogger logger,
+        IWebHostEnvironment env
+    )
     {
         var loggerConfiguration = new LoggerConfiguration()
             .MinimumLevel.Verbose()
@@ -144,7 +160,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
         serviceCollection.AddSingleton(Log.Logger);
-        
+
         return serviceCollection;
     }
 }

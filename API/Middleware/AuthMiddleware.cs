@@ -213,7 +213,7 @@ namespace API.Middleware
                         });
                         return;
                     }
-                    
+
                     // Validate token expiry from database (skip expired)
                     if (authMode == AuthMode.JsonWebToken)
                     {
@@ -231,7 +231,7 @@ namespace API.Middleware
                             return;
                         }
                     }
-                    
+
                     context.User.Identities.FirstOrDefault()
                         ?.AddClaim(new Claim(ClaimKey.JsonWebTokenId, jsonWebToken.Id.ToString(),
                             ClaimValueTypes.String));

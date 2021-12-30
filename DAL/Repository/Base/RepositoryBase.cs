@@ -18,6 +18,7 @@ namespace DAL.Repository.Base
         void Save(TEntity entity);
         void Save(IList<TEntity> entities);
         void Delete(TEntity entity);
+        void Delete(IEnumerable<TEntity> entities);
         Task<TEntity> GetByIdAsync(TKey id);
         Task<TEntity> GetByIdOrDefaultAsync(TKey id);
         Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate);
@@ -116,6 +117,11 @@ namespace DAL.Repository.Base
         public void Delete(TEntity entity)
         {
             DbSet.Remove(entity);
+        }
+
+        public void Delete(IEnumerable<TEntity> entities)
+        {
+            DbSet.RemoveRange(entities);
         }
 
         public async Task<TEntity> GetByIdAsync(TKey id)

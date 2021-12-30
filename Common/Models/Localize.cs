@@ -69,5 +69,21 @@ public static class Localize
             $"[{assemblyName}.{methodName}] (Error) {Environment.NewLine + message}";
 
         #endregion
+
+        #region Background Service
+
+        public static string BackgroundServiceStarting(string assemblyName) =>
+            $"[{assemblyName}] (Starting)";
+
+        public static string BackgroundServiceStopping(string assemblyName) =>
+            $"[{assemblyName}] (End)";
+
+        public static string BackgroundServiceWorking(string assemblyName) =>
+            $"[{assemblyName}] (Working)";
+
+        public static string BackgroundServiceError(string assemblyName, string message) =>
+            $"[{assemblyName}] (Error) {Environment.NewLine + message}";
+
+        #endregion
     }
 }

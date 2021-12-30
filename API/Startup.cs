@@ -34,7 +34,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCustomLogging(Log.Logger, _env);
-            
+
             services.AddCustomConfigureOptions();
 
             services.AddCustomOptions(Configuration);
@@ -119,8 +119,13 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
+            }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

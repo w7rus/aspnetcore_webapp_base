@@ -95,8 +95,8 @@ public class AuthHandler : IAuthHandler
         }
         catch (Exception e)
         {
-            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(SignUp), e.Message));
             await _appDbContextAction.RollbackTransactionAsync();
+            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(SignUp), e.Message));
 
             var errorModelResult = new ErrorModelResult
             {
@@ -126,7 +126,7 @@ public class AuthHandler : IAuthHandler
             var user = await _userService.GetByEmailAsync(data.Email);
             if (user == null || !customPasswordHasher.VerifyPassword(user.Password, data.Password))
                 throw new CustomException();
-            
+
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
@@ -140,7 +140,8 @@ public class AuthHandler : IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            await _jsonWebTokenService.Add(jsonWebTokenString, jsonWebTokenExpiresAt, refreshTokenExpiresAt, user.Id, cancellationToken);
+            await _jsonWebTokenService.Add(jsonWebTokenString, jsonWebTokenExpiresAt, refreshTokenExpiresAt, user.Id,
+                cancellationToken);
 
             if (data.UseCookies)
             {
@@ -180,8 +181,8 @@ public class AuthHandler : IAuthHandler
         }
         catch (Exception e)
         {
-            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(SignInViaEmail), e.Message));
             await _appDbContextAction.RollbackTransactionAsync();
+            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(SignInViaEmail), e.Message));
 
             var errorModelResult = new ErrorModelResult
             {
@@ -231,7 +232,7 @@ public class AuthHandler : IAuthHandler
             //     throw new CustomException(Localize.Error.JsonWebTokenExpired);
 
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
-            
+
             var user = await _userService.GetFromHttpContext();
             if (user == null)
                 throw new CustomException();
@@ -249,7 +250,8 @@ public class AuthHandler : IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            await _jsonWebTokenService.Add(jsonWebTokenString, jsonWebTokenExpiresAt, refreshTokenExpiresAt, user.Id, cancellationToken);
+            await _jsonWebTokenService.Add(jsonWebTokenString, jsonWebTokenExpiresAt, refreshTokenExpiresAt, user.Id,
+                cancellationToken);
 
             if (useCookies)
             {
@@ -289,8 +291,8 @@ public class AuthHandler : IAuthHandler
         }
         catch (Exception e)
         {
-            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(Refresh), e.Message));
             await _appDbContextAction.RollbackTransactionAsync();
+            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(Refresh), e.Message));
 
             var errorModelResult = new ErrorModelResult
             {
@@ -339,7 +341,7 @@ public class AuthHandler : IAuthHandler
                 throw new CustomException(Localize.Error.JsonWebTokenExpired);
 
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
-            
+
             var user = await _userService.GetFromHttpContext();
             if (user == null)
                 throw new CustomException();
@@ -358,8 +360,8 @@ public class AuthHandler : IAuthHandler
         }
         catch (Exception e)
         {
-            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(SignOut), e.Message));
             await _appDbContextAction.RollbackTransactionAsync();
+            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(SignOut), e.Message));
 
             var errorModelResult = new ErrorModelResult
             {

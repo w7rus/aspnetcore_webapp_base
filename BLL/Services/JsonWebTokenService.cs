@@ -39,6 +39,14 @@ namespace BLL.Services
             CancellationToken cancellationToken
         );
 
+        Task<IReadOnlyCollection<JsonWebToken>> GetDeleteAfterAsync(
+            CancellationToken cancellationToken
+        );
+
+        Task PurgeAsync(
+            CancellationToken cancellationToken
+        );
+
         string CreateWithClaims(
             string issuerSigningKey,
             string issuer,
@@ -98,7 +106,7 @@ namespace BLL.Services
             {
                 Token = token,
                 ExpiresAt = expiresAt,
-                RemoveAfter = removeAfter,
+                DeleteAfter = removeAfter,
                 UserId = userId,
             };
 
@@ -130,6 +138,21 @@ namespace BLL.Services
             return await _jsonWebTokenRepository
                 .QueryMany(_ => _.UserId == userId && _.ExpiresAt < DateTimeOffset.UtcNow)
                 .ToArrayAsync(cancellationToken);
+        }
+
+        public async Task<IReadOnlyCollection<JsonWebToken>> GetDeleteAfterAsync(CancellationToken cancellationToken)
+        {
+            return await _jsonWebTokenRepository
+                .QueryMany(_ => _.DeleteAfter < DateTimeOffset.UtcNow)
+                .ToArrayAsync(cancellationToken);
+        }
+
+        public async Task PurgeAsync(CancellationToken cancellationToken)
+        {
+            var jsonWebTokens = await GetDeleteAfterAsync(cancellationToken);
+
+            _jsonWebTokenRepository.Delete(jsonWebTokens);
+            await _appDbContextAction.CommitAsync(cancellationToken);
         }
 
         public string CreateWithClaims(
