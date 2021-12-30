@@ -146,14 +146,14 @@ public class AuthHandler : IAuthHandler
             {
                 var refreshTokenCookieOptions = new CookieOptions
                 {
-                    Expires = DateTimeOffset.MaxValue,
+                    Expires = refreshTokenExpiresAt,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };
                 var jsonWebTokenCookieOptions = new CookieOptions
                 {
-                    Expires = DateTimeOffset.MaxValue,
+                    Expires = refreshTokenExpiresAt,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
@@ -255,14 +255,14 @@ public class AuthHandler : IAuthHandler
             {
                 var refreshTokenCookieOptions = new CookieOptions
                 {
-                    Expires = DateTimeOffset.MaxValue,
+                    Expires = refreshTokenExpiresAt,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };
                 var jsonWebTokenCookieOptions = new CookieOptions
                 {
-                    Expires = DateTimeOffset.MaxValue,
+                    Expires = refreshTokenExpiresAt,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
