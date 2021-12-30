@@ -226,8 +226,9 @@ public class AuthHandler : IAuthHandler
             if (jsonWebToken == null)
                 throw new CustomException(Localize.Error.JsonWebTokenNotFound);
 
-            if (jsonWebToken.ExpiresAt < DateTimeOffset.UtcNow)
-                throw new CustomException(Localize.Error.JsonWebTokenExpired);
+            // Middleware already validated this case
+            // if (jsonWebToken.ExpiresAt < DateTimeOffset.UtcNow)
+            //     throw new CustomException(Localize.Error.JsonWebTokenExpired);
 
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
             

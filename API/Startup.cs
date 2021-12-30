@@ -1,18 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using API.Configuration;
+using API.Extensions;
 using API.Middleware;
-using BLL.Handlers;
-using BLL.Services;
 using Common.Helpers;
 using Common.Models;
-using Common.Options;
 using DAL.Data;
-using DAL.Repository;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Events;
 
 namespace API
 {
@@ -42,48 +33,11 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //Logger
-            var loggerConfiguration = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.FromLogContext()
-                .WriteTo.Logger(_ =>
-                {
-                    _.MinimumLevel.Error()
-                        .WriteTo.File(
-                            Path.Combine(Directory.GetCurrentDirectory(), "Logs",
-                                $"log_error_{DateTime.UtcNow:yyyy_mm_dd}.log"),
-                            LogEventLevel.Error, rollingInterval: RollingInterval.Day);
-                });
+            services.AddCustomLogging(Log.Logger, _env);
+            
+            services.AddCustomConfigureOptions();
 
-
-            if (_env.IsDevelopment())
-            {
-                loggerConfiguration
-                    .WriteTo.Logger(_ =>
-                    {
-                        _.MinimumLevel.Information()
-                            .WriteTo.Console()
-                            .WriteTo.File(
-                                Path.Combine(Directory.GetCurrentDirectory(), "Logs",
-                                    $"log_debug_{DateTime.UtcNow:yyyy_mm_dd}.log"),
-                                rollingInterval: RollingInterval.Day);
-                    });
-            }
-
-            Log.Logger = loggerConfiguration.CreateLogger();
-
-            services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
-
-            services.AddSingleton(Log.Logger);
-
-            //IOptions<>
-            {
-                services.AddOptions();
-                services.Configure<GoogleReCaptchaV2Options>(
-                    Configuration.GetSection(nameof(GoogleReCaptchaV2Options)));
-                services.Configure<JsonWebTokenOptions>(Configuration.GetSection(nameof(JsonWebTokenOptions)));
-                services.Configure<RefreshTokenOptions>(Configuration.GetSection(nameof(RefreshTokenOptions)));
-            }
+            services.AddCustomOptions(Configuration);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -140,53 +94,16 @@ namespace API
 
             //Authentication
             {
-                services.AddSingleton<IConfigureOptions<AuthenticationOptions>, ConfigureAuthenticationOptions>();
-                services.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>();
-
                 // //TODO: Probably useless since there is AuthorizeJsonWebToken & AuthorizeExpiredJsonWebToken attributes
                 // services.AddAuthentication()
                 //     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, null!);
             }
 
-            //DbContext
-            {
-                services.AddScoped<AppDbContext>();
-                services.AddScoped<IAppDbContextAction, AppDbContextAction>();
-
-                services.AddDbContext<AppDbContext>(options =>
-                {
-                    options
-                        .UseNpgsql(Configuration.GetConnectionString("Default"),
-                            _ => _.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery))
-                        .UseLazyLoadingProxies();
-                });
-            }
-
-            //DI
-            {
-                //Repositories
-                services.AddScoped<IJsonWebTokenRepository, JsonWebTokenRepository>();
-                services.AddScoped<IPermissionRepository, PermissionRepository>();
-                services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-                services.AddScoped<IUserGroupPermissionValueRepository, UserGroupPermissionValueRepository>();
-                services.AddScoped<IUserGroupRepository, UserGroupRepository>();
-                services.AddScoped<IUserProfileRepository, UserProfileRepository>();
-                services.AddScoped<IUserRepository, UserRepository>();
-                services.AddScoped<IUserToGroupMappingRepository, UserToGroupMappingRepository>();
-
-                //Services
-                services.AddScoped<IJsonWebTokenService, JsonWebTokenService>();
-                services.AddScoped<IPermissionService, PermissionService>();
-                services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-                services.AddScoped<IUserGroupPermissionValueService, UserGroupPermissionValueService>();
-                services.AddScoped<IUserProfileService, UserProfileService>();
-                services.AddScoped<IUserService, UserService>();
-
-                //Handlers
-                services.AddScoped<IAuthHandler, AuthHandler>();
-
-                //Background Services
-            }
+            services.AddCustomDbContext(Configuration);
+            services.AddRepositories();
+            services.AddServices();
+            services.AddHandlers();
+            services.AddBackgroundServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
