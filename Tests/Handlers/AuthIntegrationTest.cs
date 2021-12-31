@@ -72,25 +72,24 @@ public class AuthIntegrationTest
 
                         services.Configure<ApiBehaviorOptions>(options =>
                         {
-                            // TODO:
-                            // options.InvalidModelStateResponseFactory = context =>
-                            // {
-                            //     var errorModelResult = new ErrorModelResult
-                            //     {
-                            //         Errors = new List<KeyValuePair<string, string>>()
-                            //     };
-                            //
-                            //     foreach (var modelError in context.ModelState.Values.SelectMany(modelStateValue =>
-                            //                  modelStateValue.Errors))
-                            //         errorModelResult.Errors.Add(new(Localize.ErrorType.ModelState,
-                            //             modelError.ErrorMessage));
-                            //
-                            //     return new BadRequestObjectResult(errorModelResult);
-                            // };
+                            options.InvalidModelStateResponseFactory = context =>
+                            {
+                                var errorModelResult = new ErrorModelResult
+                                {
+                                    Errors = new List<KeyValuePair<string, string>>()
+                                };
+
+                                foreach (var modelError in context.ModelState.Values.SelectMany(modelStateValue =>
+                                             modelStateValue.Errors))
+                                    errorModelResult.Errors.Add(new(Localize.ErrorType.ModelState,
+                                        modelError.ErrorMessage));
+
+                                return new BadRequestObjectResult(errorModelResult);
+                            };
                         });
                         
                         // Disable default object model validator
-                        // services.AddSingleton<IObjectModelValidator, CustomObjectModelValidator>();
+                        services.AddSingleton<IObjectModelValidator, CustomObjectModelValidator>();
 
                         services.AddCustomDbContextInMemory();
                         services.AddRepositories();

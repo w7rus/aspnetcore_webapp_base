@@ -17,7 +17,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("/[controller]")]
+    [Route("[controller]")]
     [ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status400BadRequest)]
     public class AuthController : CustomControllerBase
@@ -48,8 +48,7 @@ namespace API.Controllers
             return Ok();
         }
         
-        [HttpPost]
-        [Route("test2")]
+        [HttpPost("test2")]
         public IActionResult Test2([FromBody] AuthSignUp data)
         {
             return Ok();
