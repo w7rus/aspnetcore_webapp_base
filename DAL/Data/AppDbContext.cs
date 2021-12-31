@@ -33,21 +33,21 @@ namespace DAL.Data
             // Database.Migrate();
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-        }
+        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // {
+        //     base.OnConfiguring(optionsBuilder);
+        // }
 
         public class AppDbContextSeedLists
         {
-            public List<Permission> Permissions { get; set; }
-            public List<User> Users { get; set; }
-            public List<UserGroup> UserGroups { get; set; }
-            public List<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
-            public List<UserProfile> UserProfiles { get; set; }
-            public List<UserToGroupMapping> UserToGroupMappings { get; set; }
-            public List<JsonWebToken> JsonWebTokens { get; set; }
-            public List<RefreshToken> RefreshTokens { get; set; }
+            public virtual List<Permission> Permissions { get; set; }
+            public virtual List<User> Users { get; set; }
+            public virtual List<UserGroup> UserGroups { get; set; }
+            public virtual List<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
+            public virtual List<UserProfile> UserProfiles { get; set; }
+            public virtual List<UserToGroupMapping> UserToGroupMappings { get; set; }
+            public virtual List<JsonWebToken> JsonWebTokens { get; set; }
+            public virtual List<RefreshToken> RefreshTokens { get; set; }
         }
 
         public static AppDbContextSeedLists Seed()

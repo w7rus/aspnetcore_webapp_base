@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -40,6 +41,11 @@ namespace API.Middleware
 
             if (executingEnpoint == null)
                 return;
+            
+            var bodyStream = new StreamReader(context.Request.Body);
+            // bodyStream.BaseStream.Seek(0, SeekOrigin.Begin);
+            var bodyText = await bodyStream.ReadToEndAsync();
+
 
             /*
              * Add authentication modes attribute checks here

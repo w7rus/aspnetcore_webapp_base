@@ -91,8 +91,9 @@ public static class ServiceCollectionExtensions
 
         serviceCollection.AddDbContext<AppDbContext>(options =>
         {
-            options.UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+            options.UseSqlite("Filename=:memory:", 
+                    _ => _.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery))
+                .UseLazyLoadingProxies();
         });
 
         return serviceCollection;
