@@ -12,14 +12,6 @@ namespace Tests.Handlers;
 
 public class AuthHandlerTests
 {
-    // private readonly IServiceProvider _serviceProvider;
-
-    public AuthHandlerTests()
-    {
-        // _serviceProvider = TestsHelper.GetIServiceProvider();
-    }
-
-
     [Fact]
     public async Task ExampleMoq()
     {
@@ -50,133 +42,8 @@ public class AuthHandlerTests
         userRepositoryMock.Setup(_ => _.QueryAll()).Returns(userDbSet.AsQueryable);
 
         var userRepository = userRepositoryMock.Object;
-        
-        userRepository.Add(initialEntities);
+
+        await userRepository.AddAsync(initialEntities);
         var res = userRepository.QueryAll();
     }
-
-    // [Fact]
-    // public async Task SignUp()
-    // {
-    //     await TestsHelper.SeedAppDbContext(_serviceProvider);
-    //     
-    //     var authHandler = _serviceProvider.GetRequiredService<IAuthHandler>();
-    //
-    //     var result = await authHandler.SignUp(new AuthSignUp
-    //     {
-    //         Email = "test123@email.com",
-    //         Password = "12345678",
-    //         Username = "test123"
-    //     }, default);
-    //
-    //     Assert.IsType<AuthSignUpResult>(result);
-    //
-    //     await TestsHelper.PurgeAppDbContext(_serviceProvider);
-    //
-    //     // var userGuest = new User
-    //     // {
-    //     //     Id = new Guid(),
-    //     // };
-    //     // appDbContext.Users.Add(userGuest);
-    //     // await appDbContextAction.CommitAsync();
-    //
-    //     // var test = await authHandler.SignUp(new AuthSignUp()
-    //     // {
-    //     // }, new CancellationToken() { });
-    //     //
-    //     // var users = userRepository.QueryAll().ToList();
-    //     // var userGroups = userGroupRepository.QueryAll().ToList();
-    //     //
-    //     // // Assert.NotNull(appDbContext.Users.FirstOrDefault(_ => _.Id == userGuest.Id));
-    //     // Assert.NotNull(
-    //     //     appDbContext.Users.FirstOrDefault(_ => _.Id == Guid.Parse("00000047-0000-0000-0000-000000000000")));
-    //
-    //     // Assert.NotNull(test);
-    // }
-    //
-    // [Fact]
-    // public async Task SignUpBadEmail()
-    // {
-    //     await TestsHelper.SeedAppDbContext(_serviceProvider);
-    //     
-    //     var authHandler = _serviceProvider.GetRequiredService<IAuthHandler>();
-    //
-    //     var result = await authHandler.SignUp(new AuthSignUp
-    //     {
-    //         Email = "test123",
-    //         Password = "12345678",
-    //         Username = "test123"
-    //     }, default);
-    //
-    //     Assert.IsType<ErrorModelResult>(result);
-    //     
-    //     await TestsHelper.PurgeAppDbContext(_serviceProvider);
-    // }
-    //
-    // [Fact]
-    // public async Task SignUpBadPassword()
-    // {
-    //     await TestsHelper.SeedAppDbContext(_serviceProvider);
-    //     
-    //     var authHandler = _serviceProvider.GetRequiredService<IAuthHandler>();
-    //
-    //     var result = await authHandler.SignUp(new AuthSignUp
-    //     {
-    //         Email = "test123@email.com",
-    //         Password = "12",
-    //         Username = "test123"
-    //     }, default);
-    //
-    //     Assert.IsType<ErrorModelResult>(result);
-    //     
-    //     await TestsHelper.PurgeAppDbContext(_serviceProvider);
-    // }
-    //
-    // [Fact]
-    // public async Task SignUpBadUsername()
-    // {
-    //     await TestsHelper.SeedAppDbContext(_serviceProvider);
-    //     
-    //     var authHandler = _serviceProvider.GetRequiredService<IAuthHandler>();
-    //
-    //     var result = await authHandler.SignUp(new AuthSignUp
-    //     {
-    //         Email = "test123@email.com",
-    //         Password = "12345678",
-    //         Username = ""
-    //     }, default);
-    //
-    //     Assert.IsType<ErrorModelResult>(result);
-    //     
-    //     await TestsHelper.PurgeAppDbContext(_serviceProvider);
-    // }
-    //
-    // [Fact]
-    // public async Task SignUpBadAlreadyExists()
-    // {
-    //     await TestsHelper.SeedAppDbContext(_serviceProvider);
-    //     
-    //     var authHandler = _serviceProvider.GetRequiredService<IAuthHandler>();
-    //     var userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
-    //
-    //     var result = await authHandler.SignUp(new AuthSignUp
-    //     {
-    //         Email = "test123@email.com",
-    //         Password = "12345678",
-    //         Username = "test123"
-    //     }, default);
-    //
-    //     var result2 = await authHandler.SignUp(new AuthSignUp
-    //     {
-    //         Email = "test123@email.com",
-    //         Password = "12345678",
-    //         Username = "test123"
-    //     }, default);
-    //     
-    //     var users = userRepository.QueryAll().ToList();
-    //
-    //     Assert.IsType<ErrorModelResult>(result2);
-    //     
-    //     await TestsHelper.PurgeAppDbContext(_serviceProvider);
-    // }
 }

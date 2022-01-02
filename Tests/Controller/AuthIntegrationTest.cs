@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using API.Controllers;
 using API.Extensions;
@@ -18,7 +13,6 @@ using DAL.Data;
 using DTO.Models.Auth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.TestHost;
@@ -26,10 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
 using Xunit;
-using JsonConverter = System.Text.Json.Serialization.JsonConverter;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Tests.Handlers;
 
@@ -42,7 +33,7 @@ public class AuthIntegrationTest
             .ConfigureWebHost(webBuilder =>
             {
                 webBuilder.UseTestServer();
-                    
+
                 webBuilder.ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;
@@ -50,15 +41,12 @@ public class AuthIntegrationTest
                     config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
                     config.AddJsonFile($"appsettings.Local.json", optional: true, reloadOnChange: true);
 
-                    if (env.IsDevelopment())
-                    {
-                        var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
-                        config.AddUserSecrets(appAssembly, true);
-                    }
+                    var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
+                    config.AddUserSecrets(appAssembly, true);
 
                     config.AddEnvironmentVariables();
                 });
-                    
+
                 webBuilder.ConfigureServices((webHostBuilder, services) =>
                     {
                         services.AddCustomConfigureOptions();
@@ -87,11 +75,11 @@ public class AuthIntegrationTest
                                 return new BadRequestObjectResult(errorModelResult);
                             };
                         });
-                        
+
                         // Disable default object model validator
                         services.AddSingleton<IObjectModelValidator, CustomObjectModelValidator>();
 
-                        services.AddCustomDbContextInMemory();
+                        services.AddDbContextTest(webHostBuilder.Configuration);
                         services.AddRepositories();
                         services.AddServices();
                         services.AddHandlers();
@@ -99,8 +87,15 @@ public class AuthIntegrationTest
                     .Configure(app =>
                     {
                         var appDbContext = app.ApplicationServices.GetRequiredService<AppDbContext>();
-                        
-                        appDbContext.Database.EnsureCreated();
+
+                        appDbContext.Database.EnsureDeleted();
+                        appDbContext.Database.Migrate();
+
+                        // var hostApplicationLifetime = app.ApplicationServices.GetRequiredService<IHostApplicationLifetime>();
+                        // hostApplicationLifetime.ApplicationStopping.Register(() =>
+                        // {
+                        //     appDbContext.Database.CloseConnection();
+                        // });
 
                         app.UseDeveloperExceptionPage();
 
@@ -121,40 +116,32 @@ public class AuthIntegrationTest
             Password = "12345678",
             Username = "test123"
         };
-        
+
+        var model2 = new AuthSignUp
+        {
+            Email = "test123@email.com",
+            Password = "12345678",
+            Username = "test123"
+        };
+
+        var json = JsonContent.Create(model);
+        var json2 = JsonContent.Create(model2);
+
         var server = host.GetTestServer();
-        server.BaseAddress = new Uri("http://localhost:5000/");
 
         var testHttpClient = server.CreateClient();
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5000/Auth/test2");
-        requestMessage.Content = new StringContent(JsonConvert.SerializeObject(model));
-        requestMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-        
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/Auth/signup")
+        {
+            Content = json
+        };
+        var requestMessage2 = new HttpRequestMessage(HttpMethod.Post, "/Auth/signup")
+        {
+            Content = json2
+        };
+
         var result = await testHttpClient.SendAsync(requestMessage);
-
-        // var content = JsonConvert.SerializeObject(model);
-        // var contentBytes = Encoding.UTF8.GetBytes(content);
-
-        // var json = JsonContent.Create(model);
-        //
-        // HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5000/Auth/test2")
-        // {
-        //     Content = json,
-        // };
-        //
-        // postRequest.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-        //
-        // var response = await host.GetTestClient().SendAsync(postRequest);
-
-        // var response = await host.GetTestClient().PostAsync("/Auth/signup",
-        //     new StringContent(content, Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json));
-
-        // var responseString = await response.Content.ReadAsStringAsync();
-
-        // var context = await server.SendAsync(c =>
-        // {
-        //     c.Request.Method = HttpMethods.Get;
-        //     c.Request.Path = "/Auth/test";
-        // });
+        var result2 = await testHttpClient.SendAsync(requestMessage2);
+        Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, result2.StatusCode);
     }
 }

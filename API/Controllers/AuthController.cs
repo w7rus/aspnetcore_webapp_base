@@ -47,9 +47,9 @@ namespace API.Controllers
         {
             return Ok();
         }
-        
+
         [HttpPost("test2")]
-        public IActionResult Test2([FromBody] AuthSignUp data)
+        public IActionResult Test2([Required] [FromBody] AuthSignUp data)
         {
             return Ok();
         }

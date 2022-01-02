@@ -19,7 +19,7 @@ public class HandlerBase : IHandlerBase
 
         if (Validator.TryValidateObject(data, context, validationResults, true))
             return null;
-        
+
         var errorModelResult = new ErrorModelResult
         {
             Errors = new List<KeyValuePair<string, string>>()

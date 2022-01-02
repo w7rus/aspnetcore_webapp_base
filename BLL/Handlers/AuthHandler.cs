@@ -73,7 +73,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
     #endregion
 
     #region Methods
-    
+
     public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignUp)));
@@ -119,14 +119,14 @@ public class AuthHandler : HandlerBase, IAuthHandler
             return errorModelResult;
         }
     }
-    
+
     public async Task<DTOResultBase> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignInViaEmail)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-        
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -208,14 +208,14 @@ public class AuthHandler : HandlerBase, IAuthHandler
             return errorModelResult;
         }
     }
-    
+
     public async Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(Refresh)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-        
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -321,14 +321,14 @@ public class AuthHandler : HandlerBase, IAuthHandler
             return errorModelResult;
         }
     }
-    
+
     public async Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignOut)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-        
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();

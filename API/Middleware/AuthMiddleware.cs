@@ -41,11 +41,6 @@ namespace API.Middleware
 
             if (executingEnpoint == null)
                 return;
-            
-            //var bodyStream = new StreamReader(context.Request.Body);
-            // bodyStream.BaseStream.Seek(0, SeekOrigin.Begin);
-            //var bodyText = await bodyStream.ReadToEndAsync();
-
 
             /*
              * Add authentication modes attribute checks here
@@ -244,12 +239,12 @@ namespace API.Middleware
                 }
             }
 
-            //logger.Log(LogLevel.Information, Localize.Log.MiddlewareForwardEnd(GetType().AssemblyQualifiedName));
+            logger.Log(LogLevel.Information, Localize.Log.MiddlewareForwardEnd(GetType().AssemblyQualifiedName));
 
             await _next(context);
 
-            //logger.Log(LogLevel.Information, Localize.Log.MiddlewareBackwardStart(GetType().AssemblyQualifiedName));
-            //logger.Log(LogLevel.Information, Localize.Log.MiddlewareBackwardEnd(GetType().AssemblyQualifiedName));
+            logger.Log(LogLevel.Information, Localize.Log.MiddlewareBackwardStart(GetType().AssemblyQualifiedName));
+            logger.Log(LogLevel.Information, Localize.Log.MiddlewareBackwardEnd(GetType().AssemblyQualifiedName));
         }
     }
 }

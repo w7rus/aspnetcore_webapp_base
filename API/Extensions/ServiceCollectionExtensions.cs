@@ -84,14 +84,33 @@ public static class ServiceCollectionExtensions
         return serviceCollection;
     }
 
-    public static IServiceCollection AddCustomDbContextInMemory(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddDbContextTest(
+        this IServiceCollection serviceCollection,
+        IConfiguration configuration
+    )
     {
         serviceCollection.AddScoped<AppDbContext>();
         serviceCollection.AddScoped<IAppDbContextAction, AppDbContextAction>();
 
         serviceCollection.AddDbContext<AppDbContext>(options =>
         {
-            options.UseSqlite("Filename=:memory:", 
+            options
+                .UseNpgsql(configuration.GetConnectionString("Test"),
+                    _ => _.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery))
+                .UseLazyLoadingProxies();
+        });
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddDbContextTestInMemory(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddScoped<AppDbContext>();
+        serviceCollection.AddScoped<IAppDbContextAction, AppDbContextAction>();
+
+        serviceCollection.AddDbContext<AppDbContext>(options =>
+        {
+            options.UseSqlite("Filename=:memory:",
                     _ => _.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery))
                 .UseLazyLoadingProxies();
         });
