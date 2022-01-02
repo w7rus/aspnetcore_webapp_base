@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using BLL.Handlers.Base;
 using BLL.Services;
+using Common.Attributes;
 using Common.Exceptions;
 using Common.Helpers;
 using Common.Models;
+using Common.Models.Base;
 using Common.Options;
 using DAL.Data;
 using DTO.Models.Auth;
@@ -20,13 +24,13 @@ namespace BLL.Handlers;
 
 public interface IAuthHandler
 {
-    Task<IActionResult> SignUp(AuthSignUp data, CancellationToken cancellationToken);
-    Task<IActionResult> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken);
-    Task<IActionResult> Refresh(AuthRefresh data, CancellationToken cancellationToken);
-    Task<IActionResult> SignOut(AuthSignOut data, CancellationToken cancellationToken);
+    Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken);
+    Task<DTOResultBase> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken);
+    Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken);
+    Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken);
 }
 
-public class AuthHandler : IAuthHandler
+public class AuthHandler : HandlerBase, IAuthHandler
 {
     #region Fields
 
@@ -70,9 +74,12 @@ public class AuthHandler : IAuthHandler
 
     #region Methods
 
-    public async Task<IActionResult> SignUp(AuthSignUp data, CancellationToken cancellationToken)
+    public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignUp)));
+
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
 
         try
         {
@@ -88,10 +95,10 @@ public class AuthHandler : IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(_fullName, nameof(SignUp)));
 
-            return new OkObjectResult(new AuthSignUpResult
+            return new AuthSignUpResult
             {
                 UserId = user.Id
-            });
+            };
         }
         catch (Exception e)
         {
@@ -109,13 +116,16 @@ public class AuthHandler : IAuthHandler
             if (e is CustomException)
                 errorModelResult.Errors.Add(new KeyValuePair<string, string>(Localize.ErrorType.Auth, e.Message));
 
-            return new BadRequestObjectResult(errorModelResult);
+            return errorModelResult;
         }
     }
 
-    public async Task<IActionResult> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken)
+    public async Task<DTOResultBase> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignInViaEmail)));
+
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
 
         try
         {
@@ -170,14 +180,14 @@ public class AuthHandler : IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(_fullName, nameof(SignInViaEmail)));
 
-            return new OkObjectResult(new AuthSignInResult
+            return new AuthSignInResult
             {
                 UserId = user.Id,
                 JsonWebToken = !data.UseCookies ? jsonWebTokenString : null,
                 JsonWebTokenExpiresAt = jsonWebTokenExpiresAt,
                 RefreshToken = !data.UseCookies ? refreshTokenString : null,
                 RefreshTokenExpiresAt = refreshTokenExpiresAt
-            });
+            };
         }
         catch (Exception e)
         {
@@ -195,13 +205,16 @@ public class AuthHandler : IAuthHandler
             if (e is CustomException)
                 errorModelResult.Errors.Add(new KeyValuePair<string, string>(Localize.ErrorType.Auth, e.Message));
 
-            return new BadRequestObjectResult(errorModelResult);
+            return errorModelResult;
         }
     }
 
-    public async Task<IActionResult> Refresh(AuthRefresh data, CancellationToken cancellationToken)
+    public async Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(Refresh)));
+
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
 
         try
         {
@@ -280,14 +293,14 @@ public class AuthHandler : IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(_fullName, nameof(Refresh)));
 
-            return new OkObjectResult(new AuthRefreshResult()
+            return new AuthRefreshResult()
             {
                 UserId = user.Id,
                 JsonWebToken = !useCookies ? jsonWebTokenString : null,
                 JsonWebTokenExpiresAt = jsonWebTokenExpiresAt,
                 RefreshToken = !useCookies ? refreshTokenString : null,
                 RefreshTokenExpiresAt = refreshTokenExpiresAt
-            });
+            };
         }
         catch (Exception e)
         {
@@ -305,13 +318,16 @@ public class AuthHandler : IAuthHandler
             if (e is CustomException)
                 errorModelResult.Errors.Add(new KeyValuePair<string, string>(Localize.ErrorType.Auth, e.Message));
 
-            return new BadRequestObjectResult(errorModelResult);
+            return errorModelResult;
         }
     }
 
-    public async Task<IActionResult> SignOut(AuthSignOut data, CancellationToken cancellationToken)
+    public async Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignOut)));
+
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
 
         try
         {
@@ -356,7 +372,7 @@ public class AuthHandler : IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(_fullName, nameof(SignOut)));
 
-            return new OkObjectResult(new AuthSignOutResult());
+            return new AuthSignOutResult();
         }
         catch (Exception e)
         {
@@ -374,7 +390,7 @@ public class AuthHandler : IAuthHandler
             if (e is CustomException)
                 errorModelResult.Errors.Add(new KeyValuePair<string, string>(Localize.ErrorType.Auth, e.Message));
 
-            return new BadRequestObjectResult(errorModelResult);
+            return errorModelResult;
         }
     }
 

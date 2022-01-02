@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
+using API.Controllers.Base;
 using BLL.Handlers;
 using Common.Attributes;
 using Common.Models;
@@ -19,7 +20,7 @@ namespace API.Controllers
     [Route("[controller]")]
     [ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status400BadRequest)]
-    public class AuthController : ControllerBase
+    public class AuthController : CustomControllerBase
     {
         #region Fields
 
@@ -40,6 +41,19 @@ namespace API.Controllers
 
         #region Endpoints
 
+        [HttpGet]
+        [Route("test")]
+        public IActionResult Test()
+        {
+            return Ok();
+        }
+
+        [HttpPost("test2")]
+        public IActionResult Test2([Required] [FromBody] AuthSignUp data)
+        {
+            return Ok();
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [Route("signup")]
@@ -51,7 +65,7 @@ namespace API.Controllers
             CancellationToken cancellationToken = default
         )
         {
-            return await _authHandler.SignUp(data, cancellationToken);
+            return ResponseWith(await _authHandler.SignUp(data, cancellationToken));
         }
 
         [HttpPost]
@@ -65,7 +79,7 @@ namespace API.Controllers
             CancellationToken cancellationToken = default
         )
         {
-            return await _authHandler.SignInViaEmail(data, cancellationToken);
+            return ResponseWith(await _authHandler.SignInViaEmail(data, cancellationToken));
         }
 
         [HttpPost]
@@ -80,7 +94,7 @@ namespace API.Controllers
             CancellationToken cancellationToken = default
         )
         {
-            return await _authHandler.Refresh(data, cancellationToken);
+            return ResponseWith(await _authHandler.Refresh(data, cancellationToken));
         }
 
         [HttpPost]
@@ -95,7 +109,7 @@ namespace API.Controllers
             CancellationToken cancellationToken = default
         )
         {
-            return await _authHandler.SignOut(data, cancellationToken);
+            return ResponseWith(await _authHandler.SignOut(data, cancellationToken));
         }
 
         #endregion

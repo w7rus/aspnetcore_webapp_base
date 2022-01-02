@@ -7,6 +7,9 @@ using Domain.Entities;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal;
+using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -15,6 +18,8 @@ namespace DAL.Data
 {
     public sealed class AppDbContext : DbContext
     {
+        private bool InMemory { get; set; }
+
         #region DbSets
 
         public DbSet<Permission> Permissions { get; set; }
@@ -30,24 +35,38 @@ namespace DAL.Data
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            // Database.Migrate();
+            if (options.Extensions.FirstOrDefault(_ => _ is SqliteOptionsExtension) is SqliteOptionsExtension sqlite &&
+                sqlite.ConnectionString == "Filename=:memory:")
+                InMemory = true;
+
+            if (!InMemory) return;
+
+            Database.OpenConnection();
+            Database.Migrate();
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public override void Dispose()
         {
-            base.OnConfiguring(optionsBuilder);
+            if (InMemory)
+                Database.CloseConnection();
+            base.Dispose();
         }
+
+        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // {
+        //     base.OnConfiguring(optionsBuilder);
+        // }
 
         public class AppDbContextSeedLists
         {
-            public List<Permission> Permissions { get; set; }
-            public List<User> Users { get; set; }
-            public List<UserGroup> UserGroups { get; set; }
-            public List<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
-            public List<UserProfile> UserProfiles { get; set; }
-            public List<UserToGroupMapping> UserToGroupMappings { get; set; }
-            public List<JsonWebToken> JsonWebTokens { get; set; }
-            public List<RefreshToken> RefreshTokens { get; set; }
+            public virtual List<Permission> Permissions { get; set; }
+            public virtual List<User> Users { get; set; }
+            public virtual List<UserGroup> UserGroups { get; set; }
+            public virtual List<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
+            public virtual List<UserProfile> UserProfiles { get; set; }
+            public virtual List<UserToGroupMapping> UserToGroupMappings { get; set; }
+            public virtual List<JsonWebToken> JsonWebTokens { get; set; }
+            public virtual List<RefreshToken> RefreshTokens { get; set; }
         }
 
         public static AppDbContextSeedLists Seed()
