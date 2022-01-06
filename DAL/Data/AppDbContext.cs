@@ -1843,6 +1843,9 @@ namespace DAL.Data
             builder.Entity<User>(_ =>
             {
                 _.HasIndex(__ => __.Email).IsUnique();
+                
+                //Allow PhoneNumber to remain empty
+                // _.HasIndex(__ => __.PhoneNumber).IsUnique().HasFilter(null);
 
                 _.HasData(appDbContextSeedLists.Users);
             });
