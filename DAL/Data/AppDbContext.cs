@@ -8,7 +8,6 @@ using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,8 +17,6 @@ namespace DAL.Data
 {
     public sealed class AppDbContext : DbContext
     {
-        private bool InMemory { get; set; }
-
         #region DbSets
 
         public DbSet<Permission> Permissions { get; set; }
@@ -35,20 +32,11 @@ namespace DAL.Data
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            if (options.Extensions.FirstOrDefault(_ => _ is SqliteOptionsExtension) is SqliteOptionsExtension sqlite &&
-                sqlite.ConnectionString == "Filename=:memory:")
-                InMemory = true;
-
-            if (!InMemory) return;
-
-            Database.OpenConnection();
             Database.Migrate();
         }
 
         public override void Dispose()
         {
-            if (InMemory)
-                Database.CloseConnection();
             base.Dispose();
         }
 

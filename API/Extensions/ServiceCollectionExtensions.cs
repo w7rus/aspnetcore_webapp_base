@@ -103,21 +103,6 @@ public static class ServiceCollectionExtensions
         return serviceCollection;
     }
 
-    public static IServiceCollection AddDbContextTestInMemory(this IServiceCollection serviceCollection)
-    {
-        serviceCollection.AddScoped<AppDbContext>();
-        serviceCollection.AddScoped<IAppDbContextAction, AppDbContextAction>();
-
-        serviceCollection.AddDbContext<AppDbContext>(options =>
-        {
-            options.UseSqlite("Filename=:memory:",
-                    _ => _.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery))
-                .UseLazyLoadingProxies();
-        });
-
-        return serviceCollection;
-    }
-
     public static IServiceCollection AddCustomConfigureOptions(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IConfigureOptions<AuthenticationOptions>, ConfigureAuthenticationOptions>();
