@@ -110,7 +110,7 @@ namespace API
                     .AddScheme<JsonWebTokenAuthenticationSchemeOptions, JsonWebTokenAuthenticationHandler>(
                         AuthenticationSchemes.JsonWebToken, null!);
                 services.AddAuthentication()
-                    .AddScheme<JsonWebTokenAuthenticationSchemeOptions, JsonWebTokenAuthenticationHandler>(
+                    .AddScheme<JsonWebTokenAuthenticationSchemeOptions, JsonWebTokenExpiredAuthenticationHandler>(
                         AuthenticationSchemes.JsonWebTokenExpired, null!);
             }
 

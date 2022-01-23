@@ -71,7 +71,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("refresh")]
-        [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+        [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebTokenExpired)]
         [SwaggerOperation(Summary = "Refresh Authorization using Refresh Token",
             Description = "Refresh Authorization using Refresh Token")]
         [ProducesResponseType(typeof(AuthRefreshResult), StatusCodes.Status200OK)]
@@ -84,7 +84,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebTokenExpired)]
+        [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
         [Route("signout")]
         [SwaggerOperation(Summary = "Sign Out from an existing User account",
             Description = "Sign Out from an existing User account")]
