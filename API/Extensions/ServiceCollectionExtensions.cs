@@ -47,6 +47,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserGroupPermissionValueService, UserGroupPermissionValueService>();
         serviceCollection.AddScoped<IUserProfileService, UserProfileService>();
         serviceCollection.AddScoped<IUserService, UserService>();
+        serviceCollection.AddScoped<IUserGroupService, UserGroupService>();
 
         return serviceCollection;
     }

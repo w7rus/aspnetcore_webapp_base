@@ -13,10 +13,10 @@ namespace DAL.Repository.Base
     public interface IRepositoryBase<TEntity, in TKey> where TEntity : EntityBase<TKey> where TKey : IEquatable<TKey>
     {
         void Add(TEntity entity);
-        void Add(IList<TEntity> entities);
-        Task AddAsync(IList<TEntity> entities);
+        void Add(ICollection<TEntity> entities);
+        Task AddAsync(ICollection<TEntity> entities);
         void Save(TEntity entity);
-        void Save(IList<TEntity> entities);
+        void Save(ICollection<TEntity> entities);
         void Delete(TEntity entity);
         void Delete(IEnumerable<TEntity> entities);
         Task<TEntity> GetByIdAsync(TKey id);
@@ -53,7 +53,7 @@ namespace DAL.Repository.Base
             DbSet.Add(entity);
         }
 
-        public void Add(IList<TEntity> entities)
+        public void Add(ICollection<TEntity> entities)
         {
             foreach (var entity in entities)
             {
@@ -63,7 +63,7 @@ namespace DAL.Repository.Base
             DbSet.AddRange(entities);
         }
 
-        public async Task AddAsync(IList<TEntity> entities)
+        public async Task AddAsync(ICollection<TEntity> entities)
         {
             foreach (var entity in entities)
             {
@@ -92,7 +92,7 @@ namespace DAL.Repository.Base
             DbSet.Update(entity);
         }
 
-        public void Save(IList<TEntity> entities)
+        public void Save(ICollection<TEntity> entities)
         {
             foreach (var entity in entities)
             {

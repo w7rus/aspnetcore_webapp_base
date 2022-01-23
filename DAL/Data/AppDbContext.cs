@@ -85,19 +85,22 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_any_view_permission_overview",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_any_view_permission_overview_own",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_any_modify_permission_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -108,79 +111,92 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_group_create_groups",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_group_view_groups",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_group_view_groups_own",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_delete_groups_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_delete_groups_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_add_member_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_add_member_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_remove_member_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_remove_member_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_modify_alias_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_modify_alias_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_modify_description_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_group_modify_description_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -226,7 +242,8 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_lastipaddress",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
 
                 #region Profile Username
@@ -235,31 +252,36 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_profile_username",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_profile_username_own",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_profile_username_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_profile_username_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_profile_username_own_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -270,31 +292,36 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_profile_basic",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_profile_basic_own",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_profile_basic_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_profile_basic_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_profile_basic_own_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -305,31 +332,36 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_profile_custom",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_profile_custom_own",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_profile_custom_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_profile_custom_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_profile_custom_own_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -340,19 +372,22 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_delete_user_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_delete_user_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_delete_user_own_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -363,19 +398,22 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_communication_private_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_communication_private_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_communication_private_own_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -386,13 +424,15 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_communication_global_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_communication_global_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -403,13 +443,15 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_poke_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_poke_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -418,13 +460,15 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_max_apuint64_keys",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_max_avatar_filesize",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #region Complaints
@@ -433,61 +477,71 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_create_complaints_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_create_complaints_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_complaints",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_complaints_own",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_complaints_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_complaints_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_complaints_own_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_delete_complaints_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_delete_complaints_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_delete_complaints_own_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
@@ -498,67 +552,78 @@ namespace DAL.Data
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_create_bans_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_create_bans_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_bans",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "boolean_user_view_bans_own",
-                    Type = PermissionType.Boolean
+                    Type = PermissionType.Boolean,
+                    CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_bans_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_bans_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_modify_bans_own_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_delete_bans_power",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_delete_bans_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_delete_bans_own_power_needed",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = ToGuid(++permissionsGuidOffset),
                     Alias = "uint64_user_max_ban_time",
-                    Type = PermissionType.UInt64
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.LessOrEqual
                 },
 
                 #endregion
