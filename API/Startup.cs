@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using API.AuthHandlers;
 using API.Extensions;
 using API.Middleware;
 using Common.Helpers;
 using Common.Models;
+using Common.Options;
 using DAL.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -97,6 +99,19 @@ namespace API
                 // //TODO: Probably useless since there is AuthorizeJsonWebToken & AuthorizeExpiredJsonWebToken attributes
                 // services.AddAuthentication()
                 //     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, null!);
+                // services.AddAuthentication(
+                //         options => options.DefaultScheme = AuthenticationSchemes.JsonWebToken)
+                //     .AddScheme<JsonWebTokenAuthenticationSchemeOptions, JsonWebTokenAuthenticationHandler>(
+                //         AuthenticationSchemes.JsonWebToken, options => { });
+                services.AddAuthentication()
+                    .AddScheme<DefaultAuthenticationSchemeOptions, DefaultAuthenticationHandler>(
+                        AuthenticationSchemes.Default, null!);
+                services.AddAuthentication()
+                    .AddScheme<JsonWebTokenAuthenticationSchemeOptions, JsonWebTokenAuthenticationHandler>(
+                        AuthenticationSchemes.JsonWebToken, null!);
+                services.AddAuthentication()
+                    .AddScheme<JsonWebTokenAuthenticationSchemeOptions, JsonWebTokenAuthenticationHandler>(
+                        AuthenticationSchemes.JsonWebTokenExpired, null!);
             }
 
             services.AddCustomDbContext(Configuration);
@@ -129,10 +144,10 @@ namespace API
 
             app.UseRouting();
 
-            // app.UseAuthentication();
-            // app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMiddleware<AuthMiddleware>();
+            // app.UseMiddleware<AuthMiddleware>();
 
             app.UseCors();
 

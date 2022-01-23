@@ -8,7 +8,6 @@
         public bool ValidateAudience { get; set; }
         public string IssuerSigningKey { get; set; }
         public bool ValidateIssuerSigningKey { get; set; }
-        public bool ValidateLifetime { get; set; }
         public int ExpirySeconds { get; set; }
     }
 }

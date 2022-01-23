@@ -41,19 +41,6 @@ namespace API.Controllers
 
         #region Endpoints
 
-        [HttpGet]
-        [Route("test")]
-        public IActionResult Test()
-        {
-            return Ok();
-        }
-
-        [HttpPost("test2")]
-        public IActionResult Test2([Required] [FromBody] AuthSignUp data)
-        {
-            return Ok();
-        }
-
         [HttpPost]
         [AllowAnonymous]
         [Route("signup")]
@@ -69,8 +56,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [Route("signin")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Sign In to an existing User account",
             Description = "Sign In to an existing User account")]
         [ProducesResponseType(typeof(AuthSignInResult), StatusCodes.Status200OK)]
@@ -83,9 +70,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [WrapperTypeFilter(typeof(AuthorizeExpiredJsonWebTokenAttribute),
-            Arguments = new object[] {JwtBearerDefaults.AuthenticationScheme})]
         [Route("refresh")]
+        [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
         [SwaggerOperation(Summary = "Refresh Authorization using Refresh Token",
             Description = "Refresh Authorization using Refresh Token")]
         [ProducesResponseType(typeof(AuthRefreshResult), StatusCodes.Status200OK)]
@@ -98,8 +84,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [WrapperTypeFilter(typeof(AuthorizeJsonWebTokenAttribute),
-            Arguments = new object[] {JwtBearerDefaults.AuthenticationScheme})]
+        [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebTokenExpired)]
         [Route("signout")]
         [SwaggerOperation(Summary = "Sign Out from an existing User account",
             Description = "Sign Out from an existing User account")]

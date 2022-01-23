@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Common.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 
@@ -8,8 +9,8 @@ namespace API.Configuration
     {
         public void Configure(AuthenticationOptions options)
         {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultAuthenticateScheme = AuthenticationSchemes.Default;
+            // options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }
     }
 }

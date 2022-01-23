@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using API.AuthHandlers;
 using API.Configuration;
 using BLL.BackgroundServices;
 using BLL.Handlers;
@@ -106,7 +107,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCustomConfigureOptions(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IConfigureOptions<AuthenticationOptions>, ConfigureAuthenticationOptions>();
-        serviceCollection.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>();
+        serviceCollection.AddSingleton<IConfigureOptions<JsonWebTokenAuthenticationSchemeOptions>, ConfigureJwtBearerOptions>();
 
         return serviceCollection;
     }

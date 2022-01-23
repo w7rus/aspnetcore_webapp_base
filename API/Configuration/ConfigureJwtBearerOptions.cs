@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using API.AuthHandlers;
+using Common.Models;
 using Common.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
@@ -6,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace API.Configuration
 {
-    public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions>
+    public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JsonWebTokenAuthenticationSchemeOptions>
     {
         private readonly JsonWebTokenOptions _jsonWebTokenOptions;
 
@@ -15,25 +17,37 @@ namespace API.Configuration
             _jsonWebTokenOptions = jsonWebTokenOptions.Value;
         }
 
-        public void Configure(string name, JwtBearerOptions options)
+        public void Configure(string name, JsonWebTokenAuthenticationSchemeOptions options)
         {
-            if (name == JwtBearerDefaults.AuthenticationScheme)
+            options.TokenValidationParameters = name switch
             {
-                options.TokenValidationParameters = new TokenValidationParameters
+                AuthenticationSchemes.JsonWebToken => new TokenValidationParameters
                 {
                     ValidateIssuer = _jsonWebTokenOptions.ValidateIssuer,
                     ValidateAudience = _jsonWebTokenOptions.ValidateAudience,
-                    ValidateLifetime = _jsonWebTokenOptions.ValidateLifetime,
+                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = _jsonWebTokenOptions.ValidateIssuerSigningKey,
                     ValidIssuer = _jsonWebTokenOptions.Issuer,
                     ValidAudience = _jsonWebTokenOptions.Audience,
                     IssuerSigningKey =
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jsonWebTokenOptions.IssuerSigningKey))
-                };
-            }
+                },
+                AuthenticationSchemes.JsonWebTokenExpired => new TokenValidationParameters
+                {
+                    ValidateIssuer = _jsonWebTokenOptions.ValidateIssuer,
+                    ValidateAudience = _jsonWebTokenOptions.ValidateAudience,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = _jsonWebTokenOptions.ValidateIssuerSigningKey,
+                    ValidIssuer = _jsonWebTokenOptions.Issuer,
+                    ValidAudience = _jsonWebTokenOptions.Audience,
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jsonWebTokenOptions.IssuerSigningKey))
+                },
+                _ => options.TokenValidationParameters
+            };
         }
 
-        public void Configure(JwtBearerOptions options)
+        public void Configure(JsonWebTokenAuthenticationSchemeOptions options)
         {
             Configure(string.Empty, options);
         }

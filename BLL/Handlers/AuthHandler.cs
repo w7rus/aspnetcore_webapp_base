@@ -43,6 +43,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
     private readonly RefreshTokenOptions _refreshTokenOptions;
     private readonly JsonWebTokenOptions _jsonWebTokenOptions;
     private readonly HttpContext _httpContext;
+    private readonly bool _secureCookies = false;
 
     #endregion
 
@@ -158,14 +159,14 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 var refreshTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
-                    Secure = true,
+                    Secure = _secureCookies,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };
                 var jsonWebTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
-                    Secure = true,
+                    Secure = _secureCookies,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };
@@ -271,14 +272,14 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 var refreshTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
-                    Secure = true,
+                    Secure = _secureCookies,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };
                 var jsonWebTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
-                    Secure = true,
+                    Secure = _secureCookies,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };

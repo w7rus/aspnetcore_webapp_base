@@ -132,7 +132,7 @@ namespace API.Middleware
                                     {
                                         ValidateIssuer = jsonWebTokenOptions.Value.ValidateIssuer,
                                         ValidateAudience = jsonWebTokenOptions.Value.ValidateAudience,
-                                        ValidateLifetime = jsonWebTokenOptions.Value.ValidateLifetime,
+                                        ValidateLifetime = true,
                                         ValidateIssuerSigningKey = jsonWebTokenOptions.Value.ValidateIssuerSigningKey,
                                         IssuerSigningKey =
                                             new SymmetricSecurityKey(
