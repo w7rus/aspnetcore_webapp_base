@@ -98,5 +98,15 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
             .ToArrayAsync(cancellationToken);
     }
 
+    public async Task<UserGroupPermissionValue> GetByEntityIdPermissionId(
+        Guid entityId,
+        Guid permissionId,
+        CancellationToken cancellationToken
+    )
+    {
+        return await _userGroupPermissionValueRepository.SingleOrDefaultAsync(_ =>
+            _.EntityId == entityId && _.PermissionId == permissionId);
+    }
+
     #endregion
 }

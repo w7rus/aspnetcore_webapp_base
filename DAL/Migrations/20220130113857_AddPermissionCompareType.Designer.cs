@@ -3,6 +3,7 @@ using System;
 using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220130113857_AddPermissionCompareType")]
+    partial class AddPermissionCompareType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,7 +179,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000003-0000-0000-0000-000000000000"),
                             Alias = "uint64_any_modify_permission_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -213,7 +215,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000007-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_delete_groups_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -222,7 +224,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000008-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_delete_groups_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -231,7 +233,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000009-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_add_member_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -240,7 +242,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000000a-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_add_member_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -249,7 +251,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000000b-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_remove_member_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -258,7 +260,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000000c-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_remove_member_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -267,7 +269,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000000d-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_modify_alias_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -276,7 +278,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000000e-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_modify_alias_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -285,7 +287,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000000f-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_modify_description_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -294,7 +296,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000010-0000-0000-0000-000000000000"),
                             Alias = "uint64_group_modify_description_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -375,7 +377,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000019-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_profile_username_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -384,7 +386,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000001a-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_profile_username_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -393,7 +395,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000001b-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_profile_username_own_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -420,7 +422,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000001e-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_profile_basic_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -429,7 +431,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000001f-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_profile_basic_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -438,7 +440,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000020-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_profile_basic_own_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -465,7 +467,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000023-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_profile_custom_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -474,7 +476,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000024-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_profile_custom_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -483,7 +485,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000025-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_profile_custom_own_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -492,7 +494,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000026-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_delete_user_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -501,7 +503,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000027-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_delete_user_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -510,7 +512,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000028-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_delete_user_own_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -519,7 +521,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000029-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_communication_private_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -528,7 +530,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000002a-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_communication_private_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -537,7 +539,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000002b-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_communication_private_own_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -546,7 +548,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000002c-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_communication_global_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -555,7 +557,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000002d-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_communication_global_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -564,7 +566,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000002e-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_poke_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -573,7 +575,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000002f-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_poke_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -582,7 +584,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000030-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_max_apuint64_keys",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -591,7 +593,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000031-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_max_avatar_filesize",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -600,7 +602,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000032-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_create_complaints_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -609,7 +611,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000033-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_create_complaints_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -636,7 +638,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000036-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_complaints_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -645,7 +647,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000037-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_complaints_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -654,7 +656,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000038-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_complaints_own_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -663,7 +665,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000039-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_delete_complaints_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -672,7 +674,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000003a-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_delete_complaints_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -681,7 +683,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000003b-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_delete_complaints_own_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -690,7 +692,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000003c-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_create_bans_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -699,7 +701,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("0000003d-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_create_bans_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -726,7 +728,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000040-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_bans_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -735,7 +737,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000041-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_bans_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -744,7 +746,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000042-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_modify_bans_own_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -753,7 +755,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000043-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_delete_bans_power",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -762,7 +764,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000044-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_delete_bans_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -771,7 +773,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000045-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_delete_bans_own_power_needed",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
@@ -780,7 +782,7 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("00000046-0000-0000-0000-000000000000"),
                             Alias = "uint64_user_max_ban_time",
-                            CompareMode = 6,
+                            CompareMode = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))

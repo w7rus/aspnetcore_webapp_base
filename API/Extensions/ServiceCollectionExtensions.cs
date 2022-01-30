@@ -5,6 +5,7 @@ using API.Configuration;
 using BLL.BackgroundServices;
 using BLL.Handlers;
 using BLL.Services;
+using BLL.Services.Advanced;
 using Common.Options;
 using DAL.Data;
 using DAL.Repository;
@@ -41,13 +42,15 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddServices(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddScoped<IUserToGroupService, UserToGroupService>();
         serviceCollection.AddScoped<IJsonWebTokenService, JsonWebTokenService>();
         serviceCollection.AddScoped<IPermissionService, PermissionService>();
+        serviceCollection.AddScoped<IPermissionToPermissionValueService, PermissionToPermissionValueService>();
         serviceCollection.AddScoped<IRefreshTokenService, RefreshTokenService>();
         serviceCollection.AddScoped<IUserGroupPermissionValueService, UserGroupPermissionValueService>();
+        serviceCollection.AddScoped<IUserGroupService, UserGroupService>();
         serviceCollection.AddScoped<IUserProfileService, UserProfileService>();
         serviceCollection.AddScoped<IUserService, UserService>();
-        serviceCollection.AddScoped<IUserGroupService, UserGroupService>();
 
         return serviceCollection;
     }

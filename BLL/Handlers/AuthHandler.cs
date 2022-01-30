@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BLL.Handlers.Base;
 using BLL.Services;
+using BLL.Services.Advanced;
 using Common.Attributes;
 using Common.Exceptions;
 using Common.Helpers;
@@ -14,6 +15,7 @@ using Common.Models;
 using Common.Models.Base;
 using Common.Options;
 using DAL.Data;
+using Domain.Entities;
 using DTO.Models.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +46,10 @@ public class AuthHandler : HandlerBase, IAuthHandler
     private readonly JsonWebTokenOptions _jsonWebTokenOptions;
     private readonly HttpContext _httpContext;
     private readonly bool _secureCookies = false;
+    private readonly IUserToGroupService _userToGroupService;
+    private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
+    private readonly IPermissionService _permissionService;
+    private readonly IUserGroupService _userGroupService;
 
     #endregion
 
@@ -57,7 +63,11 @@ public class AuthHandler : HandlerBase, IAuthHandler
         IUserService userService,
         IOptions<RefreshTokenOptions> refreshTokenOptions,
         IOptions<JsonWebTokenOptions> jsonWebTokenOptions,
-        IHttpContextAccessor httpContextAccessor
+        IHttpContextAccessor httpContextAccessor,
+        IUserToGroupService userToGroupService,
+        IUserGroupPermissionValueService userGroupPermissionValueService,
+        IPermissionService permissionService,
+        IUserGroupService userGroupService
     )
     {
         _fullName = GetType().FullName;
@@ -66,6 +76,10 @@ public class AuthHandler : HandlerBase, IAuthHandler
         _jsonWebTokenService = jsonWebTokenService;
         _refreshTokenService = refreshTokenService;
         _userService = userService;
+        _userToGroupService = userToGroupService;
+        _userGroupPermissionValueService = userGroupPermissionValueService;
+        _permissionService = permissionService;
+        _userGroupService = userGroupService;
         _refreshTokenOptions = refreshTokenOptions.Value;
         _jsonWebTokenOptions = jsonWebTokenOptions.Value;
         _httpContext = httpContextAccessor.HttpContext;

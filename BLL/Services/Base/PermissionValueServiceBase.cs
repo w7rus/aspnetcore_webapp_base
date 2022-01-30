@@ -30,6 +30,12 @@ public interface
     );
 
     Task<IReadOnlyCollection<TEntityPermissionValue>> GetByEntityId(Guid entityId, CancellationToken cancellationToken);
+
+    Task<TEntityPermissionValue> GetByEntityIdPermissionId(
+        Guid entityId,
+        Guid permissionId,
+        CancellationToken cancellationToken
+    );
 }
 
 public abstract class
@@ -57,6 +63,12 @@ public abstract class
 
     public abstract Task<IReadOnlyCollection<TEntityPermissionValue>> GetByEntityId(
         Guid entityId,
+        CancellationToken cancellationToken
+    );
+
+    public abstract Task<TEntityPermissionValue> GetByEntityIdPermissionId(
+        Guid entityId,
+        Guid permissionId,
         CancellationToken cancellationToken
     );
 }

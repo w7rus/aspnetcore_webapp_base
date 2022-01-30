@@ -77,11 +77,6 @@ public class JsonWebTokenExpiredAuthenticationHandler : AuthenticationHandler<Js
         if (jsonWebToken == null)
             return AuthenticateResult.Fail(Localize.Error.JsonWebTokenNotFound);
 
-        if (jsonWebToken.ExpiresAt < DateTimeOffset.UtcNow)
-        {
-            return AuthenticateResult.Fail(Localize.Error.JsonWebTokenExpired);
-        }
-
         claims.Add(new Claim(ClaimKey.JsonWebTokenId, jsonWebToken.Id.ToString(),
             ClaimValueTypes.String));
 
