@@ -45,11 +45,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
     private readonly RefreshTokenOptions _refreshTokenOptions;
     private readonly JsonWebTokenOptions _jsonWebTokenOptions;
     private readonly HttpContext _httpContext;
-    private readonly bool _secureCookies = false;
-    private readonly IUserToGroupService _userToGroupService;
-    private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
-    private readonly IPermissionService _permissionService;
-    private readonly IUserGroupService _userGroupService;
+    private readonly MiscOptions _miscOptions;
 
     #endregion
 
@@ -64,10 +60,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         IOptions<RefreshTokenOptions> refreshTokenOptions,
         IOptions<JsonWebTokenOptions> jsonWebTokenOptions,
         IHttpContextAccessor httpContextAccessor,
-        IUserToGroupService userToGroupService,
-        IUserGroupPermissionValueService userGroupPermissionValueService,
-        IPermissionService permissionService,
-        IUserGroupService userGroupService
+        IOptions<MiscOptions> miscOptions
     )
     {
         _fullName = GetType().FullName;
@@ -76,13 +69,10 @@ public class AuthHandler : HandlerBase, IAuthHandler
         _jsonWebTokenService = jsonWebTokenService;
         _refreshTokenService = refreshTokenService;
         _userService = userService;
-        _userToGroupService = userToGroupService;
-        _userGroupPermissionValueService = userGroupPermissionValueService;
-        _permissionService = permissionService;
-        _userGroupService = userGroupService;
         _refreshTokenOptions = refreshTokenOptions.Value;
         _jsonWebTokenOptions = jsonWebTokenOptions.Value;
         _httpContext = httpContextAccessor.HttpContext;
+        _miscOptions = miscOptions.Value;
     }
 
     #endregion
@@ -173,14 +163,14 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 var refreshTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
-                    Secure = _secureCookies,
+                    Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };
                 var jsonWebTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
-                    Secure = _secureCookies,
+                    Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };
@@ -286,14 +276,14 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 var refreshTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
-                    Secure = _secureCookies,
+                    Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };
                 var jsonWebTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
-                    Secure = _secureCookies,
+                    Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
                     HttpOnly = true,
                 };

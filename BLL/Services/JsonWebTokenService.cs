@@ -18,6 +18,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BLL.Services
 {
+    /// <summary>
+    /// Service to work with JsonWebToken entity
+    /// </summary>
     public interface IJsonWebTokenService : IEntityServiceBase<JsonWebToken>
     {
         new Task Save(JsonWebToken jsonWebToken, CancellationToken cancellationToken);

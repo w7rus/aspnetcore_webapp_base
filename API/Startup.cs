@@ -96,13 +96,6 @@ namespace API
 
             //Authentication
             {
-                // //TODO: Probably useless since there is AuthorizeJsonWebToken & AuthorizeExpiredJsonWebToken attributes
-                // services.AddAuthentication()
-                //     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, null!);
-                // services.AddAuthentication(
-                //         options => options.DefaultScheme = AuthenticationSchemes.JsonWebToken)
-                //     .AddScheme<JsonWebTokenAuthenticationSchemeOptions, JsonWebTokenAuthenticationHandler>(
-                //         AuthenticationSchemes.JsonWebToken, options => { });
                 services.AddAuthentication()
                     .AddScheme<DefaultAuthenticationSchemeOptions, DefaultAuthenticationHandler>(
                         AuthenticationSchemes.Default, null!);
@@ -146,8 +139,6 @@ namespace API
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            // app.UseMiddleware<AuthMiddleware>();
 
             app.UseCors();
 

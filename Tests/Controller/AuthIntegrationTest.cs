@@ -77,7 +77,7 @@ public class AuthIntegrationTest
                         });
 
                         // Disable default object model validator
-                        services.AddSingleton<IObjectModelValidator, CustomObjectModelValidator>();
+                        // services.AddSingleton<IObjectModelValidator, CustomObjectModelValidator>();
 
                         services.AddDbContextTest(webHostBuilder.Configuration);
                         services.AddRepositories();

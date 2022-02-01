@@ -45,7 +45,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserToGroupService, UserToGroupService>();
         serviceCollection.AddScoped<IJsonWebTokenService, JsonWebTokenService>();
         serviceCollection.AddScoped<IPermissionService, PermissionService>();
-        serviceCollection.AddScoped<IPermissionToPermissionValueService, PermissionToPermissionValueService>();
+        serviceCollection.AddScoped<IAuthorizePermissionValueService, AuthorizePermissionValueService>();
         serviceCollection.AddScoped<IRefreshTokenService, RefreshTokenService>();
         serviceCollection.AddScoped<IUserGroupPermissionValueService, UserGroupPermissionValueService>();
         serviceCollection.AddScoped<IUserGroupService, UserGroupService>();
@@ -111,7 +111,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCustomConfigureOptions(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IConfigureOptions<AuthenticationOptions>, ConfigureAuthenticationOptions>();
-        serviceCollection.AddSingleton<IConfigureOptions<JsonWebTokenAuthenticationSchemeOptions>, ConfigureJwtBearerOptions>();
+        serviceCollection
+            .AddSingleton<IConfigureOptions<JsonWebTokenAuthenticationSchemeOptions>, ConfigureJwtBearerOptions>();
 
         return serviceCollection;
     }
@@ -128,6 +129,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.Configure<RefreshTokenOptions>(configuration.GetSection(nameof(RefreshTokenOptions)));
         serviceCollection.Configure<BackgroundServicesOptions>(
             configuration.GetSection(nameof(BackgroundServicesOptions)));
+        serviceCollection.Configure<MiscOptions>(configuration.GetSection(nameof(MiscOptions)));
 
         return serviceCollection;
     }

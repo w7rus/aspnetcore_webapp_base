@@ -7,6 +7,10 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services;
 
+/// <summary>
+/// Service to work with Permission entity
+/// Permissions are managed in AppDbContext.Seed
+/// </summary>
 public interface IPermissionService
 {
     Task<Permission> GetByIdAsync(Guid id);

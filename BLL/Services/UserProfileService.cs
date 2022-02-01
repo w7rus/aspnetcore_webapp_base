@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services;
 
+/// <summary>
+/// Service to work with UserProfile entity
+/// </summary>
 public interface IUserProfileService : IEntityServiceBase<UserProfile>
 {
     new Task Save(UserProfile userProfile, CancellationToken cancellationToken);

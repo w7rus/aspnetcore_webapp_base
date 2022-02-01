@@ -14,6 +14,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services;
 
+/// <summary>
+/// Service to work with User entity
+/// </summary>
 public interface IUserService : IEntityServiceBase<User>
 {
     new Task Save(User user, CancellationToken cancellationToken);

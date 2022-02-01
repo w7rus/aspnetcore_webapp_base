@@ -20,7 +20,7 @@ namespace Domain.Entities
         /// Type of the permission
         /// </summary>
         public PermissionType Type { get; set; }
-        
+
         /// <summary>
         /// Compare mode of the permission
         /// </summary>

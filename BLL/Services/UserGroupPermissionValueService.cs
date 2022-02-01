@@ -11,6 +11,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services;
 
+/// <summary>
+/// Service to work with UserGroupPermissionValue entity
+/// </summary>
 public interface
     IUserGroupPermissionValueService : IEntityPermissionValueServiceBase<UserGroupPermissionValue, UserGroup>
 {

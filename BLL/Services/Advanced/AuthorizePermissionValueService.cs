@@ -1,34 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
 using Common.Exceptions;
-using Domain.Entities;
 using Domain.Entities.Base;
 using Domain.Enums;
 using Microsoft.Extensions.Logging;
 
-namespace BLL.Services;
+namespace BLL.Services.Advanced;
 
-public interface IPermissionToPermissionValueService
+/// <summary>
+/// Advanced Service to authorize actions based on comparison of PermissionValues
+/// </summary>
+public interface IAuthorizePermissionValueService
 {
+    /// <summary>
+    /// Authorizes PermissionValue.Value to another PermissionValue.Value
+    /// </summary>
+    /// <param name="entityPermissionValue">PermissionValue which is compared</param>
+    /// <param name="entityPermissionValueCompared">Comparable PermissionValue</param>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TEntityCompared"></typeparam>
+    /// <returns>True=Authorized, False=Unauthorized</returns>
     bool Authorize<TEntity, TEntityCompared>(
-        Permission permission,
         EntityPermissionValueBase<TEntity> entityPermissionValue,
-        Permission permissionCompared,
+        EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared
+    ) where TEntity : EntityBase<Guid> where TEntityCompared : EntityBase<Guid>;
+
+    /// <summary>
+    /// Authorized "uint64_any_modify_permission_power" PermissionValue.Value to another PermissionValue.Grant
+    /// </summary>
+    /// <param name="entityPermissionValue">PermissionValue which is compared</param>
+    /// <param name="entityPermissionValueCompared">Comparable PermissionValue</param>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TEntityCompared"></typeparam>
+    /// <returns>Authorization result</returns>
+    bool AuthorizeSave<TEntity, TEntityCompared>(
+        EntityPermissionValueBase<TEntity> entityPermissionValue,
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared
     ) where TEntity : EntityBase<Guid> where TEntityCompared : EntityBase<Guid>;
 }
 
-public class PermissionToPermissionValueService : IPermissionToPermissionValueService
+public class AuthorizePermissionValueService : IAuthorizePermissionValueService
 {
     #region Fields
 
-    private readonly ILogger<PermissionToPermissionValueService> _logger;
+    private readonly ILogger<AuthorizePermissionValueService> _logger;
 
     #endregion
 
     #region Ctor
 
-    public PermissionToPermissionValueService(ILogger<PermissionToPermissionValueService> logger)
+    public AuthorizePermissionValueService(ILogger<AuthorizePermissionValueService> logger)
     {
         _logger = logger;
     }
@@ -38,21 +58,27 @@ public class PermissionToPermissionValueService : IPermissionToPermissionValueSe
     #region Methods
 
     public bool Authorize<TEntity, TEntityCompared>(
-        Permission permission,
         EntityPermissionValueBase<TEntity> entityPermissionValue,
-        Permission permissionCompared,
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared
     ) where TEntity : EntityBase<Guid> where TEntityCompared : EntityBase<Guid>
     {
-        if (permission.Type != permissionCompared.Type)
-            throw new CustomException();
+        if (entityPermissionValue == null)
+            return false;
 
-        if (permission.CompareMode != permissionCompared.CompareMode)
-            throw new CustomException();
+        if (entityPermissionValueCompared == null)
+            return false;
+
+        if (entityPermissionValue.Permission.Type != entityPermissionValueCompared.Permission.Type)
+            throw new CustomException(
+                $"{nameof(entityPermissionValue.Permission.Type)} does not match {nameof(entityPermissionValueCompared.Permission.Type)}");
+
+        if (entityPermissionValue.Permission.CompareMode != entityPermissionValueCompared.Permission.CompareMode)
+            throw new CustomException(
+                $"{nameof(entityPermissionValue.Permission.CompareMode)} does not match {nameof(entityPermissionValueCompared.Permission.CompareMode)}");
 
         int compareToResult;
 
-        switch (permission.Type)
+        switch (entityPermissionValue.Permission.Type)
         {
             case PermissionType.Unknown:
                 return false;
@@ -141,7 +167,7 @@ public class PermissionToPermissionValueService : IPermissionToPermissionValueSe
                     BitConverter.ToInt32(entityPermissionValue.Value, sizeof(int) * 2),
                     entityPermissionValue.Value[15] == 0x80,
                     entityPermissionValue.Value[14]
-                    );
+                );
                 var valueCompared = new decimal(
                     BitConverter.ToInt32(entityPermissionValueCompared.Value),
                     BitConverter.ToInt32(entityPermissionValueCompared.Value, sizeof(int)),
@@ -170,7 +196,7 @@ public class PermissionToPermissionValueService : IPermissionToPermissionValueSe
                 throw new ArgumentOutOfRangeException();
         }
 
-        return permission.CompareMode switch
+        return entityPermissionValue.Permission.CompareMode switch
         {
             PermissionCompareMode.None => true,
             PermissionCompareMode.Equal => compareToResult == 0,
@@ -181,6 +207,30 @@ public class PermissionToPermissionValueService : IPermissionToPermissionValueSe
             PermissionCompareMode.GreaterOrEqual => compareToResult >= 0,
             _ => throw new ArgumentOutOfRangeException()
         };
+    }
+
+    public bool AuthorizeSave<TEntity, TEntityCompared>(
+        EntityPermissionValueBase<TEntity> entityPermissionValue,
+        EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared
+    ) where TEntity : EntityBase<Guid> where TEntityCompared : EntityBase<Guid>
+    {
+        if (entityPermissionValue.Permission.Alias != "uint64_any_modify_permission_power")
+            throw new CustomException(
+                $"{nameof(entityPermissionValue.Permission.Alias)} does not match uint64_any_modify_permission_power");
+
+        if (entityPermissionValue.Permission.Type != PermissionType.UInt64)
+            throw new CustomException(
+                $"{nameof(entityPermissionValue.Permission.Type)} does not match {nameof(PermissionType.UInt64)}");
+
+        if (entityPermissionValue.Permission.CompareMode != PermissionCompareMode.GreaterOrEqual)
+            throw new CustomException(
+                $"{nameof(entityPermissionValue.Permission.CompareMode)} does not match {nameof(PermissionCompareMode.GreaterOrEqual)}");
+
+        var value = BitConverter.ToUInt64(entityPermissionValue.Value);
+        var valueCompared = entityPermissionValueCompared.Grant;
+        var compareToResult = value.CompareTo(valueCompared);
+
+        return compareToResult >= 0;
     }
 
     #endregion

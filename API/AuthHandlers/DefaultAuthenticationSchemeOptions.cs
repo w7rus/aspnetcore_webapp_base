@@ -4,5 +4,4 @@ namespace API.AuthHandlers;
 
 public class DefaultAuthenticationSchemeOptions : AuthenticationSchemeOptions
 {
-    
 }

@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services;
 
+/// <summary>
+/// Service to work with UserGroup entity
+/// </summary>
 public interface IUserGroupService : IEntityServiceBase<UserGroup>
 {
     new Task Save(UserGroup userGroup, CancellationToken cancellationToken);

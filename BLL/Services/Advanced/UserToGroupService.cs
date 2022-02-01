@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Advanced;
 
+/// <summary>
+/// Advanced Service for User and UserGroup management
+/// </summary>
 public interface IUserToGroupService
 {
     ICollection<UserGroup> GetUserGroupsByUser(User user);
@@ -17,7 +20,6 @@ public interface IUserToGroupService
     Task<bool> AuthorizePermission<TEntityCompared>(
         User user,
         Permission permission,
-        Permission permissionCompared,
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
         CancellationToken cancellationToken
     ) where TEntityCompared : EntityBase<Guid>;
@@ -28,7 +30,7 @@ public class UserToGroupService : IUserToGroupService
     #region Fields
 
     private readonly ILogger<UserToGroupService> _logger;
-    private readonly IPermissionToPermissionValueService _permissionToPermissionValueService;
+    private readonly IAuthorizePermissionValueService _authorizePermissionValueService;
     private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
 
     #endregion
@@ -37,12 +39,12 @@ public class UserToGroupService : IUserToGroupService
 
     public UserToGroupService(
         ILogger<UserToGroupService> logger,
-        IPermissionToPermissionValueService permissionToPermissionValueService,
+        IAuthorizePermissionValueService authorizePermissionValueService,
         IUserGroupPermissionValueService userGroupPermissionValueService
     )
     {
         _logger = logger;
-        _permissionToPermissionValueService = permissionToPermissionValueService;
+        _authorizePermissionValueService = authorizePermissionValueService;
         _userGroupPermissionValueService = userGroupPermissionValueService;
     }
 
@@ -63,7 +65,6 @@ public class UserToGroupService : IUserToGroupService
     public async Task<bool> AuthorizePermission<TEntityCompared>(
         User user,
         Permission permission,
-        Permission permissionCompared,
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
         CancellationToken cancellationToken
     ) where TEntityCompared : EntityBase<Guid>
@@ -75,7 +76,7 @@ public class UserToGroupService : IUserToGroupService
             if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, permission.Id,
                     cancellationToken) is var permissionValue && permissionValue == null)
                 continue;
-            result |= _permissionToPermissionValueService.Authorize(permission, permissionValue, permissionCompared,
+            result |= _authorizePermissionValueService.Authorize(permissionValue,
                 entityPermissionValueCompared);
         }
 

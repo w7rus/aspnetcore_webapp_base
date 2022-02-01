@@ -62,7 +62,8 @@ public class JsonWebTokenAuthenticationHandler : AuthenticationHandler<JsonWebTo
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            tokenHandler.ValidateToken(authorizationBearerPayload, _jsonWebTokenAuthenticationSchemeOptions.TokenValidationParameters,
+            tokenHandler.ValidateToken(authorizationBearerPayload,
+                _jsonWebTokenAuthenticationSchemeOptions.TokenValidationParameters,
                 out var validatedToken);
 
             var jwtToken = (JwtSecurityToken) validatedToken;

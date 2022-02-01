@@ -11,6 +11,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services;
 
+/// <summary>
+/// Service to work with RefreshToken entity
+/// </summary>
 public interface IRefreshTokenService : IEntityServiceBase<RefreshToken>
 {
     new Task Save(RefreshToken refreshToken, CancellationToken cancellationToken);
