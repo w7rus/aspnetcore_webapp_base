@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using Common.Options;
+using System.Threading;
+using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.Entities.Base;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace DAL.Data
 {
     public sealed class AppDbContext : DbContext
     {
+        #region Fields
+
+        private static int _guidSeedOffset;
+
+        #endregion
+        
         #region DbSets
 
         public DbSet<Permission> Permissions { get; set; }
@@ -27,37 +28,72 @@ namespace DAL.Data
         public DbSet<UserToGroupMapping> UserToGroupMappings { get; set; }
         public DbSet<JsonWebToken> JsonWebTokens { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<File> Files { get; set; }
 
         #endregion
+
+        #region Ctor
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
             Database.Migrate();
         }
 
+        #endregion
+
+        private void UpdateTimestamps<TKey>() where TKey : IEquatable<TKey>
+        {
+            var entityEntries = ChangeTracker.Entries();
+
+            foreach (var entityEntry in entityEntries.Where(_ => _.State is EntityState.Modified or EntityState.Added))
+            {
+                var dateTimeOffsetUtcNow = DateTimeOffset.UtcNow;
+
+                if (entityEntry.State == EntityState.Added)
+                    ((EntityBase<TKey>) entityEntry.Entity).CreatedAt = dateTimeOffsetUtcNow;
+                ((EntityBase<TKey>) entityEntry.Entity).UpdatedAt = dateTimeOffsetUtcNow;
+            }
+        }
+
+        #region Overrides
+
         public override void Dispose()
         {
             base.Dispose();
         }
 
-        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        // {
-        //     base.OnConfiguring(optionsBuilder);
-        // }
-
-        public class AppDbContextSeedLists
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            public virtual List<Permission> Permissions { get; set; }
-            public virtual List<User> Users { get; set; }
-            public virtual List<UserGroup> UserGroups { get; set; }
-            public virtual List<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
-            public virtual List<UserProfile> UserProfiles { get; set; }
-            public virtual List<UserToGroupMapping> UserToGroupMappings { get; set; }
-            public virtual List<JsonWebToken> JsonWebTokens { get; set; }
-            public virtual List<RefreshToken> RefreshTokens { get; set; }
+            base.OnConfiguring(optionsBuilder);
         }
 
-        public static AppDbContextSeedLists Seed()
+        public override int SaveChanges()
+        {
+            UpdateTimestamps<Guid>();
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
+        {
+            UpdateTimestamps<Guid>();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        #endregion
+
+        private sealed class AppDbContextSeedLists
+        {
+            public List<Permission> Permissions { get; set; }
+            public List<User> Users { get; set; }
+            public List<UserGroup> UserGroups { get; set; }
+            public List<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
+            public List<UserProfile> UserProfiles { get; set; }
+            public List<UserToGroupMapping> UserToGroupMappings { get; set; }
+            public List<JsonWebToken> JsonWebTokens { get; set; }
+            public List<RefreshToken> RefreshTokens { get; set; }
+        }
+
+        private static AppDbContextSeedLists Seed()
         {
             var appDbContextSeedLists = new AppDbContextSeedLists
             {
@@ -70,12 +106,8 @@ namespace DAL.Data
                 JsonWebTokens = new List<JsonWebToken>(),
                 RefreshTokens = new List<RefreshToken>()
             };
-
-            var globalGuidOffset = 0;
-
+            
             #region Permissions
-
-            var permissionsGuidOffset = globalGuidOffset;
 
             var permissions = new List<Permission>
             {
@@ -83,21 +115,21 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_any_view_permission_overview",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_any_view_permission_overview_own",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_any_modify_permission_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -109,91 +141,91 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_group_create_groups",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_group_view_groups",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_group_view_groups_own",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_delete_groups_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_delete_groups_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_add_member_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_add_member_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_remove_member_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_remove_member_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_modify_alias_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_modify_alias_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_modify_description_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_group_modify_description_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -207,31 +239,31 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_email",
                     Type = PermissionType.Boolean
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_email_own",
                     Type = PermissionType.Boolean
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_email_power",
                     Type = PermissionType.UInt64
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_email_power_needed",
                     Type = PermissionType.UInt64
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_email_own_power_needed",
                     Type = PermissionType.UInt64
                 },
@@ -240,7 +272,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_lastipaddress",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
@@ -250,35 +282,35 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_profile_username",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_profile_username_own",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_profile_username_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_profile_username_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_profile_username_own_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -290,35 +322,35 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_profile_basic",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_profile_basic_own",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_profile_basic_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_profile_basic_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_profile_basic_own_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -330,35 +362,35 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_profile_custom",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_profile_custom_own",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_profile_custom_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_profile_custom_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_profile_custom_own_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -370,21 +402,21 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_delete_user_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_delete_user_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_delete_user_own_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -396,21 +428,21 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_communication_private_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_communication_private_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_communication_private_own_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -422,14 +454,14 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_communication_global_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_communication_global_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -441,14 +473,14 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_poke_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_poke_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -458,14 +490,14 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_max_apuint64_keys",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_max_avatar_filesize",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -475,70 +507,70 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_create_complaints_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_create_complaints_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_complaints",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_complaints_own",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_complaints_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_complaints_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_complaints_own_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_delete_complaints_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_delete_complaints_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_delete_complaints_own_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -550,77 +582,77 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_create_bans_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_create_bans_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_bans",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "boolean_user_view_bans_own",
                     Type = PermissionType.Boolean,
                     CompareMode = PermissionCompareMode.Equal
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_bans_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_bans_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_modify_bans_own_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_delete_bans_power",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_delete_bans_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_delete_bans_own_power_needed",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
                 new()
                 {
-                    Id = ToGuid(++permissionsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "uint64_user_max_ban_time",
                     Type = PermissionType.UInt64,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
@@ -631,25 +663,19 @@ namespace DAL.Data
                 #endregion
             };
 
-            globalGuidOffset = permissionsGuidOffset;
-
             appDbContextSeedLists.Permissions.AddRange(permissions);
 
             #endregion
 
             #region Users
 
-            var usersGuidOffset = globalGuidOffset;
-
             var users = new List<User>();
 
             var userGuest = new User
             {
-                Id = ToGuid(++usersGuidOffset),
+                Id = NextGuid(),
             };
             users.Add(userGuest);
-
-            globalGuidOffset = usersGuidOffset;
 
             appDbContextSeedLists.Users.AddRange(users);
 
@@ -657,20 +683,16 @@ namespace DAL.Data
 
             #region UserProfiles
 
-            var userProfilesGuidOffset = globalGuidOffset;
-
             var userProfiles = new List<UserProfile>();
 
             var userProfileGuest = new UserProfile
             {
-                Id = ToGuid(++userProfilesGuidOffset),
+                Id = NextGuid(),
                 Username = "Guest",
                 Description = "Initial system user",
                 UserId = userGuest.Id,
             };
             userProfiles.Add(userProfileGuest);
-
-            globalGuidOffset = userProfilesGuidOffset;
 
             appDbContextSeedLists.UserProfiles.AddRange(userProfiles);
 
@@ -678,19 +700,17 @@ namespace DAL.Data
 
             #region UserGroups
 
-            var userGroupsGuidOffset = globalGuidOffset;
-
             var userGroups = new List<UserGroup>
             {
                 new()
                 {
-                    Id = ToGuid(++userGroupsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "Root",
                     Description = "System user group with root like permission set"
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupsGuidOffset),
+                    Id = NextGuid(),
                     Alias = "Guest",
                     Description = "System user group with guest like permission set"
                 }
@@ -699,15 +719,11 @@ namespace DAL.Data
             var rootUserGroup = userGroups.First(__ => __.Alias == "Root");
             var guestUserGroup = userGroups.First(__ => __.Alias == "Guest");
 
-            globalGuidOffset = userGroupsGuidOffset;
-
             appDbContextSeedLists.UserGroups.AddRange(userGroups);
 
             #endregion
 
             #region UserGroupsPermissionValues
-
-            var userGroupPermissionValuesGuidOffset = globalGuidOffset;
 
             var rootPower = ulong.MaxValue;
 
@@ -717,7 +733,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_any_view_permission_overview").Id,
@@ -725,7 +741,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_any_view_permission_overview_own").Id,
@@ -733,7 +749,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_any_modify_permission_power").Id,
@@ -746,7 +762,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_group_create_groups").Id,
@@ -754,7 +770,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_group_view_groups").Id,
@@ -762,7 +778,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_group_view_groups_own").Id,
@@ -770,7 +786,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_delete_groups_power").Id,
@@ -778,7 +794,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_delete_groups_power_needed").Id,
@@ -786,7 +802,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_add_member_power").Id,
@@ -794,7 +810,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_add_member_power_needed").Id,
@@ -802,7 +818,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_remove_member_power").Id,
@@ -810,7 +826,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_remove_member_power_needed").Id,
@@ -818,7 +834,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_modify_alias_power").Id,
@@ -826,7 +842,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_modify_alias_power_needed").Id,
@@ -834,7 +850,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_modify_description_power").Id,
@@ -842,7 +858,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_modify_description_power_needed").Id,
@@ -857,7 +873,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_email").Id,
@@ -865,7 +881,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_email_own").Id,
@@ -873,7 +889,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_email_power").Id,
@@ -881,7 +897,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_email_power_needed").Id,
@@ -889,7 +905,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_email_own_power_needed").Id,
@@ -900,7 +916,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_lastipaddress").Id,
@@ -911,7 +927,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_username").Id,
@@ -919,7 +935,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_username_own").Id,
@@ -927,7 +943,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_username_power").Id,
@@ -935,7 +951,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_username_power_needed")
@@ -944,7 +960,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions
@@ -958,7 +974,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_basic").Id,
@@ -966,7 +982,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_basic_own").Id,
@@ -974,7 +990,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_basic_power").Id,
@@ -982,7 +998,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId =
@@ -991,7 +1007,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions
@@ -1005,7 +1021,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_custom").Id,
@@ -1013,7 +1029,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_custom_own").Id,
@@ -1021,7 +1037,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_custom_power").Id,
@@ -1029,7 +1045,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_custom_power_needed")
@@ -1038,7 +1054,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions
@@ -1052,7 +1068,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_user_power").Id,
@@ -1060,7 +1076,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_user_power_needed").Id,
@@ -1068,7 +1084,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_user_own_power_needed").Id,
@@ -1081,7 +1097,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power").Id,
@@ -1089,7 +1105,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power_needed")
@@ -1098,7 +1114,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions
@@ -1112,7 +1128,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_global_power").Id,
@@ -1125,7 +1141,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_poke_power").Id,
@@ -1133,7 +1149,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_poke_power_needed").Id,
@@ -1144,7 +1160,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_max_apuint64_keys").Id,
@@ -1152,7 +1168,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_max_avatar_filesize").Id,
@@ -1163,7 +1179,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_complaints_power").Id,
@@ -1171,7 +1187,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_complaints_power_needed").Id,
@@ -1179,7 +1195,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_complaints").Id,
@@ -1187,7 +1203,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_complaints_own").Id,
@@ -1195,7 +1211,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_power").Id,
@@ -1203,7 +1219,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_power_needed").Id,
@@ -1211,7 +1227,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_own_power_needed")
@@ -1220,7 +1236,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_complaints_power").Id,
@@ -1228,7 +1244,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_complaints_power_needed").Id,
@@ -1236,7 +1252,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_complaints_own_power_needed")
@@ -1250,7 +1266,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_bans_power").Id,
@@ -1258,7 +1274,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_bans_power_needed").Id,
@@ -1266,7 +1282,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_bans").Id,
@@ -1274,7 +1290,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_bans_own").Id,
@@ -1282,7 +1298,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_bans_power").Id,
@@ -1290,7 +1306,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_bans_power_needed").Id,
@@ -1298,7 +1314,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_bans_own_power_needed").Id,
@@ -1306,7 +1322,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_bans_power").Id,
@@ -1314,7 +1330,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_bans_power_needed").Id,
@@ -1322,7 +1338,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_bans_own_power_needed").Id,
@@ -1330,7 +1346,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_max_ban_time").Id,
@@ -1350,7 +1366,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_any_view_permission_overview_own").Id,
@@ -1363,7 +1379,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_group_view_groups").Id,
@@ -1371,7 +1387,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_group_view_groups_own").Id,
@@ -1379,7 +1395,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_delete_groups_power_needed").Id,
@@ -1387,7 +1403,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_add_member_power_needed").Id,
@@ -1395,7 +1411,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_remove_member_power_needed").Id,
@@ -1403,7 +1419,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_modify_alias_power_needed").Id,
@@ -1411,7 +1427,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_group_modify_description_power_needed").Id,
@@ -1426,7 +1442,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(false),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_email").Id,
@@ -1434,7 +1450,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_email_own").Id,
@@ -1442,7 +1458,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_email_power").Id,
@@ -1450,7 +1466,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_email_power_needed").Id,
@@ -1458,7 +1474,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_email_own_power_needed").Id,
@@ -1469,7 +1485,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(false),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_lastipaddress").Id,
@@ -1480,7 +1496,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_username").Id,
@@ -1488,7 +1504,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_username_own").Id,
@@ -1496,7 +1512,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_username_power").Id,
@@ -1504,7 +1520,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_username_power_needed")
@@ -1513,7 +1529,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions
@@ -1527,7 +1543,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_basic").Id,
@@ -1535,7 +1551,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_basic_own").Id,
@@ -1543,7 +1559,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_basic_power").Id,
@@ -1551,7 +1567,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId =
@@ -1560,7 +1576,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions
@@ -1574,7 +1590,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_custom").Id,
@@ -1582,7 +1598,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_profile_custom_own").Id,
@@ -1590,7 +1606,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_custom_power").Id,
@@ -1598,7 +1614,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_profile_custom_power_needed")
@@ -1607,7 +1623,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions
@@ -1621,7 +1637,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_user_power").Id,
@@ -1629,7 +1645,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_user_power_needed").Id,
@@ -1637,7 +1653,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_user_own_power_needed").Id,
@@ -1650,7 +1666,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power").Id,
@@ -1658,7 +1674,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power_needed")
@@ -1667,7 +1683,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions
@@ -1681,7 +1697,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_global_power").Id,
@@ -1694,7 +1710,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_poke_power").Id,
@@ -1702,7 +1718,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_poke_power_needed").Id,
@@ -1713,7 +1729,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(0),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_max_apuint64_keys").Id,
@@ -1721,7 +1737,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(0),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_max_avatar_filesize").Id,
@@ -1732,7 +1748,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_complaints_power").Id,
@@ -1740,7 +1756,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_complaints_power_needed").Id,
@@ -1748,7 +1764,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(false),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_complaints").Id,
@@ -1756,7 +1772,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(true),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_complaints_own").Id,
@@ -1764,7 +1780,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_power").Id,
@@ -1772,7 +1788,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_power_needed").Id,
@@ -1780,7 +1796,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_own_power_needed")
@@ -1789,7 +1805,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_complaints_power").Id,
@@ -1797,7 +1813,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_complaints_power_needed").Id,
@@ -1805,7 +1821,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(guestPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_complaints_own_power_needed")
@@ -1819,7 +1835,7 @@ namespace DAL.Data
 
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_bans_power_needed").Id,
@@ -1827,7 +1843,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_bans_power_needed").Id,
@@ -1835,7 +1851,7 @@ namespace DAL.Data
                 },
                 new()
                 {
-                    Id = ToGuid(++userGroupPermissionValuesGuidOffset),
+                    Id = NextGuid(),
                     Value = BitConverter.GetBytes(rootPower),
                     Grant = rootPower,
                     PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_bans_power_needed").Id,
@@ -1847,8 +1863,6 @@ namespace DAL.Data
                 #endregion
             };
 
-            globalGuidOffset = userGroupPermissionValuesGuidOffset;
-
             appDbContextSeedLists.UserGroupPermissionValues.AddRange(rootUserGroupPermissionValues);
             appDbContextSeedLists.UserGroupPermissionValues.AddRange(guestUserGroupPermissionValues);
 
@@ -1856,16 +1870,12 @@ namespace DAL.Data
 
             #region UserToGroupMappings
 
-            var userToGroupMappingsGuidOffset = globalGuidOffset;
-
             var userGuestToGuestUserGroupMapping = new UserToGroupMapping
             {
-                Id = ToGuid(++userGroupsGuidOffset),
+                Id = NextGuid(),
                 EntityId = userGuest.Id,
                 GroupId = guestUserGroup.Id,
             };
-
-            globalGuidOffset = userToGroupMappingsGuidOffset;
 
             appDbContextSeedLists.UserToGroupMappings.Add(userGuestToGuestUserGroupMapping);
 
@@ -1970,24 +1980,26 @@ namespace DAL.Data
             builder.Entity<RefreshToken>(_ => { _.HasIndex(__ => __.Token).IsUnique(); });
 
             #endregion
+            
+            #region Files
+
+            builder.Entity<File>(_ => { _.HasIndex(__ => __.Name).IsUnique(); });
+
+            #endregion
         }
 
         #region Helpers
+
+        private static Guid NextGuid()
+        {
+            return ToGuid(++_guidSeedOffset);
+        }
 
         private static Guid ToGuid(int value)
         {
             var bytes = new byte[16];
             BitConverter.GetBytes(value).CopyTo(bytes, 0);
             return new Guid(bytes);
-        }
-
-        private static byte[] GenerateRandomBytes(int byteCount)
-        {
-            var csp = RandomNumberGenerator.Create();
-
-            var buffer = new byte[byteCount];
-            csp.GetBytes(buffer);
-            return buffer;
         }
 
         #endregion

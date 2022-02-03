@@ -13,10 +13,10 @@ namespace DAL.Repository.Base
     public interface IRepositoryBase<TEntity, in TKey> where TEntity : EntityBase<TKey> where TKey : IEquatable<TKey>
     {
         void Add(TEntity entity);
-        void Add(ICollection<TEntity> entities);
-        Task AddAsync(ICollection<TEntity> entities);
+        void Add(IEnumerable<TEntity> entities);
+        Task AddAsync(IEnumerable<TEntity> entities);
         void Save(TEntity entity);
-        void Save(ICollection<TEntity> entities);
+        void Save(IEnumerable<TEntity> entities);
         void Delete(TEntity entity);
         void Delete(IEnumerable<TEntity> entities);
         Task<TEntity> GetByIdAsync(TKey id);
@@ -48,69 +48,26 @@ namespace DAL.Repository.Base
 
         public void Add(TEntity entity)
         {
-            entity.CreatedAt = DateTimeOffset.UtcNow;
-
             DbSet.Add(entity);
         }
 
-        public void Add(ICollection<TEntity> entities)
+        public void Add(IEnumerable<TEntity> entities)
         {
-            foreach (var entity in entities)
-            {
-                entity.CreatedAt = DateTimeOffset.UtcNow;
-            }
-
             DbSet.AddRange(entities);
         }
 
-        public async Task AddAsync(ICollection<TEntity> entities)
+        public async Task AddAsync(IEnumerable<TEntity> entities)
         {
-            foreach (var entity in entities)
-            {
-                entity.CreatedAt = DateTimeOffset.UtcNow;
-            }
-
             await DbSet.AddRangeAsync(entities);
         }
 
         public void Save(TEntity entity)
         {
-            if (entity.IsNew())
-                entity.CreatedAt = DateTimeOffset.UtcNow;
-            else
-            {
-                var entityEntry = AppDbContext.Entry(entity);
-                entity.UpdatedAt = entityEntry.State switch
-                {
-                    EntityState.Modified when !entityEntry.Property(nameof(EntityBase<TKey>.UpdatedAt)).IsModified =>
-                        DateTimeOffset.UtcNow,
-                    EntityState.Detached => throw new InvalidOperationException("Can't save detached entity."),
-                    _ => entity.UpdatedAt
-                };
-            }
-
             DbSet.Update(entity);
         }
 
-        public void Save(ICollection<TEntity> entities)
+        public void Save(IEnumerable<TEntity> entities)
         {
-            foreach (var entity in entities)
-            {
-                if (entity.IsNew())
-                    entity.CreatedAt = DateTimeOffset.UtcNow;
-                else
-                {
-                    var entityEntry = AppDbContext.Entry(entity);
-                    entity.UpdatedAt = entityEntry.State switch
-                    {
-                        EntityState.Modified when !entityEntry.Property(nameof(EntityBase<TKey>.UpdatedAt)).IsModified
-                            => DateTimeOffset.UtcNow,
-                        EntityState.Detached => throw new InvalidOperationException("Can't save detached entity."),
-                        _ => entity.UpdatedAt
-                    };
-                }
-            }
-
             DbSet.UpdateRange(entities);
         }
 
