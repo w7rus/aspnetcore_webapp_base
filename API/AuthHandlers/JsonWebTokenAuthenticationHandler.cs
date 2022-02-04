@@ -70,7 +70,7 @@ public class JsonWebTokenAuthenticationHandler : AuthenticationHandler<JsonWebTo
 
             claims.AddRange(jwtToken.Claims);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return AuthenticateResult.Fail(Localize.Error.JsonWebTokenValidationFailed);
         }

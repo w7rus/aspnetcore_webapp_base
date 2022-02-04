@@ -26,10 +26,10 @@ namespace BLL.Handlers;
 
 public interface IAuthHandler
 {
-    Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken);
-    Task<DTOResultBase> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken);
-    Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken);
-    Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken);
+    Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = new());
+    Task<DTOResultBase> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken = new());
+    Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = new());
+    Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = new());
 }
 
 public class AuthHandler : HandlerBase, IAuthHandler
@@ -79,7 +79,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     #region Methods
 
-    public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken)
+    public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = new())
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignUp)));
 
@@ -114,7 +114,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             {
                 Errors = new List<KeyValuePair<string, string>>
                 {
-                    new(Localize.ErrorType.Auth, Localize.Error.SignUpFailed)
+                    new(Localize.ErrorType.Auth, Localize.Error.AuthSignUpFailed)
                 }
             };
 
@@ -125,7 +125,10 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken)
+    public async Task<DTOResultBase> SignInViaEmail(
+        AuthSignInViaEmail data,
+        CancellationToken cancellationToken = new()
+    )
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignInViaEmail)));
 
@@ -203,7 +206,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             {
                 Errors = new List<KeyValuePair<string, string>>
                 {
-                    new(Localize.ErrorType.Auth, Localize.Error.SignInFailed)
+                    new(Localize.ErrorType.Auth, Localize.Error.AuthSignInFailed)
                 }
             };
 
@@ -214,7 +217,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken)
+    public async Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = new())
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(Refresh)));
 
@@ -230,7 +233,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             data.RefreshToken ??=
                 _httpContext.Request.Cookies.SingleOrDefault(_ => _.Key == CookieKey.RefreshToken).Value;
             if (data.RefreshToken == null)
-                throw new CustomException(Localize.Error.RefreshTokenNotFound);
+                throw new CustomException(Localize.Error.RefreshTokenNotProvided);
 
             var refreshTokenOld = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
             if (refreshTokenOld == null)
@@ -316,7 +319,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             {
                 Errors = new List<KeyValuePair<string, string>>
                 {
-                    new(Localize.ErrorType.Auth, Localize.Error.RefreshFailed)
+                    new(Localize.ErrorType.Auth, Localize.Error.AuthRefreshFailed)
                 }
             };
 
@@ -327,7 +330,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken)
+    public async Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = new())
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignOut)));
 
@@ -343,7 +346,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             data.RefreshToken ??=
                 _httpContext.Request.Cookies.SingleOrDefault(_ => _.Key == CookieKey.RefreshToken).Value;
             if (data.RefreshToken == null)
-                throw new CustomException(Localize.Error.RefreshTokenNotFound);
+                throw new CustomException(Localize.Error.RefreshTokenNotProvided);
 
             var refreshTokenOld = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
             if (refreshTokenOld == null)
@@ -388,7 +391,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             {
                 Errors = new List<KeyValuePair<string, string>>
                 {
-                    new(Localize.ErrorType.Auth, Localize.Error.SignOutFailed)
+                    new(Localize.ErrorType.Auth, Localize.Error.AuthSignOutFailed)
                 }
             };
 

@@ -23,11 +23,5 @@ public class DefaultAuthenticationHandler : AuthenticationHandler<DefaultAuthent
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         return Task.FromResult(AuthenticateResult.NoResult());
-
-        var executingEndpoint = Context.GetEndpoint();
-
-        return Task.FromResult(executingEndpoint == null
-            ? AuthenticateResult.Fail(new NullReferenceException(nameof(executingEndpoint)))
-            : AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(), Scheme.Name)));
     }
 }

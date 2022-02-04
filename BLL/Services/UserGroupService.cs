@@ -14,10 +14,7 @@ namespace BLL.Services;
 /// </summary>
 public interface IUserGroupService : IEntityServiceBase<UserGroup>
 {
-    new Task Save(UserGroup userGroup, CancellationToken cancellationToken);
-    Task<UserGroup> Add(string alias, string description, CancellationToken cancellationToken);
-    new Task Delete(UserGroup userGroup, CancellationToken cancellationToken);
-    new Task<UserGroup> GetByIdAsync(Guid id);
+    Task<UserGroup> Add(string alias, string description, CancellationToken cancellationToken = new());
     Task<UserGroup> GetByAliasAsync(string alias);
 }
 
@@ -48,19 +45,19 @@ public class UserGroupService : IUserGroupService
 
     #region Methods
 
-    public async Task Save(UserGroup userGroup, CancellationToken cancellationToken)
+    public async Task Save(UserGroup entity, CancellationToken cancellationToken = new())
     {
-        _userGroupRepository.Save(userGroup);
+        _userGroupRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task Delete(UserGroup userGroup, CancellationToken cancellationToken)
+    public async Task Delete(UserGroup entity, CancellationToken cancellationToken = new())
     {
-        _userGroupRepository.Delete(userGroup);
+        _userGroupRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<UserGroup> GetByIdAsync(Guid id)
+    public async Task<UserGroup> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
     {
         return await _userGroupRepository.SingleOrDefaultAsync(_ => _.Id == id);
     }
@@ -70,7 +67,7 @@ public class UserGroupService : IUserGroupService
         return await _userGroupRepository.SingleOrDefaultAsync(_ => _.Alias == alias);
     }
 
-    public async Task<UserGroup> Add(string alias, string description, CancellationToken cancellationToken)
+    public async Task<UserGroup> Add(string alias, string description, CancellationToken cancellationToken = new())
     {
         var entity = new UserGroup
         {

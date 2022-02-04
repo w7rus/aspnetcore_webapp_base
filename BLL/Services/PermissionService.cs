@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
+using Common.Models;
 using DAL.Repository;
 using Domain.Entities;
 using Microsoft.Extensions.Logging;
@@ -11,9 +13,8 @@ namespace BLL.Services;
 /// Service to work with Permission entity
 /// Permissions are managed in AppDbContext.Seed
 /// </summary>
-public interface IPermissionService
+public interface IPermissionService : IEntityServiceBase<Permission>
 {
-    Task<Permission> GetByIdAsync(Guid id);
     Task<Permission> GetByAliasAsync(string alias);
 }
 
@@ -38,7 +39,17 @@ public class PermissionService : IPermissionService
 
     #region Methods
 
-    public async Task<Permission> GetByIdAsync(Guid id)
+    public Task Save(Permission entity, CancellationToken cancellationToken = new())
+    {
+        throw new ApplicationException(Localize.Error.ImplementedViaManualMaintenance);
+    }
+
+    public Task Delete(Permission entity, CancellationToken cancellationToken = new())
+    {
+        throw new ApplicationException(Localize.Error.ImplementedViaManualMaintenance);
+    }
+
+    public async Task<Permission> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
     {
         return await _permissionRepository.SingleOrDefaultAsync(_ => _.Id == id);
     }

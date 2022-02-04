@@ -6,28 +6,60 @@ public static class Localize
 {
     public static class ErrorType
     {
-        public static string AuthMiddleware => "AuthMiddleware";
         public static string ModelState => "ModelState";
         public static string Auth => "Auth";
+        public static string File => "File";
     }
 
     public static class Error
     {
-        public static string IncorrectAttributeConfiguration => "IncorrectAttributeConfiguration";
-        public static string SignUpFailed => "SignUpFailed";
-        public static string SignInFailed => "SignInFailed";
-        public static string RefreshFailed => "RefreshFailed";
-        public static string SignOutFailed => "SignOutFailed";
+        #region Auth
+
+        public static string AuthSignUpFailed => "AuthSignUpFailed";
+        public static string AuthSignInFailed => "AuthSignInFailed";
+        public static string AuthRefreshFailed => "AuthRefreshFailed";
+        public static string AuthSignOutFailed => "AuthSignOutFailed";
+
+        #endregion
+
+        #region File
+
+        public static string FileCreateFailed => "FileCreateFailed";
+        public static string FileReadFailed => "FileReadFailed";
+        public static string FileDeleteFailed => "FileDeleteFailed";
+
+        #endregion
+
+        #region User
+
         public static string UserIdRetrievalFailed => "UserIdRetrievalFailed";
+
+        #endregion
+
+        #region JsonWebToken
+
         public static string JsonWebTokenIdRetrievalFailed => "JsonWebTokenIdRetrievalFailed";
         public static string JsonWebTokenNotProvided => "JsonWebTokenNotProvided";
         public static string JsonWebTokenNotFound => "JsonWebTokenNotFound";
         public static string JsonWebTokenExpired => "JsonWebTokenExpired";
         public static string JsonWebTokenValidationFailed => "JsonWebTokenValidationFailed";
+
+        #endregion
+
+        #region RefreshToken
+
         public static string RefreshTokenNotProvided => "RefreshTokenNotProvided";
         public static string RefreshTokenNotFound => "RefreshTokenNotFound";
         public static string RefreshTokenExpired => "RefreshTokenExpired";
         public static string RefreshTokenIncorrectFormat => "RefreshTokenIncorrectFormat";
+
+        #endregion
+
+        #region MyRegion
+
+        public static string ImplementedViaManualMaintenance => "ImplementedViaManualMaintenance";
+
+        #endregion
     }
 
     public static class WarningType

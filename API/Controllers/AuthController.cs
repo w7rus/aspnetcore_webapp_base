@@ -49,7 +49,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(AuthSignUpResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> SignUp(
             [Required] [FromBody] AuthSignUp data,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = new()
         )
         {
             return ResponseWith(await _authHandler.SignUp(data, cancellationToken));
@@ -63,7 +63,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(AuthSignInResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> SignInViaEmail(
             [Required] [FromBody] AuthSignInViaEmail data,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = new()
         )
         {
             return ResponseWith(await _authHandler.SignInViaEmail(data, cancellationToken));
@@ -77,7 +77,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(AuthRefreshResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> Refresh(
             [Required] [FromBody] AuthRefresh data,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = new()
         )
         {
             return ResponseWith(await _authHandler.Refresh(data, cancellationToken));
@@ -91,7 +91,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(AuthSignOutResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> SignOut(
             [Required] [FromBody] AuthSignOut data,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = new()
         )
         {
             return ResponseWith(await _authHandler.SignOut(data, cancellationToken));

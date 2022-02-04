@@ -16,12 +16,19 @@ namespace BLL.Services;
 /// </summary>
 public interface IRefreshTokenService : IEntityServiceBase<RefreshToken>
 {
-    new Task Save(RefreshToken refreshToken, CancellationToken cancellationToken);
-    Task<RefreshToken> Add(string token, DateTimeOffset expiresAt, Guid userId, CancellationToken cancellationToken);
-    new Task Delete(RefreshToken refreshToken, CancellationToken cancellationToken);
-    new Task<RefreshToken> GetByIdAsync(Guid id);
+    Task<RefreshToken> Add(
+        string token,
+        DateTimeOffset expiresAt,
+        Guid userId,
+        CancellationToken cancellationToken = new()
+    );
+
     Task<RefreshToken> GetByTokenAsync(string token);
-    Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(Guid userId, CancellationToken cancellationToken);
+
+    Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken = new()
+    );
 }
 
 public class RefreshTokenService : IRefreshTokenService
@@ -51,9 +58,9 @@ public class RefreshTokenService : IRefreshTokenService
 
     #region Methods
 
-    public async Task Save(RefreshToken refreshToken, CancellationToken cancellationToken)
+    public async Task Save(RefreshToken entity, CancellationToken cancellationToken = new())
     {
-        _refreshTokenRepository.Save(refreshToken);
+        _refreshTokenRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
@@ -61,7 +68,7 @@ public class RefreshTokenService : IRefreshTokenService
         string token,
         DateTimeOffset expiresAt,
         Guid userId,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = new()
     )
     {
         var entity = new RefreshToken
@@ -75,13 +82,13 @@ public class RefreshTokenService : IRefreshTokenService
         return entity;
     }
 
-    public async Task Delete(RefreshToken refreshToken, CancellationToken cancellationToken)
+    public async Task Delete(RefreshToken entity, CancellationToken cancellationToken = new())
     {
-        _refreshTokenRepository.Delete(refreshToken);
+        _refreshTokenRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<RefreshToken> GetByIdAsync(Guid id)
+    public async Task<RefreshToken> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
     {
         return await _refreshTokenRepository.SingleOrDefaultAsync(_ => _.Id == id);
     }
@@ -93,7 +100,7 @@ public class RefreshTokenService : IRefreshTokenService
 
     public async Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(
         Guid userId,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = new()
     )
     {
         return await _refreshTokenRepository.QueryMany(_ => _.UserId == userId && _.ExpiresAt < DateTimeOffset.UtcNow)

@@ -21,7 +21,7 @@ public interface IUserToGroupService
         User user,
         Permission permission,
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = new()
     ) where TEntityCompared : EntityBase<Guid>;
 }
 
@@ -66,7 +66,7 @@ public class UserToGroupService : IUserToGroupService
         User user,
         Permission permission,
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = new()
     ) where TEntityCompared : EntityBase<Guid>
     {
         var userGroups = GetUserGroupsByUser(user);

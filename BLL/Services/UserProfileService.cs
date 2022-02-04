@@ -14,19 +14,15 @@ namespace BLL.Services;
 /// </summary>
 public interface IUserProfileService : IEntityServiceBase<UserProfile>
 {
-    new Task Save(UserProfile userProfile, CancellationToken cancellationToken);
-
     Task<UserProfile> Add(
         string username,
         string firstname,
         string lastname,
         string description,
         Guid userId,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = new()
     );
 
-    new Task Delete(UserProfile userProfile, CancellationToken cancellationToken);
-    new Task<UserProfile> GetByIdAsync(Guid id);
     Task<UserProfile> GetByUsernameAsync(string username);
     Task<UserProfile> GetByUserIdAsync(Guid userId);
 }
@@ -58,9 +54,9 @@ public class UserProfileService : IUserProfileService
 
     #region Methods
 
-    public async Task Save(UserProfile userProfile, CancellationToken cancellationToken)
+    public async Task Save(UserProfile entity, CancellationToken cancellationToken = new())
     {
-        _userProfileRepository.Save(userProfile);
+        _userProfileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
@@ -70,7 +66,7 @@ public class UserProfileService : IUserProfileService
         string lastname,
         string description,
         Guid userId,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = new()
     )
     {
         var entity = new UserProfile
@@ -86,13 +82,13 @@ public class UserProfileService : IUserProfileService
         return entity;
     }
 
-    public async Task Delete(UserProfile userProfile, CancellationToken cancellationToken)
+    public async Task Delete(UserProfile entity, CancellationToken cancellationToken = new())
     {
-        _userProfileRepository.Delete(userProfile);
+        _userProfileRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<UserProfile> GetByIdAsync(Guid id)
+    public async Task<UserProfile> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
     {
         return await _userProfileRepository.SingleOrDefaultAsync(_ => _.Id == id);
     }

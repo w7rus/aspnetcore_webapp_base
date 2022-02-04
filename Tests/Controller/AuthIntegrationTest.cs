@@ -101,8 +101,6 @@ public class AuthIntegrationTest
 
                         app.UseRouting();
 
-                        app.UseMiddleware<AuthMiddleware>();
-
                         app.UseCors();
 
                         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

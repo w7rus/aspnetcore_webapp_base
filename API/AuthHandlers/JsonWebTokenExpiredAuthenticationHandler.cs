@@ -68,7 +68,7 @@ public class JsonWebTokenExpiredAuthenticationHandler : AuthenticationHandler<Js
 
             claims.AddRange(jwtToken.Claims);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return AuthenticateResult.Fail(Localize.Error.JsonWebTokenValidationFailed);
         }

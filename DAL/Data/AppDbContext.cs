@@ -17,7 +17,7 @@ namespace DAL.Data
         private static int _guidSeedOffset;
 
         #endregion
-        
+
         #region DbSets
 
         public DbSet<Permission> Permissions { get; set; }
@@ -106,7 +106,7 @@ namespace DAL.Data
                 JsonWebTokens = new List<JsonWebToken>(),
                 RefreshTokens = new List<RefreshToken>()
             };
-            
+
             #region Permissions
 
             var permissions = new List<Permission>
@@ -1980,7 +1980,7 @@ namespace DAL.Data
             builder.Entity<RefreshToken>(_ => { _.HasIndex(__ => __.Token).IsUnique(); });
 
             #endregion
-            
+
             #region Files
 
             builder.Entity<File>(_ => { _.HasIndex(__ => __.Name).IsUnique(); });

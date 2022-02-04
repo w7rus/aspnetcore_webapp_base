@@ -20,6 +20,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Events;
+using File = Domain.Entities.File;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace API.Extensions;
@@ -36,6 +37,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserProfileRepository, UserProfileRepository>();
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
         serviceCollection.AddScoped<IUserToGroupMappingRepository, UserToGroupMappingRepository>();
+        serviceCollection.AddScoped<IFileRepository<File>, FileRepository<File>>();
 
         return serviceCollection;
     }
@@ -51,6 +53,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserGroupService, UserGroupService>();
         serviceCollection.AddScoped<IUserProfileService, UserProfileService>();
         serviceCollection.AddScoped<IUserService, UserService>();
+        serviceCollection.AddScoped<IFileService, FileService>();
 
         return serviceCollection;
     }
@@ -58,6 +61,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddHandlers(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<IAuthHandler, AuthHandler>();
+        serviceCollection.AddScoped<IFileHandler, FileHandler>();
 
         return serviceCollection;
     }
