@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Web;
 using BLL.Services.Base;
 using Common.Exceptions;
+using Common.Helpers;
+using Common.Models;
 using Common.Options;
 using DAL.Data;
 using DAL.Repository;
@@ -73,22 +75,18 @@ public class FileService : IFileService
 
     public async Task Delete(File entity, CancellationToken cancellationToken = new())
     {
-        var query = new NameValueCollection
-        {
-            {"FileName", entity.Name}
-        };
-
-        var queryString = string.Join("&",
-            query.AllKeys.Select(_ => _ + "=" + HttpUtility.UrlEncode(query[_])));
-
         var httpClient = new HttpClient();
         var uriBuilder = new UriBuilder(_miscOptions.FileServer.Scheme, _miscOptions.FileServer.Host,
-            _miscOptions.FileServer.Port, _miscOptions.FileServer.Path, "?" + queryString);
+            _miscOptions.FileServer.Port, _miscOptions.FileServer.Path, "?" + await Utilities.ToHttpQueryString(
+                new FileCDNDelete
+                {
+                    FileName = entity.Name
+                }));
         var response = await httpClient.DeleteAsync(uriBuilder.ToString(), cancellationToken);
 
         httpClient.Dispose();
         if (!response.IsSuccessStatusCode)
-            throw new CustomException();
+            throw new CustomException(Localize.Error.ResponseStatusCodeUnsuccessful);
 
         _fileRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -98,27 +96,23 @@ public class FileService : IFileService
     {
         var file = await _fileRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
-        var query = new NameValueCollection
-        {
-            {"FileName", file.Name}
-        };
-
-        var queryString = string.Join("&",
-            query.AllKeys.Select(_ => _ + "=" + HttpUtility.UrlEncode(query[_])));
-
         var cdnServer = _miscOptions.CDNServers.FirstOrDefault() ?? throw new CustomException();
 
         var httpClient = new HttpClient();
         var uriBuilder = new UriBuilder(cdnServer.Scheme, cdnServer.Host,
-            cdnServer.Port, cdnServer.Path, "?" + queryString);
+            cdnServer.Port, cdnServer.Path, "?" + await Utilities.ToHttpQueryString(new FileCDNRead
+            {
+                FileName = file.Name
+            }));
         var response = await httpClient.GetAsync(uriBuilder.ToString(), cancellationToken);
+
         httpClient.Dispose();
         if (!response.IsSuccessStatusCode)
-            throw new CustomException();
-        var ms = new MemoryStream();
-        await response.Content.CopyToAsync(ms, cancellationToken);
-        file.Data = ms.ToArray();
+            throw new CustomException(Localize.Error.ResponseStatusCodeUnsuccessful);
+
+        file.Data = await response.Content.ReadAsByteArrayAsync(cancellationToken);
         file.ContentType = response.Content.Headers.ContentType?.ToString();
+
         return file;
     }
 
@@ -142,15 +136,18 @@ public class FileService : IFileService
 
         httpClient.Dispose();
         if (!response.IsSuccessStatusCode)
-            throw new CustomException();
+            throw new CustomException(Localize.Error.ResponseStatusCodeUnsuccessful);
 
-        var fileCreateResult =
+        var fileCdnCreateResult =
             JsonConvert.DeserializeObject<FileCDNCreateResult>(
                 await response.Content.ReadAsStringAsync(cancellationToken));
 
+        if (fileCdnCreateResult == null)
+            throw new CustomException(Localize.Error.ObjectDeserializationFailed);
+
         var entity = new File
         {
-            Name = fileCreateResult?.FileName,
+            Name = fileCdnCreateResult.FileName,
             Size = data.Length,
             AgeRating = ageRating,
             Metadata = metadata,

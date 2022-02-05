@@ -41,12 +41,12 @@ public class PermissionService : IPermissionService
 
     public Task Save(Permission entity, CancellationToken cancellationToken = new())
     {
-        throw new ApplicationException(Localize.Error.ImplementedViaManualMaintenance);
+        throw new ApplicationException(Localize.Error.PermissionDynamicManagementNotAllowed);
     }
 
     public Task Delete(Permission entity, CancellationToken cancellationToken = new())
     {
-        throw new ApplicationException(Localize.Error.ImplementedViaManualMaintenance);
+        throw new ApplicationException(Localize.Error.PermissionDynamicManagementNotAllowed);
     }
 
     public async Task<Permission> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())

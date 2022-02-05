@@ -22,14 +22,6 @@ public static class Localize
 
         #endregion
 
-        #region File
-
-        public static string FileCreateFailed => "FileCreateFailed";
-        public static string FileReadFailed => "FileReadFailed";
-        public static string FileDeleteFailed => "FileDeleteFailed";
-
-        #endregion
-
         #region User
 
         public static string UserIdRetrievalFailed => "UserIdRetrievalFailed";
@@ -55,9 +47,30 @@ public static class Localize
 
         #endregion
 
-        #region MyRegion
+        #region File
 
-        public static string ImplementedViaManualMaintenance => "ImplementedViaManualMaintenance";
+        public static string FileCreateFailed => "FileCreateFailed";
+        public static string FileReadFailed => "FileReadFailed";
+        public static string FileDeleteFailed => "FileDeleteFailed";
+
+        #endregion
+
+        #region Permission
+
+        public static string PermissionDynamicManagementNotAllowed => "PermissionDynamicManagementNotAllowed";
+
+        #endregion
+
+        #region HttpClient
+
+        public static string ResponseStatusCodeUnsuccessful => "ResponseStatusCodeUnsuccessful";
+
+        #endregion
+
+        #region JsonConvert
+
+        public static string ObjectDeserializationFailed => "ObjectDeserializationFailed";
+        public static string ObjectCastFailed => "ObjectCastFailed";
 
         #endregion
     }
