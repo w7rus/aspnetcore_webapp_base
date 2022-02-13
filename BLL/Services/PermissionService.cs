@@ -39,19 +39,24 @@ public class PermissionService : IPermissionService
 
     #region Methods
 
-    public Task Save(Permission entity, CancellationToken cancellationToken = new())
+    public Task Save(Permission entity, CancellationToken cancellationToken = default)
     {
         throw new ApplicationException(Localize.Error.PermissionDynamicManagementNotAllowed);
     }
 
-    public Task Delete(Permission entity, CancellationToken cancellationToken = new())
+    public Task Delete(Permission entity, CancellationToken cancellationToken = default)
     {
         throw new ApplicationException(Localize.Error.PermissionDynamicManagementNotAllowed);
     }
 
-    public async Task<Permission> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
+    public async Task<Permission> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _permissionRepository.SingleOrDefaultAsync(_ => _.Id == id);
+    }
+
+    public Task<Permission> Create(Permission entity, CancellationToken cancellationToken = default)
+    {
+        throw new ApplicationException(Localize.Error.PermissionDynamicManagementNotAllowed);
     }
 
     public async Task<Permission> GetByAliasAsync(string alias)

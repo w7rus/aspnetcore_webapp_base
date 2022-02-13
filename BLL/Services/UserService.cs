@@ -20,25 +20,24 @@ namespace BLL.Services;
 /// </summary>
 public interface IUserService : IEntityServiceBase<User>
 {
-    Task<User> Add(string email, string password, CancellationToken cancellationToken = new());
     Task<User> GetByEmailAsync(string email);
     Task<User> GetByPhoneNumberAsync(string phoneNumber);
-    Task<IReadOnlyCollection<User>> GetExpiredByDisableSignInUntil(CancellationToken cancellationToken = new());
+    Task<IReadOnlyCollection<User>> GetExpiredByDisableSignInUntil(CancellationToken cancellationToken = default);
 
     Task<IReadOnlyCollection<User>> GetInRangeByLastSignIn(
         DateTimeOffset from,
         DateTimeOffset to,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     );
 
     Task<IReadOnlyCollection<User>> GetInRangeByLastActivity(
         DateTimeOffset from,
         DateTimeOffset to,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     );
 
-    Task<IReadOnlyCollection<User>> GetByLastIpAddress(string ipAddress, CancellationToken cancellationToken = new());
-    Task<User> GetFromHttpContext(CancellationToken cancellationToken = new());
+    Task<IReadOnlyCollection<User>> GetByLastIpAddress(string ipAddress, CancellationToken cancellationToken = default);
+    Task<User> GetFromHttpContext(CancellationToken cancellationToken = default);
 }
 
 public class UserService : IUserService
@@ -71,33 +70,27 @@ public class UserService : IUserService
 
     #region Methods
 
-    public async Task Save(User entity, CancellationToken cancellationToken = new())
+    public async Task Save(User entity, CancellationToken cancellationToken = default)
     {
         _userRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<User> Add(string email, string password, CancellationToken cancellationToken = new())
-    {
-        var entity = new User
-        {
-            Email = email,
-            Password = password,
-        };
-
-        await Save(entity, cancellationToken);
-        return entity;
-    }
-
-    public async Task Delete(User entity, CancellationToken cancellationToken = new())
+    public async Task Delete(User entity, CancellationToken cancellationToken = default)
     {
         _userRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<User> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
+    public async Task<User> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _userRepository.SingleOrDefaultAsync(_ => _.Id == id);
+    }
+
+    public async Task<User> Create(User entity, CancellationToken cancellationToken = default)
+    {
+        await Save(entity, cancellationToken);
+        return entity;
     }
 
     public async Task<User> GetByEmailAsync(string email)
@@ -111,7 +104,7 @@ public class UserService : IUserService
     }
 
     public async Task<IReadOnlyCollection<User>> GetExpiredByDisableSignInUntil(
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return await _userRepository.QueryMany(_ => _.DisableSignInUntil < DateTimeOffset.UtcNow)
@@ -121,7 +114,7 @@ public class UserService : IUserService
     public async Task<IReadOnlyCollection<User>> GetInRangeByLastSignIn(
         DateTimeOffset @from,
         DateTimeOffset to,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return await _userRepository.QueryMany(_ => _.LastSignIn >= @from && _.LastSignIn <= to)
@@ -131,7 +124,7 @@ public class UserService : IUserService
     public async Task<IReadOnlyCollection<User>> GetInRangeByLastActivity(
         DateTimeOffset @from,
         DateTimeOffset to,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return await _userRepository.QueryMany(_ => _.LastActivity >= @from && _.LastActivity <= to)
@@ -140,13 +133,13 @@ public class UserService : IUserService
 
     public async Task<IReadOnlyCollection<User>> GetByLastIpAddress(
         string ipAddress,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return await _userRepository.QueryMany(_ => _.LastIpAddress == ipAddress).ToArrayAsync(cancellationToken);
     }
 
-    public async Task<User> GetFromHttpContext(CancellationToken cancellationToken = new())
+    public async Task<User> GetFromHttpContext(CancellationToken cancellationToken = default)
     {
         if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.UserId)?.Value,
                 out var userId))

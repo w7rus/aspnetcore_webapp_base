@@ -12,64 +12,64 @@ namespace BLL.Services.Advanced;
 /// <summary>
 /// Advanced Service for User and UserGroup management
 /// </summary>
-public interface IUserToGroupService
+public interface IUserToUserGroupService
 {
-    ICollection<UserGroup> GetUserGroupsByUser(User user);
-    ICollection<User> GetUsersByUserGroup(UserGroup userGroup);
+    //Add CRD for User
+
+    //Add CRD for UserGroup
 
     Task<bool> AuthorizePermission<TEntityCompared>(
         User user,
         Permission permission,
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     ) where TEntityCompared : EntityBase<Guid>;
 }
 
-public class UserToGroupService : IUserToGroupService
+public class UserToUserGroupService : IUserToUserGroupService
 {
     #region Fields
 
-    private readonly ILogger<UserToGroupService> _logger;
+    private readonly ILogger<UserToUserGroupService> _logger;
     private readonly IAuthorizePermissionValueService _authorizePermissionValueService;
     private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
+    private readonly IUserToUserGroupMappingService _userToUserGroupMappingService;
+    private readonly IUserGroupService _userGroupService;
+    private readonly IUserService _userService;
 
     #endregion
 
     #region Ctor
 
-    public UserToGroupService(
-        ILogger<UserToGroupService> logger,
+    public UserToUserGroupService(
+        ILogger<UserToUserGroupService> logger,
         IAuthorizePermissionValueService authorizePermissionValueService,
-        IUserGroupPermissionValueService userGroupPermissionValueService
+        IUserGroupPermissionValueService userGroupPermissionValueService,
+        IUserToUserGroupMappingService userToUserGroupMappingService,
+        IUserGroupService userGroupService,
+        IUserService userService
     )
     {
         _logger = logger;
         _authorizePermissionValueService = authorizePermissionValueService;
         _userGroupPermissionValueService = userGroupPermissionValueService;
+        _userToUserGroupMappingService = userToUserGroupMappingService;
+        _userGroupService = userGroupService;
+        _userService = userService;
     }
 
     #endregion
 
     #region Methods
 
-    public ICollection<UserGroup> GetUserGroupsByUser(User user)
-    {
-        return user.UserToGroupMappings.Select(_ => _.Group).ToArray();
-    }
-
-    public ICollection<User> GetUsersByUserGroup(UserGroup userGroup)
-    {
-        return userGroup.GroupToEntityMappings.Select(_ => _.Entity).ToArray();
-    }
-
     public async Task<bool> AuthorizePermission<TEntityCompared>(
         User user,
         Permission permission,
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     ) where TEntityCompared : EntityBase<Guid>
     {
-        var userGroups = GetUserGroupsByUser(user);
+        var userGroups = user.UserToUserGroupMappings.Select(_ => _.Group).ToArray();
         var result = false;
         foreach (var userGroup in userGroups)
         {

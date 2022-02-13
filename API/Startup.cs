@@ -4,6 +4,7 @@ using System.Linq;
 using API.AuthHandlers;
 using API.Extensions;
 using API.Middleware;
+using BLL.Maps;
 using Common.Helpers;
 using Common.Models;
 using Common.Options;
@@ -106,6 +107,8 @@ namespace API
                     .AddScheme<JsonWebTokenAuthenticationSchemeOptions, JsonWebTokenExpiredAuthenticationHandler>(
                         AuthenticationSchemes.JsonWebTokenExpired, null!);
             }
+            
+            services.AddAutoMapper(typeof(ExampleProfile));
 
             services.AddCustomDbContext(Configuration);
             services.AddRepositories();

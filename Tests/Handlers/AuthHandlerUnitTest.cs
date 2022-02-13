@@ -29,7 +29,7 @@ public class AuthHandlerTests
                 LastSignIn = default,
                 LastActivity = default,
                 LastIpAddress = null,
-                UserToGroupMappings = null,
+                UserToUserGroupMappings = null,
                 UserProfile = null
             }
         };

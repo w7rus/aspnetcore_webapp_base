@@ -67,10 +67,12 @@ public static class Localize
 
         #endregion
 
-        #region JsonConvert
+        #region Misc
 
         public static string ObjectDeserializationFailed => "ObjectDeserializationFailed";
         public static string ObjectCastFailed => "ObjectCastFailed";
+        public static string DependencyInjectionFailed => "DependencyInjectionFailed";
+        public static string ValueRetrievalFailed => "ValueRetrievalFailed";
 
         #endregion
     }

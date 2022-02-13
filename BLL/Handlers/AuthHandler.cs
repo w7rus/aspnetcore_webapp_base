@@ -26,10 +26,10 @@ namespace BLL.Handlers;
 
 public interface IAuthHandler
 {
-    Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = new());
-    Task<DTOResultBase> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken = new());
-    Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = new());
-    Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = new());
+    Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = default);
 }
 
 public class AuthHandler : HandlerBase, IAuthHandler
@@ -46,6 +46,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
     private readonly JsonWebTokenOptions _jsonWebTokenOptions;
     private readonly HttpContext _httpContext;
     private readonly MiscOptions _miscOptions;
+    private readonly IUserToUserGroupMappingService _userToUserGroupMappingService;
+    private readonly IUserGroupService _userGroupService;
 
     #endregion
 
@@ -60,7 +62,9 @@ public class AuthHandler : HandlerBase, IAuthHandler
         IOptions<RefreshTokenOptions> refreshTokenOptions,
         IOptions<JsonWebTokenOptions> jsonWebTokenOptions,
         IHttpContextAccessor httpContextAccessor,
-        IOptions<MiscOptions> miscOptions
+        IOptions<MiscOptions> miscOptions,
+        IUserToUserGroupMappingService userToUserGroupMappingService,
+        IUserGroupService userGroupService
     )
     {
         _fullName = GetType().FullName;
@@ -69,6 +73,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
         _jsonWebTokenService = jsonWebTokenService;
         _refreshTokenService = refreshTokenService;
         _userService = userService;
+        _userToUserGroupMappingService = userToUserGroupMappingService;
+        _userGroupService = userGroupService;
         _refreshTokenOptions = refreshTokenOptions.Value;
         _jsonWebTokenOptions = jsonWebTokenOptions.Value;
         _httpContext = httpContextAccessor.HttpContext;
@@ -79,7 +85,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     #region Methods
 
-    public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = new())
+    public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignUp)));
 
@@ -94,7 +100,19 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var passwordHashed = customPasswordHasher.HashPassword(data.Password);
 
-            var user = await _userService.Add(data.Email, passwordHashed, cancellationToken);
+            var user = await _userService.Create(new User
+            {
+                Email = data.Email,
+                Password = passwordHashed
+            }, cancellationToken);
+
+            var guestUserGroup = await _userGroupService.GetByAliasAsync("Guest");
+
+            await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
+            {
+                EntityId = user.Id,
+                GroupId = guestUserGroup.Id,
+            }, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -127,7 +145,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     public async Task<DTOResultBase> SignInViaEmail(
         AuthSignInViaEmail data,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignInViaEmail)));
@@ -149,8 +167,12 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
                 DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
-            await _refreshTokenService.Add(refreshTokenString, refreshTokenExpiresAt,
-                user.Id, cancellationToken);
+            await _refreshTokenService.Create(new RefreshToken
+            {
+                Token = refreshTokenString,
+                ExpiresAt = refreshTokenExpiresAt,
+                UserId = user.Id
+            }, cancellationToken);
 
             var jsonWebTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(_jsonWebTokenOptions.ExpirySeconds);
             var jsonWebTokenString = _jsonWebTokenService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
@@ -158,7 +180,13 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            await _jsonWebTokenService.Add(jsonWebTokenString, jsonWebTokenExpiresAt, refreshTokenExpiresAt, user.Id,
+            await _jsonWebTokenService.Create(new JsonWebToken
+                {
+                    Token = jsonWebTokenString,
+                    ExpiresAt = jsonWebTokenExpiresAt,
+                    DeleteAfter = refreshTokenExpiresAt,
+                    UserId = user.Id
+                },
                 cancellationToken);
 
             if (data.UseCookies)
@@ -217,7 +245,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = new())
+    public async Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(Refresh)));
 
@@ -254,7 +282,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
 
-            var user = await _userService.GetFromHttpContext();
+            var user = await _userService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new CustomException();
 
@@ -262,8 +290,12 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
                 DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
-            await _refreshTokenService.Add(refreshTokenString, refreshTokenExpiresAt,
-                user.Id, cancellationToken);
+            await _refreshTokenService.Create(new RefreshToken
+            {
+                Token = refreshTokenString,
+                ExpiresAt = refreshTokenExpiresAt,
+                UserId = user.Id
+            }, cancellationToken);
 
             var jsonWebTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(_jsonWebTokenOptions.ExpirySeconds);
             var jsonWebTokenString = _jsonWebTokenService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
@@ -271,7 +303,13 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            await _jsonWebTokenService.Add(jsonWebTokenString, jsonWebTokenExpiresAt, refreshTokenExpiresAt, user.Id,
+            await _jsonWebTokenService.Create(new JsonWebToken
+                {
+                    Token = jsonWebTokenString,
+                    ExpiresAt = jsonWebTokenExpiresAt,
+                    DeleteAfter = refreshTokenExpiresAt,
+                    UserId = user.Id
+                },
                 cancellationToken);
 
             if (useCookies)
@@ -330,7 +368,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = new())
+    public async Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignOut)));
 
@@ -366,7 +404,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
 
-            var user = await _userService.GetFromHttpContext();
+            var user = await _userService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new CustomException();
 

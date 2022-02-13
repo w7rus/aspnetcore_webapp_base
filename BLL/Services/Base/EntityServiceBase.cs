@@ -7,14 +7,15 @@ namespace BLL.Services.Base;
 
 public interface IEntityServiceBase<TEntity> where TEntity : EntityBase<Guid>
 {
-    Task Save(TEntity entity, CancellationToken cancellationToken = new());
-    Task Delete(TEntity entity, CancellationToken cancellationToken = new());
-    Task<TEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken = new());
-}
-
-public abstract class EntityServiceBase<TEntity> : IEntityServiceBase<TEntity> where TEntity : EntityBase<Guid>
-{
-    public abstract Task Save(TEntity entity, CancellationToken cancellationToken = new());
-    public abstract Task Delete(TEntity entity, CancellationToken cancellationToken = new());
-    public abstract Task<TEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken = new());
+    Task Save(TEntity entity, CancellationToken cancellationToken = default);
+    Task Delete(TEntity entity, CancellationToken cancellationToken = default);
+    Task<TEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Replacement for ADD method
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default);
 }

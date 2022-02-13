@@ -111,8 +111,8 @@ namespace DAL.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<decimal>("Size")
-                        .HasColumnType("numeric(20,0)");
+                    b.Property<int>("Size")
+                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -2244,14 +2244,14 @@ namespace DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToGroupMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
                 {
                     b.HasBaseType("Domain.Entities.Base.EntityToGroupMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>");
 
                     b.HasIndex("EntityId", "GroupId")
                         .IsUnique();
 
-                    b.HasDiscriminator().HasValue("UserToGroupMapping");
+                    b.HasDiscriminator().HasValue("UserToUserGroupMapping");
 
                     b.HasData(
                         new
@@ -2336,10 +2336,10 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToGroupMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
                 {
                     b.HasOne("Domain.Entities.User", "Entity")
-                        .WithMany("UserToGroupMappings")
+                        .WithMany("UserToUserGroupMappings")
                         .HasForeignKey("EntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2351,7 +2351,7 @@ namespace DAL.Migrations
                 {
                     b.Navigation("UserProfile");
 
-                    b.Navigation("UserToGroupMappings");
+                    b.Navigation("UserToUserGroupMappings");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserGroup", b =>

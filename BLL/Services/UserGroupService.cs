@@ -14,7 +14,6 @@ namespace BLL.Services;
 /// </summary>
 public interface IUserGroupService : IEntityServiceBase<UserGroup>
 {
-    Task<UserGroup> Add(string alias, string description, CancellationToken cancellationToken = new());
     Task<UserGroup> GetByAliasAsync(string alias);
 }
 
@@ -45,38 +44,32 @@ public class UserGroupService : IUserGroupService
 
     #region Methods
 
-    public async Task Save(UserGroup entity, CancellationToken cancellationToken = new())
+    public async Task Save(UserGroup entity, CancellationToken cancellationToken = default)
     {
         _userGroupRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task Delete(UserGroup entity, CancellationToken cancellationToken = new())
+    public async Task Delete(UserGroup entity, CancellationToken cancellationToken = default)
     {
         _userGroupRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<UserGroup> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
+    public async Task<UserGroup> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _userGroupRepository.SingleOrDefaultAsync(_ => _.Id == id);
+    }
+
+    public async Task<UserGroup> Create(UserGroup entity, CancellationToken cancellationToken = default)
+    {
+        await Save(entity, cancellationToken);
+        return entity;
     }
 
     public async Task<UserGroup> GetByAliasAsync(string alias)
     {
         return await _userGroupRepository.SingleOrDefaultAsync(_ => _.Alias == alias);
-    }
-
-    public async Task<UserGroup> Add(string alias, string description, CancellationToken cancellationToken = new())
-    {
-        var entity = new UserGroup
-        {
-            Alias = alias,
-            Description = description
-        };
-
-        await Save(entity, cancellationToken);
-        return entity;
     }
 
     #endregion

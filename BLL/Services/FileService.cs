@@ -27,14 +27,6 @@ namespace BLL.Services;
 
 public interface IFileService : IEntityServiceBase<File>
 {
-    Task<File> Add(
-        string fileName,
-        byte[] data,
-        AgeRating ageRating,
-        Dictionary<string, string> metadata,
-        Guid? userId,
-        CancellationToken cancellationToken = new()
-    );
 }
 
 public class FileService : IFileService
@@ -67,13 +59,13 @@ public class FileService : IFileService
 
     #region Methods
 
-    public async Task Save(File entity, CancellationToken cancellationToken = new())
+    public async Task Save(File entity, CancellationToken cancellationToken = default)
     {
         _fileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task Delete(File entity, CancellationToken cancellationToken = new())
+    public async Task Delete(File entity, CancellationToken cancellationToken = default)
     {
         var httpClient = new HttpClient();
         var uriBuilder = new UriBuilder(_miscOptions.FileServer.Scheme, _miscOptions.FileServer.Host,
@@ -92,7 +84,7 @@ public class FileService : IFileService
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<File> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
+    public async Task<File> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var file = await _fileRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
@@ -116,14 +108,7 @@ public class FileService : IFileService
         return file;
     }
 
-    public async Task<File> Add(
-        string fileName,
-        byte[] data,
-        AgeRating ageRating,
-        Dictionary<string, string> metadata,
-        Guid? userId,
-        CancellationToken cancellationToken = new()
-    )
+    public async Task<File> Create(File entity, CancellationToken cancellationToken = default)
     {
         var httpClient = new HttpClient();
         var uriBuilder = new UriBuilder(_miscOptions.FileServer.Scheme, _miscOptions.FileServer.Host,
@@ -131,7 +116,7 @@ public class FileService : IFileService
         var response = await httpClient.PostAsync(uriBuilder.ToString(), new MultipartFormDataContent
         {
             {JsonContent.Create(new FileCDNCreate()), "data"},
-            {new ByteArrayContent(data), "file", fileName}
+            {new ByteArrayContent(entity.Data), "file", entity.Name}
         }, cancellationToken);
 
         httpClient.Dispose();
@@ -145,14 +130,11 @@ public class FileService : IFileService
         if (fileCdnCreateResult == null)
             throw new CustomException(Localize.Error.ObjectDeserializationFailed);
 
-        var entity = new File
-        {
-            Name = fileCdnCreateResult.FileName,
-            Size = data.Length,
-            AgeRating = ageRating,
-            Metadata = metadata,
-            UserId = userId,
-        };
+        entity.Name = fileCdnCreateResult.FileName;
+        entity.Size = entity.Data.Length;
+        entity.AgeRating = entity.AgeRating;
+        entity.Metadata = entity.Metadata;
+        entity.UserId = entity.UserId;
 
         await Save(entity, cancellationToken);
         return entity;

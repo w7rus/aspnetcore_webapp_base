@@ -25,7 +25,7 @@ namespace DAL.Data
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<UserToGroupMapping> UserToGroupMappings { get; set; }
+        public DbSet<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
         public DbSet<JsonWebToken> JsonWebTokens { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<File> Files { get; set; }
@@ -73,7 +73,7 @@ namespace DAL.Data
             return base.SaveChanges();
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             UpdateTimestamps<Guid>();
             return base.SaveChangesAsync(cancellationToken);
@@ -88,7 +88,7 @@ namespace DAL.Data
             public List<UserGroup> UserGroups { get; set; }
             public List<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
             public List<UserProfile> UserProfiles { get; set; }
-            public List<UserToGroupMapping> UserToGroupMappings { get; set; }
+            public List<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
             public List<JsonWebToken> JsonWebTokens { get; set; }
             public List<RefreshToken> RefreshTokens { get; set; }
         }
@@ -102,7 +102,7 @@ namespace DAL.Data
                 UserGroups = new List<UserGroup>(),
                 UserGroupPermissionValues = new List<UserGroupPermissionValue>(),
                 UserProfiles = new List<UserProfile>(),
-                UserToGroupMappings = new List<UserToGroupMapping>(),
+                UserToUserGroupMappings = new List<UserToUserGroupMapping>(),
                 JsonWebTokens = new List<JsonWebToken>(),
                 RefreshTokens = new List<RefreshToken>()
             };
@@ -1868,16 +1868,16 @@ namespace DAL.Data
 
             #endregion
 
-            #region UserToGroupMappings
+            #region UserToUserGroupMappings
 
-            var userGuestToGuestUserGroupMapping = new UserToGroupMapping
+            var userGuestToGuestUserGroupMapping = new UserToUserGroupMapping
             {
                 Id = NextGuid(),
                 EntityId = userGuest.Id,
                 GroupId = guestUserGroup.Id,
             };
 
-            appDbContextSeedLists.UserToGroupMappings.Add(userGuestToGuestUserGroupMapping);
+            appDbContextSeedLists.UserToUserGroupMappings.Add(userGuestToGuestUserGroupMapping);
 
             #endregion
 
@@ -1956,13 +1956,13 @@ namespace DAL.Data
 
             #endregion
 
-            #region UserToGroupMappings
+            #region UserToUserGroupMappings
 
-            builder.Entity<UserToGroupMapping>(_ =>
+            builder.Entity<UserToUserGroupMapping>(_ =>
             {
                 _.HasIndex(__ => new {__.EntityId, __.GroupId}).IsUnique();
 
-                _.HasData(appDbContextSeedLists.UserToGroupMappings);
+                _.HasData(appDbContextSeedLists.UserToUserGroupMappings);
             });
 
             // builder.Entity<UserToGroupMapping>().ToTable(nameof(UserToGroupMapping));

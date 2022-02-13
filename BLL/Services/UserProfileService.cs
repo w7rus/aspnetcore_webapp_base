@@ -14,15 +14,6 @@ namespace BLL.Services;
 /// </summary>
 public interface IUserProfileService : IEntityServiceBase<UserProfile>
 {
-    Task<UserProfile> Add(
-        string username,
-        string firstname,
-        string lastname,
-        string description,
-        Guid userId,
-        CancellationToken cancellationToken = new()
-    );
-
     Task<UserProfile> GetByUsernameAsync(string username);
     Task<UserProfile> GetByUserIdAsync(Guid userId);
 }
@@ -54,43 +45,27 @@ public class UserProfileService : IUserProfileService
 
     #region Methods
 
-    public async Task Save(UserProfile entity, CancellationToken cancellationToken = new())
+    public async Task Save(UserProfile entity, CancellationToken cancellationToken = default)
     {
         _userProfileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<UserProfile> Add(
-        string username,
-        string firstname,
-        string lastname,
-        string description,
-        Guid userId,
-        CancellationToken cancellationToken = new()
-    )
-    {
-        var entity = new UserProfile
-        {
-            Username = username,
-            FirstName = firstname,
-            LastName = lastname,
-            Description = description,
-            UserId = userId,
-        };
-
-        await Save(entity, cancellationToken);
-        return entity;
-    }
-
-    public async Task Delete(UserProfile entity, CancellationToken cancellationToken = new())
+    public async Task Delete(UserProfile entity, CancellationToken cancellationToken = default)
     {
         _userProfileRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<UserProfile> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
+    public async Task<UserProfile> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _userProfileRepository.SingleOrDefaultAsync(_ => _.Id == id);
+    }
+
+    public async Task<UserProfile> Create(UserProfile entity, CancellationToken cancellationToken = default)
+    {
+        await Save(entity, cancellationToken);
+        return entity;
     }
 
     public async Task<UserProfile> GetByUsernameAsync(string username)

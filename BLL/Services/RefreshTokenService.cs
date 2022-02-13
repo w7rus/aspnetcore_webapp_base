@@ -16,18 +16,11 @@ namespace BLL.Services;
 /// </summary>
 public interface IRefreshTokenService : IEntityServiceBase<RefreshToken>
 {
-    Task<RefreshToken> Add(
-        string token,
-        DateTimeOffset expiresAt,
-        Guid userId,
-        CancellationToken cancellationToken = new()
-    );
-
     Task<RefreshToken> GetByTokenAsync(string token);
 
     Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(
         Guid userId,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     );
 }
 
@@ -58,39 +51,27 @@ public class RefreshTokenService : IRefreshTokenService
 
     #region Methods
 
-    public async Task Save(RefreshToken entity, CancellationToken cancellationToken = new())
+    public async Task Save(RefreshToken entity, CancellationToken cancellationToken = default)
     {
         _refreshTokenRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<RefreshToken> Add(
-        string token,
-        DateTimeOffset expiresAt,
-        Guid userId,
-        CancellationToken cancellationToken = new()
-    )
-    {
-        var entity = new RefreshToken
-        {
-            Token = token,
-            ExpiresAt = expiresAt,
-            UserId = userId,
-        };
-
-        await Save(entity, cancellationToken);
-        return entity;
-    }
-
-    public async Task Delete(RefreshToken entity, CancellationToken cancellationToken = new())
+    public async Task Delete(RefreshToken entity, CancellationToken cancellationToken = default)
     {
         _refreshTokenRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<RefreshToken> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
+    public async Task<RefreshToken> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _refreshTokenRepository.SingleOrDefaultAsync(_ => _.Id == id);
+    }
+
+    public async Task<RefreshToken> Create(RefreshToken entity, CancellationToken cancellationToken = default)
+    {
+        await Save(entity, cancellationToken);
+        return entity;
     }
 
     public async Task<RefreshToken> GetByTokenAsync(string token)
@@ -100,7 +81,7 @@ public class RefreshTokenService : IRefreshTokenService
 
     public async Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(
         Guid userId,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return await _refreshTokenRepository.QueryMany(_ => _.UserId == userId && _.ExpiresAt < DateTimeOffset.UtcNow)

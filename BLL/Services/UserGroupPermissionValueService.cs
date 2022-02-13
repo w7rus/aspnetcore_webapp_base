@@ -46,46 +46,35 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
 
     #region Methods
 
-    public async Task Save(UserGroupPermissionValue entity, CancellationToken cancellationToken = new())
+    public async Task Save(UserGroupPermissionValue entity, CancellationToken cancellationToken = default)
     {
         _userGroupPermissionValueRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<UserGroupPermissionValue> Add(
-        byte[] value,
-        ulong grant,
-        Guid permissionId,
-        Guid entityId,
-        CancellationToken cancellationToken = new()
-    )
-    {
-        var entity = new UserGroupPermissionValue
-        {
-            Value = value,
-            Grant = grant,
-            PermissionId = permissionId,
-            EntityId = entityId,
-        };
-
-        await Save(entity, cancellationToken);
-        return entity;
-    }
-
-    public async Task Delete(UserGroupPermissionValue entity, CancellationToken cancellationToken = new())
+    public async Task Delete(UserGroupPermissionValue entity, CancellationToken cancellationToken = default)
     {
         _userGroupPermissionValueRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<UserGroupPermissionValue> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
+    public async Task<UserGroupPermissionValue> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _userGroupPermissionValueRepository.SingleOrDefaultAsync(_ => _.Id == id);
     }
 
+    public async Task<UserGroupPermissionValue> Create(
+        UserGroupPermissionValue entity,
+        CancellationToken cancellationToken = default
+    )
+    {
+        await Save(entity, cancellationToken);
+        return entity;
+    }
+
     public async Task<IReadOnlyCollection<UserGroupPermissionValue>> GetByPermissionId(
         Guid permissionId,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return await _userGroupPermissionValueRepository.QueryMany(_ => _.PermissionId == permissionId)
@@ -94,7 +83,7 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
 
     public async Task<IReadOnlyCollection<UserGroupPermissionValue>> GetByEntityId(
         Guid entityId,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return await _userGroupPermissionValueRepository.QueryMany(_ => _.EntityId == entityId)
@@ -104,7 +93,7 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
     public async Task<UserGroupPermissionValue> GetByEntityIdPermissionId(
         Guid entityId,
         Guid permissionId,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return await _userGroupPermissionValueRepository.SingleOrDefaultAsync(_ =>

@@ -3,7 +3,7 @@ using Domain.Entities.Base;
 
 namespace Domain.Entities
 {
-    public class UserToGroupMapping : EntityToGroupMappingBase<User, UserGroup>
+    public class UserToUserGroupMapping : EntityToGroupMappingBase<User, UserGroup>
     {
     }
 }

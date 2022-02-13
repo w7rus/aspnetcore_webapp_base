@@ -3,25 +3,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using BLL.Handlers.Base;
 using BLL.Services;
 using Common.Exceptions;
 using Common.Models;
 using Common.Models.Base;
 using DAL.Data;
+using Domain.Entities;
 using Domain.Enums;
 using DTO.Models.File;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Logging;
+using File = Domain.Entities.File;
 
 namespace BLL.Handlers;
 
 public interface IFileHandler
 {
-    Task<DTOResultBase> Create(FileCreate data, IFormFile formFile, CancellationToken cancellationToken = new());
-    Task<DTOResultBase> Read(FileRead data, CancellationToken cancellationToken = new());
-    Task<DTOResultBase> Delete(FileDelete data, CancellationToken cancellationToken = new());
+    Task<DTOResultBase> Create(FileCreate data, IFormFile formFile, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Read(FileRead data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Delete(FileDelete data, CancellationToken cancellationToken = default);
 }
 
 public class FileHandler : HandlerBase, IFileHandler
@@ -34,6 +37,10 @@ public class FileHandler : HandlerBase, IFileHandler
     private readonly IFileService _fileService;
     private readonly HttpContext _httpContext;
     private readonly IUserService _userService;
+    private readonly IMapper _mapper;
+    private readonly IPermissionService _permissionService;
+    private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
+    private readonly IUserGroupService _userGroupService;
 
     #endregion
 
@@ -44,7 +51,11 @@ public class FileHandler : HandlerBase, IFileHandler
         IAppDbContextAction appDbContextAction,
         IFileService fileService,
         IHttpContextAccessor httpContextAccessor,
-        IUserService userService
+        IUserService userService,
+        IMapper mapper,
+        IPermissionService permissionService,
+        IUserGroupPermissionValueService userGroupPermissionValueService,
+        IUserGroupService userGroupService
     )
     {
         _fullName = GetType().FullName;
@@ -52,6 +63,10 @@ public class FileHandler : HandlerBase, IFileHandler
         _appDbContextAction = appDbContextAction;
         _fileService = fileService;
         _userService = userService;
+        _mapper = mapper;
+        _permissionService = permissionService;
+        _userGroupPermissionValueService = userGroupPermissionValueService;
+        _userGroupService = userGroupService;
         _httpContext = httpContextAccessor.HttpContext;
     }
 
@@ -62,7 +77,7 @@ public class FileHandler : HandlerBase, IFileHandler
     public async Task<DTOResultBase> Create(
         FileCreate data,
         IFormFile formFile,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(Create)));
@@ -74,7 +89,7 @@ public class FileHandler : HandlerBase, IFileHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userService.GetFromHttpContext();
+            var user = await _userService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new CustomException();
 
@@ -82,9 +97,30 @@ public class FileHandler : HandlerBase, IFileHandler
             var fileName = Guid.NewGuid() + fileInfo.Extension;
             var ms = new MemoryStream();
             await formFile.OpenReadStream().CopyToAsync(ms, cancellationToken);
-            var file = await _fileService.Add(fileName, ms.ToArray(), data.AgeRating, new Dictionary<string, string>(),
-                user.Id,
+            // var file = await _fileService.Add(fileName, ms.ToArray(), data.AgeRating, new Dictionary<string, string>(),
+            //     user.Id,
+            //     cancellationToken);
+
+            var userGroup = await _userGroupService.GetByAliasAsync("Guest");
+            var permission = await _permissionService.GetByAliasAsync("uint64_user_communication_private_power");
+            var permissionCompared = await _permissionService.GetByAliasAsync("uint64_user_communication_private_power_needed");
+            var entityPermissionValueCompared = await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id,
+                permissionCompared.Id,
                 cancellationToken);
+            var file = _mapper.Map<File>(data, opts =>
+            {
+                opts.Items["user"] = user;
+                opts.Items["permission"] = permission;
+                opts.Items["entityPermissionValueCompared"] = entityPermissionValueCompared;
+            });
+
+            file.Name = fileName;
+            file.Data = ms.ToArray();
+            file.Metadata = new Dictionary<string, string>();
+            file.UserId = user.Id;
+
+            //TODO: Mapper with permission checks
+            file = await _fileService.Create(file, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -114,7 +150,7 @@ public class FileHandler : HandlerBase, IFileHandler
         }
     }
 
-    public async Task<DTOResultBase> Read(FileRead data, CancellationToken cancellationToken = new())
+    public async Task<DTOResultBase> Read(FileRead data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(Read)));
 
@@ -163,7 +199,7 @@ public class FileHandler : HandlerBase, IFileHandler
         }
     }
 
-    public async Task<DTOResultBase> Delete(FileDelete data, CancellationToken cancellationToken = new())
+    public async Task<DTOResultBase> Delete(FileDelete data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(Delete)));
 

@@ -49,7 +49,7 @@ public class FileController : CustomControllerBase
         [Required] [FromForm] [ModelBinder(BinderType = typeof(JsonModelBinder))]
         FileCreate data,
         IFormFile file,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return ResponseWith(await _fileHandler.Create(data, file, cancellationToken));
@@ -63,7 +63,7 @@ public class FileController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Read(
         [Required] [FromQuery] FileRead data,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return ResponseWith(await _fileHandler.Read(data, cancellationToken));
@@ -77,7 +77,7 @@ public class FileController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
         [Required] [FromQuery] FileDelete data,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         return ResponseWith(await _fileHandler.Delete(data, cancellationToken));

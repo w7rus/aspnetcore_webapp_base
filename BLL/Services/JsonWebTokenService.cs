@@ -23,27 +23,19 @@ namespace BLL.Services
     /// </summary>
     public interface IJsonWebTokenService : IEntityServiceBase<JsonWebToken>
     {
-        Task<JsonWebToken> Add(
-            string token,
-            DateTimeOffset expiresAt,
-            DateTimeOffset removeAfter,
-            Guid userId,
-            CancellationToken cancellationToken = new()
-        );
-
         Task<JsonWebToken> GetByTokenAsync(string token);
 
         Task<IReadOnlyCollection<JsonWebToken>> GetExpiredByUserIdAsync(
             Guid userId,
-            CancellationToken cancellationToken = new()
+            CancellationToken cancellationToken = default
         );
 
         Task<IReadOnlyCollection<JsonWebToken>> GetDeleteAfterAsync(
-            CancellationToken cancellationToken = new()
+            CancellationToken cancellationToken = default
         );
 
         Task PurgeAsync(
-            CancellationToken cancellationToken = new()
+            CancellationToken cancellationToken = default
         );
 
         string CreateWithClaims(
@@ -54,7 +46,7 @@ namespace BLL.Services
             DateTime expires
         );
 
-        Task<JsonWebToken> GetFromHttpContext(CancellationToken cancellationToken = new());
+        Task<JsonWebToken> GetFromHttpContext(CancellationToken cancellationToken = default);
     }
 
     public class JsonWebTokenService : IJsonWebTokenService
@@ -87,41 +79,27 @@ namespace BLL.Services
 
         #region Methods
 
-        public async Task Save(JsonWebToken entity, CancellationToken cancellationToken = new())
+        public async Task Save(JsonWebToken entity, CancellationToken cancellationToken = default)
         {
             _jsonWebTokenRepository.Save(entity);
             await _appDbContextAction.CommitAsync(cancellationToken);
         }
 
-        public async Task<JsonWebToken> Add(
-            string token,
-            DateTimeOffset expiresAt,
-            DateTimeOffset removeAfter,
-            Guid userId,
-            CancellationToken cancellationToken = new()
-        )
-        {
-            var entity = new JsonWebToken
-            {
-                Token = token,
-                ExpiresAt = expiresAt,
-                DeleteAfter = removeAfter,
-                UserId = userId,
-            };
-
-            await Save(entity, cancellationToken);
-            return entity;
-        }
-
-        public async Task Delete(JsonWebToken entity, CancellationToken cancellationToken = new())
+        public async Task Delete(JsonWebToken entity, CancellationToken cancellationToken = default)
         {
             _jsonWebTokenRepository.Delete(entity);
             await _appDbContextAction.CommitAsync(cancellationToken);
         }
 
-        public async Task<JsonWebToken> GetByIdAsync(Guid id, CancellationToken cancellationToken = new())
+        public async Task<JsonWebToken> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await _jsonWebTokenRepository.SingleOrDefaultAsync(_ => _.Id == id);
+        }
+
+        public async Task<JsonWebToken> Create(JsonWebToken entity, CancellationToken cancellationToken = default)
+        {
+            await Save(entity, cancellationToken);
+            return entity;
         }
 
         public async Task<JsonWebToken> GetByTokenAsync(string token)
@@ -131,7 +109,7 @@ namespace BLL.Services
 
         public async Task<IReadOnlyCollection<JsonWebToken>> GetExpiredByUserIdAsync(
             Guid userId,
-            CancellationToken cancellationToken = new()
+            CancellationToken cancellationToken = default
         )
         {
             return await _jsonWebTokenRepository
@@ -140,7 +118,7 @@ namespace BLL.Services
         }
 
         public async Task<IReadOnlyCollection<JsonWebToken>> GetDeleteAfterAsync(
-            CancellationToken cancellationToken = new()
+            CancellationToken cancellationToken = default
         )
         {
             return await _jsonWebTokenRepository
@@ -148,7 +126,7 @@ namespace BLL.Services
                 .ToArrayAsync(cancellationToken);
         }
 
-        public async Task PurgeAsync(CancellationToken cancellationToken = new())
+        public async Task PurgeAsync(CancellationToken cancellationToken = default)
         {
             var jsonWebTokens = await GetDeleteAfterAsync(cancellationToken);
 
@@ -175,7 +153,7 @@ namespace BLL.Services
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
 
-        public async Task<JsonWebToken> GetFromHttpContext(CancellationToken cancellationToken = new())
+        public async Task<JsonWebToken> GetFromHttpContext(CancellationToken cancellationToken = default)
         {
             if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.JsonWebTokenId)?.Value,
                     out var jsonWebTokenId))

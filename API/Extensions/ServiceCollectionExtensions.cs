@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddScoped<IFileRepository<File>, FileRepository<File>>();
         serviceCollection.AddScoped<IJsonWebTokenRepository, JsonWebTokenRepository>();
         serviceCollection.AddScoped<IPermissionRepository, PermissionRepository>();
         serviceCollection.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
@@ -36,24 +37,26 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserGroupRepository, UserGroupRepository>();
         serviceCollection.AddScoped<IUserProfileRepository, UserProfileRepository>();
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
-        serviceCollection.AddScoped<IUserToGroupMappingRepository, UserToGroupMappingRepository>();
-        serviceCollection.AddScoped<IFileRepository<File>, FileRepository<File>>();
+        serviceCollection.AddScoped<IUserToUserGroupMappingRepository, UserToUserGroupMappingRepository>();
 
         return serviceCollection;
     }
 
     public static IServiceCollection AddServices(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<IUserToGroupService, UserToGroupService>();
+        //Advanced
+        serviceCollection.AddScoped<IAuthorizePermissionValueService, AuthorizePermissionValueService>();
+        serviceCollection.AddScoped<IUserToUserGroupService, UserToUserGroupService>();
+        
+        serviceCollection.AddScoped<IFileService, FileService>();
         serviceCollection.AddScoped<IJsonWebTokenService, JsonWebTokenService>();
         serviceCollection.AddScoped<IPermissionService, PermissionService>();
-        serviceCollection.AddScoped<IAuthorizePermissionValueService, AuthorizePermissionValueService>();
         serviceCollection.AddScoped<IRefreshTokenService, RefreshTokenService>();
         serviceCollection.AddScoped<IUserGroupPermissionValueService, UserGroupPermissionValueService>();
         serviceCollection.AddScoped<IUserGroupService, UserGroupService>();
         serviceCollection.AddScoped<IUserProfileService, UserProfileService>();
         serviceCollection.AddScoped<IUserService, UserService>();
-        serviceCollection.AddScoped<IFileService, FileService>();
+        serviceCollection.AddScoped<IUserToUserGroupMappingService, UserToUserGroupMappingService>();
 
         return serviceCollection;
     }
