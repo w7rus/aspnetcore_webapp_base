@@ -15,7 +15,7 @@ namespace BLL.Services.Advanced;
 public interface IUserToUserGroupService
 {
     /// <summary>
-    /// Authorizes
+    /// Authorizes PermissionValue.Value to another PermissionValue.Value from all groups given user is member of
     /// </summary>
     /// <param name="user"></param>
     /// <param name="permission"></param>
@@ -29,6 +29,21 @@ public interface IUserToUserGroupService
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
         CancellationToken cancellationToken = default
     ) where TEntityCompared : EntityBase<Guid>;
+    
+    /// <summary>
+    /// Authorizes PermissionValue.Value to another PermissionValue.Value from all groups given user is member of
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="permission"></param>
+    /// <param name="_valueCompared"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<bool> AuthorizePermission(
+        User user,
+        Permission permission,
+        byte[] _valueCompared,
+        CancellationToken cancellationToken = default
+    );
 }
 
 public class UserToUserGroupService : IUserToUserGroupService
@@ -83,6 +98,27 @@ public class UserToUserGroupService : IUserToUserGroupService
                 continue;
             result |= _authorizePermissionValueService.Authorize(permissionValue,
                 entityPermissionValueCompared);
+        }
+
+        return result;
+    }
+
+    public async Task<bool> AuthorizePermission(
+        User user,
+        Permission permission,
+        byte[] _valueCompared,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var userGroups = user.UserToUserGroupMappings.Select(_ => _.Group).ToArray();
+        var result = false;
+        foreach (var userGroup in userGroups)
+        {
+            if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, permission.Id,
+                    cancellationToken) is var permissionValue && permissionValue == null)
+                continue;
+            result |= _authorizePermissionValueService.Authorize(permissionValue,
+                _valueCompared);
         }
 
         return result;

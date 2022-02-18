@@ -97,18 +97,13 @@ public class FileHandler : HandlerBase, IFileHandler
             var fileName = Guid.NewGuid() + fileInfo.Extension;
             var ms = new MemoryStream();
             await formFile.OpenReadStream().CopyToAsync(ms, cancellationToken);
-
-            var userGroup = await _userGroupService.GetByAliasAsync("Guest");
-            var permission = await _permissionService.GetByAliasAsync("uint64_user_communication_private_power");
-            var permissionCompared = await _permissionService.GetByAliasAsync("uint64_user_communication_private_power_needed");
-            var entityPermissionValueCompared = await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id,
-                permissionCompared.Id,
-                cancellationToken);
+            
+            var permission = await _permissionService.GetByAliasAsync("uint64_file_create_power");
             var file = _mapper.Map<File>(data, opts =>
             {
                 opts.Items["user"] = user;
                 opts.Items["permission"] = permission;
-                opts.Items["entityPermissionValueCompared"] = entityPermissionValueCompared;
+                opts.Items["valueCompared"] = BitConverter.GetBytes(Consts.MemberUserGroupPowerBase);
             });
 
             file.Name = fileName;

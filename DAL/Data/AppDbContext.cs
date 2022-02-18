@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Models;
 using Domain.Entities;
 using Domain.Entities.Base;
 using Domain.Enums;
@@ -661,8 +662,8 @@ namespace DAL.Data
 
             #region UserGroupsPermissionValues
 
-            var rootUserGroupPower = ulong.MaxValue;
-            var memberUserGroupPower = 50ul;
+            var rootUserGroupPower = Consts.RootUserGroupPowerBase;
+            var memberUserGroupPower = Consts.MemberUserGroupPowerBase;
 
             var rootUserGroupPermissionValues = new List<UserGroupPermissionValue>()
             {
