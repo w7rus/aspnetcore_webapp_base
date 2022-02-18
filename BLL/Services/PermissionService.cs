@@ -15,6 +15,11 @@ namespace BLL.Services;
 /// </summary>
 public interface IPermissionService : IEntityServiceBase<Permission>
 {
+    /// <summary>
+    /// Gets entity with Alias that equals given one
+    /// </summary>
+    /// <param name="alias"></param>
+    /// <returns></returns>
     Task<Permission> GetByAliasAsync(string alias);
 }
 

@@ -14,10 +14,15 @@ namespace BLL.Services.Advanced;
 /// </summary>
 public interface IUserToUserGroupService
 {
-    //Add CRD for User
-
-    //Add CRD for UserGroup
-
+    /// <summary>
+    /// Authorizes
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="permission"></param>
+    /// <param name="entityPermissionValueCompared"></param>
+    /// <param name="cancellationToken"></param>
+    /// <typeparam name="TEntityCompared"></typeparam>
+    /// <returns></returns>
     Task<bool> AuthorizePermission<TEntityCompared>(
         User user,
         Permission permission,

@@ -17,12 +17,12 @@ namespace Domain.Entities
         public string Alias { get; set; }
 
         /// <summary>
-        /// Type of the permission
+        /// Type of the permission. Comparable permission Type must equal!
         /// </summary>
         public PermissionType Type { get; set; }
 
         /// <summary>
-        /// Compare mode of the permission
+        /// Compare mode of the permission. Defines how permission values which reference this permission are compared against the other permission values. Comparable permission CompareMode must equal!
         /// </summary>
         public PermissionCompareMode CompareMode { get; set; }
     }

@@ -14,10 +14,10 @@ public interface IAuthorizePermissionValueService
     /// <summary>
     /// Authorizes PermissionValue.Value to another PermissionValue.Value
     /// </summary>
-    /// <param name="entityPermissionValue">PermissionValue which is compared</param>
+    /// <param name="entityPermissionValue">PermissionValue compared</param>
     /// <param name="entityPermissionValueCompared">Comparable PermissionValue</param>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TEntityCompared"></typeparam>
+    /// <typeparam name="TEntity">Type of Compared PermissionValue</typeparam>
+    /// <typeparam name="TEntityCompared">Type of Comparable PermissionValue</typeparam>
     /// <returns>True=Authorized, False=Unauthorized</returns>
     bool Authorize<TEntity, TEntityCompared>(
         EntityPermissionValueBase<TEntity> entityPermissionValue,
@@ -25,12 +25,25 @@ public interface IAuthorizePermissionValueService
     ) where TEntity : EntityBase<Guid> where TEntityCompared : EntityBase<Guid>;
 
     /// <summary>
-    /// Authorized "uint64_any_modify_permission_power" PermissionValue.Value to another PermissionValue.Grant
+    /// Authorizes PermissionValue.Value to given value
     /// </summary>
-    /// <param name="entityPermissionValue">PermissionValue which is compared</param>
+    /// <param name="entityPermissionValue">PermissionValue compared</param>
+    /// <param name="_valueCompared">Comparable value</param>
+    /// <typeparam name="TEntity">Type of Compared PermissionValue</typeparam>
+    /// <returns>True=Authorized, False=Unauthorized</returns>
+    bool Authorize<TEntity>(
+        EntityPermissionValueBase<TEntity> entityPermissionValue,
+        byte[] _valueCompared
+    ) where TEntity : EntityBase<Guid>;
+
+    /// <summary>
+    /// Authorizes "uint64_any_modify_permission_power" PermissionValue.Value to another PermissionValue.Grant
+    /// Authorizes saving of new PermissionValue data
+    /// </summary>
+    /// <param name="entityPermissionValue">PermissionValue compared</param>
     /// <param name="entityPermissionValueCompared">Comparable PermissionValue</param>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TEntityCompared"></typeparam>
+    /// <typeparam name="TEntity">Type of Compared PermissionValue</typeparam>
+    /// <typeparam name="TEntityCompared">Type of Comparable PermissionValue</typeparam>
     /// <returns>Authorization result</returns>
     bool AuthorizeSave<TEntity, TEntityCompared>(
         EntityPermissionValueBase<TEntity> entityPermissionValue,
@@ -189,6 +202,147 @@ public class AuthorizePermissionValueService : IAuthorizePermissionValueService
             {
                 var value = DateTime.FromBinary(BitConverter.ToInt64(entityPermissionValue.Value));
                 var valueCompared = DateTime.FromBinary(BitConverter.ToInt64(entityPermissionValueCompared.Value));
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        return entityPermissionValue.Permission.CompareMode switch
+        {
+            PermissionCompareMode.None => true,
+            PermissionCompareMode.Equal => compareToResult == 0,
+            PermissionCompareMode.NotEqual => compareToResult != 0,
+            PermissionCompareMode.Less => compareToResult < 0,
+            PermissionCompareMode.LessOrEqual => compareToResult <= 0,
+            PermissionCompareMode.Greater => compareToResult > 0,
+            PermissionCompareMode.GreaterOrEqual => compareToResult >= 0,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    public bool Authorize<TEntity>(
+        EntityPermissionValueBase<TEntity> entityPermissionValue,
+        byte[] _valueCompared
+    ) where TEntity : EntityBase<Guid>
+    {
+        if (entityPermissionValue == null)
+            return false;
+
+        int compareToResult;
+
+        switch (entityPermissionValue.Permission.Type)
+        {
+            case PermissionType.Unknown:
+                return false;
+            case PermissionType.Boolean:
+            {
+                var value = BitConverter.ToBoolean(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToBoolean(_valueCompared);
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.Int8:
+            {
+                var value = (sbyte) entityPermissionValue.Value[0];
+                var valueCompared = (sbyte) _valueCompared[0];
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.Int16:
+            {
+                var value = BitConverter.ToInt16(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToInt16(_valueCompared);
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.Int32:
+            {
+                var value = BitConverter.ToInt32(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToInt32(_valueCompared);
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.Int64:
+            {
+                var value = BitConverter.ToInt64(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToInt64(_valueCompared);
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.UInt8:
+            {
+                var value = entityPermissionValue.Value[0];
+                var valueCompared = _valueCompared[0];
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.UInt16:
+            {
+                var value = BitConverter.ToUInt16(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToUInt16(_valueCompared);
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.UInt32:
+            {
+                var value = BitConverter.ToUInt32(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToUInt32(_valueCompared);
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.UInt64:
+            {
+                var value = BitConverter.ToUInt64(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToUInt64(_valueCompared);
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.Float:
+            {
+                var value = BitConverter.ToSingle(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToSingle(_valueCompared);
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.Double:
+            {
+                var value = BitConverter.ToDouble(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToDouble(_valueCompared);
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.Decimal:
+            {
+                var value = new decimal(
+                    BitConverter.ToInt32(entityPermissionValue.Value),
+                    BitConverter.ToInt32(entityPermissionValue.Value, sizeof(int)),
+                    BitConverter.ToInt32(entityPermissionValue.Value, sizeof(int) * 2),
+                    entityPermissionValue.Value[15] == 0x80,
+                    entityPermissionValue.Value[14]
+                );
+                var valueCompared = new decimal(
+                    BitConverter.ToInt32(_valueCompared),
+                    BitConverter.ToInt32(_valueCompared, sizeof(int)),
+                    BitConverter.ToInt32(_valueCompared, sizeof(int) * 2),
+                    _valueCompared[15] == 0x80,
+                    _valueCompared[14]
+                );
+                compareToResult = value.CompareTo(valueCompared);
+                break;
+            }
+            case PermissionType.String:
+            {
+                var value = BitConverter.ToString(entityPermissionValue.Value);
+                var valueCompared = BitConverter.ToString(_valueCompared);
+                compareToResult = string.Compare(value, valueCompared, StringComparison.Ordinal);
+                break;
+            }
+            case PermissionType.DateTime:
+            {
+                var value = DateTime.FromBinary(BitConverter.ToInt64(entityPermissionValue.Value));
+                var valueCompared = DateTime.FromBinary(BitConverter.ToInt64(_valueCompared));
                 compareToResult = value.CompareTo(valueCompared);
                 break;
             }

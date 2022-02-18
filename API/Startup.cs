@@ -108,7 +108,7 @@ namespace API
                         AuthenticationSchemes.JsonWebTokenExpired, null!);
             }
             
-            services.AddAutoMapper(typeof(ExampleProfile));
+            services.AddAutoMapper(typeof(AutoMapperProfile));
 
             services.AddCustomDbContext(Configuration);
             services.AddRepositories();

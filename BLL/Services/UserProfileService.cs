@@ -14,7 +14,18 @@ namespace BLL.Services;
 /// </summary>
 public interface IUserProfileService : IEntityServiceBase<UserProfile>
 {
+    /// <summary>
+    /// Gets entity with Username that equals given one
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
     Task<UserProfile> GetByUsernameAsync(string username);
+    
+    /// <summary>
+    /// Gets entity with UserId that equals give one
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     Task<UserProfile> GetByUserIdAsync(Guid userId);
 }
 

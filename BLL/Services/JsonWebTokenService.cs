@@ -23,21 +23,51 @@ namespace BLL.Services
     /// </summary>
     public interface IJsonWebTokenService : IEntityServiceBase<JsonWebToken>
     {
+        /// <summary>
+        /// Gets entity with Token that equals given one
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<JsonWebToken> GetByTokenAsync(string token);
 
+        /// <summary>
+        /// Gets entities with UserId that equals given one & ExpiresAt that is less than current date
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         Task<IReadOnlyCollection<JsonWebToken>> GetExpiredByUserIdAsync(
             Guid userId,
             CancellationToken cancellationToken = default
         );
 
+        /// <summary>
+        /// Gets entities with DeleteAfter that is less than current date
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         Task<IReadOnlyCollection<JsonWebToken>> GetDeleteAfterAsync(
             CancellationToken cancellationToken = default
         );
 
+        /// <summary>
+        /// Deletes entities with DeleteAfter that is less than current date
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         Task PurgeAsync(
             CancellationToken cancellationToken = default
         );
 
+        /// <summary>
+        /// Creates new JWT object
+        /// </summary>
+        /// <param name="issuerSigningKey"></param>
+        /// <param name="issuer"></param>
+        /// <param name="audience"></param>
+        /// <param name="claims"></param>
+        /// <param name="expires"></param>
+        /// <returns></returns>
         string CreateWithClaims(
             string issuerSigningKey,
             string issuer,
@@ -46,6 +76,11 @@ namespace BLL.Services
             DateTime expires
         );
 
+        /// <summary>
+        /// Gets entity by HttpContext authorization data
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         Task<JsonWebToken> GetFromHttpContext(CancellationToken cancellationToken = default);
     }
 

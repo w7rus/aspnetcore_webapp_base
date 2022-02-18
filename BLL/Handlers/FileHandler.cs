@@ -97,9 +97,6 @@ public class FileHandler : HandlerBase, IFileHandler
             var fileName = Guid.NewGuid() + fileInfo.Extension;
             var ms = new MemoryStream();
             await formFile.OpenReadStream().CopyToAsync(ms, cancellationToken);
-            // var file = await _fileService.Add(fileName, ms.ToArray(), data.AgeRating, new Dictionary<string, string>(),
-            //     user.Id,
-            //     cancellationToken);
 
             var userGroup = await _userGroupService.GetByAliasAsync("Guest");
             var permission = await _permissionService.GetByAliasAsync("uint64_user_communication_private_power");
@@ -118,8 +115,7 @@ public class FileHandler : HandlerBase, IFileHandler
             file.Data = ms.ToArray();
             file.Metadata = new Dictionary<string, string>();
             file.UserId = user.Id;
-
-            //TODO: Mapper with permission checks
+            
             file = await _fileService.Create(file, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();

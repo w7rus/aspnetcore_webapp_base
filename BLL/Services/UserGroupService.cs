@@ -14,6 +14,11 @@ namespace BLL.Services;
 /// </summary>
 public interface IUserGroupService : IEntityServiceBase<UserGroup>
 {
+    /// <summary>
+    /// Gets entity with Alias that equals given one
+    /// </summary>
+    /// <param name="alias"></param>
+    /// <returns></returns>
     Task<UserGroup> GetByAliasAsync(string alias);
 }
 

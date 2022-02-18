@@ -59,12 +59,24 @@ public class FileService : IFileService
 
     #region Methods
 
+    /// <summary>
+    /// Saves entity
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task Save(File entity, CancellationToken cancellationToken = default)
     {
         _fileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// Deletes entity & Sends response to delete file on FS
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
+    /// <exception cref="CustomException"></exception>
     public async Task Delete(File entity, CancellationToken cancellationToken = default)
     {
         var httpClient = new HttpClient();
@@ -84,6 +96,13 @@ public class FileService : IFileService
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// Gets entity by PK & Retrieves file from CDN or FS
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="CustomException"></exception>
     public async Task<File> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var file = await _fileRepository.SingleOrDefaultAsync(_ => _.Id == id);
@@ -108,6 +127,13 @@ public class FileService : IFileService
         return file;
     }
 
+    /// <summary>
+    /// Creates entity and saves it & Creates file on FS
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="CustomException"></exception>
     public async Task<File> Create(File entity, CancellationToken cancellationToken = default)
     {
         var httpClient = new HttpClient();

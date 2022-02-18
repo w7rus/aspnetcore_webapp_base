@@ -20,23 +20,70 @@ namespace BLL.Services;
 /// </summary>
 public interface IUserService : IEntityServiceBase<User>
 {
+    /// <summary>
+    /// Gets entity with Email that equals given one
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
     Task<User> GetByEmailAsync(string email);
-    Task<User> GetByPhoneNumberAsync(string phoneNumber);
+
+    /// <summary>
+    /// Gets entities with PhoneNumber that equals given one
+    /// </summary>
+    /// <param name="phoneNumber"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyCollection<User>> GetByPhoneNumberAsync(
+        string phoneNumber,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    /// Gets entities with DisableSignInUntil that is less than current date
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     Task<IReadOnlyCollection<User>> GetExpiredByDisableSignInUntil(CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Gets entities with LastSignIn that are in given inclusive range
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     Task<IReadOnlyCollection<User>> GetInRangeByLastSignIn(
         DateTimeOffset from,
         DateTimeOffset to,
         CancellationToken cancellationToken = default
     );
 
+    /// <summary>
+    /// Gets entities with LastActivity that are in given inclusive range
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     Task<IReadOnlyCollection<User>> GetInRangeByLastActivity(
         DateTimeOffset from,
         DateTimeOffset to,
         CancellationToken cancellationToken = default
     );
 
+    /// <summary>
+    /// Gets entities with IpAddress that equals given one
+    /// </summary>
+    /// <param name="ipAddress"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     Task<IReadOnlyCollection<User>> GetByLastIpAddress(string ipAddress, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets entity by HttpContext authorization data
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     Task<User> GetFromHttpContext(CancellationToken cancellationToken = default);
 }
 
@@ -98,9 +145,12 @@ public class UserService : IUserService
         return await _userRepository.SingleOrDefaultAsync(_ => _.Email == email);
     }
 
-    public async Task<User> GetByPhoneNumberAsync(string phoneNumber)
+    public async Task<IReadOnlyCollection<User>> GetByPhoneNumberAsync(
+        string phoneNumber,
+        CancellationToken cancellationToken = default
+    )
     {
-        return await _userRepository.SingleOrDefaultAsync(_ => _.PhoneNumber == phoneNumber);
+        return await _userRepository.QueryMany(_ => _.PhoneNumber == phoneNumber).ToArrayAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyCollection<User>> GetExpiredByDisableSignInUntil(

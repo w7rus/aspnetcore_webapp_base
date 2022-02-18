@@ -16,8 +16,19 @@ namespace BLL.Services;
 /// </summary>
 public interface IRefreshTokenService : IEntityServiceBase<RefreshToken>
 {
+    /// <summary>
+    /// Gets entity with Token that equals given one
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
     Task<RefreshToken> GetByTokenAsync(string token);
 
+    /// <summary>
+    /// Gets entities with UserId that equals given one & ExpiresAt that is less than current date
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(
         Guid userId,
         CancellationToken cancellationToken = default
