@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BLL.Handlers.Base;
 using BLL.Services;
+using BLL.Services.Advanced;
 using Common.Exceptions;
 using Common.Models;
 using Common.Models.Base;
@@ -41,6 +42,7 @@ public class FileHandler : HandlerBase, IFileHandler
     private readonly IPermissionService _permissionService;
     private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
     private readonly IUserGroupService _userGroupService;
+    private readonly IUserToUserGroupService _userToUserGroupService;
 
     #endregion
 
@@ -55,7 +57,8 @@ public class FileHandler : HandlerBase, IFileHandler
         IMapper mapper,
         IPermissionService permissionService,
         IUserGroupPermissionValueService userGroupPermissionValueService,
-        IUserGroupService userGroupService
+        IUserGroupService userGroupService,
+        IUserToUserGroupService userToUserGroupService
     )
     {
         _fullName = GetType().FullName;
@@ -67,6 +70,7 @@ public class FileHandler : HandlerBase, IFileHandler
         _permissionService = permissionService;
         _userGroupPermissionValueService = userGroupPermissionValueService;
         _userGroupService = userGroupService;
+        _userToUserGroupService = userToUserGroupService;
         _httpContext = httpContextAccessor.HttpContext;
     }
 
@@ -97,20 +101,40 @@ public class FileHandler : HandlerBase, IFileHandler
             var fileName = Guid.NewGuid() + fileInfo.Extension;
             var ms = new MemoryStream();
             await formFile.OpenReadStream().CopyToAsync(ms, cancellationToken);
-            
+
             var permission = await _permissionService.GetByAliasAsync("uint64_file_create_power");
+            var permissionValueComparedSystem =
+                await _userToUserGroupService.GetSystemPermissionValueByAlias("uint64_file_create_power_needed_system",
+                    cancellationToken);
+
+            if (!await _userToUserGroupService.AuthorizePermission(user, permission, permissionValueComparedSystem,
+                    cancellationToken))
+                throw new CustomException(Localize.Error.PermissionInsufficientPermissions);
+
+            //TODO: Create special permissions for mapping fields of a model
             var file = _mapper.Map<File>(data, opts =>
             {
                 opts.Items["user"] = user;
-                opts.Items["permission"] = permission;
-                opts.Items["valueCompared"] = BitConverter.GetBytes(Consts.MemberUserGroupPowerBase);
+                opts.Items["modelFieldMappingPermissionAuthorizationTuples"] =
+                    new Dictionary<string, AutoMapperComparePermissionToTuple>
+                    {
+                        {
+                            nameof(File.AgeRating), new AutoMapperComparePermissionToTuple
+                            {
+                                ComparedPermission = permission,
+                                ComparablePermissionValue = null,
+                                ComparablePermissionValueSystem = permissionValueComparedSystem,
+                                ComparableCustomValue = null
+                            }
+                        }
+                    };
             });
 
             file.Name = fileName;
             file.Data = ms.ToArray();
             file.Metadata = new Dictionary<string, string>();
             file.UserId = user.Id;
-            
+
             file = await _fileService.Create(file, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();

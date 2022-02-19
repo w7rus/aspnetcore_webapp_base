@@ -59,6 +59,11 @@ public static class Localize
 
         public static string PermissionDynamicManagementNotAllowed => "PermissionDynamicManagementNotAllowed";
 
+        public static string PermissionAuthorizePermissionValueAtLeastOneRequired =>
+            "PermissionAuthorizePermissionValueAtLeastOneRequired";
+
+        public static string PermissionInsufficientPermissions => "PermissionInsufficientPermissions";
+
         #endregion
 
         #region HttpClient
@@ -73,6 +78,12 @@ public static class Localize
         public static string ObjectCastFailed => "ObjectCastFailed";
         public static string DependencyInjectionFailed => "DependencyInjectionFailed";
         public static string ValueRetrievalFailed => "ValueRetrievalFailed";
+
+        #endregion
+
+        #region UserGroup
+
+        public static string UserGroupIsSystemManagementNotAllowed => "UserGroupIsSystemManagementNotAllowed";
 
         #endregion
     }

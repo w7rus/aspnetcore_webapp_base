@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AutoMapper;
 using BLL.Services;
 using BLL.Services.Advanced;
@@ -12,20 +13,6 @@ namespace BLL.Maps;
 
 public class AutoMapperProfile : Profile
 {
-    // // Example authorize permission by other permission value
-    // var userGroup = await _userGroupService.GetByAliasAsync("Member");
-    // var permission = await _permissionService.GetByAliasAsync("uint64_user_communication_private_power");
-    // var permissionCompared = await _permissionService.GetByAliasAsync("uint64_user_communication_private_power_needed");
-    // var entityPermissionValueCompared = await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id,
-    //     permissionCompared.Id,
-    //     cancellationToken);
-    // var file = _mapper.Map<File>(data, opts =>
-    // {
-    //     opts.Items["user"] = user;
-    //     opts.Items["permission"] = permission;
-    //     opts.Items["entityPermissionValueCompared"] = entityPermissionValueCompared;
-    // });
-    
     #region Ctor
 
     public AutoMapperProfile()
@@ -42,8 +29,9 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.UserId, options => options.Ignore())
             .ForMember(_ => _.AgeRating, options =>
             {
-                options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) => UserToUserGroupAuthorizePermissionCustom(context));
-                options.MapFrom(__ => __.AgeRating);
+                options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
+                    User_UserGroup_AuthorizePermission(context, objMemberTo.GetType().Name));
+                // options.MapFrom(__ => __.AgeRating);
             });
 
         #endregion
@@ -52,36 +40,8 @@ public class AutoMapperProfile : Profile
     #endregion
 
     #region Utilities
-
-    bool UserToUserGroupAuthorizePermission(ResolutionContext context)
-    {
-        var userToUserGroupService = (context
-                                          .Options
-                                          .ServiceCtor(typeof(IUserToUserGroupService)) ??
-                                      throw new CustomException(Localize.Error.DependencyInjectionFailed)) as
-                                     IUserToUserGroupService ??
-                                     throw new CustomException(Localize.Error.ObjectCastFailed);
-
-        if (!context.Items.TryGetValue("user", out var userObject))
-            throw new CustomException(Localize.Error.ValueRetrievalFailed);
-        var user = userObject as User;
-
-        if (!context.Items.TryGetValue("permission", out var permissionObject))
-            throw new CustomException(Localize.Error.ValueRetrievalFailed);
-        var permission = permissionObject as Permission;
-
-        if (!context.Items.TryGetValue("entityPermissionValueCompared",
-                out var entityPermissionValueComparedObject))
-            throw new CustomException(Localize.Error.ValueRetrievalFailed);
-
-        dynamic entityPermissionValueCompared =
-            entityPermissionValueComparedObject;
-                    
-        return userToUserGroupService.AuthorizePermission(user, permission, entityPermissionValueCompared)
-            .ConfigureAwait(false).GetAwaiter().GetResult();
-    }
     
-    bool UserToUserGroupAuthorizePermissionCustom(ResolutionContext context)
+    bool User_UserGroup_AuthorizePermission(ResolutionContext context, string objMemberToName)
     {
         var userToUserGroupService = (context
                                           .Options
@@ -90,20 +50,104 @@ public class AutoMapperProfile : Profile
                                      IUserToUserGroupService ??
                                      throw new CustomException(Localize.Error.ObjectCastFailed);
 
+        //Get user from the context items
         if (!context.Items.TryGetValue("user", out var userObject))
-            throw new CustomException(Localize.Error.ValueRetrievalFailed);
+            throw new CustomException(Localize.Error.ValueRetrievalFailed + " " + nameof(userObject));
         var user = userObject as User;
 
-        if (!context.Items.TryGetValue("permission", out var permissionObject))
-            throw new CustomException(Localize.Error.ValueRetrievalFailed);
-        var permission = permissionObject as Permission;
+        var result = true;
 
-        if (!context.Items.TryGetValue("valueCompared",
-                out var valueComparedObject))
-            throw new CustomException(Localize.Error.ValueRetrievalFailed);
+        //Get dictionary of Permission + PermissionValue + PermissionValueSystem tuples
+        context.Items.TryGetValue("modelFieldMappingPermissionAuthorizationTuples",
+            out var modelFieldMappingPermissionAuthorizationTuplesObject);
 
-        return userToUserGroupService.AuthorizePermission(user, permission, valueComparedObject as byte[])
-            .ConfigureAwait(false).GetAwaiter().GetResult();
+        var modelFieldMappingPermissionAuthorizationTuples =
+            modelFieldMappingPermissionAuthorizationTuplesObject as
+                Dictionary<string, AutoMapperComparePermissionToTuple> ?? throw new CustomException(
+                Localize.Error.ValueRetrievalFailed + " " + nameof(modelFieldMappingPermissionAuthorizationTuplesObject));
+
+        //Get Permission + PermissionValue + PermissionValueSystem tuple for corresponding model field
+        modelFieldMappingPermissionAuthorizationTuples.TryGetValue(objMemberToName,
+            out var autoMapperComparePermissionToPermissionValueTuple);
+
+        if (autoMapperComparePermissionToPermissionValueTuple == null)
+            throw new CustomException(
+                Localize.Error.ValueRetrievalFailed + " " + nameof(autoMapperComparePermissionToPermissionValueTuple));
+
+        //Get Permission
+        var comparedPermission = autoMapperComparePermissionToPermissionValueTuple.ComparedPermission as Permission;
+        if (comparedPermission == null)
+            throw new CustomException(Localize.Error.ValueRetrievalFailed + " " + nameof(comparedPermission));
+
+        //Get PermissionValue
+        var comparablePermissionValue =
+            autoMapperComparePermissionToPermissionValueTuple.ComparablePermissionValue as dynamic;
+        
+        //Get PermissionValueSystem
+        var comparablePermissionValueSystem =
+            autoMapperComparePermissionToPermissionValueTuple.ComparablePermissionValueSystem as dynamic;
+
+        //Check that at least one exists
+        if (comparablePermissionValue == null && comparablePermissionValueSystem == null)
+            throw new CustomException(Localize.Error.PermissionAuthorizePermissionValueAtLeastOneRequired);
+
+        //Authorize User with all PermissionValues from their UserGroups against given PermissionValue AND PermissionValueSystem
+        if (comparablePermissionValue != null)
+            result &= userToUserGroupService.AuthorizePermission(user, comparedPermission, comparablePermissionValue)
+                .ConfigureAwait(false).GetAwaiter().GetResult();
+
+        if (comparablePermissionValueSystem != null)
+            result &= userToUserGroupService
+                .AuthorizePermission(user, comparedPermission, comparablePermissionValueSystem)
+                .ConfigureAwait(false).GetAwaiter().GetResult();
+
+        //Return the result
+        return result;
+    }
+
+    bool User_UserGroup_AuthorizePermission_CustomValue(ResolutionContext context, string objMemberToName)
+    {
+        var userToUserGroupService = (context
+                                          .Options
+                                          .ServiceCtor(typeof(IUserToUserGroupService)) ??
+                                      throw new CustomException(Localize.Error.DependencyInjectionFailed)) as
+                                     IUserToUserGroupService ??
+                                     throw new CustomException(Localize.Error.ObjectCastFailed);
+
+        //Get user from the context items
+        if (!context.Items.TryGetValue("user", out var userObject))
+            throw new CustomException(Localize.Error.ValueRetrievalFailed + " " + nameof(userObject));
+        var user = userObject as User;
+
+        //Get dictionary of Permission + CustomValue tuples
+        context.Items.TryGetValue("modelFieldMappingPermissionAuthorizationTuples",
+            out var modelFieldMappingPermissionAuthorizationTuplesObject);
+
+        var modelFieldMappingPermissionAuthorizationTuples =
+            modelFieldMappingPermissionAuthorizationTuplesObject as
+                Dictionary<string, AutoMapperComparePermissionToTuple> ?? throw new CustomException(
+                Localize.Error.ValueRetrievalFailed + " " + nameof(modelFieldMappingPermissionAuthorizationTuplesObject));
+
+        //Get Permission + CustomValue tuple for corresponding model field
+        modelFieldMappingPermissionAuthorizationTuples.TryGetValue(objMemberToName,
+            out var autoMapperComparePermissionToPermissionValueTuple);
+
+        if (autoMapperComparePermissionToPermissionValueTuple == null)
+            throw new CustomException(
+                Localize.Error.ValueRetrievalFailed + " " + nameof(autoMapperComparePermissionToPermissionValueTuple));
+
+        //Get Permission
+        var comparedPermission = autoMapperComparePermissionToPermissionValueTuple.ComparedPermission as Permission;
+        if (comparedPermission == null)
+            throw new CustomException(Localize.Error.ValueRetrievalFailed + " " + nameof(comparedPermission));
+
+        //Get CustomValue
+        var comparableCustomValue =
+            autoMapperComparePermissionToPermissionValueTuple.ComparableCustomValue;
+        
+        //Return result of Authorize User with all PermissionValues from their UserGroups against given CustomValue
+        return userToUserGroupService.AuthorizePermission(user, comparedPermission, comparableCustomValue)
+        .ConfigureAwait(false).GetAwaiter().GetResult();
     }
 
     #endregion

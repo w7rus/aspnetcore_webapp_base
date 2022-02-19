@@ -106,7 +106,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 Password = passwordHashed
             }, cancellationToken);
 
-            var guestUserGroup = await _userGroupService.GetByAliasAsync("Guest");
+            var guestUserGroup = await _userGroupService.GetByAliasAsync("Member");
 
             await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
             {

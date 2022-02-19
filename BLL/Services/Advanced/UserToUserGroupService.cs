@@ -29,7 +29,7 @@ public interface IUserToUserGroupService
         EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
         CancellationToken cancellationToken = default
     ) where TEntityCompared : EntityBase<Guid>;
-    
+
     /// <summary>
     /// Authorizes PermissionValue.Value to another PermissionValue.Value from all groups given user is member of
     /// </summary>
@@ -44,6 +44,11 @@ public interface IUserToUserGroupService
         byte[] _valueCompared,
         CancellationToken cancellationToken = default
     );
+
+    Task<UserGroupPermissionValue> GetSystemPermissionValueByAlias(
+        string alias,
+        CancellationToken cancellationToken = default
+    );
 }
 
 public class UserToUserGroupService : IUserToUserGroupService
@@ -56,6 +61,7 @@ public class UserToUserGroupService : IUserToUserGroupService
     private readonly IUserToUserGroupMappingService _userToUserGroupMappingService;
     private readonly IUserGroupService _userGroupService;
     private readonly IUserService _userService;
+    private readonly IPermissionService _permissionService;
 
     #endregion
 
@@ -67,7 +73,8 @@ public class UserToUserGroupService : IUserToUserGroupService
         IUserGroupPermissionValueService userGroupPermissionValueService,
         IUserToUserGroupMappingService userToUserGroupMappingService,
         IUserGroupService userGroupService,
-        IUserService userService
+        IUserService userService,
+        IPermissionService permissionService
     )
     {
         _logger = logger;
@@ -76,6 +83,7 @@ public class UserToUserGroupService : IUserToUserGroupService
         _userToUserGroupMappingService = userToUserGroupMappingService;
         _userGroupService = userGroupService;
         _userService = userService;
+        _permissionService = permissionService;
     }
 
     #endregion
@@ -122,6 +130,17 @@ public class UserToUserGroupService : IUserToUserGroupService
         }
 
         return result;
+    }
+
+    public async Task<UserGroupPermissionValue> GetSystemPermissionValueByAlias(
+        string alias,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var userGroup = await _userGroupService.GetByAliasAsync("Root");
+        var permission = await _permissionService.GetByAliasAsync(alias);
+        return await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, permission.Id,
+            cancellationToken);
     }
 
     #endregion

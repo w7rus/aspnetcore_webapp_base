@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
+using Common.Exceptions;
+using Common.Models;
 using DAL.Data;
 using DAL.Repository;
 using Domain.Entities;
@@ -51,12 +53,18 @@ public class UserGroupService : IUserGroupService
 
     public async Task Save(UserGroup entity, CancellationToken cancellationToken = default)
     {
+        if (entity.IsSystem)
+            throw new CustomException(Localize.Error.UserGroupIsSystemManagementNotAllowed);
+        
         _userGroupRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(UserGroup entity, CancellationToken cancellationToken = default)
     {
+        if (entity.IsSystem)
+            throw new CustomException(Localize.Error.UserGroupIsSystemManagementNotAllowed);
+        
         _userGroupRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
