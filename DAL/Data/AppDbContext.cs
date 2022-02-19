@@ -592,6 +592,32 @@ namespace DAL.Data
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
 
+                #region FileCreate->File AutoMapper Permissions
+
+                new()
+                {
+                    Id = new Guid("6fc92a20-2405-45e3-95e5-234642d49221"),
+                    Alias = "uint64_filecreate_automap_file.agerating_power",
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.GreaterOrEqual
+                },
+                new()
+                {
+                    Id = new Guid("dc98ca5c-9e8b-49c7-bf95-6c7664115fc8"),
+                    Alias = "uint64_filecreate_automap_file.agerating_power_needed",
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.GreaterOrEqual
+                },
+                new()
+                {
+                    Id = new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"),
+                    Alias = "uint64_filecreate_automap_file.agerating_power_needed_system",
+                    Type = PermissionType.UInt64,
+                    CompareMode = PermissionCompareMode.GreaterOrEqual
+                },
+
+                #endregion
+
                 #endregion
 
                 #region Read
@@ -1195,6 +1221,27 @@ namespace DAL.Data
                     PermissionId = permissions.First(_ => _.Alias == "uint64_file_create_power_needed_system").Id,
                     EntityId = rootUserGroup.Id,
                 },
+                
+                #region FileCreate->File AutoMapper Permissions
+                
+                new()
+                {
+                    Id = new Guid("bde4867e-d661-4ac8-9c92-f2a89b77e153"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_filecreate_automap_file.agerating_power").Id,
+                    EntityId = rootUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("8790dd27-c5fc-401d-b385-87741e804e82"),
+                    Value = BitConverter.GetBytes(memberUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_filecreate_automap_file.agerating_power_needed_system").Id,
+                    EntityId = rootUserGroup.Id,
+                },
+
+                #endregion
 
                 #endregion
 
@@ -1740,6 +1787,19 @@ namespace DAL.Data
                     PermissionId = permissions.First(_ => _.Alias == "uint64_file_create_power").Id,
                     EntityId = memberUserGroup.Id,
                 },
+                
+                #region FileCreate->File AutoMapper Permissions
+                
+                new()
+                {
+                    Id = new Guid("2cb0dc86-7027-4739-a5c2-25f7fa7755bf"),
+                    Value = BitConverter.GetBytes(memberUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_filecreate_automap_file.agerating_power").Id,
+                    EntityId = memberUserGroup.Id,
+                },
+
+                #endregion
 
                 #endregion
 

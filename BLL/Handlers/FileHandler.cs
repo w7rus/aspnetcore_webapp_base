@@ -102,16 +102,29 @@ public class FileHandler : HandlerBase, IFileHandler
             var ms = new MemoryStream();
             await formFile.OpenReadStream().CopyToAsync(ms, cancellationToken);
 
+            //Get file creation Permission that will be compared
             var permission = await _permissionService.GetByAliasAsync("uint64_file_create_power");
+            
+            //Get file creation comparable system PermissionValue
             var permissionValueComparedSystem =
                 await _userToUserGroupService.GetSystemPermissionValueByAlias("uint64_file_create_power_needed_system",
                     cancellationToken);
-
+            
+            //Authorize file creation
             if (!await _userToUserGroupService.AuthorizePermission(user, permission, permissionValueComparedSystem,
                     cancellationToken))
                 throw new CustomException(Localize.Error.PermissionInsufficientPermissions);
 
-            //TODO: Create special permissions for mapping fields of a model
+            //Get AgeRating model field mapping Permission that will be compared
+            var permissionFileCreateAutomapFileAgerating =
+                await _permissionService.GetByAliasAsync("uint64_filecreate_automap_file.agerating_power");
+            
+            //Get AgeRating model field mapping comparable system PermissionValue
+            var permissionValueFileCreateAutomapFileAgeratingComparedSystem =
+                await _userToUserGroupService.GetSystemPermissionValueByAlias(
+                    "uint64_filecreate_automap_file.agerating_power_needed_system");
+
+            //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
             var file = _mapper.Map<File>(data, opts =>
             {
                 opts.Items["user"] = user;
@@ -121,9 +134,9 @@ public class FileHandler : HandlerBase, IFileHandler
                         {
                             nameof(File.AgeRating), new AutoMapperComparePermissionToTuple
                             {
-                                ComparedPermission = permission,
+                                ComparedPermission = permissionFileCreateAutomapFileAgerating,
                                 ComparablePermissionValue = null,
-                                ComparablePermissionValueSystem = permissionValueComparedSystem,
+                                ComparablePermissionValueSystem = permissionValueFileCreateAutomapFileAgeratingComparedSystem,
                                 ComparableCustomValue = null
                             }
                         }
