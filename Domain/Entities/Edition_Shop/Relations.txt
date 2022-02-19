@@ -1,0 +1,11 @@
+﻿|- Base Catalog                             -|- Company Catalog                                         -|- Store Catalog
+|                                            |                                                           |
+Product                                     -> CompanyProduct                                           -> StoreProduct
+ProductGroup                                -> CompanyProductGroup                                      -> StoreProductGroup
+ProductGroupToCategoryMapping               -> CompanyProductGroupToCategoryMapping                     -> StoreProductGroupToCategoryMapping
+ProductGroupToProductMapping                -> CompanyProductGroupToCompanyProductMapping               -> StoreProductGroupToStoreProductMapping
+                                            >> CompanyProductGroupToDiscountMapping                     -> StoreProductGroupToDiscountMapping
+ProductToCategoryMapping                    -> CompanyProductToCategoryMapping                          -> StoreProductToCategoryMapping
+                                            >> CompanyProductToDiscountMapping                          -> StoreProductToDiscountMapping
+RelatedProductGroupToProductGroupMapping    -> RelatedCompanyProductGroupToCompanyProductGroupMapping   -> RelatedStoreProductGroupToStoreProductGroupMapping
+RelatedProductGroupToProductMapping         -> RelatedCompanyProductGroupToCompanyProductMapping        -> RelatedStoreProductGroupToStoreProductMapping

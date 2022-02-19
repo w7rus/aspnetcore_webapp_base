@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Common.Models;
 using Domain.Entities;
 using Domain.Entities.Base;
+using Domain.Entities.Edition_Shop;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +31,69 @@ namespace DAL.Data
         public DbSet<JsonWebToken> JsonWebTokens { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<File> Files { get; set; }
+
+        #region Edition_Shop
+
+        public DbSet<Ad> Ads { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<CompanyProduct> CompanyProducts { get; set; }
+        public DbSet<CompanyProductGroup> CompanyProductGroups { get; set; }
+        public DbSet<CompanyProductGroupToCategoryMapping> CompanyProductGroupToCategoryMappings { get; set; }
+
+        public DbSet<CompanyProductGroupToCompanyProductMapping> CompanyProductGroupToCompanyProductMappings
+        {
+            get;
+            set;
+        }
+
+        public DbSet<CompanyProductToCategoryMapping> CompanyProductToCategoryMappings { get; set; }
+        public DbSet<CompanyProductToDiscountMapping> CompanyProductToDiscountMappings { get; set; }
+
+        public DbSet<Discount> Discounts { get; set; }
+        public DbSet<OperatingTime> OperatingTimes { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductGroup> ProductGroups { get; set; }
+        public DbSet<ProductGroupToCategoryMapping> ProductGroupToCategoryMappings { get; set; }
+        public DbSet<ProductGroupToProductMapping> ProductToProductGroupMappings { get; set; }
+        public DbSet<ProductToCategoryMapping> ProductToCategoryMappings { get; set; }
+
+        public DbSet<RelatedCompanyProductGroupToCompanyProductGroupMapping>
+            RelatedCompanyProductGroupToCompanyProductGroupMappings { get; set; }
+
+        public DbSet<RelatedCompanyProductGroupToCompanyProductMapping>
+            RelatedCompanyProductGroupToCompanyProductMappings { get; set; }
+
+        public DbSet<RelatedProductGroupToProductGroupMapping> RelatedProductGroupToProductGroupMappings { get; set; }
+        public DbSet<RelatedProductGroupToProductMapping> RelatedProductGroupToProductMappings { get; set; }
+
+        public DbSet<RelatedStoreProductGroupToStoreProductGroupMapping>
+            RelatedStoreProductGroupToStoreProductGroupMappings { get; set; }
+
+        public DbSet<RelatedStoreProductGroupToStoreProductMapping> RelatedStoreProductGroupToStoreProductMappings
+        {
+            get;
+            set;
+        }
+
+        public DbSet<Store> Stores { get; set; }
+        public DbSet<StoreProduct> StoreProducts { get; set; }
+        public DbSet<StoreProductGroup> StoreProductGroups { get; set; }
+        public DbSet<StoreProductGroupToCategoryMapping> StoreProductGroupToCategoryMappings { get; set; }
+        public DbSet<StoreProductGroupToStoreProductMapping> StoreProductGroupToStoreProductMappings { get; set; }
+        public DbSet<StoreProductToCategoryMapping> StoreProductToCategoryMappings { get; set; }
+        public DbSet<StoreProductToDiscountMapping> StoreProductToDiscountMappings { get; set; }
+
+        public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<TaxCategory> TaxCategories { get; set; }
+        public DbSet<UserToCompanyMapping> UserToCompanyMappings { get; set; }
+        public DbSet<UserToStoreMapping> UserToStoreMappings { get; set; }
+
+        #endregion
 
         #endregion
 
@@ -92,6 +156,10 @@ namespace DAL.Data
             public List<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
             public List<JsonWebToken> JsonWebTokens { get; set; }
             public List<RefreshToken> RefreshTokens { get; set; }
+
+            #region Edition_Shop
+
+            #endregion
         }
 
         private static AppDbContextSeedLists Seed()
@@ -534,11 +602,11 @@ namespace DAL.Data
                 #endregion
 
                 #endregion
-                
+
                 #region User Profile
 
                 #region Modify
-                
+
                 new()
                 {
                     Id = new Guid("86ce307c-f9db-4a5a-9347-8a3ea7ef2442"),
@@ -562,7 +630,7 @@ namespace DAL.Data
                 },
 
                 #endregion
-                
+
                 new()
                 {
                     Id = new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"),
@@ -717,7 +785,8 @@ namespace DAL.Data
                 {
                     Id = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
                     Alias = "Root",
-                    Description = "System user group with root like permission set. Also used to store system wise permission values",
+                    Description =
+                        "System user group with root like permission set. Also used to store system wise permission values",
                     IsSystem = true
                 },
                 new()
@@ -929,7 +998,8 @@ namespace DAL.Data
                     Id = new Guid("f38b3ba0-7263-4f97-95f6-ab77f1cbfc83"),
                     Value = BitConverter.GetBytes(rootUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64t_user_view_lastipaddress_own_power_needed").Id,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64t_user_view_lastipaddress_own_power_needed")
+                        .Id,
                     EntityId = rootUserGroup.Id,
                 },
 
@@ -979,7 +1049,8 @@ namespace DAL.Data
                     Id = new Guid("c75603c0-5cc0-40d6-8c05-4beb03fe8309"),
                     Value = BitConverter.GetBytes(rootUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power_needed").Id,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power_needed")
+                        .Id,
                     EntityId = rootUserGroup.Id,
                 },
                 new()
@@ -987,7 +1058,8 @@ namespace DAL.Data
                     Id = new Guid("1393cacb-1c3d-4886-92c2-f2a988fe25d0"),
                     Value = BitConverter.GetBytes(rootUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_own_power_needed").Id,
+                    PermissionId = permissions
+                        .First(_ => _.Alias == "uint64_user_communication_private_own_power_needed").Id,
                     EntityId = rootUserGroup.Id,
                 },
 
@@ -1082,7 +1154,8 @@ namespace DAL.Data
                     Id = new Guid("9768dcbd-f0b6-4e92-a1fb-411d461d8d11"),
                     Value = BitConverter.GetBytes(rootUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_own_power_needed").Id,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_own_power_needed")
+                        .Id,
                     EntityId = rootUserGroup.Id,
                 },
 
@@ -1221,15 +1294,16 @@ namespace DAL.Data
                     PermissionId = permissions.First(_ => _.Alias == "uint64_file_create_power_needed_system").Id,
                     EntityId = rootUserGroup.Id,
                 },
-                
+
                 #region FileCreate->File AutoMapper Permissions
-                
+
                 new()
                 {
                     Id = new Guid("bde4867e-d661-4ac8-9c92-f2a89b77e153"),
                     Value = BitConverter.GetBytes(rootUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64_filecreate_automap_file.agerating_power").Id,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_filecreate_automap_file.agerating_power")
+                        .Id,
                     EntityId = rootUserGroup.Id,
                 },
                 new()
@@ -1237,7 +1311,8 @@ namespace DAL.Data
                     Id = new Guid("8790dd27-c5fc-401d-b385-87741e804e82"),
                     Value = BitConverter.GetBytes(memberUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64_filecreate_automap_file.agerating_power_needed_system").Id,
+                    PermissionId = permissions.First(_ =>
+                        _.Alias == "uint64_filecreate_automap_file.agerating_power_needed_system").Id,
                     EntityId = rootUserGroup.Id,
                 },
 
@@ -1503,7 +1578,8 @@ namespace DAL.Data
                     Id = new Guid("c3e65d57-9ee5-45d3-bfc2-f0c7f47a5572"),
                     Value = BitConverter.GetBytes(memberUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64t_user_view_lastipaddress_own_power_needed").Id,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64t_user_view_lastipaddress_own_power_needed")
+                        .Id,
                     EntityId = memberUserGroup.Id,
                 },
 
@@ -1553,7 +1629,8 @@ namespace DAL.Data
                     Id = new Guid("b46d829f-65d1-4111-a444-50535b23687c"),
                     Value = BitConverter.GetBytes(memberUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power_needed").Id,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power_needed")
+                        .Id,
                     EntityId = memberUserGroup.Id,
                 },
                 new()
@@ -1561,7 +1638,8 @@ namespace DAL.Data
                     Id = new Guid("cad02bb3-c32f-4774-b68a-83dcd57a96d9"),
                     Value = BitConverter.GetBytes(memberUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_own_power_needed").Id,
+                    PermissionId = permissions
+                        .First(_ => _.Alias == "uint64_user_communication_private_own_power_needed").Id,
                     EntityId = memberUserGroup.Id,
                 },
 
@@ -1656,7 +1734,8 @@ namespace DAL.Data
                     Id = new Guid("a2eb095a-d327-4a0f-bda9-8ededac9e944"),
                     Value = BitConverter.GetBytes(memberUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_own_power_needed").Id,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_own_power_needed")
+                        .Id,
                     EntityId = memberUserGroup.Id,
                 },
 
@@ -1787,15 +1866,16 @@ namespace DAL.Data
                     PermissionId = permissions.First(_ => _.Alias == "uint64_file_create_power").Id,
                     EntityId = memberUserGroup.Id,
                 },
-                
+
                 #region FileCreate->File AutoMapper Permissions
-                
+
                 new()
                 {
                     Id = new Guid("2cb0dc86-7027-4739-a5c2-25f7fa7755bf"),
                     Value = BitConverter.GetBytes(memberUserGroupPower),
                     Grant = rootUserGroupPower,
-                    PermissionId = permissions.First(_ => _.Alias == "uint64_filecreate_automap_file.agerating_power").Id,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_filecreate_automap_file.agerating_power")
+                        .Id,
                     EntityId = memberUserGroup.Id,
                 },
 
@@ -1870,7 +1950,7 @@ namespace DAL.Data
             #endregion
 
             #region UserToUserGroupMappings
-            
+
             var userToUserGroupMappings = new List<UserToUserGroupMapping>();
 
             appDbContextSeedLists.UserToUserGroupMappings.AddRange(userToUserGroupMappings);
@@ -1946,9 +2026,11 @@ namespace DAL.Data
 
             builder.Entity<UserToUserGroupMapping>(_ =>
             {
-                _.HasIndex(__ => new {
+                _.HasIndex(__ => new
+                {
                     EntityId = __.EntityLeftId,
-                    GroupId = __.EntityRightId}).IsUnique();
+                    GroupId = __.EntityRightId
+                }).IsUnique();
 
                 _.HasData(appDbContextSeedLists.UserToUserGroupMappings);
             });
@@ -1970,6 +2052,220 @@ namespace DAL.Data
             #region Files
 
             builder.Entity<File>(_ => { _.HasIndex(__ => __.Name).IsUnique(); });
+
+            #endregion
+
+            #region Edition_Shop
+
+            #region ProductGroupToCategoryMapping
+
+            builder.Entity<ProductGroupToCategoryMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region CompanyProductGroupToCategoryMapping
+
+            builder.Entity<CompanyProductGroupToCategoryMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region CompanyProductGroupToCompanyProductMapping
+
+            builder.Entity<CompanyProductGroupToCompanyProductMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region CompanyProductToCategoryMapping
+
+            builder.Entity<CompanyProductToCategoryMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region CompanyProductToDiscountMapping
+
+            builder.Entity<CompanyProductToDiscountMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region ProductGroupToCategoryMapping
+
+            builder.Entity<ProductGroupToCategoryMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region ProductGroupToProductMapping
+
+            builder.Entity<ProductGroupToProductMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region ProductToCategoryMapping
+
+            builder.Entity<ProductToCategoryMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region RelatedCompanyProductGroupToCompanyProductGroupMapping
+
+            builder.Entity<RelatedCompanyProductGroupToCompanyProductGroupMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+
+                _.HasOne(__ => __.EntityLeft)
+                    .WithMany(__ => __.RelatedCompanyProductGroupToCompanyProductGroupMappings)
+                    .HasForeignKey(__ => __.EntityLeftId);
+
+                _.HasOne(__ => __.EntityRight)
+                    .WithMany(__ => __.RelatedCompanyProductGroupToCompanyProductGroupMappingsReverse)
+                    .HasForeignKey(__ => __.EntityRightId);
+            });
+
+            #endregion
+
+            #region RelatedCompanyProductGroupToCompanyProductMapping
+
+            builder.Entity<RelatedCompanyProductGroupToCompanyProductMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region RelatedProductGroupToProductGroupMapping
+
+            builder.Entity<RelatedProductGroupToProductGroupMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+
+                _.HasOne(__ => __.EntityLeft)
+                    .WithMany(__ => __.RelatedProductGroupToProductGroupMappings)
+                    .HasForeignKey(__ => __.EntityLeftId);
+
+                _.HasOne(__ => __.EntityRight)
+                    .WithMany(__ => __.RelatedProductGroupToProductGroupMappingsReverse)
+                    .HasForeignKey(__ => __.EntityRightId);
+            });
+
+            #endregion
+
+            #region RelatedProductGroupToProductMapping
+
+            builder.Entity<RelatedProductGroupToProductMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region RelatedStoreProductGroupToStoreProductGroupMapping
+
+            builder.Entity<RelatedStoreProductGroupToStoreProductGroupMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+
+                _.HasOne(__ => __.EntityLeft)
+                    .WithMany(__ => __.RelatedStoreProductGroupToStoreProductGroupMappings)
+                    .HasForeignKey(__ => __.EntityLeftId);
+
+                _.HasOne(__ => __.EntityRight)
+                    .WithMany(__ => __.RelatedStoreProductGroupToStoreProductGroupMappingsReverse)
+                    .HasForeignKey(__ => __.EntityRightId);
+            });
+
+            #endregion
+
+            #region RelatedStoreProductGroupToStoreProductMapping
+
+            builder.Entity<RelatedStoreProductGroupToStoreProductMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region StoreProductGroupToCategoryMapping
+
+            builder.Entity<StoreProductGroupToCategoryMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region StoreProductGroupToStoreProductMapping
+
+            builder.Entity<StoreProductGroupToStoreProductMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region StoreProductToCategoryMapping
+
+            builder.Entity<StoreProductToCategoryMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region StoreProductToDiscountMapping
+
+            builder.Entity<StoreProductToDiscountMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region TaxCategory
+
+            builder.Entity<TaxCategory>(_ => { _.Property(__ => __.Taxcode).HasDefaultValue("txcd_00000000"); });
+
+            #endregion
+
+            #region UserToCompanyMapping
+
+            builder.Entity<UserToCompanyMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region UserToStoreMapping
+
+            builder.Entity<UserToStoreMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
 
             #endregion
         }
