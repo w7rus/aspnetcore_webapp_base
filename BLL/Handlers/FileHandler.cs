@@ -96,33 +96,47 @@ public class FileHandler : HandlerBase, IFileHandler
             var user = await _userService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new CustomException();
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Received {user.GetType().Name} {user.Id}"));
 
             var fileInfo = new FileInfo(formFile.FileName);
             var fileName = Guid.NewGuid() + fileInfo.Extension;
             var ms = new MemoryStream();
             await formFile.OpenReadStream().CopyToAsync(ms, cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Copied {ms.Length} bytes from form file"));
 
             //Get file creation Permission that will be compared
             var permission = await _permissionService.GetByAliasAsync("uint64_file_create_power");
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Received {permission.GetType().Name} {permission.Alias}"));
             
             //Get file creation comparable system PermissionValue
             var permissionValueComparedSystem =
                 await _userToUserGroupService.GetSystemPermissionValueByAlias("uint64_file_create_power_needed_system",
                     cancellationToken);
             
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Received System {permissionValueComparedSystem.GetType().Name} {permissionValueComparedSystem.Id}"));
+            
             //Authorize file creation
             if (!await _userToUserGroupService.AuthorizePermission(user, permission, permissionValueComparedSystem,
                     cancellationToken))
                 throw new CustomException(Localize.Error.PermissionInsufficientPermissions);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"{permissionValueComparedSystem.Permission.Alias} authorized {permission.Alias}"));
 
             //Get AgeRating model field mapping Permission that will be compared
             var permissionFileCreateAutomapFileAgerating =
                 await _permissionService.GetByAliasAsync("uint64_filecreate_automap_file.agerating_power");
             
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Received Permission {permissionFileCreateAutomapFileAgerating.Alias}"));
+
             //Get AgeRating model field mapping comparable system PermissionValue
             var permissionValueFileCreateAutomapFileAgeratingComparedSystem =
                 await _userToUserGroupService.GetSystemPermissionValueByAlias(
                     "uint64_filecreate_automap_file.agerating_power_needed_system");
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Received System PermissionValue {permissionValueFileCreateAutomapFileAgeratingComparedSystem.Id}"));
 
             //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
             var file = _mapper.Map<File>(data, opts =>
@@ -142,13 +156,19 @@ public class FileHandler : HandlerBase, IFileHandler
                         }
                     };
             });
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"{data.GetType().Name} mapped to {file.GetType().Name}"));
 
             file.Name = fileName;
             file.Data = ms.ToArray();
             file.Metadata = new Dictionary<string, string>();
             file.UserId = user.Id;
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Set additional data to {file.GetType().Name}"));
 
             file = await _fileService.Create(file, cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Staged creation of {file.GetType().Name} {file.Id}"));
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -190,6 +210,8 @@ public class FileHandler : HandlerBase, IFileHandler
             await _appDbContextAction.BeginTransactionAsync();
 
             var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Read), $"Received {file.GetType().Name} {file.Id}"));
 
             var contentDisposition = new System.Net.Mime.ContentDisposition
             {
@@ -239,7 +261,10 @@ public class FileHandler : HandlerBase, IFileHandler
             await _appDbContextAction.BeginTransactionAsync();
 
             var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Read), $"Received {file.GetType().Name} {file.Id}"));
 
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Read), $"Staging deletion of {file.GetType().Name} {file.Id}"));
             await _fileService.Delete(file, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();

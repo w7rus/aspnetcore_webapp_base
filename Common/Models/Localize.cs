@@ -119,6 +119,9 @@ public static class Localize
 
         public static string MethodStart(string assemblyName, string methodName) =>
             $"[{assemblyName}.{methodName}] (Start)";
+        
+        public static string Method(string assemblyName, string methodName, string message) =>
+            $"[{assemblyName}.{methodName}] {message}";
 
         public static string MethodEnd(string assemblyName, string methodName) =>
             $"[{assemblyName}.{methodName}] (End)";

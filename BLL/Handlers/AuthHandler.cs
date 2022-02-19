@@ -105,14 +105,18 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 Email = data.Email,
                 Password = passwordHashed
             }, cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignUp), $"Staged creation of {user.GetType().Name} {user.Id}"));
 
             var guestUserGroup = await _userGroupService.GetByAliasAsync("Member");
 
-            await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
+            var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
             {
                 EntityId = user.Id,
                 GroupId = guestUserGroup.Id,
             }, cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignUp), $"Staged creation of {userToUserGroupMapping.GetType().Name} {userToUserGroupMapping.Id}"));
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -153,6 +157,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
 
+        var warnings = new List<KeyValuePair<string, string>>();
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -162,17 +168,21 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var user = await _userService.GetByEmailAsync(data.Email);
             if (user == null || !customPasswordHasher.VerifyPassword(user.Password, data.Password))
                 throw new CustomException();
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignInViaEmail), $"Received {user.GetType().Name} {user.Id}"));
 
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
                 DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
-            await _refreshTokenService.Create(new RefreshToken
+            var refreshToken = await _refreshTokenService.Create(new RefreshToken
             {
                 Token = refreshTokenString,
                 ExpiresAt = refreshTokenExpiresAt,
                 UserId = user.Id
             }, cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignInViaEmail), $"Staged creation of {refreshToken.GetType().Name} {refreshToken.Id}"));
 
             var jsonWebTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(_jsonWebTokenOptions.ExpirySeconds);
             var jsonWebTokenString = _jsonWebTokenService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
@@ -180,7 +190,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            await _jsonWebTokenService.Create(new JsonWebToken
+            var jsonWebToken = await _jsonWebTokenService.Create(new JsonWebToken
                 {
                     Token = jsonWebTokenString,
                     ExpiresAt = jsonWebTokenExpiresAt,
@@ -188,9 +198,13 @@ public class AuthHandler : HandlerBase, IAuthHandler
                     UserId = user.Id
                 },
                 cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignInViaEmail), $"Staged creation of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
 
             if (data.UseCookies)
             {
+                _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignInViaEmail), $"Client requested to use cookies"));
+                
                 var refreshTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
@@ -211,6 +225,10 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 _httpContext.Response.Cookies.Append(CookieKey.JsonWebToken, jsonWebTokenString,
                     jsonWebTokenCookieOptions);
             }
+            else
+            {
+                warnings.Add(new KeyValuePair<string, string>(Localize.WarningType.Auth, Localize.Warning.XssVulnerable));
+            }
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -222,7 +240,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 JsonWebToken = !data.UseCookies ? jsonWebTokenString : null,
                 JsonWebTokenExpiresAt = jsonWebTokenExpiresAt,
                 RefreshToken = !data.UseCookies ? refreshTokenString : null,
-                RefreshTokenExpiresAt = refreshTokenExpiresAt
+                RefreshTokenExpiresAt = refreshTokenExpiresAt,
+                Warnings = warnings
             };
         }
         catch (Exception e)
@@ -251,51 +270,66 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
+        
+        var warnings = new List<KeyValuePair<string, string>>();
 
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
 
             var useCookies = data.RefreshToken == null;
+            
+            if (useCookies)
+                _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Client requested to use cookies"));
 
             data.RefreshToken ??=
                 _httpContext.Request.Cookies.SingleOrDefault(_ => _.Key == CookieKey.RefreshToken).Value;
             if (data.RefreshToken == null)
                 throw new CustomException(Localize.Error.RefreshTokenNotProvided);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"{nameof(data.RefreshToken)} presented {data.RefreshToken}"));
 
-            var refreshTokenOld = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
-            if (refreshTokenOld == null)
+            var refreshToken = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
+            if (refreshToken == null)
                 throw new CustomException(Localize.Error.RefreshTokenNotFound);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Received {refreshToken.GetType().Name} {refreshToken.Id}"));
 
-            if (refreshTokenOld.ExpiresAt < DateTimeOffset.UtcNow)
+            if (refreshToken.ExpiresAt < DateTimeOffset.UtcNow)
                 throw new CustomException(Localize.Error.RefreshTokenExpired);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"{refreshToken.GetType().Name} is valid until {refreshToken.ExpiresAt}"));
 
-            await _refreshTokenService.Delete(refreshTokenOld, cancellationToken);
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staging deletion of {refreshToken.GetType().Name} {refreshToken.Id}"));
+            await _refreshTokenService.Delete(refreshToken, cancellationToken);
 
-            var jsonWebToken = await _jsonWebTokenService.GetFromHttpContext();
+            var jsonWebToken = await _jsonWebTokenService.GetFromHttpContext(cancellationToken);
             if (jsonWebToken == null)
                 throw new CustomException(Localize.Error.JsonWebTokenNotFound);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Received {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
 
-            // Middleware already validated this case
-            // if (jsonWebToken.ExpiresAt < DateTimeOffset.UtcNow)
-            //     throw new CustomException(Localize.Error.JsonWebTokenExpired);
-
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staging deletion of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
 
             var user = await _userService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new CustomException();
-
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Received {user.GetType().Name} {user.Id}"));
+            
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
                 DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
-            await _refreshTokenService.Create(new RefreshToken
+            refreshToken = await _refreshTokenService.Create(new RefreshToken
             {
                 Token = refreshTokenString,
                 ExpiresAt = refreshTokenExpiresAt,
                 UserId = user.Id
             }, cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staged creation of {refreshToken.GetType().Name} {refreshToken.Id}"));
 
             var jsonWebTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(_jsonWebTokenOptions.ExpirySeconds);
             var jsonWebTokenString = _jsonWebTokenService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
@@ -303,7 +337,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            await _jsonWebTokenService.Create(new JsonWebToken
+            jsonWebToken = await _jsonWebTokenService.Create(new JsonWebToken
                 {
                     Token = jsonWebTokenString,
                     ExpiresAt = jsonWebTokenExpiresAt,
@@ -311,6 +345,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
                     UserId = user.Id
                 },
                 cancellationToken);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staged creation of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
 
             if (useCookies)
             {
@@ -334,6 +370,10 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 _httpContext.Response.Cookies.Append(CookieKey.JsonWebToken, jsonWebTokenString,
                     jsonWebTokenCookieOptions);
             }
+            else
+            {
+                warnings.Add(new KeyValuePair<string, string>(Localize.WarningType.Auth, Localize.Warning.XssVulnerable));
+            }
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -345,7 +385,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 JsonWebToken = !useCookies ? jsonWebTokenString : null,
                 JsonWebTokenExpiresAt = jsonWebTokenExpiresAt,
                 RefreshToken = !useCookies ? refreshTokenString : null,
-                RefreshTokenExpiresAt = refreshTokenExpiresAt
+                RefreshTokenExpiresAt = refreshTokenExpiresAt,
+                Warnings = warnings
             };
         }
         catch (Exception e)
@@ -380,33 +421,49 @@ public class AuthHandler : HandlerBase, IAuthHandler
             await _appDbContextAction.BeginTransactionAsync();
 
             var useCookies = data.RefreshToken == null;
+            
+            if (useCookies)
+                _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Client requested to use cookies"));
 
             data.RefreshToken ??=
                 _httpContext.Request.Cookies.SingleOrDefault(_ => _.Key == CookieKey.RefreshToken).Value;
             if (data.RefreshToken == null)
                 throw new CustomException(Localize.Error.RefreshTokenNotProvided);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"RefreshToken presented {data.RefreshToken}"));
 
-            var refreshTokenOld = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
-            if (refreshTokenOld == null)
+            var refreshToken = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
+            if (refreshToken == null)
                 throw new CustomException(Localize.Error.RefreshTokenNotFound);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Received RefreshToken {refreshToken.Id}"));
 
-            if (refreshTokenOld.ExpiresAt < DateTimeOffset.UtcNow)
+            if (refreshToken.ExpiresAt < DateTimeOffset.UtcNow)
                 throw new CustomException(Localize.Error.RefreshTokenExpired);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"RefreshToken is valid until {refreshToken.ExpiresAt}"));
 
-            await _refreshTokenService.Delete(refreshTokenOld, cancellationToken);
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Staging deletion of RefreshToken {refreshToken.Id}"));
+            await _refreshTokenService.Delete(refreshToken, cancellationToken);
 
             var jsonWebToken = await _jsonWebTokenService.GetFromHttpContext();
             if (jsonWebToken == null)
                 throw new CustomException(Localize.Error.JsonWebTokenNotFound);
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Received {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
 
-            if (jsonWebToken.ExpiresAt < DateTimeOffset.UtcNow)
-                throw new CustomException(Localize.Error.JsonWebTokenExpired);
+            // Middleware already validated this case
+            // if (jsonWebToken.ExpiresAt < DateTimeOffset.UtcNow)
+            //     throw new CustomException(Localize.Error.JsonWebTokenExpired);
 
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Staging deletion of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
 
             var user = await _userService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new CustomException();
+            
+            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Received {user.GetType().Name} {user.Id}"));
 
             if (useCookies)
             {
