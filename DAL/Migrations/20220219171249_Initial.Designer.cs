@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220219100437_Initial")]
+    [Migration("20220219171249_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,7 +64,7 @@ namespace DAL.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("EntityPermissionValueBase<UserGroup>");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Base.EntityToGroupMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>
+            modelBuilder.Entity("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,10 +77,10 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("EntityId")
+                    b.Property<Guid>("EntityLeftId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("GroupId")
+                    b.Property<Guid>("EntityRightId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
@@ -88,11 +88,11 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupId");
+                    b.HasIndex("EntityRightId");
 
-                    b.ToTable("EntityToGroupMappingBase<User, UserGroup>");
+                    b.ToTable("EntityToEntityMappingBase<User, UserGroup>");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("EntityToGroupMappingBase<User, UserGroup>");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("EntityToEntityMappingBase<User, UserGroup>");
                 });
 
             modelBuilder.Entity("Domain.Entities.File", b =>
@@ -622,6 +622,33 @@ namespace DAL.Migrations
                         {
                             Id = new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"),
                             Alias = "uint64_file_create_power_needed_system",
+                            CompareMode = 6,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 9,
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("6fc92a20-2405-45e3-95e5-234642d49221"),
+                            Alias = "uint64_filecreate_automap_file.agerating_power",
+                            CompareMode = 6,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 9,
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("dc98ca5c-9e8b-49c7-bf95-6c7664115fc8"),
+                            Alias = "uint64_filecreate_automap_file.agerating_power_needed",
+                            CompareMode = 6,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 9,
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"),
+                            Alias = "uint64_filecreate_automap_file.agerating_power_needed_system",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 9,
@@ -1370,6 +1397,26 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("bde4867e-d661-4ac8-9c92-f2a89b77e153"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            Grant = 18446744073709551615m,
+                            PermissionId = new Guid("6fc92a20-2405-45e3-95e5-234642d49221"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 }
+                        },
+                        new
+                        {
+                            Id = new Guid("8790dd27-c5fc-401d-b385-87741e804e82"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            Grant = 18446744073709551615m,
+                            PermissionId = new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
                             Id = new Guid("9d2e3031-3685-46cd-9df2-fcbfd4ca5d24"),
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
@@ -1920,6 +1967,16 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("2cb0dc86-7027-4739-a5c2-25f7fa7755bf"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
+                            Grant = 18446744073709551615m,
+                            PermissionId = new Guid("6fc92a20-2405-45e3-95e5-234642d49221"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
                             Id = new Guid("c0edebd2-fa11-4882-b411-682588267b22"),
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
@@ -1980,14 +2037,14 @@ namespace DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserEntityMapping", b =>
                 {
-                    b.HasBaseType("Domain.Entities.Base.EntityToGroupMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>");
+                    b.HasBaseType("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>");
 
-                    b.HasIndex("EntityId", "GroupId")
+                    b.HasIndex("EntityLeftId", "EntityRightId")
                         .IsUnique();
 
-                    b.HasDiscriminator().HasValue("UserToUserGroupMapping");
+                    b.HasDiscriminator().HasValue("UserToUserEntityMapping");
                 });
 
             modelBuilder.Entity("Domain.Entities.Base.EntityPermissionValueBase<Domain.Entities.UserGroup>", b =>
@@ -2009,15 +2066,15 @@ namespace DAL.Migrations
                     b.Navigation("Permission");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Base.EntityToGroupMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>
+            modelBuilder.Entity("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>
                 {
-                    b.HasOne("Domain.Entities.UserGroup", "Group")
+                    b.HasOne("Domain.Entities.UserGroup", "EntityRight")
                         .WithMany("GroupToEntityMappings")
-                        .HasForeignKey("GroupId")
+                        .HasForeignKey("EntityRightId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Group");
+                    b.Navigation("EntityRight");
                 });
 
             modelBuilder.Entity("Domain.Entities.File", b =>
@@ -2062,15 +2119,15 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserEntityMapping", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "Entity")
+                    b.HasOne("Domain.Entities.User", "EntityLeft")
                         .WithMany("UserToUserGroupMappings")
-                        .HasForeignKey("EntityId")
+                        .HasForeignKey("EntityLeftId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Entity");
+                    b.Navigation("EntityLeft");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>

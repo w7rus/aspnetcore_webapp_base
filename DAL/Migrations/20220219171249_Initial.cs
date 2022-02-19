@@ -98,28 +98,28 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EntityToGroupMappingBase<User, UserGroup>",
+                name: "EntityToEntityMappingBase<User, UserGroup>",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GroupId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityLeftId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityRightId = table.Column<Guid>(type: "uuid", nullable: false),
                     Discriminator = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EntityToGroupMappingBase<User, UserGroup>", x => x.Id);
+                    table.PrimaryKey("PK_EntityToEntityMappingBase<User, UserGroup>", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EntityToGroupMappingBase<User, UserGroup>_UserGroups_GroupId",
-                        column: x => x.GroupId,
+                        name: "FK_EntityToEntityMappingBase<User, UserGroup>_UserGroups_Entit~",
+                        column: x => x.EntityRightId,
                         principalTable: "UserGroups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EntityToGroupMappingBase<User, UserGroup>_Users_EntityId",
-                        column: x => x.EntityId,
+                        name: "FK_EntityToEntityMappingBase<User, UserGroup>_Users_EntityLeft~",
+                        column: x => x.EntityLeftId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -245,6 +245,7 @@ namespace DAL.Migrations
                     { new Guid("5ee1fd85-4a95-4409-a0d8-96da8ccf855b"), "uint64_file_modify_own_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("634b0339-1e37-4510-b32e-4b549e37fb7e"), "uint64_group_modify_groups_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("6475655d-cb05-4301-94a5-591a23bc4c78"), "uint64_user_communication_private_power", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { new Guid("6fc92a20-2405-45e3-95e5-234642d49221"), "uint64_filecreate_automap_file.agerating_power", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("709a247a-71fc-43c5-9401-98670cefd65f"), "uint64_user_modify_email_own_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("780ebed2-c70e-43f0-95aa-1fd336d170b2"), "uint64_file_modify_power_needed_system", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("7c062589-5c65-448a-a5e8-436993da90ae"), "boolean_user_view_complaints_own", 1, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 1, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
@@ -258,6 +259,7 @@ namespace DAL.Migrations
                     { new Guid("a651fac7-21d1-44b4-9e1f-2f3e7cb5bcd4"), "uint64_user_poke_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("b316b212-6b69-48ea-982b-f986bc478a7a"), "uint64_group_view_groups_own_power_needed", 1, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 1, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("b45ab8a1-609b-4467-a42a-49a63a5b01ed"), "uint64t_user_view_lastipaddress_own_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"), "uint64_filecreate_automap_file.agerating_power_needed_system", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("b89b5856-18dd-49c7-9295-26927214276c"), "uint64_file_read_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("ba26d7c7-fd22-4455-b6fd-8f40b2c1b0cd"), "uint64_user_view_email_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("bdeabe5f-dafb-40e1-8209-2c63f8cbcc3c"), "uint64_user_view_email_own_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
@@ -268,6 +270,7 @@ namespace DAL.Migrations
                     { new Guid("d1344244-8ea2-42f1-bf5c-5803794333b4"), "uint64_any_modify_permission_power", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("d4e32d88-643c-4a34-842a-fb3b8ab502cd"), "uint64_file_read_power_needed_system", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("d5c58e90-3065-4a51-b079-9738954c76e9"), "uint64t_user_view_lastipaddress_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { new Guid("dc98ca5c-9e8b-49c7-bf95-6c7664115fc8"), "uint64_filecreate_automap_file.agerating_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("de10a7db-682f-4c0d-a3c0-482444bffae1"), "uint64_user_communication_private_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"), "uint64_file_create_power_needed_system", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("e83d9d16-3be4-4f17-b26d-d0977e6f2b69"), "uint64_user_modify_email_power_needed", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
@@ -315,6 +318,7 @@ namespace DAL.Migrations
                     { new Guid("212b2344-3d5a-444d-9d73-fe5831bbe15c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("5deb5229-4488-4c2c-974a-a16279b29794"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
                     { new Guid("257082df-0fb3-4960-8c58-78bcec07b384"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("d5c58e90-3065-4a51-b079-9738954c76e9"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
                     { new Guid("2a6a1403-0982-4054-b584-0b998bff20a1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("bf3f4a6e-00ec-4050-a073-6b89fe0de2c6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 1 } },
+                    { new Guid("2cb0dc86-7027-4739-a5c2-25f7fa7755bf"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("6fc92a20-2405-45e3-95e5-234642d49221"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
                     { new Guid("37561812-21e3-46ea-9396-70c9a27ff60c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("780ebed2-c70e-43f0-95aa-1fd336d170b2"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
                     { new Guid("378d2e0f-9262-4ae2-96fa-6bd3b74703c5"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("7c062589-5c65-448a-a5e8-436993da90ae"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 1 } },
                     { new Guid("39112117-413b-4a68-b54a-880eb5e04223"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("40eaaf64-d3df-44e2-b909-314e967931d9"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
@@ -350,6 +354,7 @@ namespace DAL.Migrations
                     { new Guid("79d4fbba-1f23-4f06-b3b5-366253db224f"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("b316b212-6b69-48ea-982b-f986bc478a7a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
                     { new Guid("83c284b0-4724-4855-99f1-c3254f473eaf"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("a378650d-2281-4232-a1bc-798fa8a8914a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
                     { new Guid("8533f3cb-c97b-4ca1-8a88-0c9f1b78b657"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("877c5a27-c6fe-4354-b935-4416a786c5f4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("8790dd27-c5fc-401d-b385-87741e804e82"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
                     { new Guid("8dde5cbb-a050-4215-abd4-236580c7cc6a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("39c6fb5d-7544-4512-a0b9-d77b784a05db"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
                     { new Guid("9316bbf5-2198-438c-8304-bc1f7b128e49"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("0c8db7fa-2f38-404a-8193-78b350f638e3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 1 } },
                     { new Guid("9711f54c-9cbd-4dc3-b178-105c391645e9"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("f099bbd3-cf54-49e8-a1d4-1ccd693253e9"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
@@ -374,6 +379,7 @@ namespace DAL.Migrations
                     { new Guid("b46d829f-65d1-4111-a444-50535b23687c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("de10a7db-682f-4c0d-a3c0-482444bffae1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
                     { new Guid("ba477dc5-f0b5-4405-81c4-74f0000139d9"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("6475655d-cb05-4301-94a5-591a23bc4c78"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
                     { new Guid("bc128d54-75c3-4569-a114-8bfc9cf1d621"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("34ac147d-bbc5-4e21-a7b1-8978c9feec9c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("bde4867e-d661-4ac8-9c92-f2a89b77e153"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), 18446744073709551615m, new Guid("6fc92a20-2405-45e3-95e5-234642d49221"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
                     { new Guid("bec9bc10-b315-473f-8026-17a417acc641"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("39c6fb5d-7544-4512-a0b9-d77b784a05db"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0 } },
                     { new Guid("c0edebd2-fa11-4882-b411-682588267b22"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("49ef7d3b-3d35-45e5-9995-6d4920413a8b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
                     { new Guid("c3e65d57-9ee5-45d3-bfc2-f0c7f47a5572"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), 18446744073709551615m, new Guid("b45ab8a1-609b-4467-a42a-49a63a5b01ed"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
@@ -423,15 +429,15 @@ namespace DAL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_EntityToGroupMappingBase<User, UserGroup>_EntityId_GroupId",
-                table: "EntityToGroupMappingBase<User, UserGroup>",
-                columns: new[] { "EntityId", "GroupId" },
+                name: "IX_EntityToEntityMappingBase<User, UserGroup>_EntityLeftId_Ent~",
+                table: "EntityToEntityMappingBase<User, UserGroup>",
+                columns: new[] { "EntityLeftId", "EntityRightId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_EntityToGroupMappingBase<User, UserGroup>_GroupId",
-                table: "EntityToGroupMappingBase<User, UserGroup>",
-                column: "GroupId");
+                name: "IX_EntityToEntityMappingBase<User, UserGroup>_EntityRightId",
+                table: "EntityToEntityMappingBase<User, UserGroup>",
+                column: "EntityRightId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Files_Name",
@@ -503,7 +509,7 @@ namespace DAL.Migrations
                 name: "EntityPermissionValueBase<UserGroup>");
 
             migrationBuilder.DropTable(
-                name: "EntityToGroupMappingBase<User, UserGroup>");
+                name: "EntityToEntityMappingBase<User, UserGroup>");
 
             migrationBuilder.DropTable(
                 name: "Files");

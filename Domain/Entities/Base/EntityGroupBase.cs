@@ -21,7 +21,7 @@ namespace Domain.Entities.Base
         /// Entity mappings of the group
         /// Multiple-to-multiple table that links entities assigned to the group
         /// </summary>
-        public virtual ICollection<EntityToGroupMappingBase<TEntity, TGroup>> GroupToEntityMappings { get; set; }
+        public virtual ICollection<EntityToEntityMappingBase<TEntity, TGroup>> GroupToEntityMappings { get; set; }
 
         /// <summary>
         /// Permissions value mappings of the group

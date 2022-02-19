@@ -97,7 +97,7 @@ public class UserToUserGroupService : IUserToUserGroupService
         CancellationToken cancellationToken = default
     ) where TEntityCompared : EntityBase<Guid>
     {
-        var userGroups = user.UserToUserGroupMappings.Select(_ => _.Group).ToArray();
+        var userGroups = user.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
         var result = false;
         foreach (var userGroup in userGroups)
         {
@@ -118,7 +118,7 @@ public class UserToUserGroupService : IUserToUserGroupService
         CancellationToken cancellationToken = default
     )
     {
-        var userGroups = user.UserToUserGroupMappings.Select(_ => _.Group).ToArray();
+        var userGroups = user.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
         var result = false;
         foreach (var userGroup in userGroups)
         {

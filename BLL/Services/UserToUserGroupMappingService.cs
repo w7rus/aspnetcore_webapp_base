@@ -12,7 +12,7 @@ namespace BLL.Services;
 /// <summary>
 /// Service to work with UserToUserGroupMapping entity
 /// </summary>
-public interface IUserToUserGroupMappingService : IEntityToGroupMappingServiceBase<UserToUserGroupMapping>
+public interface IUserToUserGroupMappingService : IEntityToGroupMappingServiceBase<UserToUserEntityMapping>
 {
 }
 
@@ -43,25 +43,25 @@ public class UserToUserGroupMappingService : IUserToUserGroupMappingService
 
     #region Methods
 
-    public async Task Save(UserToUserGroupMapping entity, CancellationToken cancellationToken = default)
+    public async Task Save(UserToUserEntityMapping entity, CancellationToken cancellationToken = default)
     {
         _userToUserGroupMappingRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task Delete(UserToUserGroupMapping entity, CancellationToken cancellationToken = default)
+    public async Task Delete(UserToUserEntityMapping entity, CancellationToken cancellationToken = default)
     {
         _userToUserGroupMappingRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<UserToUserGroupMapping> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<UserToUserEntityMapping> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _userToUserGroupMappingRepository.SingleOrDefaultAsync(_ => _.Id == id);
     }
 
-    public async Task<UserToUserGroupMapping> Create(
-        UserToUserGroupMapping entity,
+    public async Task<UserToUserEntityMapping> Create(
+        UserToUserEntityMapping entity,
         CancellationToken cancellationToken = default
     )
     {

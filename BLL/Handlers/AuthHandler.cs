@@ -110,10 +110,10 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var guestUserGroup = await _userGroupService.GetByAliasAsync("Member");
 
-            var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
+            var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserEntityMapping
             {
-                EntityId = user.Id,
-                GroupId = guestUserGroup.Id,
+                EntityLeftId = user.Id,
+                EntityRightId = guestUserGroup.Id,
             }, cancellationToken);
             
             _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignUp), $"Staged creation of {userToUserGroupMapping.GetType().Name} {userToUserGroupMapping.Id}"));

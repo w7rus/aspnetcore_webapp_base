@@ -62,7 +62,7 @@ namespace DAL.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("EntityPermissionValueBase<UserGroup>");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Base.EntityToGroupMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>
+            modelBuilder.Entity("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,10 +75,10 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("EntityId")
+                    b.Property<Guid>("EntityLeftId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("GroupId")
+                    b.Property<Guid>("EntityRightId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
@@ -86,11 +86,11 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupId");
+                    b.HasIndex("EntityRightId");
 
-                    b.ToTable("EntityToGroupMappingBase<User, UserGroup>");
+                    b.ToTable("EntityToEntityMappingBase<User, UserGroup>");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("EntityToGroupMappingBase<User, UserGroup>");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("EntityToEntityMappingBase<User, UserGroup>");
                 });
 
             modelBuilder.Entity("Domain.Entities.File", b =>
@@ -2035,14 +2035,14 @@ namespace DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserEntityMapping", b =>
                 {
-                    b.HasBaseType("Domain.Entities.Base.EntityToGroupMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>");
+                    b.HasBaseType("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>");
 
-                    b.HasIndex("EntityId", "GroupId")
+                    b.HasIndex("EntityLeftId", "EntityRightId")
                         .IsUnique();
 
-                    b.HasDiscriminator().HasValue("UserToUserGroupMapping");
+                    b.HasDiscriminator().HasValue("UserToUserEntityMapping");
                 });
 
             modelBuilder.Entity("Domain.Entities.Base.EntityPermissionValueBase<Domain.Entities.UserGroup>", b =>
@@ -2064,15 +2064,15 @@ namespace DAL.Migrations
                     b.Navigation("Permission");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Base.EntityToGroupMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>
+            modelBuilder.Entity("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>
                 {
-                    b.HasOne("Domain.Entities.UserGroup", "Group")
+                    b.HasOne("Domain.Entities.UserGroup", "EntityRight")
                         .WithMany("GroupToEntityMappings")
-                        .HasForeignKey("GroupId")
+                        .HasForeignKey("EntityRightId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Group");
+                    b.Navigation("EntityRight");
                 });
 
             modelBuilder.Entity("Domain.Entities.File", b =>
@@ -2117,15 +2117,15 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserEntityMapping", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "Entity")
+                    b.HasOne("Domain.Entities.User", "EntityLeft")
                         .WithMany("UserToUserGroupMappings")
-                        .HasForeignKey("EntityId")
+                        .HasForeignKey("EntityLeftId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Entity");
+                    b.Navigation("EntityLeft");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
