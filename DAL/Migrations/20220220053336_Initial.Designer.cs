@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220219171249_Initial")]
+    [Migration("20220220053336_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2037,14 +2037,14 @@ namespace DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToUserEntityMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
                 {
                     b.HasBaseType("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>");
 
                     b.HasIndex("EntityLeftId", "EntityRightId")
                         .IsUnique();
 
-                    b.HasDiscriminator().HasValue("UserToUserEntityMapping");
+                    b.HasDiscriminator().HasValue("UserToUserGroupMapping");
                 });
 
             modelBuilder.Entity("Domain.Entities.Base.EntityPermissionValueBase<Domain.Entities.UserGroup>", b =>
@@ -2119,7 +2119,7 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToUserEntityMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
                 {
                     b.HasOne("Domain.Entities.User", "EntityLeft")
                         .WithMany("UserToUserGroupMappings")

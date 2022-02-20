@@ -2035,14 +2035,14 @@ namespace DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToUserEntityMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
                 {
                     b.HasBaseType("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>");
 
                     b.HasIndex("EntityLeftId", "EntityRightId")
                         .IsUnique();
 
-                    b.HasDiscriminator().HasValue("UserToUserEntityMapping");
+                    b.HasDiscriminator().HasValue("UserToUserGroupMapping");
                 });
 
             modelBuilder.Entity("Domain.Entities.Base.EntityPermissionValueBase<Domain.Entities.UserGroup>", b =>
@@ -2117,7 +2117,7 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToUserEntityMapping", b =>
+            modelBuilder.Entity("Domain.Entities.UserToUserGroupMapping", b =>
                 {
                     b.HasOne("Domain.Entities.User", "EntityLeft")
                         .WithMany("UserToUserGroupMappings")

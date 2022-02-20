@@ -62,7 +62,7 @@ namespace Domain.Entities
         /// Group mappings of the entity
         /// Multiple-to-multiple table that links groups assigned to the entity
         /// </summary>
-        public virtual ICollection<UserToUserEntityMapping> UserToUserGroupMappings { get; set; }
+        public virtual ICollection<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
 
         /// <summary>
         /// Profile of a user (if exists)

@@ -110,7 +110,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var guestUserGroup = await _userGroupService.GetByAliasAsync("Member");
 
-            var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserEntityMapping
+            var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
             {
                 EntityLeftId = user.Id,
                 EntityRightId = guestUserGroup.Id,

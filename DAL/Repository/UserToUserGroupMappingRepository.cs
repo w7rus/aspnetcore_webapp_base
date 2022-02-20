@@ -5,11 +5,11 @@ using Domain.Entities;
 
 namespace DAL.Repository
 {
-    public interface IUserToUserGroupMappingRepository : IRepositoryBase<UserToUserEntityMapping, Guid>
+    public interface IUserToUserGroupMappingRepository : IRepositoryBase<UserToUserGroupMapping, Guid>
     {
     }
 
-    public class UserToUserGroupMappingRepository : RepositoryBase<UserToUserEntityMapping, Guid>,
+    public class UserToUserGroupMappingRepository : RepositoryBase<UserToUserGroupMapping, Guid>,
         IUserToUserGroupMappingRepository
     {
         public UserToUserGroupMappingRepository(AppDbContext appDbContext) : base(appDbContext)

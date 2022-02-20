@@ -26,7 +26,7 @@ namespace DAL.Data
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<UserToUserEntityMapping> UserToUserGroupMappings { get; set; }
+        public DbSet<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
         public DbSet<JsonWebToken> JsonWebTokens { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<File> Files { get; set; }
@@ -89,7 +89,7 @@ namespace DAL.Data
             public List<UserGroup> UserGroups { get; set; }
             public List<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
             public List<UserProfile> UserProfiles { get; set; }
-            public List<UserToUserEntityMapping> UserToUserGroupMappings { get; set; }
+            public List<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
             public List<JsonWebToken> JsonWebTokens { get; set; }
             public List<RefreshToken> RefreshTokens { get; set; }
         }
@@ -103,7 +103,7 @@ namespace DAL.Data
                 UserGroups = new List<UserGroup>(),
                 UserGroupPermissionValues = new List<UserGroupPermissionValue>(),
                 UserProfiles = new List<UserProfile>(),
-                UserToUserGroupMappings = new List<UserToUserEntityMapping>(),
+                UserToUserGroupMappings = new List<UserToUserGroupMapping>(),
                 JsonWebTokens = new List<JsonWebToken>(),
                 RefreshTokens = new List<RefreshToken>()
             };
@@ -1871,7 +1871,7 @@ namespace DAL.Data
 
             #region UserToUserGroupMappings
             
-            var userToUserGroupMappings = new List<UserToUserEntityMapping>();
+            var userToUserGroupMappings = new List<UserToUserGroupMapping>();
 
             appDbContextSeedLists.UserToUserGroupMappings.AddRange(userToUserGroupMappings);
 
@@ -1944,7 +1944,7 @@ namespace DAL.Data
 
             #region UserToUserGroupMappings
 
-            builder.Entity<UserToUserEntityMapping>(_ =>
+            builder.Entity<UserToUserGroupMapping>(_ =>
             {
                 _.HasIndex(__ => new {
                     EntityId = __.EntityLeftId,
