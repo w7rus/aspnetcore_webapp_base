@@ -8,26 +8,33 @@ namespace Domain.Entities
     public class UserProfile : EntityBase<Guid>
     {
         /// <summary>
-        /// Username of a user
+        /// Username of a UserProfile
         /// </summary>
         public string Username { get; set; }
 
         /// <summary>
-        /// First name of a user
+        /// First name of a UserProfile
         /// </summary>
         public string FirstName { get; set; }
 
         /// <summary>
-        /// Last name of a user
+        /// Last name of a UserProfile
         /// </summary>
         public string LastName { get; set; }
 
         /// <summary>
-        /// Description of a user
+        /// Description of a UserProfile
         /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// Id of a User this UserProfile belongs to
+        /// </summary>
         public Guid UserId { get; set; }
+        
+        /// <summary>
+        /// User this UserProfile belongs to
+        /// </summary>
         public virtual User User { get; set; }
     }
 }

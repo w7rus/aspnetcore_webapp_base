@@ -9,52 +9,54 @@ namespace Domain.Entities
     public class User : EntityBase<Guid>
     {
         /// <summary>
-        /// Email of a user
+        /// Email of a User
         /// </summary>
         public string Email { get; set; }
 
         /// <summary>
-        /// Is user email verified?
+        /// Is Users email validated?
         /// </summary>
         public bool IsEmailValidated { get; set; }
 
         /// <summary>
-        /// Phone number of a user
+        /// Phone number of a User
         /// </summary>
         public string PhoneNumber { get; set; }
 
         /// <summary>
-        /// Is user phone number verified?
+        /// Is Users phone number validated?
         /// </summary>
         public bool IsPhoneNumberVerified { get; set; }
 
         /// <summary>
-        /// Password of a user
+        /// Password of a User
         /// </summary>
         public string Password { get; set; }
 
         /// <summary>
-        /// Amount of failed sign in attempts
+        /// Failed sign in attempts count of a User
         /// </summary>
         public int FailedSignInAttempts { get; set; }
 
         /// <summary>
-        /// Time until sign in is disabled for a user
+        /// Date until which sign in is disabled for a User
         /// </summary>
         public DateTimeOffset? DisableSignInUntil { get; set; }
 
+        //TODO: Make use of this field (Also auth refresh)
         /// <summary>
-        /// Time of last sign in of a user
+        /// Date of last sign in of a User
         /// </summary>
         public DateTimeOffset LastSignIn { get; set; }
 
+        //TODO: Make use of this field (Add middleware)
         /// <summary>
-        /// Time of last activity of a user
+        /// Date of last activity of a User
         /// </summary>
         public DateTimeOffset LastActivity { get; set; }
 
         /// <summary>
-        /// Last IP Address of a user
+        /// Last IP Address of a User
         /// </summary>
         public string LastIpAddress { get; set; }
 

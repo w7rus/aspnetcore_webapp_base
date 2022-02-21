@@ -7,21 +7,28 @@ namespace Domain.Entities
     public class JsonWebToken : EntityBase<Guid>
     {
         /// <summary>
-        /// String representation of a token
+        /// String representation of a JsonWebToken
         /// </summary>
         public string Token { get; set; }
 
         /// <summary>
-        /// Date past which JWT token counts as expired
+        /// Date past which JsonWebToken expires
         /// </summary>
         public DateTimeOffset ExpiresAt { get; set; }
 
         /// <summary>
-        /// Date past which JWT token must be removed
+        /// Date past which JsonWebToken is pruneable
         /// </summary>
         public DateTimeOffset DeleteAfter { get; set; }
 
+        /// <summary>
+        /// Id of a User this JsonWebToken belongs to
+        /// </summary>
         public Guid UserId { get; set; }
+        
+        /// <summary>
+        /// User this JsonWebToken belongs to
+        /// </summary>
         public virtual User User { get; set; }
     }
 }

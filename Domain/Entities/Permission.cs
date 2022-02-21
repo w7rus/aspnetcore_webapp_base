@@ -12,17 +12,19 @@ namespace Domain.Entities
     public class Permission : EntityBase<Guid>
     {
         /// <summary>
-        /// Alias of the permission. Unique field.
+        /// Alias of the Permission. Unique field.
         /// </summary>
         public string Alias { get; set; }
 
         /// <summary>
-        /// Type of the permission. Comparable permission Type must equal!
+        /// Type of the Permission.
+        /// Compared permissions Type must equal!
         /// </summary>
         public PermissionType Type { get; set; }
 
         /// <summary>
-        /// Compare mode of the permission. Defines how permission values which reference this permission are compared against the other permission values. Comparable permission CompareMode must equal!
+        /// Compare mode of the permission. Defines how permission values are compared against each other.
+        /// Compared permissions CompareMode must equal!
         /// </summary>
         public PermissionCompareMode CompareMode { get; set; }
     }

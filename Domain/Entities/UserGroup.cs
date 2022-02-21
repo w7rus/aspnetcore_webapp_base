@@ -6,7 +6,7 @@ namespace Domain.Entities
     public class UserGroup : EntityGroupBase<User, UserGroup>
     {
         /// <summary>
-        /// Flag indicating this group is system
+        /// Is UserGroup System?
         /// </summary>
         public bool IsSystem { get; set; }
     }
