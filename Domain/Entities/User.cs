@@ -61,8 +61,7 @@ namespace Domain.Entities
         public string LastIpAddress { get; set; }
 
         /// <summary>
-        /// Group mappings of the entity
-        /// Multiple-to-multiple table that links groups assigned to the entity
+        /// User mappings to UserGroups
         /// </summary>
         public virtual ICollection<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
 
