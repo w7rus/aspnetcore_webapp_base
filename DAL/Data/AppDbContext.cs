@@ -37,7 +37,7 @@ namespace DAL.Data
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            Database.Migrate();
+            // Database.Migrate();
         }
 
         #endregion

@@ -122,7 +122,7 @@ namespace API
         {
             Log.Logger.Debug("Configure!");
 
-            appDbContext.Database.Migrate();
+            // appDbContext.Database.Migrate();
 
             if (env.IsDevelopment())
             {
