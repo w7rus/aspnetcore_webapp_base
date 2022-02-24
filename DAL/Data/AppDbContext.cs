@@ -50,12 +50,10 @@ namespace DAL.Data
 
         public DbSet<CompanyProductToCategoryMapping> CompanyProductToCategoryMappings { get; set; }
         public DbSet<CompanyProductToDiscountMapping> CompanyProductToDiscountMappings { get; set; }
-
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<OperatingTime> OperatingTimes { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductGroup> ProductGroups { get; set; }
         public DbSet<ProductGroupToCategoryMapping> ProductGroupToCategoryMappings { get; set; }
@@ -87,7 +85,6 @@ namespace DAL.Data
         public DbSet<StoreProductGroupToStoreProductMapping> StoreProductGroupToStoreProductMappings { get; set; }
         public DbSet<StoreProductToCategoryMapping> StoreProductToCategoryMappings { get; set; }
         public DbSet<StoreProductToDiscountMapping> StoreProductToDiscountMappings { get; set; }
-
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<TaxCategory> TaxCategories { get; set; }
         public DbSet<UserToCompanyMapping> UserToCompanyMappings { get; set; }

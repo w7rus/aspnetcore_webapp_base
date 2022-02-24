@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DAL.Data;
 using DAL.Repository.Base;
 using Domain.Entities.Edition_Shop;
