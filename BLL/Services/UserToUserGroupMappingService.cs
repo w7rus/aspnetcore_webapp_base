@@ -12,7 +12,7 @@ namespace BLL.Services;
 /// <summary>
 /// Service to work with UserToUserGroupMapping entity
 /// </summary>
-public interface IUserToUserGroupMappingService : IEntityToGroupMappingServiceBase<UserToUserGroupMapping>
+public interface IUserToUserGroupMappingService : IEntityToEntityMappingServiceBase<UserToUserGroupMapping>
 {
 }
 

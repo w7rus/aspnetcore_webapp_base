@@ -9,7 +9,7 @@ namespace BLL.Services.Base;
 /// Base service every entity that utilizes grouping must implement
 /// </summary>
 /// <typeparam name="TEntity"></typeparam>
-public interface IEntityToGroupMappingServiceBase<TEntity> : IEntityServiceBase<TEntity>
+public interface IEntityToEntityMappingServiceBase<TEntity> : IEntityServiceBase<TEntity>
     where TEntity : EntityBase<Guid>
 {
 }
