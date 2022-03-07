@@ -40,6 +40,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Controllers\Edition_Shop" />
         <Folder Include="Logs" />
     </ItemGroup>
 

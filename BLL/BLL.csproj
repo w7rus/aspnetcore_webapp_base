@@ -21,4 +21,10 @@
         <ProjectReference Include="..\DTO\DTO.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="BackgroundServices\Edition_Shop" />
+      <Folder Include="Handlers\Edition_Shop" />
+      <Folder Include="Maps\Edition_Shop" />
+    </ItemGroup>
+
 </Project>
