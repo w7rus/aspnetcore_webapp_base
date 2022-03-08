@@ -146,5 +146,21 @@ public static class Localize
             $"[{assemblyName}] (Error) {Environment.NewLine + message}";
 
         #endregion
+
+        #region Job
+
+        public static string JobExecuted(string assemblyName) =>
+            $"[{assemblyName}] Executed";
+        
+        public static string JobAborted(string assemblyName) =>
+            $"[{assemblyName}] Aborted";
+
+        public static string JobCompleted(string assemblyName) =>
+            $"[{assemblyName}] Completed";
+
+        public static string JobError(string assemblyName, string message) =>
+            $"[{assemblyName}] Error {Environment.NewLine + message}";
+
+        #endregion
     }
 }

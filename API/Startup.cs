@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using API.AuthHandlers;
 using API.Extensions;
 using API.Middleware;
+using BLL.Jobs;
 using BLL.Maps;
+using BLL.Services;
 using Common.Helpers;
 using Common.Models;
 using Common.Options;
 using DAL.Data;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.Events;
 
 namespace API
 {
@@ -36,7 +42,7 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCustomLogging(Log.Logger, _env);
+            services.AddCustomLogging(_env, Configuration);
 
             services.AddCustomConfigureOptions();
 
@@ -107,34 +113,60 @@ namespace API
                     .AddScheme<JsonWebTokenAuthenticationSchemeOptions, JsonWebTokenExpiredAuthenticationHandler>(
                         AuthenticationSchemes.JsonWebTokenExpired, null!);
             }
-            
+
             services.AddAutoMapper(typeof(AutoMapperProfile));
 
             services.AddCustomDbContext(Configuration);
             services.AddRepositories();
             services.AddServices();
+            services.AddAdvancedServices();
             services.AddHandlers();
-            services.AddBackgroundServices();
+            // services.AddBackgroundServices();
+
+            services.AddCustomHangfire(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppDbContext appDbContext)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            AppDbContext appDbContext,
+            IBackgroundJobClient backgroundJobClient,
+            IRecurringJobManager recurringJobManager,
+            IHostApplicationLifetime hostApplicationLifetime
+        )
         {
-            Log.Logger.Debug("Configure!");
-
-            // appDbContext.Database.Migrate();
+            Log.Logger.Information("Startup.Configure()");
+            Log.Logger.Information($"EnvironmentName: {env.EnvironmentName}");
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                Log.Logger.Information($"Add Swagger & SwaggerUI");
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+
+                Log.Logger.Information($"Add HangfireDashboard");
+                app.UseHangfireDashboard();
             }
             else
             {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
+            app.UseSerilogRequestLogging(options =>
+            {
+                options.MessageTemplate =
+                    "[{TraceId}] {RequestProtocol} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+                options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+                {
+                    diagnosticContext.Set("ConnectionId", httpContext.Connection.Id);
+                    diagnosticContext.Set("TraceId", httpContext.TraceIdentifier);
+                    diagnosticContext.Set("RequestProtocol", httpContext.Request.Protocol);
+                };
+            });
 
             // app.UseHttpsRedirection();
 
@@ -145,7 +177,15 @@ namespace API
 
             app.UseCors();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHangfireDashboard();
+            });
+
+            Log.Logger.Information($"Add/Update Recurring Jobs for Hangfire");
+            recurringJobManager.AddOrUpdate<IJsonWebTokenJobs>(RecurringJobId.JsonWebTokenPurge,
+                _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Minutely);
         }
     }
 }

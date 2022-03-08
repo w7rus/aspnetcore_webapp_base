@@ -12,7 +12,7 @@ namespace BLL.Services.Advanced;
 /// <summary>
 /// Advanced Service for User and UserGroup management
 /// </summary>
-public interface IUserToUserGroupService
+public interface IUserToUserGroupAdvancedService
 {
     /// <summary>
     /// Authorizes PermissionValue.Value to another PermissionValue.Value from all groups given user is member of
@@ -51,12 +51,12 @@ public interface IUserToUserGroupService
     );
 }
 
-public class UserToUserGroupService : IUserToUserGroupService
+public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
 {
     #region Fields
 
-    private readonly ILogger<UserToUserGroupService> _logger;
-    private readonly IAuthorizePermissionValueService _authorizePermissionValueService;
+    private readonly ILogger<UserToUserGroupAdvancedService> _logger;
+    private readonly IPermissionAdvancedService _permissionAdvancedService;
     private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
     private readonly IUserToUserGroupMappingService _userToUserGroupMappingService;
     private readonly IUserGroupService _userGroupService;
@@ -67,9 +67,9 @@ public class UserToUserGroupService : IUserToUserGroupService
 
     #region Ctor
 
-    public UserToUserGroupService(
-        ILogger<UserToUserGroupService> logger,
-        IAuthorizePermissionValueService authorizePermissionValueService,
+    public UserToUserGroupAdvancedService(
+        ILogger<UserToUserGroupAdvancedService> logger,
+        IPermissionAdvancedService permissionAdvancedService,
         IUserGroupPermissionValueService userGroupPermissionValueService,
         IUserToUserGroupMappingService userToUserGroupMappingService,
         IUserGroupService userGroupService,
@@ -78,7 +78,7 @@ public class UserToUserGroupService : IUserToUserGroupService
     )
     {
         _logger = logger;
-        _authorizePermissionValueService = authorizePermissionValueService;
+        _permissionAdvancedService = permissionAdvancedService;
         _userGroupPermissionValueService = userGroupPermissionValueService;
         _userToUserGroupMappingService = userToUserGroupMappingService;
         _userGroupService = userGroupService;
@@ -104,7 +104,7 @@ public class UserToUserGroupService : IUserToUserGroupService
             if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, permission.Id,
                     cancellationToken) is var permissionValue && permissionValue == null)
                 continue;
-            result |= _authorizePermissionValueService.Authorize(permissionValue,
+            result |= _permissionAdvancedService.Authorize(permissionValue,
                 entityPermissionValueCompared);
         }
 
@@ -125,7 +125,7 @@ public class UserToUserGroupService : IUserToUserGroupService
             if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, permission.Id,
                     cancellationToken) is var permissionValue && permissionValue == null)
                 continue;
-            result |= _authorizePermissionValueService.Authorize(permissionValue,
+            result |= _permissionAdvancedService.Authorize(permissionValue,
                 _valueCompared);
         }
 

@@ -75,13 +75,6 @@ namespace BLL.Services
             IEnumerable<Claim> claims,
             DateTime expires
         );
-
-        /// <summary>
-        /// Gets entity by HttpContext authorization data
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task<JsonWebToken> GetFromHttpContext(CancellationToken cancellationToken = default);
     }
 
     public class JsonWebTokenService : IJsonWebTokenService
@@ -91,7 +84,6 @@ namespace BLL.Services
         private readonly ILogger<JsonWebTokenService> _logger;
         private readonly IJsonWebTokenRepository _jsonWebTokenRepository;
         private readonly IAppDbContextAction _appDbContextAction;
-        private readonly HttpContext _httpContext;
 
         #endregion
 
@@ -100,14 +92,12 @@ namespace BLL.Services
         public JsonWebTokenService(
             ILogger<JsonWebTokenService> logger,
             IJsonWebTokenRepository jsonWebTokenRepository,
-            IAppDbContextAction appDbContextAction,
-            IHttpContextAccessor httpContextAccessor
+            IAppDbContextAction appDbContextAction
         )
         {
             _logger = logger;
             _jsonWebTokenRepository = jsonWebTokenRepository;
             _appDbContextAction = appDbContextAction;
-            _httpContext = httpContextAccessor.HttpContext;
         }
 
         #endregion
@@ -186,15 +176,6 @@ namespace BLL.Services
                 signingCredentials: signingCredentials);
 
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-        }
-
-        public async Task<JsonWebToken> GetFromHttpContext(CancellationToken cancellationToken = default)
-        {
-            if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.JsonWebTokenId)?.Value,
-                    out var jsonWebTokenId))
-                throw new ApplicationException(Localize.Error.JsonWebTokenIdRetrievalFailed);
-
-            return await GetByIdAsync(jsonWebTokenId, cancellationToken);
         }
 
         #endregion

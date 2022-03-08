@@ -9,7 +9,7 @@ namespace BLL.Services.Advanced;
 /// <summary>
 /// Advanced Service to authorize actions based on comparison of PermissionValues
 /// </summary>
-public interface IAuthorizePermissionValueService
+public interface IPermissionAdvancedService
 {
     /// <summary>
     /// Authorizes PermissionValue.Value to another PermissionValue.Value
@@ -51,17 +51,17 @@ public interface IAuthorizePermissionValueService
     ) where TEntity : EntityBase<Guid> where TEntityCompared : EntityBase<Guid>;
 }
 
-public class AuthorizePermissionValueService : IAuthorizePermissionValueService
+public class PermissionAdvancedService : IPermissionAdvancedService
 {
     #region Fields
 
-    private readonly ILogger<AuthorizePermissionValueService> _logger;
+    private readonly ILogger<PermissionAdvancedService> _logger;
 
     #endregion
 
     #region Ctor
 
-    public AuthorizePermissionValueService(ILogger<AuthorizePermissionValueService> logger)
+    public PermissionAdvancedService(ILogger<PermissionAdvancedService> logger)
     {
         _logger = logger;
     }

@@ -45,9 +45,9 @@ public class AutoMapperProfile : Profile
     {
         var userToUserGroupService = (context
                                           .Options
-                                          .ServiceCtor(typeof(IUserToUserGroupService)) ??
+                                          .ServiceCtor(typeof(IUserToUserGroupAdvancedService)) ??
                                       throw new CustomException(Localize.Error.DependencyInjectionFailed)) as
-                                     IUserToUserGroupService ??
+                                     IUserToUserGroupAdvancedService ??
                                      throw new CustomException(Localize.Error.ObjectCastFailed);
 
         //Get user from the context items
@@ -109,9 +109,9 @@ public class AutoMapperProfile : Profile
     {
         var userToUserGroupService = (context
                                           .Options
-                                          .ServiceCtor(typeof(IUserToUserGroupService)) ??
+                                          .ServiceCtor(typeof(IUserToUserGroupAdvancedService)) ??
                                       throw new CustomException(Localize.Error.DependencyInjectionFailed)) as
-                                     IUserToUserGroupService ??
+                                     IUserToUserGroupAdvancedService ??
                                      throw new CustomException(Localize.Error.ObjectCastFailed);
 
         //Get user from the context items

@@ -4,11 +4,14 @@ using API.AuthHandlers;
 using API.Configuration;
 using BLL.BackgroundServices;
 using BLL.Handlers;
+using BLL.Jobs;
 using BLL.Services;
 using BLL.Services.Advanced;
 using Common.Options;
 using DAL.Data;
 using DAL.Repository;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -44,10 +47,6 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddServices(this IServiceCollection serviceCollection)
     {
-        //Advanced
-        serviceCollection.AddScoped<IAuthorizePermissionValueService, AuthorizePermissionValueService>();
-        serviceCollection.AddScoped<IUserToUserGroupService, UserToUserGroupService>();
-        
         serviceCollection.AddScoped<IFileService, FileService>();
         serviceCollection.AddScoped<IJsonWebTokenService, JsonWebTokenService>();
         serviceCollection.AddScoped<IPermissionService, PermissionService>();
@@ -57,6 +56,16 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserProfileService, UserProfileService>();
         serviceCollection.AddScoped<IUserService, UserService>();
         serviceCollection.AddScoped<IUserToUserGroupMappingService, UserToUserGroupMappingService>();
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddAdvancedServices(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddScoped<IPermissionAdvancedService, PermissionAdvancedService>();
+        serviceCollection.AddScoped<IJsonWebTokenAdvancedService, JsonWebTokenAdvancedService>();
+        serviceCollection.AddScoped<IUserAdvancedService, UserAdvancedService>();
+        serviceCollection.AddScoped<IUserToUserGroupAdvancedService, UserToUserGroupAdvancedService>();
 
         return serviceCollection;
     }
@@ -72,7 +81,14 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddBackgroundServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService<ConsumeScopedServiceHostedService>();
-        serviceCollection.AddScoped<IScopedProcessingService, JsonWebTokenBackgroundService>();
+        // serviceCollection.AddScoped<IScopedProcessingService, JsonWebTokenBackgroundService>();
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddJobs(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddScoped<IJsonWebTokenJobs, JsonWebTokenJobs>();
 
         return serviceCollection;
     }
@@ -96,7 +112,7 @@ public static class ServiceCollectionExtensions
         return serviceCollection;
     }
 
-    public static IServiceCollection AddDbContextTest(
+    public static IServiceCollection AddCustomDbContextTest(
         this IServiceCollection serviceCollection,
         IConfiguration configuration
     )
@@ -111,6 +127,38 @@ public static class ServiceCollectionExtensions
                     _ => _.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery))
                 .UseLazyLoadingProxies();
         });
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddCustomHangfire(
+        this IServiceCollection serviceCollection,
+        IConfiguration configuration
+    )
+    {
+        serviceCollection.AddHangfire(_ =>
+            _.SetDataCompatibilityLevel(CompatibilityLevel.Version_170).UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(configuration.GetConnectionString("Hangfire"), new PostgreSqlStorageOptions
+                {
+                    QueuePollInterval = TimeSpan.FromMinutes(5)
+                }));
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddCustomHangfireTest(
+        this IServiceCollection serviceCollection,
+        IConfiguration configuration
+    )
+    {
+        serviceCollection.AddHangfire(_ =>
+            _.SetDataCompatibilityLevel(CompatibilityLevel.Version_170).UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(configuration.GetConnectionString("HangfireTest"), new PostgreSqlStorageOptions
+                {
+                    QueuePollInterval = TimeSpan.FromMinutes(5)
+                }));
 
         return serviceCollection;
     }
@@ -143,40 +191,29 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddCustomLogging(
         this IServiceCollection serviceCollection,
-        Serilog.ILogger logger,
-        IWebHostEnvironment env
+        IHostEnvironment env,
+        IConfiguration configuration
     )
     {
         var loggerConfiguration = new LoggerConfiguration()
-            .MinimumLevel.Verbose()
+            .MinimumLevel.Information()
+            .ReadFrom.Configuration(configuration)
             .Enrich.FromLogContext()
-            .WriteTo.Logger(_ =>
-            {
-                _.MinimumLevel.Error()
-                    .WriteTo.File(
-                        Path.Combine(Directory.GetCurrentDirectory(), "Logs",
-                            $"log_error_{DateTime.UtcNow:yyyy_mm_dd}.log"),
-                        LogEventLevel.Error, rollingInterval: RollingInterval.Day);
-            });
-
-
-        if (env.IsDevelopment())
-        {
-            loggerConfiguration
-                .WriteTo.Logger(_ =>
-                {
-                    _.MinimumLevel.Information()
-                        .WriteTo.Console()
-                        .WriteTo.File(
-                            Path.Combine(Directory.GetCurrentDirectory(), "Logs",
-                                $"log_debug_{DateTime.UtcNow:yyyy_mm_dd}.log"),
-                            rollingInterval: RollingInterval.Day);
-                });
-        }
+            .WriteTo.Console()
+            .WriteTo.File(
+                Path.Combine(env.ContentRootPath, "Logs", $"log_error_{DateTime.UtcNow:yyyy_mm_dd}.log"),
+                LogEventLevel.Error, rollingInterval: RollingInterval.Day, buffered: true,
+                flushToDiskInterval: TimeSpan.FromMinutes(1), rollOnFileSizeLimit: true,
+                fileSizeLimitBytes: 4194304)
+            .WriteTo.File(
+                Path.Combine(env.ContentRootPath, "Logs", $"log_information_{DateTime.UtcNow:yyyy_mm_dd}.log"),
+                LogEventLevel.Information, rollingInterval: RollingInterval.Day, buffered: true,
+                flushToDiskInterval: TimeSpan.FromMinutes(1), rollOnFileSizeLimit: true,
+                fileSizeLimitBytes: 4194304);
 
         Log.Logger = loggerConfiguration.CreateLogger();
 
-        serviceCollection.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+        serviceCollection.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(Log.Logger, true));
 
         serviceCollection.AddSingleton(Log.Logger);
 

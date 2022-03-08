@@ -78,13 +78,6 @@ public interface IUserService : IEntityServiceBase<User>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyCollection<User>> GetByLastIpAddress(string ipAddress, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Gets entity by HttpContext authorization data
-    /// </summary>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<User> GetFromHttpContext(CancellationToken cancellationToken = default);
 }
 
 public class UserService : IUserService
@@ -94,7 +87,6 @@ public class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     private readonly IUserRepository _userRepository;
     private readonly IAppDbContextAction _appDbContextAction;
-    private readonly HttpContext _httpContext;
 
     #endregion
 
@@ -103,14 +95,12 @@ public class UserService : IUserService
     public UserService(
         ILogger<UserService> logger,
         IUserRepository userRepository,
-        IAppDbContextAction appDbContextAction,
-        IHttpContextAccessor httpContextAccessor
+        IAppDbContextAction appDbContextAction
     )
     {
         _logger = logger;
         _userRepository = userRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion
@@ -187,15 +177,6 @@ public class UserService : IUserService
     )
     {
         return await _userRepository.QueryMany(_ => _.LastIpAddress == ipAddress).ToArrayAsync(cancellationToken);
-    }
-
-    public async Task<User> GetFromHttpContext(CancellationToken cancellationToken = default)
-    {
-        if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.UserId)?.Value,
-                out var userId))
-            throw new CustomException(Localize.Error.UserIdRetrievalFailed);
-
-        return await GetByIdAsync(userId, cancellationToken);
     }
 
     #endregion

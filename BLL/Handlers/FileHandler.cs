@@ -42,7 +42,8 @@ public class FileHandler : HandlerBase, IFileHandler
     private readonly IPermissionService _permissionService;
     private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
     private readonly IUserGroupService _userGroupService;
-    private readonly IUserToUserGroupService _userToUserGroupService;
+    private readonly IUserToUserGroupAdvancedService _userToUserGroupAdvancedService;
+    private readonly IUserAdvancedService _userAdvancedService;
 
     #endregion
 
@@ -58,7 +59,8 @@ public class FileHandler : HandlerBase, IFileHandler
         IPermissionService permissionService,
         IUserGroupPermissionValueService userGroupPermissionValueService,
         IUserGroupService userGroupService,
-        IUserToUserGroupService userToUserGroupService
+        IUserToUserGroupAdvancedService userToUserGroupAdvancedService,
+        IUserAdvancedService userAdvancedService
     )
     {
         _fullName = GetType().FullName;
@@ -70,7 +72,8 @@ public class FileHandler : HandlerBase, IFileHandler
         _permissionService = permissionService;
         _userGroupPermissionValueService = userGroupPermissionValueService;
         _userGroupService = userGroupService;
-        _userToUserGroupService = userToUserGroupService;
+        _userToUserGroupAdvancedService = userToUserGroupAdvancedService;
+        _userAdvancedService = userAdvancedService;
         _httpContext = httpContextAccessor.HttpContext;
     }
 
@@ -93,7 +96,7 @@ public class FileHandler : HandlerBase, IFileHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new CustomException();
             
@@ -113,13 +116,13 @@ public class FileHandler : HandlerBase, IFileHandler
             
             //Get file creation comparable system PermissionValue
             var permissionValueComparedSystem =
-                await _userToUserGroupService.GetSystemPermissionValueByAlias("uint64_file_create_power_needed_system",
+                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias("uint64_file_create_power_needed_system",
                     cancellationToken);
             
             _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Received System {permissionValueComparedSystem.GetType().Name} {permissionValueComparedSystem.Id}"));
             
             //Authorize file creation
-            if (!await _userToUserGroupService.AuthorizePermission(user, permission, permissionValueComparedSystem,
+            if (!await _userToUserGroupAdvancedService.AuthorizePermission(user, permission, permissionValueComparedSystem,
                     cancellationToken))
                 throw new CustomException(Localize.Error.PermissionInsufficientPermissions);
             
@@ -133,7 +136,7 @@ public class FileHandler : HandlerBase, IFileHandler
 
             //Get AgeRating model field mapping comparable system PermissionValue
             var permissionValueFileCreateAutomapFileAgeratingComparedSystem =
-                await _userToUserGroupService.GetSystemPermissionValueByAlias(
+                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
                     "uint64_filecreate_automap_file.agerating_power_needed_system");
             
             _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Create), $"Received System PermissionValue {permissionValueFileCreateAutomapFileAgeratingComparedSystem.Id}"));

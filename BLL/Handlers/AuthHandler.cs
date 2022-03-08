@@ -48,6 +48,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
     private readonly MiscOptions _miscOptions;
     private readonly IUserToUserGroupMappingService _userToUserGroupMappingService;
     private readonly IUserGroupService _userGroupService;
+    private readonly IUserAdvancedService _userAdvancedService;
+    private readonly IJsonWebTokenAdvancedService _jsonWebTokenAdvancedService;
 
     #endregion
 
@@ -64,7 +66,9 @@ public class AuthHandler : HandlerBase, IAuthHandler
         IHttpContextAccessor httpContextAccessor,
         IOptions<MiscOptions> miscOptions,
         IUserToUserGroupMappingService userToUserGroupMappingService,
-        IUserGroupService userGroupService
+        IUserGroupService userGroupService,
+        IUserAdvancedService userAdvancedService,
+        IJsonWebTokenAdvancedService jsonWebTokenAdvancedService
     )
     {
         _fullName = GetType().FullName;
@@ -75,6 +79,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
         _userService = userService;
         _userToUserGroupMappingService = userToUserGroupMappingService;
         _userGroupService = userGroupService;
+        _userAdvancedService = userAdvancedService;
+        _jsonWebTokenAdvancedService = jsonWebTokenAdvancedService;
         _refreshTokenOptions = refreshTokenOptions.Value;
         _jsonWebTokenOptions = jsonWebTokenOptions.Value;
         _httpContext = httpContextAccessor.HttpContext;
@@ -303,7 +309,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staging deletion of {refreshToken.GetType().Name} {refreshToken.Id}"));
             await _refreshTokenService.Delete(refreshToken, cancellationToken);
 
-            var jsonWebToken = await _jsonWebTokenService.GetFromHttpContext(cancellationToken);
+            var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken);
             if (jsonWebToken == null)
                 throw new CustomException(Localize.Error.JsonWebTokenNotFound);
             
@@ -312,7 +318,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staging deletion of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
 
-            var user = await _userService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new CustomException();
             
@@ -446,7 +452,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Staging deletion of RefreshToken {refreshToken.Id}"));
             await _refreshTokenService.Delete(refreshToken, cancellationToken);
 
-            var jsonWebToken = await _jsonWebTokenService.GetFromHttpContext();
+            var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext();
             if (jsonWebToken == null)
                 throw new CustomException(Localize.Error.JsonWebTokenNotFound);
             
@@ -459,7 +465,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Staging deletion of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
 
-            var user = await _userService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new CustomException();
             
