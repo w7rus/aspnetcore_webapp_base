@@ -30,14 +30,13 @@ namespace API
     public class Startup
     {
         private readonly IWebHostEnvironment _env;
+        private IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             _env = env;
             Configuration = configuration;
         }
-
-        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -86,7 +85,8 @@ namespace API
                 {
                     var errorModelResult = new ErrorModelResult
                     {
-                        Errors = new List<KeyValuePair<string, string>>()
+                        Errors = new List<KeyValuePair<string, string>>(),
+                        TraceId = context.HttpContext.TraceIdentifier
                     };
 
                     foreach (var modelError in context.ModelState.Values.SelectMany(modelStateValue =>

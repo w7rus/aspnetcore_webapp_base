@@ -31,7 +31,11 @@ namespace API.Controllers
 
         #region Ctor
 
-        public AuthController(ILogger<AuthController> logger, IAuthHandler authHandler)
+        public AuthController(
+            ILogger<AuthController> logger,
+            IAuthHandler authHandler,
+            IHttpContextAccessor httpContextAccessor
+        ) : base(httpContextAccessor)
         {
             _logger = logger;
             _authHandler = authHandler;

@@ -29,7 +29,11 @@ public class FileController : CustomControllerBase
 
     #region Ctor
 
-    public FileController(ILogger<FileController> logger, IFileHandler fileHandler)
+    public FileController(
+        ILogger<FileController> logger,
+        IFileHandler fileHandler,
+        IHttpContextAccessor httpContextAccessor
+    ) : base(httpContextAccessor)
     {
         _logger = logger;
         _fileHandler = fileHandler;
