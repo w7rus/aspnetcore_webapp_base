@@ -26,4 +26,9 @@ public class CartItem : EntityBase<Guid>
     /// User this CartItem references
     /// </summary>
     public virtual User User { get; set; }
+    
+    /// <summary>
+    /// Amount of a CartItem
+    /// </summary>
+    public int Amount { get; set; }
 }

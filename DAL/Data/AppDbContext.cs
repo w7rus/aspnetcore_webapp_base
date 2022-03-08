@@ -51,6 +51,7 @@ namespace DAL.Data
         public DbSet<CompanyProductToCategoryMapping> CompanyProductToCategoryMappings { get; set; }
         public DbSet<CompanyProductToDiscountMapping> CompanyProductToDiscountMappings { get; set; }
         public DbSet<Discount> Discounts { get; set; }
+        public DbSet<DiscountToUserMapping> DiscountToUserMappings { get; set; }
         public DbSet<OperatingTime> OperatingTimes { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -2093,6 +2094,15 @@ namespace DAL.Data
             #region CompanyProductToDiscountMapping
 
             builder.Entity<CompanyProductToDiscountMapping>(_ =>
+            {
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
+            });
+
+            #endregion
+
+            #region DiscountToUserMapping
+
+            builder.Entity<DiscountToUserMapping>(_ =>
             {
                 _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
             });

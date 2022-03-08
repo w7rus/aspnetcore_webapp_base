@@ -77,4 +77,30 @@ public class Discount : EntityBase<Guid>
     /// Discount mappings to StoreProductOverrides
     /// </summary>
     public virtual ICollection<StoreProductToDiscountMapping> StoreProductOverrideToDiscountMappings { get; set; }
+    
+    /// <summary>
+    /// LimitType of a Discount
+    /// </summary>
+    public DiscountLimitType LimitType { get; set; }
+    
+    /// <summary>
+    /// LimitAmount of a Discount
+    /// </summary>
+    public int? LimitAmount { get; set; }
+    
+    /// <summary>
+    /// LimitTimeSpanSeconds of a Discount
+    /// </summary>
+    public double? LimitTimeSpanSeconds { get; set; }
+    
+    /// <summary>
+    /// Date past which DiscountToUserMappings are pruneable
+    /// </summary>
+    public DateTimeOffset? LimitResetAfter { get; set; }
+    
+    /// <summary>
+    /// [Proxy]
+    /// Discount mappings to Users
+    /// </summary>
+    public virtual ICollection<DiscountToUserMapping> DiscountToUserMappings { get; set; }
 }
