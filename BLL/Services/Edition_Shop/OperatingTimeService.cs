@@ -31,13 +31,13 @@ public class OperatingTimeService : IOperatingTimeService
         ILogger<OperatingTimeService> logger,
         IOperatingTimeRepository operatingTimeRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _operatingTimeRepository = operatingTimeRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

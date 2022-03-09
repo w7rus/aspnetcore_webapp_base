@@ -35,13 +35,13 @@ public class RelatedProductGroupToProductGroupMappingService : IRelatedProductGr
         ILogger<RelatedProductGroupToProductGroupMappingService> logger,
         IRelatedProductGroupToProductGroupMappingRepository relatedProductGroupToProductGroupMappingRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _relatedProductGroupToProductGroupMappingRepository = relatedProductGroupToProductGroupMappingRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

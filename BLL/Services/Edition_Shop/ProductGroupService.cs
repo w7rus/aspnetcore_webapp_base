@@ -31,13 +31,13 @@ public class ProductGroupService : IProductGroupService
         ILogger<ProductGroupService> logger,
         IProductGroupRepository productGroupRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _productGroupRepository = productGroupRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

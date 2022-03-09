@@ -31,13 +31,13 @@ public class UserToStoreMappingService : IUserToStoreMappingService
         ILogger<UserToStoreMappingService> logger,
         IUserToStoreMappingRepository userToStoreMappingRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _userToStoreMappingRepository = userToStoreMappingRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

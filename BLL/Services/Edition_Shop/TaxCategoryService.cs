@@ -31,13 +31,13 @@ public class TaxCategoryService : ITaxCategoryService
         ILogger<TaxCategoryService> logger,
         ITaxCategoryRepository taxCategoryRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _taxCategoryRepository = taxCategoryRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

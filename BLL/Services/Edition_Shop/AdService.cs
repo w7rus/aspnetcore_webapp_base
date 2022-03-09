@@ -27,16 +27,21 @@ public class AdService : IAdService
 
     #region Ctor
 
-    public AdService(ILogger<AdService> logger, IAdRepository adRepository, IAppDbContextAction appDbContextAction, HttpContext httpContext)
+    public AdService(
+        ILogger<AdService> logger,
+        IAdRepository adRepository,
+        IAppDbContextAction appDbContextAction,
+        IHttpContextAccessor httpContextAccessor
+    )
     {
         _logger = logger;
         _adRepository = adRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion
-    
+
     #region Methods
 
     public async Task Save(Ad entity, CancellationToken cancellationToken = default)

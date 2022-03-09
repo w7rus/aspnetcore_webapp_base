@@ -38,14 +38,14 @@ public class
         IRelatedStoreProductGroupToStoreProductMappingRepository
             relatedStoreProductGroupToStoreProductMappingRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _relatedStoreProductGroupToStoreProductMappingRepository =
             relatedStoreProductGroupToStoreProductMappingRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

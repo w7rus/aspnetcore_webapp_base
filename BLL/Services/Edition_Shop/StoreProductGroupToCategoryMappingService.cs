@@ -31,13 +31,13 @@ public class StoreProductGroupToCategoryMappingService : IStoreProductGroupToCat
         ILogger<StoreProductGroupToCategoryMappingService> logger,
         IStoreProductGroupToCategoryMappingRepository storeProductGroupToCategoryMappingRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _storeProductGroupToCategoryMappingRepository = storeProductGroupToCategoryMappingRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

@@ -31,13 +31,13 @@ public class DiscountService : IDiscountService
         ILogger<DiscountService> logger,
         IDiscountRepository discountRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _discountRepository = discountRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

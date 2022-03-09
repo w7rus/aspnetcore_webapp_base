@@ -31,13 +31,13 @@ public class OrderItemService : IOrderItemService
         ILogger<OrderItemService> logger,
         IOrderItemRepository orderItemRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _orderItemRepository = orderItemRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

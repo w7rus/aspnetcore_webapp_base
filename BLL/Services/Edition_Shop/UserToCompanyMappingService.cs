@@ -31,13 +31,13 @@ public class UserToCompanyMappingService : IUserToCompanyMappingService
         ILogger<UserToCompanyMappingService> logger,
         IUserToCompanyMappingRepository userToCompanyMappingRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _userToCompanyMappingRepository = userToCompanyMappingRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion

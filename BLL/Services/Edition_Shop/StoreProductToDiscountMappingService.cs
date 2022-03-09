@@ -31,13 +31,13 @@ public class StoreProductToDiscountMappingService : IStoreProductToDiscountMappi
         ILogger<StoreProductToDiscountMappingService> logger,
         IStoreProductToDiscountMappingRepository storeProductToDiscountMappingRepository,
         IAppDbContextAction appDbContextAction,
-        HttpContext httpContext
+        IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
         _storeProductToDiscountMappingRepository = storeProductToDiscountMappingRepository;
         _appDbContextAction = appDbContextAction;
-        _httpContext = httpContext;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     #endregion
