@@ -6,6 +6,11 @@ public static class Localize
 {
     public static class ErrorType
     {
+        public static string UnhandledException => "UnhandledException";
+        public static string UnhandledExceptionErrorMessage => "UnhandledExceptionErrorMessage";
+        public static string UnhandledExceptionErrorStackTrace => "UnhandledExceptionErrorStackTrace";
+        public static string UnhandledExceptionErrorSource => "UnhandledExceptionErrorSource";
+        public static string UnhandledExceptionRequestPath => "UnhandledExceptionRequestPath";
         public static string ModelState => "ModelState";
         public static string Auth => "Auth";
         public static string File => "File";
@@ -84,6 +89,12 @@ public static class Localize
         #region UserGroup
 
         public static string UserGroupIsSystemManagementNotAllowed => "UserGroupIsSystemManagementNotAllowed";
+
+        #endregion
+
+        #region UnhandledException
+
+        public const string UnhandledExceptionContactSystemAdministrator = "UnhandledExceptionContactSystemAdministrator";
 
         #endregion
     }

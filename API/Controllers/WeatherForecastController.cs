@@ -39,5 +39,9 @@ namespace API.Controllers
                 })
                 .ToArray();
         }
+        
+        [HttpGet("Throw")]
+        public IActionResult Throw() =>
+            throw new Exception("Sample exception.");
     }
 }

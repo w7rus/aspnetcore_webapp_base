@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using API.AuthHandlers;
@@ -86,7 +87,7 @@ namespace API
                     var errorModelResult = new ErrorModelResult
                     {
                         Errors = new List<KeyValuePair<string, string>>(),
-                        TraceId = context.HttpContext.TraceIdentifier
+                        TraceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier
                     };
 
                     foreach (var modelError in context.ModelState.Values.SelectMany(modelStateValue =>
@@ -141,7 +142,7 @@ namespace API
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
 
                 Log.Logger.Information($"Add Swagger & SwaggerUI");
                 app.UseSwagger();
@@ -152,9 +153,11 @@ namespace API
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                // app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+            
+            app.UseExceptionHandler("/Error");
 
             app.UseSerilogRequestLogging(options =>
             {
@@ -163,7 +166,7 @@ namespace API
                 options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
                 {
                     diagnosticContext.Set("ConnectionId", httpContext.Connection.Id);
-                    diagnosticContext.Set("TraceId", httpContext.TraceIdentifier);
+                    diagnosticContext.Set("TraceId", Activity.Current?.Id ?? httpContext.TraceIdentifier);
                     diagnosticContext.Set("RequestProtocol", httpContext.Request.Protocol);
                 };
             });
