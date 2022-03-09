@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
+using Common.Enums;
 using Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -8,9 +10,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Common.Attributes
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class ValidateModelStateAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -21,12 +20,12 @@ namespace Common.Attributes
 
             var errorModelResult = new ErrorModelResult
             {
-                Errors = new List<KeyValuePair<string, string>>()
+                TraceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier
             };
 
             foreach (var modelError in context.ModelState.Values.SelectMany(modelStateValue => modelStateValue.Errors))
             {
-                errorModelResult.Errors.Add(new(Localize.ErrorType.ModelState, modelError.ErrorMessage));
+                errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.ModelState, modelError.ErrorMessage));
             }
 
             context.Result = new BadRequestObjectResult(errorModelResult);

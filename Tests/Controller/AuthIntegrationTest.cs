@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using API.Controllers;
 using API.Extensions;
 using API.Middleware;
+using Common.Enums;
 using Common.Models;
 using DAL.Data;
 using DTO.Models.Auth;
@@ -64,12 +65,12 @@ public class AuthIntegrationTest
                             {
                                 var errorModelResult = new ErrorModelResult
                                 {
-                                    Errors = new List<KeyValuePair<string, string>>()
+                                    Errors = new List<ErrorModelResultEntry>()
                                 };
 
                                 foreach (var modelError in context.ModelState.Values.SelectMany(modelStateValue =>
                                              modelStateValue.Errors))
-                                    errorModelResult.Errors.Add(new(Localize.ErrorType.ModelState,
+                                    errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.ModelState,
                                         modelError.ErrorMessage));
 
                                 return new BadRequestObjectResult(errorModelResult);

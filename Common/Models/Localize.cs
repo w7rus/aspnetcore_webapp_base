@@ -4,18 +4,6 @@ namespace Common.Models;
 
 public static class Localize
 {
-    public static class ErrorType
-    {
-        public static string UnhandledException => "UnhandledException";
-        public static string UnhandledExceptionErrorMessage => "UnhandledExceptionErrorMessage";
-        public static string UnhandledExceptionErrorStackTrace => "UnhandledExceptionErrorStackTrace";
-        public static string UnhandledExceptionErrorSource => "UnhandledExceptionErrorSource";
-        public static string UnhandledExceptionRequestPath => "UnhandledExceptionRequestPath";
-        public static string ModelState => "ModelState";
-        public static string Auth => "Auth";
-        public static string File => "File";
-    }
-
     public static class Error
     {
         #region Auth
@@ -139,6 +127,9 @@ public static class Localize
 
         public static string MethodError(string assemblyName, string methodName, string message) =>
             $"[{assemblyName}.{methodName}] (Error) {Environment.NewLine + message}";
+        
+        public static string UnhandledMethodError(string traceId, string message) =>
+            $"[{traceId}] (UnhandledError) {Environment.NewLine + message}";
 
         #endregion
 

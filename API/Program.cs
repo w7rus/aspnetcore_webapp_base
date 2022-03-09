@@ -58,10 +58,6 @@ namespace API
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                .UseSerilog((context, services, configuration) => configuration
-                    .ReadFrom.Configuration(context.Configuration)
-                    .Enrich.FromLogContext()
-                    .WriteTo.Console())
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     Log.Information("Add JSON configurations...");

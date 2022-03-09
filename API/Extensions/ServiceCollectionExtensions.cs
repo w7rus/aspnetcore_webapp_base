@@ -20,8 +20,10 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
+using Serilog.Enrichers.HttpContextData;
 using Serilog.Events;
 using File = Domain.Entities.File;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -195,27 +197,27 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration
     )
     {
-        var loggerConfiguration = new LoggerConfiguration()
-            .MinimumLevel.Information()
+        var logger = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration)
             .Enrich.FromLogContext()
+            .Enrich.WithHttpContextData()
             .WriteTo.Console()
-            .WriteTo.File(
-                Path.Combine(env.ContentRootPath, "Logs", $"log_error_{DateTime.UtcNow:yyyy_mm_dd}.log"),
-                LogEventLevel.Error, rollingInterval: RollingInterval.Day, buffered: true,
-                flushToDiskInterval: TimeSpan.FromMinutes(1), rollOnFileSizeLimit: true,
-                fileSizeLimitBytes: 4194304)
-            .WriteTo.File(
-                Path.Combine(env.ContentRootPath, "Logs", $"log_information_{DateTime.UtcNow:yyyy_mm_dd}.log"),
-                LogEventLevel.Information, rollingInterval: RollingInterval.Day, buffered: true,
-                flushToDiskInterval: TimeSpan.FromMinutes(1), rollOnFileSizeLimit: true,
-                fileSizeLimitBytes: 4194304);
+            .WriteTo.Seq("http://localhost:5341")
+            // .WriteTo.File(
+            //     Path.Combine(env.ContentRootPath, "Logs", $"log_error_{DateTime.UtcNow:yyyy_mm_dd}.log"),
+            //     LogEventLevel.Error, rollingInterval: RollingInterval.Day, buffered: true,
+            //     flushToDiskInterval: TimeSpan.FromMinutes(1), rollOnFileSizeLimit: true,
+            //     fileSizeLimitBytes: 4194304)
+            // .WriteTo.File(
+            //     Path.Combine(env.ContentRootPath, "Logs", $"log_information_{DateTime.UtcNow:yyyy_mm_dd}.log"),
+            //     LogEventLevel.Information, rollingInterval: RollingInterval.Day, buffered: true,
+            //     flushToDiskInterval: TimeSpan.FromMinutes(1), rollOnFileSizeLimit: true,
+            //     fileSizeLimitBytes: 4194304)
+            .CreateLogger();
+        
+        Log.Logger = logger;
 
-        Log.Logger = loggerConfiguration.CreateLogger();
-
-        serviceCollection.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(Log.Logger, true));
-
-        serviceCollection.AddSingleton(Log.Logger);
+        serviceCollection.AddLogging(_ => _.ClearProviders().AddSerilog(Log.Logger, true));
 
         return serviceCollection;
     }

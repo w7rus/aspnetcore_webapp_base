@@ -184,20 +184,9 @@ public class FileHandler : HandlerBase, IFileHandler
         }
         catch (Exception e)
         {
-            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(Create), e.Message));
+            await _appDbContextAction.RollbackTransactionAsync();
 
-            var errorModelResult = new ErrorModelResult
-            {
-                Errors = new List<KeyValuePair<string, string>>
-                {
-                    new(Localize.ErrorType.File, Localize.Error.FileCreateFailed)
-                }
-            };
-
-            if (e is CustomException)
-                errorModelResult.Errors.Add(new KeyValuePair<string, string>(Localize.ErrorType.File, e.Message));
-
-            return errorModelResult;
+            throw;
         }
     }
 
@@ -235,20 +224,9 @@ public class FileHandler : HandlerBase, IFileHandler
         }
         catch (Exception e)
         {
-            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(Read), e.Message));
+            await _appDbContextAction.RollbackTransactionAsync();
 
-            var errorModelResult = new ErrorModelResult
-            {
-                Errors = new List<KeyValuePair<string, string>>
-                {
-                    new(Localize.ErrorType.File, Localize.Error.FileReadFailed)
-                }
-            };
-
-            if (e is CustomException)
-                errorModelResult.Errors.Add(new KeyValuePair<string, string>(Localize.ErrorType.File, e.Message));
-
-            return errorModelResult;
+            throw;
         }
     }
 
@@ -278,20 +256,9 @@ public class FileHandler : HandlerBase, IFileHandler
         }
         catch (Exception e)
         {
-            _logger.Log(LogLevel.Error, Localize.Log.MethodError(_fullName, nameof(Delete), e.Message));
+            await _appDbContextAction.RollbackTransactionAsync();
 
-            var errorModelResult = new ErrorModelResult
-            {
-                Errors = new List<KeyValuePair<string, string>>
-                {
-                    new(Localize.ErrorType.File, Localize.Error.FileDeleteFailed)
-                }
-            };
-
-            if (e is CustomException)
-                errorModelResult.Errors.Add(new KeyValuePair<string, string>(Localize.ErrorType.File, e.Message));
-
-            return errorModelResult;
+            throw;
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Common.Enums;
 using Common.Models;
 
 namespace BLL.Handlers.Base;
@@ -22,12 +23,12 @@ public class HandlerBase : IHandlerBase
 
         var errorModelResult = new ErrorModelResult
         {
-            Errors = new List<KeyValuePair<string, string>>()
+            Errors = new List<ErrorModelResultEntry>()
         };
 
         foreach (var validationResult in validationResults)
         {
-            errorModelResult.Errors.Add(new(Localize.ErrorType.ModelState, validationResult.ErrorMessage));
+            errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.ModelState, validationResult.ErrorMessage));
         }
 
         return errorModelResult;

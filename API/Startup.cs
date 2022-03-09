@@ -9,6 +9,8 @@ using API.Middleware;
 using BLL.Jobs;
 using BLL.Maps;
 using BLL.Services;
+using Common.Enums;
+using Common.Filters;
 using Common.Helpers;
 using Common.Models;
 using Common.Options;
@@ -17,6 +19,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -48,7 +51,11 @@ namespace API
 
             services.AddCustomOptions(Configuration);
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<HttpResponseExceptionFilter>();
+            });
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -86,13 +93,12 @@ namespace API
                 {
                     var errorModelResult = new ErrorModelResult
                     {
-                        Errors = new List<KeyValuePair<string, string>>(),
                         TraceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier
                     };
 
                     foreach (var modelError in context.ModelState.Values.SelectMany(modelStateValue =>
                                  modelStateValue.Errors))
-                        errorModelResult.Errors.Add(new(Localize.ErrorType.ModelState,
+                        errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.ModelState,
                             modelError.ErrorMessage));
 
                     return new BadRequestObjectResult(errorModelResult);
@@ -156,8 +162,6 @@ namespace API
                 // app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-            
-            app.UseExceptionHandler("/Error");
 
             app.UseSerilogRequestLogging(options =>
             {
@@ -170,6 +174,8 @@ namespace API
                     diagnosticContext.Set("RequestProtocol", httpContext.Request.Protocol);
                 };
             });
+            
+            app.UseExceptionHandler("/Error");
 
             // app.UseHttpsRedirection();
 
