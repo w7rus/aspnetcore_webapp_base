@@ -46,22 +46,25 @@ public class AdService : IAdService
 
     public async Task Save(Ad entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _adRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(Ad entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _adRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<Ad> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await _adRepository.GetByIdAsync(id);
     }
 
     public async Task<Ad> Create(Ad entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await Save(entity, cancellationToken);
+        return entity;
     }
 
     #endregion

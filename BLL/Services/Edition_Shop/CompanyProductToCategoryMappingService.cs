@@ -48,12 +48,14 @@ public class CompanyProductToCategoryMappingService : ICompanyProductToCategoryM
 
     public async Task Save(CompanyProductToCategoryMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _companyProductToCategoryMappingRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(CompanyProductToCategoryMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _companyProductToCategoryMappingRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<CompanyProductToCategoryMapping> GetByIdAsync(
@@ -61,7 +63,7 @@ public class CompanyProductToCategoryMappingService : ICompanyProductToCategoryM
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        return await _companyProductToCategoryMappingRepository.GetByIdAsync(id);
     }
 
     public async Task<CompanyProductToCategoryMapping> Create(
@@ -69,6 +71,7 @@ public class CompanyProductToCategoryMappingService : ICompanyProductToCategoryM
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        await Save(entity, cancellationToken);
+        return entity;
     }
 }

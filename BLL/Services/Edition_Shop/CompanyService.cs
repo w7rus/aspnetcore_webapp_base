@@ -48,21 +48,24 @@ public class CompanyService : ICompanyService
 
     public async Task Save(Company entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _companyRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(Company entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _companyRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<Company> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await _companyRepository.GetByIdAsync(id);
     }
 
     public async Task<Company> Create(Company entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await Save(entity, cancellationToken);
+        return entity;
     }
 }

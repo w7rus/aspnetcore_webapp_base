@@ -46,22 +46,25 @@ public class CartItemService : ICartItemService
 
     public async Task Save(CartItem entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _cartItemRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(CartItem entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _cartItemRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<CartItem> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await _cartItemRepository.GetByIdAsync(id);
     }
 
     public async Task<CartItem> Create(CartItem entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await Save(entity, cancellationToken);
+        return entity;
     }
 
     #endregion

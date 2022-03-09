@@ -48,12 +48,14 @@ public class CompanyProductToDiscountMappingService : ICompanyProductToDiscountM
 
     public async Task Save(CompanyProductToDiscountMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _companyProductToDiscountMappingRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(CompanyProductToDiscountMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _companyProductToDiscountMappingRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<CompanyProductToDiscountMapping> GetByIdAsync(
@@ -61,7 +63,7 @@ public class CompanyProductToDiscountMappingService : ICompanyProductToDiscountM
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        return await _companyProductToDiscountMappingRepository.GetByIdAsync(id);
     }
 
     public async Task<CompanyProductToDiscountMapping> Create(
@@ -69,6 +71,7 @@ public class CompanyProductToDiscountMappingService : ICompanyProductToDiscountM
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        await Save(entity, cancellationToken);
+        return entity;
     }
 }

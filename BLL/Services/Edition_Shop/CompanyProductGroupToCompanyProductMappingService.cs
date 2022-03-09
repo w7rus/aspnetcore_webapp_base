@@ -55,7 +55,8 @@ public class CompanyProductGroupToCompanyProductMappingService : ICompanyProduct
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        _companyProductGroupToCompanyProductMappingRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(
@@ -63,7 +64,8 @@ public class CompanyProductGroupToCompanyProductMappingService : ICompanyProduct
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        _companyProductGroupToCompanyProductMappingRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<CompanyProductGroupToCompanyProductMapping> GetByIdAsync(
@@ -71,7 +73,7 @@ public class CompanyProductGroupToCompanyProductMappingService : ICompanyProduct
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        return await _companyProductGroupToCompanyProductMappingRepository.GetByIdAsync(id);
     }
 
     public async Task<CompanyProductGroupToCompanyProductMapping> Create(
@@ -79,6 +81,7 @@ public class CompanyProductGroupToCompanyProductMappingService : ICompanyProduct
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        await Save(entity, cancellationToken);
+        return entity;
     }
 }

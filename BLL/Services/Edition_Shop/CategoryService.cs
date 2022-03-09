@@ -46,22 +46,25 @@ public class CategoryService : ICategoryService
 
     public async Task Save(Category entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _categoryRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(Category entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _categoryRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<Category> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await _categoryRepository.GetByIdAsync(id);
     }
 
     public async Task<Category> Create(Category entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await Save(entity, cancellationToken);
+        return entity;
     }
 
     #endregion

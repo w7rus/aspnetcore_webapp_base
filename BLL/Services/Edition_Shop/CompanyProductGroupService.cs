@@ -48,17 +48,19 @@ public class CompanyProductGroupService : ICompanyProductGroupService
 
     public async Task Save(CompanyProductGroup entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _companyProductGroupRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(CompanyProductGroup entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _companyProductGroupRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<CompanyProductGroup> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await _companyProductGroupRepository.GetByIdAsync(id);
     }
 
     public async Task<CompanyProductGroup> Create(
@@ -66,6 +68,7 @@ public class CompanyProductGroupService : ICompanyProductGroupService
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        await Save(entity, cancellationToken);
+        return entity;
     }
 }
