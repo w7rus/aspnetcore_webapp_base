@@ -22,10 +22,22 @@ public static class Program
         Log.Information("Application starting...");
 
         var app = CreateHostBuilder(args)
-            .UseSerilog()
+            .UseSerilog((context, services, configuration) => configuration
+                .ReadFrom.Configuration(context.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext()
+                .Enrich.WithAssemblyName()
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithMachineName()
+                .Enrich.WithMemoryUsage()
+                .Enrich.WithProcessId()
+                .Enrich.WithProcessName()
+                .Enrich.WithThreadId()
+                .Enrich.WithThreadName()
+                .WriteTo.Seq("http://localhost:5341")
+                .WriteTo.Console())
             .ConfigureServices((_, services) =>
             {
-                services.AddCustomLogging(_.HostingEnvironment, _.Configuration);
                 services.AddCustomOptions(_.Configuration);
                 services.AddCustomDbContext(_.Configuration);
                 services.AddRepositories();

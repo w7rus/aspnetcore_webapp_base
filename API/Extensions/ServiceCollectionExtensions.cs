@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using API.AuthHandlers;
 using API.Configuration;
 using BLL.BackgroundServices;
@@ -13,20 +12,14 @@ using DAL.Repository;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Serilog.Enrichers.HttpContextData;
-using Serilog.Events;
 using File = Domain.Entities.File;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace API.Extensions;
 
@@ -194,30 +187,20 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCustomLogging(
         this IServiceCollection serviceCollection,
         IHostEnvironment env,
-        IConfiguration configuration
+        IConfiguration configuration,
+        IServiceProvider serviceProvider
     )
     {
-        var logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(configuration)
-            .Enrich.FromLogContext()
-            .Enrich.WithHttpContextData()
-            .WriteTo.Console()
-            .WriteTo.Seq("http://localhost:5341")
-            // .WriteTo.File(
-            //     Path.Combine(env.ContentRootPath, "Logs", $"log_error_{DateTime.UtcNow:yyyy_mm_dd}.log"),
-            //     LogEventLevel.Error, rollingInterval: RollingInterval.Day, buffered: true,
-            //     flushToDiskInterval: TimeSpan.FromMinutes(1), rollOnFileSizeLimit: true,
-            //     fileSizeLimitBytes: 4194304)
-            // .WriteTo.File(
-            //     Path.Combine(env.ContentRootPath, "Logs", $"log_information_{DateTime.UtcNow:yyyy_mm_dd}.log"),
-            //     LogEventLevel.Information, rollingInterval: RollingInterval.Day, buffered: true,
-            //     flushToDiskInterval: TimeSpan.FromMinutes(1), rollOnFileSizeLimit: true,
-            //     fileSizeLimitBytes: 4194304)
-            .CreateLogger();
-        
-        Log.Logger = logger;
-
-        serviceCollection.AddLogging(_ => _.ClearProviders().AddSerilog(Log.Logger, true));
+        // var logger = new LoggerConfiguration()
+        //     .ReadFrom.Configuration(configuration)
+        //     .Enrich.FromLogContext()
+        //     .WriteTo.Console()
+        //     .WriteTo.Seq("http://localhost:5341")
+        //     .CreateLogger();
+        //
+        // Log.Logger = logger;
+        //
+        // serviceCollection.AddLogging(_ => _.ClearProviders().AddSerilog(Log.Logger, true));
 
         return serviceCollection;
     }

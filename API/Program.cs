@@ -1,17 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Events;
 
 namespace API
 {
@@ -86,7 +81,21 @@ namespace API
                         config.AddCommandLine(args);
                     }
                 })
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>().UseSerilog(); });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>().UseSerilog(); })
+                .UseSerilog((context, services, configuration) => configuration
+                    .ReadFrom.Configuration(context.Configuration)
+                    .ReadFrom.Services(services)
+                    .Enrich.FromLogContext()
+                    .Enrich.WithAssemblyName()
+                    .Enrich.WithEnvironmentName()
+                    .Enrich.WithMachineName()
+                    .Enrich.WithMemoryUsage()
+                    .Enrich.WithProcessId()
+                    .Enrich.WithProcessName()
+                    .Enrich.WithThreadId()
+                    .Enrich.WithThreadName()
+                    .WriteTo.Seq("http://localhost:5341")
+                    .WriteTo.Console());
         }
     }
 }

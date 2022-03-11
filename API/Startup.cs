@@ -45,7 +45,7 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCustomLogging(_env, Configuration);
+            // services.AddCustomLogging(_env, Configuration);
 
             services.AddCustomConfigureOptions();
 
@@ -166,12 +166,25 @@ namespace API
             app.UseSerilogRequestLogging(options =>
             {
                 options.MessageTemplate =
-                    "[{TraceId}] {RequestProtocol} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+                    "[{httpContextTraceIdentifier}] {httpContextRequestProtocol} {httpContextRequestMethod} {httpContextRequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
                 options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
                 {
-                    diagnosticContext.Set("ConnectionId", httpContext.Connection.Id);
-                    diagnosticContext.Set("TraceId", Activity.Current?.Id ?? httpContext.TraceIdentifier);
-                    diagnosticContext.Set("RequestProtocol", httpContext.Request.Protocol);
+                    diagnosticContext.Set("httpContextTraceIdentifier", Activity.Current?.Id ?? httpContext.TraceIdentifier);
+                    diagnosticContext.Set("httpContextConnectionId", httpContext.Connection.Id);
+                    diagnosticContext.Set("httpContextConnectionRemoteIpAddress", httpContext.Connection.RemoteIpAddress);
+                    diagnosticContext.Set("httpContextConnectionRemotePort", httpContext.Connection.RemotePort);
+                    diagnosticContext.Set("httpContextRequestHost", httpContext.Request.Host);
+                    diagnosticContext.Set("httpContextRequestPath", httpContext.Request.Path);
+                    diagnosticContext.Set("httpContextRequestProtocol", httpContext.Request.Protocol);
+                    diagnosticContext.Set("httpContextRequestIsHttps", httpContext.Request.IsHttps);
+                    diagnosticContext.Set("httpContextRequestScheme", httpContext.Request.Scheme);
+                    diagnosticContext.Set("httpContextRequestMethod", httpContext.Request.Method);
+                    diagnosticContext.Set("httpContextRequestContentType", httpContext.Request.ContentType);
+                    diagnosticContext.Set("httpContextRequestContentLength", httpContext.Request.ContentLength);
+                    diagnosticContext.Set("httpContextRequestQueryString", httpContext.Request.QueryString);
+                    diagnosticContext.Set("httpContextRequestQuery", httpContext.Request.Query);
+                    diagnosticContext.Set("httpContextRequestHeaders", httpContext.Request.Headers);
+                    diagnosticContext.Set("httpContextRequestCookies", httpContext.Request.Cookies);
                 };
             });
             
