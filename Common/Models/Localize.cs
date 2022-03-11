@@ -87,11 +87,6 @@ public static class Localize
         #endregion
     }
 
-    public static class WarningType
-    {
-        public static string Auth => "Auth";
-    }
-
     public static class Warning
     {
         public static string XssVulnerable => "XSSVulnerable";
