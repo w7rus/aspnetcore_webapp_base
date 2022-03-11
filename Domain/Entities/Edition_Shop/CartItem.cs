@@ -31,4 +31,6 @@ public class CartItem : EntityBase<Guid>
     /// Amount of a CartItem
     /// </summary>
     public int Amount { get; set; }
+    
+    //TODO: Add CartItem linkage (as if products is a part of of another product)
 }
