@@ -31,7 +31,7 @@ namespace Domain.Entities
         /// Id of a User this UserProfile belongs to
         /// </summary>
         public Guid UserId { get; set; }
-        
+
         /// <summary>
         /// User this UserProfile belongs to
         /// </summary>

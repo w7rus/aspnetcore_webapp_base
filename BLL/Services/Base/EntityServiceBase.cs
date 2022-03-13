@@ -18,6 +18,7 @@ public interface IEntityServiceBase<TEntity> where TEntity : EntityBase<Guid>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task Save(TEntity entity, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Deletes entity
     /// </summary>
@@ -25,6 +26,7 @@ public interface IEntityServiceBase<TEntity> where TEntity : EntityBase<Guid>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task Delete(TEntity entity, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Gets entity by PK
     /// </summary>
@@ -32,6 +34,7 @@ public interface IEntityServiceBase<TEntity> where TEntity : EntityBase<Guid>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<TEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Creates entity and saves it
     /// </summary>

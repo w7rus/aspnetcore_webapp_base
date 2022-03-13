@@ -57,6 +57,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddAdvancedServices(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddSingleton<IApplicationAdvancedService, ApplicationAdvancedService>();
         serviceCollection.AddScoped<IPermissionAdvancedService, PermissionAdvancedService>();
         serviceCollection.AddScoped<IJsonWebTokenAdvancedService, JsonWebTokenAdvancedService>();
         serviceCollection.AddScoped<IUserAdvancedService, UserAdvancedService>();

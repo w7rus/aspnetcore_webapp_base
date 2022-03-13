@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
+using Common.Models;
 using DAL.Data;
 using DAL.Repository;
 using Domain.Entities;
@@ -43,30 +44,45 @@ public class UserToUserGroupMappingService : IUserToUserGroupMappingService
 
     #region Methods
 
-    public async Task Save(UserToUserGroupMapping @group, CancellationToken cancellationToken = default)
+    public async Task Save(UserToUserGroupMapping group, CancellationToken cancellationToken = default)
     {
-        _userToUserGroupMappingRepository.Save(@group);
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{group.GetType().Name} {group.Id}"));
+
+        _userToUserGroupMappingRepository.Save(group);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task Delete(UserToUserGroupMapping @group, CancellationToken cancellationToken = default)
+    public async Task Delete(UserToUserGroupMapping group, CancellationToken cancellationToken = default)
     {
-        _userToUserGroupMappingRepository.Delete(@group);
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{group.GetType().Name} {group.Id}"));
+
+        _userToUserGroupMappingRepository.Delete(group);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<UserToUserGroupMapping> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _userToUserGroupMappingRepository.SingleOrDefaultAsync(_ => _.Id == id);
+        var entity = await _userToUserGroupMappingRepository.SingleOrDefaultAsync(_ => _.Id == id);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     public async Task<UserToUserGroupMapping> Create(
-        UserToUserGroupMapping @group,
+        UserToUserGroupMapping group,
         CancellationToken cancellationToken = default
     )
     {
-        await Save(@group, cancellationToken);
-        return @group;
+        await Save(group, cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Create), $"{group.GetType().Name} {group.Id}"));
+
+        return group;
     }
 
     #endregion

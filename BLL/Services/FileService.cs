@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using BLL.Services.Base;
+using Common.Enums;
 using Common.Exceptions;
 using Common.Helpers;
 using Common.Models;
@@ -17,6 +18,7 @@ using DAL.Data;
 using DAL.Repository;
 using Domain.Enums;
 using DTO.Models.File;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -67,6 +69,9 @@ public class FileService : IFileService
     /// <returns></returns>
     public async Task Save(File entity, CancellationToken cancellationToken = default)
     {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+
         _fileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
@@ -90,7 +95,11 @@ public class FileService : IFileService
 
         httpClient.Dispose();
         if (!response.IsSuccessStatusCode)
-            throw new CustomException(Localize.Error.ResponseStatusCodeUnsuccessful);
+            throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
+                Localize.Error.ResponseStatusCodeUnsuccessful);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
 
         _fileRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -119,10 +128,14 @@ public class FileService : IFileService
 
         httpClient.Dispose();
         if (!response.IsSuccessStatusCode)
-            throw new CustomException(Localize.Error.ResponseStatusCodeUnsuccessful);
+            throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
+                Localize.Error.ResponseStatusCodeUnsuccessful);
 
         file.Data = await response.Content.ReadAsByteArrayAsync(cancellationToken);
         file.ContentType = response.Content.Headers.ContentType?.ToString();
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{file.GetType().Name} {file.Id}"));
 
         return file;
     }
@@ -147,22 +160,24 @@ public class FileService : IFileService
 
         httpClient.Dispose();
         if (!response.IsSuccessStatusCode)
-            throw new CustomException(Localize.Error.ResponseStatusCodeUnsuccessful);
+            throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
+                Localize.Error.ResponseStatusCodeUnsuccessful);
 
         var fileCdnCreateResult =
             JsonConvert.DeserializeObject<FileCDNCreateResult>(
                 await response.Content.ReadAsStringAsync(cancellationToken));
 
         if (fileCdnCreateResult == null)
-            throw new CustomException(Localize.Error.ObjectDeserializationFailed);
+            throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.JsonConvert,
+                Localize.Error.ObjectDeserializationFailed);
 
         entity.Name = fileCdnCreateResult.FileName;
-        entity.Size = entity.Data.Length;
-        entity.AgeRating = entity.AgeRating;
-        entity.Metadata = entity.Metadata;
-        entity.UserId = entity.UserId;
 
         await Save(entity, cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
+
         return entity;
     }
 

@@ -109,30 +109,50 @@ public class UserService : IUserService
 
     public async Task Save(User entity, CancellationToken cancellationToken = default)
     {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+
         _userRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task Delete(User entity, CancellationToken cancellationToken = default)
     {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+
         _userRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<User> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _userRepository.SingleOrDefaultAsync(_ => _.Id == id);
+        var entity = await _userRepository.SingleOrDefaultAsync(_ => _.Id == id);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     public async Task<User> Create(User entity, CancellationToken cancellationToken = default)
     {
         await Save(entity, cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
+
         return entity;
     }
 
     public async Task<User> GetByEmailAsync(string email)
     {
-        return await _userRepository.SingleOrDefaultAsync(_ => _.Email == email);
+        var entity = await _userRepository.SingleOrDefaultAsync(_ => _.Email == email);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByEmailAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     public async Task<IReadOnlyCollection<User>> GetByPhoneNumberAsync(
@@ -140,15 +160,26 @@ public class UserService : IUserService
         CancellationToken cancellationToken = default
     )
     {
-        return await _userRepository.QueryMany(_ => _.PhoneNumber == phoneNumber).ToArrayAsync(cancellationToken);
+        var result = await _userRepository.QueryMany(_ => _.PhoneNumber == phoneNumber).ToArrayAsync(cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByPhoneNumberAsync), $"{result.GetType().Name} {result.Length}"));
+
+        return result;
     }
 
     public async Task<IReadOnlyCollection<User>> GetExpiredByDisableSignInUntil(
         CancellationToken cancellationToken = default
     )
     {
-        return await _userRepository.QueryMany(_ => _.DisableSignInUntil < DateTimeOffset.UtcNow)
+        var result = await _userRepository.QueryMany(_ => _.DisableSignInUntil < DateTimeOffset.UtcNow)
             .ToArrayAsync(cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetExpiredByDisableSignInUntil),
+                $"{result.GetType().Name} {result.Length}"));
+
+        return result;
     }
 
     public async Task<IReadOnlyCollection<User>> GetInRangeByLastSignIn(
@@ -157,8 +188,13 @@ public class UserService : IUserService
         CancellationToken cancellationToken = default
     )
     {
-        return await _userRepository.QueryMany(_ => _.LastSignIn >= @from && _.LastSignIn <= to)
+        var result = await _userRepository.QueryMany(_ => _.LastSignIn >= @from && _.LastSignIn <= to)
             .ToArrayAsync(cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetInRangeByLastSignIn), $"{result.GetType().Name} {result.Length}"));
+
+        return result;
     }
 
     public async Task<IReadOnlyCollection<User>> GetInRangeByLastActivity(
@@ -167,8 +203,14 @@ public class UserService : IUserService
         CancellationToken cancellationToken = default
     )
     {
-        return await _userRepository.QueryMany(_ => _.LastActivity >= @from && _.LastActivity <= to)
+        var result = await _userRepository.QueryMany(_ => _.LastActivity >= @from && _.LastActivity <= to)
             .ToArrayAsync(cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetInRangeByLastActivity),
+                $"{result.GetType().Name} {result.Length}"));
+
+        return result;
     }
 
     public async Task<IReadOnlyCollection<User>> GetByLastIpAddress(
@@ -176,7 +218,12 @@ public class UserService : IUserService
         CancellationToken cancellationToken = default
     )
     {
-        return await _userRepository.QueryMany(_ => _.LastIpAddress == ipAddress).ToArrayAsync(cancellationToken);
+        var result = await _userRepository.QueryMany(_ => _.LastIpAddress == ipAddress).ToArrayAsync(cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByLastIpAddress), $"{result.GetType().Name} {result.Length}"));
+
+        return result;
     }
 
     #endregion

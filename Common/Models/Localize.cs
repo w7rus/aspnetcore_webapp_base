@@ -8,10 +8,8 @@ public static class Localize
     {
         #region Auth
 
-        public static string AuthSignUpFailed => "AuthSignUpFailed";
-        public static string AuthSignInFailed => "AuthSignInFailed";
-        public static string AuthRefreshFailed => "AuthRefreshFailed";
-        public static string AuthSignOutFailed => "AuthSignOutFailed";
+        public static string UserDoesNotExistOrWrongCredentials => "UserDoesNotExistOrWrongCredentials";
+        public static string UserDoesNotExistOrHttpContextMissingClaims => "UserDoesNotExistOrHttpContextMissingClaims";
 
         #endregion
 
@@ -82,7 +80,8 @@ public static class Localize
 
         #region UnhandledException
 
-        public const string UnhandledExceptionContactSystemAdministrator = "UnhandledExceptionContactSystemAdministrator";
+        public const string UnhandledExceptionContactSystemAdministrator =
+            "UnhandledExceptionContactSystemAdministrator";
 
         #endregion
     }
@@ -111,18 +110,18 @@ public static class Localize
 
         #region Method
 
-        public static string MethodStart(string assemblyName, string methodName) =>
-            $"[{assemblyName}.{methodName}] (Start)";
-        
-        public static string Method(string assemblyName, string methodName, string message) =>
-            $"[{assemblyName}.{methodName}] {message}";
+        public static string MethodStart(Type type, string methodName) =>
+            $"[{type.Name}.{methodName}] (Start)";
 
-        public static string MethodEnd(string assemblyName, string methodName) =>
-            $"[{assemblyName}.{methodName}] (End)";
+        public static string Method(Type type, string methodName, string message) =>
+            $"[{type.Name}.{methodName}] {message}";
 
-        public static string MethodError(string assemblyName, string methodName, string message) =>
-            $"[{assemblyName}.{methodName}] (Error) {Environment.NewLine + message}";
-        
+        public static string MethodEnd(Type type, string methodName) =>
+            $"[{type.Name}.{methodName}] (End)";
+
+        public static string MethodError(Type type, string methodName, string message) =>
+            $"[{type.Name}.{methodName}] (Error) {Environment.NewLine + message}";
+
         public static string UnhandledMethodError(string traceId, string message) =>
             $"[{traceId}] (UnhandledError) {Environment.NewLine + message}";
 
@@ -148,7 +147,7 @@ public static class Localize
 
         public static string JobExecuted(string assemblyName) =>
             $"[{assemblyName}] Executed";
-        
+
         public static string JobAborted(string assemblyName) =>
             $"[{assemblyName}] Aborted";
 

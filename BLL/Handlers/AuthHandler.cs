@@ -94,7 +94,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignUp)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignUp)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -112,8 +112,6 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 Email = data.Email,
                 Password = passwordHashed
             }, cancellationToken);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignUp), $"Staged creation of {user.GetType().Name} {user.Id}"));
 
             var guestUserGroup = await _userGroupService.GetByAliasAsync("Member");
 
@@ -122,19 +120,17 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 EntityLeftId = user.Id,
                 EntityRightId = guestUserGroup.Id,
             }, cancellationToken);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignUp), $"Staged creation of {userToUserGroupMapping.GetType().Name} {userToUserGroupMapping.Id}"));
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(_fullName, nameof(SignUp)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignUp)));
 
             return new AuthSignUpResult
             {
                 UserId = user.Id
             };
         }
-        catch (Exception e)
+        catch (Exception)
         {
             await _appDbContextAction.RollbackTransactionAsync();
 
@@ -147,7 +143,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         CancellationToken cancellationToken = default
     )
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignInViaEmail)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignInViaEmail)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -162,9 +158,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var user = await _userService.GetByEmailAsync(data.Email);
             if (user == null || !customPasswordHasher.VerifyPassword(user.Password, data.Password))
-                throw new CustomException();
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignInViaEmail), $"Received {user.GetType().Name} {user.Id}"));
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Model,
+                    Localize.Error.UserDoesNotExistOrWrongCredentials);
 
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);
             var refreshTokenExpiresAt =
@@ -176,8 +171,6 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 ExpiresAt = refreshTokenExpiresAt,
                 UserId = user.Id
             }, cancellationToken);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignInViaEmail), $"Staged creation of {refreshToken.GetType().Name} {refreshToken.Id}"));
 
             var jsonWebTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(_jsonWebTokenOptions.ExpirySeconds);
             var jsonWebTokenString = _jsonWebTokenService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
@@ -193,13 +186,12 @@ public class AuthHandler : HandlerBase, IAuthHandler
                     UserId = user.Id
                 },
                 cancellationToken);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignInViaEmail), $"Staged creation of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
 
             if (data.UseCookies)
             {
-                _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignInViaEmail), $"Client requested to use cookies"));
-                
+                _logger.Log(LogLevel.Information,
+                    Localize.Log.Method(GetType(), nameof(SignInViaEmail), $"Client requested to use cookies"));
+
                 var refreshTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
@@ -227,7 +219,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(_fullName, nameof(SignInViaEmail)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignInViaEmail)));
 
             return new AuthSignInResult
             {
@@ -239,7 +231,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 Warnings = warnings
             };
         }
-        catch (Exception e)
+        catch (Exception)
         {
             await _appDbContextAction.RollbackTransactionAsync();
 
@@ -249,11 +241,11 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     public async Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(Refresh)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Refresh)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-        
+
         var warnings = new List<WarningModelResultEntry>();
 
         try
@@ -261,47 +253,48 @@ public class AuthHandler : HandlerBase, IAuthHandler
             await _appDbContextAction.BeginTransactionAsync();
 
             var useCookies = data.RefreshToken == null;
-            
+
             if (useCookies)
-                _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Client requested to use cookies"));
+                _logger.Log(LogLevel.Information,
+                    Localize.Log.Method(GetType(), nameof(Refresh), $"Client requested to use cookies"));
 
             data.RefreshToken ??=
                 _httpContext.Request.Cookies.SingleOrDefault(_ => _.Key == CookieKey.RefreshToken).Value;
             if (data.RefreshToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth, Localize.Error.RefreshTokenNotProvided);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"{nameof(data.RefreshToken)} presented {data.RefreshToken}"));
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                    Localize.Error.RefreshTokenNotProvided);
+
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(Refresh),
+                    $"{nameof(data.RefreshToken)} presented {data.RefreshToken}"));
 
             var refreshToken = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
             if (refreshToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth, Localize.Error.RefreshTokenNotFound);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Received {refreshToken.GetType().Name} {refreshToken.Id}"));
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                    Localize.Error.RefreshTokenNotFound);
 
             if (refreshToken.ExpiresAt < DateTimeOffset.UtcNow)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth, Localize.Error.RefreshTokenExpired);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"{refreshToken.GetType().Name} is valid until {refreshToken.ExpiresAt}"));
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                    Localize.Error.RefreshTokenExpired);
 
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staging deletion of {refreshToken.GetType().Name} {refreshToken.Id}"));
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(Refresh),
+                    $"{refreshToken.GetType().Name} is valid until {refreshToken.ExpiresAt}"));
+
             await _refreshTokenService.Delete(refreshToken, cancellationToken);
 
             var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken);
             if (jsonWebToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth, Localize.Error.JsonWebTokenNotFound);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Received {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                    Localize.Error.JsonWebTokenNotFound);
 
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staging deletion of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    "Failed to retrieve user from HttpContext"); 
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Received {user.GetType().Name} {user.Id}"));
-            
+                    Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
+
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
@@ -312,8 +305,6 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 ExpiresAt = refreshTokenExpiresAt,
                 UserId = user.Id
             }, cancellationToken);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staged creation of {refreshToken.GetType().Name} {refreshToken.Id}"));
 
             var jsonWebTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(_jsonWebTokenOptions.ExpirySeconds);
             var jsonWebTokenString = _jsonWebTokenService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
@@ -329,8 +320,6 @@ public class AuthHandler : HandlerBase, IAuthHandler
                     UserId = user.Id
                 },
                 cancellationToken);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(Refresh), $"Staged creation of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
 
             if (useCookies)
             {
@@ -361,7 +350,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(_fullName, nameof(Refresh)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Refresh)));
 
             return new AuthRefreshResult()
             {
@@ -383,7 +372,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     public async Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(_fullName, nameof(SignOut)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignOut)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -393,50 +382,47 @@ public class AuthHandler : HandlerBase, IAuthHandler
             await _appDbContextAction.BeginTransactionAsync();
 
             var useCookies = data.RefreshToken == null;
-            
+
             if (useCookies)
-                _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Client requested to use cookies"));
+                _logger.Log(LogLevel.Information,
+                    Localize.Log.Method(GetType(), nameof(SignOut), $"Client requested to use cookies"));
 
             data.RefreshToken ??=
                 _httpContext.Request.Cookies.SingleOrDefault(_ => _.Key == CookieKey.RefreshToken).Value;
             if (data.RefreshToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth, Localize.Error.RefreshTokenNotProvided);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"RefreshToken presented {data.RefreshToken}"));
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                    Localize.Error.RefreshTokenNotProvided);
 
             var refreshToken = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
             if (refreshToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth, Localize.Error.RefreshTokenNotFound);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Received RefreshToken {refreshToken.Id}"));
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                    Localize.Error.RefreshTokenNotFound);
 
             if (refreshToken.ExpiresAt < DateTimeOffset.UtcNow)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth, Localize.Error.RefreshTokenExpired);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"RefreshToken is valid until {refreshToken.ExpiresAt}"));
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                    Localize.Error.RefreshTokenExpired);
 
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Staging deletion of RefreshToken {refreshToken.Id}"));
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(SignOut),
+                    $"RefreshToken is valid until {refreshToken.ExpiresAt}"));
+
             await _refreshTokenService.Delete(refreshToken, cancellationToken);
 
             var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken);
             if (jsonWebToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth, Localize.Error.JsonWebTokenNotFound);
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Received {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                    Localize.Error.JsonWebTokenNotFound);
 
             // Middleware already validated this case
             // if (jsonWebToken.ExpiresAt < DateTimeOffset.UtcNow)
             //     throw new CustomException(Localize.Error.JsonWebTokenExpired);
 
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Staging deletion of {jsonWebToken.GetType().Name} {jsonWebToken.Id}"));
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    "Failed to retrieve user from HttpContext");
-            
-            _logger.Log(LogLevel.Information, Localize.Log.Method(_fullName, nameof(SignOut), $"Received {user.GetType().Name} {user.Id}"));
+                    Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
 
             if (useCookies)
             {
@@ -446,7 +432,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(_fullName, nameof(SignOut)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignOut)));
 
             return new AuthSignOutResult();
         }

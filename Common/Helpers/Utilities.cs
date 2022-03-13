@@ -46,7 +46,7 @@ public static class Utilities
               throw new CustomException(Localize.Error.ObjectDeserializationFailed)) as Dictionary<string, string> ??
              throw new CustomException(Localize.Error.ObjectCastFailed)).Select(_ =>
                 HttpUtility.UrlEncode(_.Key) + "=" + HttpUtility.UrlEncode(_.Value)));
-        
+
         return result;
     }
 }

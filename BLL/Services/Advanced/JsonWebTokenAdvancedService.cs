@@ -52,7 +52,12 @@ public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
                 out var jsonWebTokenId))
             throw new ApplicationException(Localize.Error.JsonWebTokenIdRetrievalFailed);
 
-        return await _jsonWebTokenService.GetByIdAsync(jsonWebTokenId, cancellationToken);
+        var entity = await _jsonWebTokenService.GetByIdAsync(jsonWebTokenId, cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetFromHttpContext), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     #endregion

@@ -10,7 +10,11 @@ public class ErrorModelResultEntry
     public string Message { get; }
     public ErrorEntryType ErrorEntryType { get; }
 
-    public ErrorModelResultEntry(ErrorType errorType, string message, ErrorEntryType errorEntryType = ErrorEntryType.None)
+    public ErrorModelResultEntry(
+        ErrorType errorType,
+        string message,
+        ErrorEntryType errorEntryType = ErrorEntryType.None
+    )
     {
         ErrorType = errorType;
         Message = message;

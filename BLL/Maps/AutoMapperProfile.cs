@@ -40,7 +40,7 @@ public class AutoMapperProfile : Profile
     #endregion
 
     #region Utilities
-    
+
     bool User_UserGroup_AuthorizePermission(ResolutionContext context, string objMemberToName)
     {
         var userToUserGroupService = (context
@@ -64,7 +64,8 @@ public class AutoMapperProfile : Profile
         var modelFieldMappingPermissionAuthorizationTuples =
             modelFieldMappingPermissionAuthorizationTuplesObject as
                 Dictionary<string, AutoMapperComparePermissionToTuple> ?? throw new CustomException(
-                Localize.Error.ValueRetrievalFailed + " " + nameof(modelFieldMappingPermissionAuthorizationTuplesObject));
+                Localize.Error.ValueRetrievalFailed + " " +
+                nameof(modelFieldMappingPermissionAuthorizationTuplesObject));
 
         //Get Permission + PermissionValue + PermissionValueSystem tuple for corresponding model field
         modelFieldMappingPermissionAuthorizationTuples.TryGetValue(objMemberToName,
@@ -82,7 +83,7 @@ public class AutoMapperProfile : Profile
         //Get PermissionValue
         var comparablePermissionValue =
             autoMapperComparePermissionToPermissionValueTuple.ComparablePermissionValue as dynamic;
-        
+
         //Get PermissionValueSystem
         var comparablePermissionValueSystem =
             autoMapperComparePermissionToPermissionValueTuple.ComparablePermissionValueSystem as dynamic;
@@ -93,12 +94,13 @@ public class AutoMapperProfile : Profile
 
         //Authorize User with all PermissionValues from their UserGroups against given PermissionValue AND PermissionValueSystem
         if (comparablePermissionValue != null)
-            result &= userToUserGroupService.AuthorizePermission(user, comparedPermission, comparablePermissionValue)
+            result &= userToUserGroupService
+                .AuthorizeUserPermissionToAnyPermissionValue(user, comparedPermission, comparablePermissionValue)
                 .ConfigureAwait(false).GetAwaiter().GetResult();
 
         if (comparablePermissionValueSystem != null)
             result &= userToUserGroupService
-                .AuthorizePermission(user, comparedPermission, comparablePermissionValueSystem)
+                .AuthorizeUserPermissionToAnyPermissionValue(user, comparedPermission, comparablePermissionValueSystem)
                 .ConfigureAwait(false).GetAwaiter().GetResult();
 
         //Return the result
@@ -126,7 +128,8 @@ public class AutoMapperProfile : Profile
         var modelFieldMappingPermissionAuthorizationTuples =
             modelFieldMappingPermissionAuthorizationTuplesObject as
                 Dictionary<string, AutoMapperComparePermissionToTuple> ?? throw new CustomException(
-                Localize.Error.ValueRetrievalFailed + " " + nameof(modelFieldMappingPermissionAuthorizationTuplesObject));
+                Localize.Error.ValueRetrievalFailed + " " +
+                nameof(modelFieldMappingPermissionAuthorizationTuplesObject));
 
         //Get Permission + CustomValue tuple for corresponding model field
         modelFieldMappingPermissionAuthorizationTuples.TryGetValue(objMemberToName,
@@ -144,10 +147,11 @@ public class AutoMapperProfile : Profile
         //Get CustomValue
         var comparableCustomValue =
             autoMapperComparePermissionToPermissionValueTuple.ComparableCustomValue;
-        
+
         //Return result of Authorize User with all PermissionValues from their UserGroups against given CustomValue
-        return userToUserGroupService.AuthorizePermission(user, comparedPermission, comparableCustomValue)
-        .ConfigureAwait(false).GetAwaiter().GetResult();
+        return userToUserGroupService
+            .AuthorizeUserPermissionToCustomValue(user, comparedPermission, comparableCustomValue)
+            .ConfigureAwait(false).GetAwaiter().GetResult();
     }
 
     #endregion

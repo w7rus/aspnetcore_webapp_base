@@ -26,7 +26,7 @@ public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
 
             errorModelResult.Errors.Add(new ErrorModelResultEntry(httpResponseException.Type,
                 httpResponseException.Message));
-            
+
             context.Result = new ObjectResult(errorModelResult)
             {
                 StatusCode = httpResponseException.StatusCode

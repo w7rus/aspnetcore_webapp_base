@@ -7,5 +7,9 @@ public enum ErrorType
     Unhandled,
     ModelState,
     HttpContext,
-    Auth
+    Auth,
+    Model,
+    Permission,
+    HttpClient,
+    JsonConvert
 }

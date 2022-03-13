@@ -25,7 +25,7 @@ namespace Domain.Entities
         /// Id of a User this JsonWebToken belongs to
         /// </summary>
         public Guid UserId { get; set; }
-        
+
         /// <summary>
         /// User this JsonWebToken belongs to
         /// </summary>

@@ -17,7 +17,7 @@ public interface IJsonWebTokenJobs
 public class JsonWebTokenJobs : IJsonWebTokenJobs
 {
     #region Fields
-    
+
     private readonly string _fullName;
     private readonly ILogger<JsonWebTokenJobs> _logger;
     private readonly IJsonWebTokenService _jsonWebTokenService;
@@ -42,11 +42,11 @@ public class JsonWebTokenJobs : IJsonWebTokenJobs
     #endregion
 
     #region Methods
-    
+
     public async Task PurgeAsync(CancellationToken stoppingToken = default)
     {
         var jobName = $"{_fullName}.PurgeAsync";
-        
+
         _logger.Log(LogLevel.Information, Localize.Log.JobExecuted(jobName));
 
         stoppingToken.Register(() =>

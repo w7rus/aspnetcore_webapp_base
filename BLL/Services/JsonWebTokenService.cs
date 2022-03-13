@@ -106,30 +106,50 @@ namespace BLL.Services
 
         public async Task Save(JsonWebToken entity, CancellationToken cancellationToken = default)
         {
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+
             _jsonWebTokenRepository.Save(entity);
             await _appDbContextAction.CommitAsync(cancellationToken);
         }
 
         public async Task Delete(JsonWebToken entity, CancellationToken cancellationToken = default)
         {
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+
             _jsonWebTokenRepository.Delete(entity);
             await _appDbContextAction.CommitAsync(cancellationToken);
         }
 
         public async Task<JsonWebToken> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _jsonWebTokenRepository.SingleOrDefaultAsync(_ => _.Id == id);
+            var entity = await _jsonWebTokenRepository.SingleOrDefaultAsync(_ => _.Id == id);
+
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+            return entity;
         }
 
         public async Task<JsonWebToken> Create(JsonWebToken entity, CancellationToken cancellationToken = default)
         {
             await Save(entity, cancellationToken);
+
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
+
             return entity;
         }
 
         public async Task<JsonWebToken> GetByTokenAsync(string token)
         {
-            return await _jsonWebTokenRepository.SingleOrDefaultAsync(_ => _.Token == token);
+            var entity = await _jsonWebTokenRepository.SingleOrDefaultAsync(_ => _.Token == token);
+
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+            return entity;
         }
 
         public async Task<IReadOnlyCollection<JsonWebToken>> GetExpiredByUserIdAsync(
@@ -137,22 +157,37 @@ namespace BLL.Services
             CancellationToken cancellationToken = default
         )
         {
-            return await _jsonWebTokenRepository
+            var result = await _jsonWebTokenRepository
                 .QueryMany(_ => _.UserId == userId && _.ExpiresAt < DateTimeOffset.UtcNow)
                 .ToArrayAsync(cancellationToken);
+
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(GetExpiredByUserIdAsync),
+                    $"{result.GetType().Name} {result.Length}"));
+
+            return result;
         }
 
         public async Task<IReadOnlyCollection<JsonWebToken>> GetDeleteAfterAsync(
             CancellationToken cancellationToken = default
         )
         {
-            return await _jsonWebTokenRepository
+            var result = await _jsonWebTokenRepository
                 .QueryMany(_ => _.DeleteAfter < DateTimeOffset.UtcNow)
                 .ToArrayAsync(cancellationToken);
+
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(GetExpiredByUserIdAsync),
+                    $"{result.GetType().Name} {result.Length}"));
+
+            return result;
         }
 
         public async Task PurgeAsync(CancellationToken cancellationToken = default)
         {
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
+
             var jsonWebTokens = await GetDeleteAfterAsync(cancellationToken);
 
             _jsonWebTokenRepository.Delete(jsonWebTokens);
@@ -167,13 +202,15 @@ namespace BLL.Services
             DateTime expires
         )
         {
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(CreateWithClaims), null));
+
             var symmetricSecurityKey =
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerSigningKey));
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
-            var jwtSecurityToken = new JwtSecurityToken(issuer: issuer, audience: audience,
-                claims: claims ?? new List<Claim>(), expires: expires,
-                signingCredentials: signingCredentials);
+            var jwtSecurityToken = new JwtSecurityToken(issuer, audience,
+                claims ?? new List<Claim>(), expires: expires, signingCredentials: signingCredentials);
 
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }

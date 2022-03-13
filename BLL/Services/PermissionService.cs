@@ -56,7 +56,12 @@ public class PermissionService : IPermissionService
 
     public async Task<Permission> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _permissionRepository.SingleOrDefaultAsync(_ => _.Id == id);
+        var entity = await _permissionRepository.SingleOrDefaultAsync(_ => _.Id == id);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     public Task<Permission> Create(Permission entity, CancellationToken cancellationToken = default)
@@ -66,7 +71,12 @@ public class PermissionService : IPermissionService
 
     public async Task<Permission> GetByAliasAsync(string alias)
     {
-        return await _permissionRepository.SingleOrDefaultAsync(_ => _.Alias == alias);
+        var entity = await _permissionRepository.SingleOrDefaultAsync(_ => _.Alias == alias);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByAliasAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     #endregion
