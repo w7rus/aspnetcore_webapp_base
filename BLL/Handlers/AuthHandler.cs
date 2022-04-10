@@ -112,8 +112,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 Password = null,
                 IsTemporary = true
             }, cancellationToken);
-
-            //TODO: Create Guest UserGroup
+            
             var guestUserGroup = await _userGroupService.GetByAliasAsync("Guest");
 
             var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
