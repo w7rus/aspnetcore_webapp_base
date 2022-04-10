@@ -213,8 +213,12 @@ namespace API
             });
 
             Log.Logger.Information($"Add/Update Recurring Jobs for Hangfire");
+            
             recurringJobManager.AddOrUpdate<IJsonWebTokenJobs>(RecurringJobId.JsonWebTokenPurge,
                 _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Minutely);
+            
+            recurringJobManager.AddOrUpdate<IUserJobs>(RecurringJobId.UsersPurge,
+                _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Daily);
         }
     }
 }

@@ -78,6 +78,15 @@ public interface IUserService : IEntityServiceBase<User>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyCollection<User>> GetByLastIpAddress(string ipAddress, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Deletes entities with IsTemporary & LastActivity that is less than current date + 1 d
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task PurgeAsync(
+        CancellationToken cancellationToken = default
+    );
 }
 
 public class UserService : IUserService
@@ -224,6 +233,17 @@ public class UserService : IUserService
             Localize.Log.Method(GetType(), nameof(GetByLastIpAddress), $"{result.GetType().Name} {result.Length}"));
 
         return result;
+    }
+
+    public async Task PurgeAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information, Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
+        
+        var result = await _userRepository.QueryMany(_ => _.LastActivity <= DateTimeOffset.UtcNow.AddDays(-1) && _.IsTemporary)
+            .ToArrayAsync(cancellationToken);
+        
+        _userRepository.Delete(result);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     #endregion
