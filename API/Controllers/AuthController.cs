@@ -61,8 +61,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [Route("signup")]
+        [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
         [SwaggerOperation(Summary = "Sign Up for creating a new User account",
             Description = "Sign Up for creating a new User account")]
         [ProducesResponseType(typeof(AuthSignUpResult), StatusCodes.Status200OK)]
@@ -89,8 +89,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Route("refresh")]
         [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebTokenExpired)]
+        [Route("refresh")]
         [SwaggerOperation(Summary = "Refresh Authorization using Refresh Token",
             Description = "Refresh Authorization using Refresh Token")]
         [ProducesResponseType(typeof(AuthRefreshResult), StatusCodes.Status200OK)]

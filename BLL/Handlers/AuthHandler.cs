@@ -220,6 +220,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             user.Email = data.Email;
             user.Password = passwordHashed;
+            user.IsTemporary = false;
 
             await _userService.Save(user, cancellationToken);
 
