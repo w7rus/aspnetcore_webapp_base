@@ -51,7 +51,7 @@ public class UserGroupService : IUserGroupService
 
     #region Methods
 
-    public async Task Save(UserGroup entity, CancellationToken cancellationToken = default)
+    public async Task<UserGroup> Save(UserGroup entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
@@ -61,6 +61,8 @@ public class UserGroupService : IUserGroupService
 
         _userGroupRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(UserGroup entity, CancellationToken cancellationToken = default)
@@ -81,16 +83,6 @@ public class UserGroupService : IUserGroupService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
-
-        return entity;
-    }
-
-    public async Task<UserGroup> Create(UserGroup entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
 
         return entity;
     }

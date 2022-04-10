@@ -40,7 +40,7 @@ public static class Localize
 
         #region File
 
-        public static string FileCreateFailed => "FileCreateFailed";
+        public static string FileSaveFailedNameChangeNotAllowedForExisting => "FileSaveFailedNameChangeNotAllowedForExisting";
         public static string FileReadFailed => "FileReadFailed";
         public static string FileDeleteFailed => "FileDeleteFailed";
 

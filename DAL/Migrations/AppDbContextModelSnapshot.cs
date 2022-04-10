@@ -2630,7 +2630,7 @@ namespace DAL.Migrations
             modelBuilder.Entity("Domain.Entities.File", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Files")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -2682,6 +2682,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
+                    b.Navigation("Files");
+
                     b.Navigation("UserProfile");
 
                     b.Navigation("UserToUserGroupMappings");

@@ -104,13 +104,15 @@ namespace BLL.Services
 
         #region Methods
 
-        public async Task Save(JsonWebToken entity, CancellationToken cancellationToken = default)
+        public async Task<JsonWebToken> Save(JsonWebToken entity, CancellationToken cancellationToken = default)
         {
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
 
             _jsonWebTokenRepository.Save(entity);
             await _appDbContextAction.CommitAsync(cancellationToken);
+
+            return entity;
         }
 
         public async Task Delete(JsonWebToken entity, CancellationToken cancellationToken = default)
@@ -128,16 +130,6 @@ namespace BLL.Services
 
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
-
-            return entity;
-        }
-
-        public async Task<JsonWebToken> Create(JsonWebToken entity, CancellationToken cancellationToken = default)
-        {
-            await Save(entity, cancellationToken);
-
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
 
             return entity;
         }

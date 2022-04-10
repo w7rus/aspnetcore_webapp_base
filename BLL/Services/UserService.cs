@@ -116,13 +116,15 @@ public class UserService : IUserService
 
     #region Methods
 
-    public async Task Save(User entity, CancellationToken cancellationToken = default)
+    public async Task<User> Save(User entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
 
         _userRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(User entity, CancellationToken cancellationToken = default)
@@ -140,16 +142,6 @@ public class UserService : IUserService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
-
-        return entity;
-    }
-
-    public async Task<User> Create(User entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
 
         return entity;
     }

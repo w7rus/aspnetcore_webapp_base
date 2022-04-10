@@ -67,13 +67,49 @@ public class FileService : IFileService
     /// <param name="entity"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task Save(File entity, CancellationToken cancellationToken = default)
+    public async Task<File> Save(File entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
 
+        if (entity.IsNew())
+        {
+            var httpClient = new HttpClient();
+            var uriBuilder = new UriBuilder(_miscOptions.FileServer.Scheme, _miscOptions.FileServer.Host,
+                _miscOptions.FileServer.Port, _miscOptions.FileServer.Path);
+            var response = await httpClient.PostAsync(uriBuilder.ToString(), new MultipartFormDataContent
+            {
+                {JsonContent.Create(new FileCDNCreate()), "data"},
+                {new ByteArrayContent(entity.Data), "file", entity.Name}
+            }, cancellationToken);
+
+            httpClient.Dispose();
+            if (!response.IsSuccessStatusCode)
+                throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
+                    Localize.Error.ResponseStatusCodeUnsuccessful);
+
+            var fileCdnCreateResult =
+                JsonConvert.DeserializeObject<FileCDNCreateResult>(
+                    await response.Content.ReadAsStringAsync(cancellationToken));
+
+            if (fileCdnCreateResult == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.JsonConvert,
+                    Localize.Error.ObjectDeserializationFailed);
+
+            entity.Name = fileCdnCreateResult.FileName;
+        }
+        else
+        {
+            var file = await _fileRepository.SingleOrDefaultAsync(_ => _.Id == entity.Id);
+
+            if (file.Name != entity.Name)
+                throw new CustomException(Localize.Error.FileSaveFailedNameChangeNotAllowedForExisting);
+        }
+
         _fileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+
+        return entity;
     }
 
     /// <summary>
@@ -138,47 +174,6 @@ public class FileService : IFileService
             Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{file.GetType().Name} {file.Id}"));
 
         return file;
-    }
-
-    /// <summary>
-    /// Creates entity and saves it & Creates file on FS
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    /// <exception cref="CustomException"></exception>
-    public async Task<File> Create(File entity, CancellationToken cancellationToken = default)
-    {
-        var httpClient = new HttpClient();
-        var uriBuilder = new UriBuilder(_miscOptions.FileServer.Scheme, _miscOptions.FileServer.Host,
-            _miscOptions.FileServer.Port, _miscOptions.FileServer.Path);
-        var response = await httpClient.PostAsync(uriBuilder.ToString(), new MultipartFormDataContent
-        {
-            {JsonContent.Create(new FileCDNCreate()), "data"},
-            {new ByteArrayContent(entity.Data), "file", entity.Name}
-        }, cancellationToken);
-
-        httpClient.Dispose();
-        if (!response.IsSuccessStatusCode)
-            throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
-                Localize.Error.ResponseStatusCodeUnsuccessful);
-
-        var fileCdnCreateResult =
-            JsonConvert.DeserializeObject<FileCDNCreateResult>(
-                await response.Content.ReadAsStringAsync(cancellationToken));
-
-        if (fileCdnCreateResult == null)
-            throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.JsonConvert,
-                Localize.Error.ObjectDeserializationFailed);
-
-        entity.Name = fileCdnCreateResult.FileName;
-
-        await Save(entity, cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
-
-        return entity;
     }
 
     #endregion

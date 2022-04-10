@@ -165,7 +165,7 @@ public class FileHandler : HandlerBase, IFileHandler
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create), $"Set additional data to {file.GetType().Name}"));
 
-            file = await _fileService.Create(file, cancellationToken);
+            file = await _fileService.Save(file, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 

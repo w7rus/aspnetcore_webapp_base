@@ -63,13 +63,15 @@ public class RefreshTokenService : IRefreshTokenService
 
     #region Methods
 
-    public async Task Save(RefreshToken entity, CancellationToken cancellationToken = default)
+    public async Task<RefreshToken> Save(RefreshToken entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
 
         _refreshTokenRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(RefreshToken entity, CancellationToken cancellationToken = default)
@@ -87,16 +89,6 @@ public class RefreshTokenService : IRefreshTokenService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
-
-        return entity;
-    }
-
-    public async Task<RefreshToken> Create(RefreshToken entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
 
         return entity;
     }

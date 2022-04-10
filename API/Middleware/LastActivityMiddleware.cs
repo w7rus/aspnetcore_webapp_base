@@ -56,10 +56,7 @@ public class LastActivityMiddleware
         catch (Exception e)
         {
             await appDbContextAction.RollbackTransactionAsync();
-            
-            if (e is CustomException)
-                return;
-                
+
             throw;
         }
 

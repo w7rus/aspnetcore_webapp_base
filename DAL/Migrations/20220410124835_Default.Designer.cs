@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220410064918_Default")]
+    [Migration("20220410124835_Default")]
     partial class Default
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2632,7 +2632,7 @@ namespace DAL.Migrations
             modelBuilder.Entity("Domain.Entities.File", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Files")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -2684,6 +2684,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
+                    b.Navigation("Files");
+
                     b.Navigation("UserProfile");
 
                     b.Navigation("UserToUserGroupMappings");

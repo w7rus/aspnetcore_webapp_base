@@ -50,7 +50,7 @@ public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
     {
         if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.JsonWebTokenId)?.Value,
                 out var jsonWebTokenId))
-            throw new ApplicationException(Localize.Error.JsonWebTokenIdRetrievalFailed);
+            return null;
 
         var entity = await _jsonWebTokenService.GetByIdAsync(jsonWebTokenId, cancellationToken);
 

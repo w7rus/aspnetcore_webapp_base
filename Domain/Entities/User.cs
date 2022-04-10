@@ -74,5 +74,11 @@ namespace Domain.Entities
         /// UserProfile referencing this User
         /// </summary>
         public virtual UserProfile UserProfile { get; set; }
+        
+        /// <summary>
+        /// [Proxy]
+        /// Files referencing this User
+        /// </summary>
+        public virtual ICollection<File> Files { get; set; }
     }
 }

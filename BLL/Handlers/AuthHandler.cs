@@ -106,7 +106,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userService.Create(new User
+            var user = await _userService.Save(new User
             {
                 Email = null,
                 Password = null,
@@ -115,7 +115,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             
             var guestUserGroup = await _userGroupService.GetByAliasAsync("Guest");
 
-            var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
+            await _userToUserGroupMappingService.Save(new UserToUserGroupMapping
             {
                 EntityLeftId = user.Id,
                 EntityRightId = guestUserGroup.Id,
@@ -125,7 +125,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
                 DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
-            await _refreshTokenService.Create(new RefreshToken
+            await _refreshTokenService.Save(new RefreshToken
             {
                 Token = refreshTokenString,
                 ExpiresAt = refreshTokenExpiresAt,
@@ -138,7 +138,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            await _jsonWebTokenService.Create(new JsonWebToken
+            await _jsonWebTokenService.Save(new JsonWebToken
                 {
                     Token = jsonWebTokenString,
                     ExpiresAt = jsonWebTokenExpiresAt,
@@ -208,20 +208,24 @@ public class AuthHandler : HandlerBase, IAuthHandler
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
+            
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            if (user == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
 
             var customPasswordHasher = new CustomPasswordHasher();
 
             var passwordHashed = customPasswordHasher.HashPassword(data.Password);
 
-            var user = await _userService.Create(new User
-            {
-                Email = data.Email,
-                Password = passwordHashed
-            }, cancellationToken);
+            user.Email = data.Email;
+            user.Password = passwordHashed;
+
+            await _userService.Save(user, cancellationToken);
 
             var memberUserGroup = await _userGroupService.GetByAliasAsync("Member");
 
-            var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
+            await _userToUserGroupMappingService.Save(new UserToUserGroupMapping
             {
                 EntityLeftId = user.Id,
                 EntityRightId = memberUserGroup.Id,
@@ -268,7 +272,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
                 DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
-            await _refreshTokenService.Create(new RefreshToken
+            await _refreshTokenService.Save(new RefreshToken
             {
                 Token = refreshTokenString,
                 ExpiresAt = refreshTokenExpiresAt,
@@ -281,7 +285,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            await _jsonWebTokenService.Create(new JsonWebToken
+            await _jsonWebTokenService.Save(new JsonWebToken
                 {
                     Token = jsonWebTokenString,
                     ExpiresAt = jsonWebTokenExpiresAt,
@@ -406,7 +410,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
                 DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
-            await _refreshTokenService.Create(new RefreshToken
+            await _refreshTokenService.Save(new RefreshToken
             {
                 Token = refreshTokenString,
                 ExpiresAt = refreshTokenExpiresAt,
@@ -419,7 +423,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            await _jsonWebTokenService.Create(new JsonWebToken
+            await _jsonWebTokenService.Save(new JsonWebToken
                 {
                     Token = jsonWebTokenString,
                     ExpiresAt = jsonWebTokenExpiresAt,

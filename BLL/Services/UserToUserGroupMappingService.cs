@@ -44,21 +44,23 @@ public class UserToUserGroupMappingService : IUserToUserGroupMappingService
 
     #region Methods
 
-    public async Task Save(UserToUserGroupMapping group, CancellationToken cancellationToken = default)
+    public async Task<UserToUserGroupMapping> Save(UserToUserGroupMapping entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Save), $"{group.GetType().Name} {group.Id}"));
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
 
-        _userToUserGroupMappingRepository.Save(group);
+        _userToUserGroupMappingRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
-    public async Task Delete(UserToUserGroupMapping group, CancellationToken cancellationToken = default)
+    public async Task Delete(UserToUserGroupMapping entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Delete), $"{group.GetType().Name} {group.Id}"));
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
 
-        _userToUserGroupMappingRepository.Delete(group);
+        _userToUserGroupMappingRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
@@ -70,19 +72,6 @@ public class UserToUserGroupMappingService : IUserToUserGroupMappingService
             Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
 
         return entity;
-    }
-
-    public async Task<UserToUserGroupMapping> Create(
-        UserToUserGroupMapping group,
-        CancellationToken cancellationToken = default
-    )
-    {
-        await Save(group, cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Create), $"{group.GetType().Name} {group.Id}"));
-
-        return group;
     }
 
     #endregion

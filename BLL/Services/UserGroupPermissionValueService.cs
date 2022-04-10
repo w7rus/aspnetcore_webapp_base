@@ -47,13 +47,15 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
 
     #region Methods
 
-    public async Task Save(UserGroupPermissionValue entity, CancellationToken cancellationToken = default)
+    public async Task<UserGroupPermissionValue> Save(UserGroupPermissionValue entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
 
         _userGroupPermissionValueRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(UserGroupPermissionValue entity, CancellationToken cancellationToken = default)
@@ -71,19 +73,6 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
-
-        return entity;
-    }
-
-    public async Task<UserGroupPermissionValue> Create(
-        UserGroupPermissionValue entity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        await Save(entity, cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
 
         return entity;
     }

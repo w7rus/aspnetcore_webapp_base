@@ -57,13 +57,15 @@ public class UserProfileService : IUserProfileService
 
     #region Methods
 
-    public async Task Save(UserProfile entity, CancellationToken cancellationToken = default)
+    public async Task<UserProfile> Save(UserProfile entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
 
         _userProfileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(UserProfile entity, CancellationToken cancellationToken = default)
@@ -81,16 +83,6 @@ public class UserProfileService : IUserProfileService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
-
-        return entity;
-    }
-
-    public async Task<UserProfile> Create(UserProfile entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Create), $"{entity.GetType().Name} {entity.Id}"));
 
         return entity;
     }
