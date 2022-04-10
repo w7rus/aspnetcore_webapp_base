@@ -46,10 +46,12 @@ public class CompanyProductGroupToCategoryMappingService : ICompanyProductGroupT
 
     #endregion
 
-    public async Task Save(CompanyProductGroupToCategoryMapping entity, CancellationToken cancellationToken = default)
+    public async Task<CompanyProductGroupToCategoryMapping> Save(CompanyProductGroupToCategoryMapping entity, CancellationToken cancellationToken = default)
     {
         _companyProductGroupToCategoryMappingRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(CompanyProductGroupToCategoryMapping entity, CancellationToken cancellationToken = default)
@@ -64,14 +66,5 @@ public class CompanyProductGroupToCategoryMappingService : ICompanyProductGroupT
     )
     {
         return await _companyProductGroupToCategoryMappingRepository.GetByIdAsync(id);
-    }
-
-    public async Task<CompanyProductGroupToCategoryMapping> Create(
-        CompanyProductGroupToCategoryMapping entity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        await Save(entity, cancellationToken);
-        return entity;
     }
 }

@@ -46,10 +46,12 @@ public class CompanyService : ICompanyService
 
     #endregion
 
-    public async Task Save(Company entity, CancellationToken cancellationToken = default)
+    public async Task<Company> Save(Company entity, CancellationToken cancellationToken = default)
     {
         _companyRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(Company entity, CancellationToken cancellationToken = default)
@@ -61,11 +63,5 @@ public class CompanyService : ICompanyService
     public async Task<Company> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _companyRepository.GetByIdAsync(id);
-    }
-
-    public async Task<Company> Create(Company entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
-        return entity;
     }
 }

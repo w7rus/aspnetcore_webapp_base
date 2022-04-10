@@ -46,23 +46,22 @@ public class StoreService : IStoreService
 
     #endregion
 
-    public async Task Save(Store entity, CancellationToken cancellationToken = default)
+    public async Task<Store> Save(Store entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _storeRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(Store entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _storeRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<Store> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Store> Create(Store entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        return await _storeRepository.GetByIdAsync(id);
     }
 }

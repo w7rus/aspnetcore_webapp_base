@@ -46,26 +46,22 @@ public class ProductToCategoryMappingService : IProductToCategoryMappingService
 
     #endregion
 
-    public async Task Save(ProductToCategoryMapping entity, CancellationToken cancellationToken = default)
+    public async Task<ProductToCategoryMapping> Save(ProductToCategoryMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _productToCategoryMappingRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(ProductToCategoryMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _productToCategoryMappingRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<ProductToCategoryMapping> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<ProductToCategoryMapping> Create(
-        ProductToCategoryMapping entity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        throw new NotImplementedException();
+        return await _productToCategoryMappingRepository.GetByIdAsync(id);
     }
 }

@@ -46,23 +46,22 @@ public class ProductService : IProductService
 
     #endregion
 
-    public async Task Save(Product entity, CancellationToken cancellationToken = default)
+    public async Task<Product> Save(Product entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _productRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(Product entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _productRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<Product> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Product> Create(Product entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        return await _productRepository.GetByIdAsync(id);
     }
 }

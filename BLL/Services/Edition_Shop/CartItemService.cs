@@ -44,10 +44,12 @@ public class CartItemService : ICartItemService
 
     #region Methods
 
-    public async Task Save(CartItem entity, CancellationToken cancellationToken = default)
+    public async Task<CartItem> Save(CartItem entity, CancellationToken cancellationToken = default)
     {
         _cartItemRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(CartItem entity, CancellationToken cancellationToken = default)
@@ -59,12 +61,6 @@ public class CartItemService : ICartItemService
     public async Task<CartItem> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _cartItemRepository.GetByIdAsync(id);
-    }
-
-    public async Task<CartItem> Create(CartItem entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
-        return entity;
     }
 
     #endregion

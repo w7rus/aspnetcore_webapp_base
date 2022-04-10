@@ -44,10 +44,12 @@ public class CategoryService : ICategoryService
 
     #region Methods
 
-    public async Task Save(Category entity, CancellationToken cancellationToken = default)
+    public async Task<Category> Save(Category entity, CancellationToken cancellationToken = default)
     {
         _categoryRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(Category entity, CancellationToken cancellationToken = default)
@@ -59,12 +61,6 @@ public class CategoryService : ICategoryService
     public async Task<Category> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _categoryRepository.GetByIdAsync(id);
-    }
-
-    public async Task<Category> Create(Category entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
-        return entity;
     }
 
     #endregion

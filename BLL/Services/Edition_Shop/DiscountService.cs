@@ -46,23 +46,22 @@ public class DiscountService : IDiscountService
 
     #endregion
 
-    public async Task Save(Discount entity, CancellationToken cancellationToken = default)
+    public async Task<Discount> Save(Discount entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _discountRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(Discount entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _discountRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<Discount> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Discount> Create(Discount entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        return await _discountRepository.GetByIdAsync(id);
     }
 }

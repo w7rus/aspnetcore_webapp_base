@@ -46,23 +46,22 @@ public class ProductGroupService : IProductGroupService
 
     #endregion
 
-    public async Task Save(ProductGroup entity, CancellationToken cancellationToken = default)
+    public async Task<ProductGroup> Save(ProductGroup entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _productGroupRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(ProductGroup entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _productGroupRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<ProductGroup> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<ProductGroup> Create(ProductGroup entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        return await _productGroupRepository.GetByIdAsync(id);
     }
 }

@@ -46,23 +46,22 @@ public class OperatingTimeService : IOperatingTimeService
 
     #endregion
 
-    public async Task Save(OperatingTime entity, CancellationToken cancellationToken = default)
+    public async Task<OperatingTime> Save(OperatingTime entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _operatingTimeRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(OperatingTime entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _operatingTimeRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<OperatingTime> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<OperatingTime> Create(OperatingTime entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        return await _operatingTimeRepository.GetByIdAsync(id);
     }
 }

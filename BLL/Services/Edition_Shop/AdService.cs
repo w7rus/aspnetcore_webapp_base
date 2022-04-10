@@ -44,10 +44,12 @@ public class AdService : IAdService
 
     #region Methods
 
-    public async Task Save(Ad entity, CancellationToken cancellationToken = default)
+    public async Task<Ad> Save(Ad entity, CancellationToken cancellationToken = default)
     {
         _adRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+
+        return entity;
     }
 
     public async Task Delete(Ad entity, CancellationToken cancellationToken = default)
@@ -59,12 +61,6 @@ public class AdService : IAdService
     public async Task<Ad> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _adRepository.GetByIdAsync(id);
-    }
-
-    public async Task<Ad> Create(Ad entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
-        return entity;
     }
 
     #endregion

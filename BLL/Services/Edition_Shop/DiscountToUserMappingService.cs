@@ -19,7 +19,7 @@ public class DiscountToUserMappingService : IDiscountToUserMappingService
     #region Fields
 
     private readonly ILogger<DiscountToUserMappingService> _logger;
-    private readonly IDiscountRepository _discountRepository;
+    private readonly IDiscountToUserMappingRepository _discountToUserMappingRepository;
     private readonly IAppDbContextAction _appDbContextAction;
     private readonly HttpContext _httpContext;
 
@@ -29,13 +29,13 @@ public class DiscountToUserMappingService : IDiscountToUserMappingService
 
     public DiscountToUserMappingService(
         ILogger<DiscountToUserMappingService> logger,
-        IDiscountRepository discountRepository,
+        IDiscountToUserMappingRepository discountToUserMappingRepository,
         IAppDbContextAction appDbContextAction,
         IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
-        _discountRepository = discountRepository;
+        _discountToUserMappingRepository = discountToUserMappingRepository;
         _appDbContextAction = appDbContextAction;
         _httpContext = httpContextAccessor.HttpContext;
     }
@@ -46,23 +46,22 @@ public class DiscountToUserMappingService : IDiscountToUserMappingService
 
     #endregion
 
-    public async Task Save(DiscountToUserMapping entity, CancellationToken cancellationToken = default)
+    public async Task<DiscountToUserMapping> Save(DiscountToUserMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _discountToUserMappingRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(DiscountToUserMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _discountToUserMappingRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<DiscountToUserMapping> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<DiscountToUserMapping> Create(DiscountToUserMapping entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        return await _discountToUserMappingRepository.GetByIdAsync(id);
     }
 }

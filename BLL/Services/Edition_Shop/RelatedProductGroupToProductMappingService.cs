@@ -46,14 +46,18 @@ public class RelatedProductGroupToProductMappingService : IRelatedProductGroupTo
 
     #endregion
 
-    public async Task Save(RelatedProductGroupToProductMapping entity, CancellationToken cancellationToken = default)
+    public async Task<RelatedProductGroupToProductMapping> Save(RelatedProductGroupToProductMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _relatedProductGroupToProductMappingRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(RelatedProductGroupToProductMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _relatedProductGroupToProductMappingRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<RelatedProductGroupToProductMapping> GetByIdAsync(
@@ -61,14 +65,6 @@ public class RelatedProductGroupToProductMappingService : IRelatedProductGroupTo
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<RelatedProductGroupToProductMapping> Create(
-        RelatedProductGroupToProductMapping entity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        throw new NotImplementedException();
+        return await _relatedProductGroupToProductMappingRepository.GetByIdAsync(id);
     }
 }

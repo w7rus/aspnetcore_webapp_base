@@ -46,23 +46,22 @@ public class TaxCategoryService : ITaxCategoryService
 
     #endregion
 
-    public async Task Save(TaxCategory entity, CancellationToken cancellationToken = default)
+    public async Task<TaxCategory> Save(TaxCategory entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _taxCategoryRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(TaxCategory entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _taxCategoryRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<TaxCategory> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<TaxCategory> Create(TaxCategory entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        return await _taxCategoryRepository.GetByIdAsync(id);
     }
 }

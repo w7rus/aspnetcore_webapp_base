@@ -46,10 +46,12 @@ public class CompanyProductToDiscountMappingService : ICompanyProductToDiscountM
 
     #endregion
 
-    public async Task Save(CompanyProductToDiscountMapping entity, CancellationToken cancellationToken = default)
+    public async Task<CompanyProductToDiscountMapping> Save(CompanyProductToDiscountMapping entity, CancellationToken cancellationToken = default)
     {
         _companyProductToDiscountMappingRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(CompanyProductToDiscountMapping entity, CancellationToken cancellationToken = default)
@@ -64,14 +66,5 @@ public class CompanyProductToDiscountMappingService : ICompanyProductToDiscountM
     )
     {
         return await _companyProductToDiscountMappingRepository.GetByIdAsync(id);
-    }
-
-    public async Task<CompanyProductToDiscountMapping> Create(
-        CompanyProductToDiscountMapping entity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        await Save(entity, cancellationToken);
-        return entity;
     }
 }

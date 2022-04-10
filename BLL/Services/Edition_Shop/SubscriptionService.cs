@@ -46,23 +46,22 @@ public class SubscriptionService : ISubscriptionService
 
     #endregion
 
-    public async Task Save(Subscription entity, CancellationToken cancellationToken = default)
+    public async Task<Subscription> Save(Subscription entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _subscriptionRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(Subscription entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _subscriptionRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<Subscription> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Subscription> Create(Subscription entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        return await _subscriptionRepository.GetByIdAsync(id);
     }
 }

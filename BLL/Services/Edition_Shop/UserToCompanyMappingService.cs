@@ -46,26 +46,22 @@ public class UserToCompanyMappingService : IUserToCompanyMappingService
 
     #endregion
 
-    public async Task Save(UserToCompanyMapping entity, CancellationToken cancellationToken = default)
+    public async Task<UserToCompanyMapping> Save(UserToCompanyMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _userToCompanyMappingRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(UserToCompanyMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _userToCompanyMappingRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<UserToCompanyMapping> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<UserToCompanyMapping> Create(
-        UserToCompanyMapping entity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        throw new NotImplementedException();
+        return await _userToCompanyMappingRepository.GetByIdAsync(id);
     }
 }

@@ -46,23 +46,22 @@ public class OrderItemService : IOrderItemService
 
     #endregion
 
-    public async Task Save(OrderItem entity, CancellationToken cancellationToken = default)
+    public async Task<OrderItem> Save(OrderItem entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _orderItemRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(OrderItem entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _orderItemRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<OrderItem> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<OrderItem> Create(OrderItem entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        return await _orderItemRepository.GetByIdAsync(id);
     }
 }

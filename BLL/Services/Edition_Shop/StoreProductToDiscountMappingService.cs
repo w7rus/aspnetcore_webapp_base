@@ -46,14 +46,18 @@ public class StoreProductToDiscountMappingService : IStoreProductToDiscountMappi
 
     #endregion
 
-    public async Task Save(StoreProductToDiscountMapping entity, CancellationToken cancellationToken = default)
+    public async Task<StoreProductToDiscountMapping> Save(StoreProductToDiscountMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _storeProductToDiscountMappingRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(StoreProductToDiscountMapping entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _storeProductToDiscountMappingRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<StoreProductToDiscountMapping> GetByIdAsync(
@@ -61,14 +65,6 @@ public class StoreProductToDiscountMappingService : IStoreProductToDiscountMappi
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<StoreProductToDiscountMapping> Create(
-        StoreProductToDiscountMapping entity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        throw new NotImplementedException();
+        return await _storeProductToDiscountMappingRepository.GetByIdAsync(id);
     }
 }

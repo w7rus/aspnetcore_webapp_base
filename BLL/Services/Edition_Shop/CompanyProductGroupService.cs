@@ -46,10 +46,12 @@ public class CompanyProductGroupService : ICompanyProductGroupService
 
     #endregion
 
-    public async Task Save(CompanyProductGroup entity, CancellationToken cancellationToken = default)
+    public async Task<CompanyProductGroup> Save(CompanyProductGroup entity, CancellationToken cancellationToken = default)
     {
         _companyProductGroupRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(CompanyProductGroup entity, CancellationToken cancellationToken = default)
@@ -61,14 +63,5 @@ public class CompanyProductGroupService : ICompanyProductGroupService
     public async Task<CompanyProductGroup> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _companyProductGroupRepository.GetByIdAsync(id);
-    }
-
-    public async Task<CompanyProductGroup> Create(
-        CompanyProductGroup entity,
-        CancellationToken cancellationToken = default
-    )
-    {
-        await Save(entity, cancellationToken);
-        return entity;
     }
 }
