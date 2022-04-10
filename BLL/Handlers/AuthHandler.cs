@@ -27,8 +27,9 @@ namespace BLL.Handlers;
 
 public interface IAuthHandler
 {
+    Task<DTOResultBase> SignUpInAsGuest(AuthSignUpInAsGuest data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> SignInViaEmail(AuthSignInViaEmail data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> SignIn(AuthSignIn data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = default);
 }
@@ -91,81 +92,41 @@ public class AuthHandler : HandlerBase, IAuthHandler
     #endregion
 
     #region Methods
-
-    public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = default)
+    
+    public async Task<DTOResultBase> SignUpInAsGuest(AuthSignUpInAsGuest data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignUp)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignUpInAsGuest)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-
+        
+        var warnings = new List<WarningModelResultEntry>();
+        
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var customPasswordHasher = new CustomPasswordHasher();
-
-            var passwordHashed = customPasswordHasher.HashPassword(data.Password);
-
             var user = await _userService.Create(new User
             {
-                Email = data.Email,
-                Password = passwordHashed
+                Email = null,
+                Password = null,
+                IsTemporary = true
             }, cancellationToken);
 
-            var guestUserGroup = await _userGroupService.GetByAliasAsync("Member");
+            //TODO: Create Guest UserGroup
+            var guestUserGroup = await _userGroupService.GetByAliasAsync("Guest");
 
             var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
             {
                 EntityLeftId = user.Id,
                 EntityRightId = guestUserGroup.Id,
             }, cancellationToken);
-
-            await _appDbContextAction.CommitTransactionAsync();
-
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignUp)));
-
-            return new AuthSignUpResult
-            {
-                UserId = user.Id
-            };
-        }
-        catch (Exception)
-        {
-            await _appDbContextAction.RollbackTransactionAsync();
-
-            throw;
-        }
-    }
-
-    public async Task<DTOResultBase> SignInViaEmail(
-        AuthSignInViaEmail data,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignInViaEmail)));
-
-        if (ValidateModel(data) is { } validationResult)
-            return validationResult;
-
-        var warnings = new List<WarningModelResultEntry>();
-
-        try
-        {
-            await _appDbContextAction.BeginTransactionAsync();
-
-            var customPasswordHasher = new CustomPasswordHasher();
-
-            var user = await _userService.GetByEmailAsync(data.Email);
-            if (user == null || !customPasswordHasher.VerifyPassword(user.Password, data.Password))
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Model,
-                    Localize.Error.UserDoesNotExistOrWrongCredentials);
-
+            
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
                 DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
-            var refreshToken = await _refreshTokenService.Create(new RefreshToken
+            await _refreshTokenService.Create(new RefreshToken
             {
                 Token = refreshTokenString,
                 ExpiresAt = refreshTokenExpiresAt,
@@ -178,7 +139,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            var jsonWebToken = await _jsonWebTokenService.Create(new JsonWebToken
+            await _jsonWebTokenService.Create(new JsonWebToken
                 {
                     Token = jsonWebTokenString,
                     ExpiresAt = jsonWebTokenExpiresAt,
@@ -186,11 +147,11 @@ public class AuthHandler : HandlerBase, IAuthHandler
                     UserId = user.Id
                 },
                 cancellationToken);
-
+            
             if (data.UseCookies)
             {
                 _logger.Log(LogLevel.Information,
-                    Localize.Log.Method(GetType(), nameof(SignInViaEmail), $"Client requested to use cookies"));
+                    Localize.Log.Method(GetType(), nameof(SignIn), $"Client requested to use cookies"));
 
                 var refreshTokenCookieOptions = new CookieOptions
                 {
@@ -217,9 +178,156 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 warnings.Add(new WarningModelResultEntry(WarningType.Security, Localize.Warning.XssVulnerable));
             }
 
+            user.LastSignIn = DateTimeOffset.UtcNow;
+            
+            await _userService.Save(user, cancellationToken);
+
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignInViaEmail)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignUpInAsGuest)));
+
+            return new AuthSignUpResult
+            {
+                UserId = user.Id
+            };
+        }
+        catch (Exception)
+        {
+            await _appDbContextAction.RollbackTransactionAsync();
+
+            throw;
+        }
+    }
+
+    public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignUp)));
+
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
+
+        try
+        {
+            await _appDbContextAction.BeginTransactionAsync();
+
+            var customPasswordHasher = new CustomPasswordHasher();
+
+            var passwordHashed = customPasswordHasher.HashPassword(data.Password);
+
+            var user = await _userService.Create(new User
+            {
+                Email = data.Email,
+                Password = passwordHashed
+            }, cancellationToken);
+
+            var memberUserGroup = await _userGroupService.GetByAliasAsync("Member");
+
+            var userToUserGroupMapping = await _userToUserGroupMappingService.Create(new UserToUserGroupMapping
+            {
+                EntityLeftId = user.Id,
+                EntityRightId = memberUserGroup.Id,
+            }, cancellationToken);
+
+            await _appDbContextAction.CommitTransactionAsync();
+
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignUp)));
+
+            return new AuthSignUpResult
+            {
+                UserId = user.Id
+            };
+        }
+        catch (Exception)
+        {
+            await _appDbContextAction.RollbackTransactionAsync();
+
+            throw;
+        }
+    }
+
+    public async Task<DTOResultBase> SignIn(AuthSignIn data, CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignIn)));
+
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
+
+        var warnings = new List<WarningModelResultEntry>();
+
+        try
+        {
+            await _appDbContextAction.BeginTransactionAsync();
+
+            var customPasswordHasher = new CustomPasswordHasher();
+
+            var user = await _userService.GetByEmailAsync(data.Email);
+            if (user == null || user.IsTemporary || !customPasswordHasher.VerifyPassword(user.Password, data.Password))
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Model,
+                    Localize.Error.UserDoesNotExistOrWrongCredentials);
+
+            var refreshTokenString = Utilities.GenerateRandomBase64String(256);
+            var refreshTokenExpiresAt =
+                data.RefreshTokenExpireAt ??
+                DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
+            await _refreshTokenService.Create(new RefreshToken
+            {
+                Token = refreshTokenString,
+                ExpiresAt = refreshTokenExpiresAt,
+                UserId = user.Id
+            }, cancellationToken);
+
+            var jsonWebTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(_jsonWebTokenOptions.ExpirySeconds);
+            var jsonWebTokenString = _jsonWebTokenService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
+                _jsonWebTokenOptions.Issuer, _jsonWebTokenOptions.Audience, new List<Claim>
+                {
+                    new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
+                }, jsonWebTokenExpiresAt.UtcDateTime);
+            await _jsonWebTokenService.Create(new JsonWebToken
+                {
+                    Token = jsonWebTokenString,
+                    ExpiresAt = jsonWebTokenExpiresAt,
+                    DeleteAfter = refreshTokenExpiresAt,
+                    UserId = user.Id
+                },
+                cancellationToken);
+
+            if (data.UseCookies)
+            {
+                _logger.Log(LogLevel.Information,
+                    Localize.Log.Method(GetType(), nameof(SignIn), $"Client requested to use cookies"));
+
+                var refreshTokenCookieOptions = new CookieOptions
+                {
+                    Expires = refreshTokenExpiresAt,
+                    Secure = _miscOptions.SecureCookies,
+                    SameSite = SameSiteMode.Strict,
+                    HttpOnly = true,
+                };
+                var jsonWebTokenCookieOptions = new CookieOptions
+                {
+                    Expires = refreshTokenExpiresAt,
+                    Secure = _miscOptions.SecureCookies,
+                    SameSite = SameSiteMode.Strict,
+                    HttpOnly = true,
+                };
+
+                _httpContext.Response.Cookies.Append(CookieKey.RefreshToken, refreshTokenString,
+                    refreshTokenCookieOptions);
+                _httpContext.Response.Cookies.Append(CookieKey.JsonWebToken, jsonWebTokenString,
+                    jsonWebTokenCookieOptions);
+            }
+            else
+            {
+                warnings.Add(new WarningModelResultEntry(WarningType.Security, Localize.Warning.XssVulnerable));
+            }
+
+            user.LastSignIn = DateTimeOffset.UtcNow;
+
+            await _userService.Save(user, cancellationToken);
+
+            await _appDbContextAction.CommitTransactionAsync();
+
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignIn)));
 
             return new AuthSignInResult
             {
@@ -299,7 +407,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
                 DateTimeOffset.UtcNow.AddSeconds(_refreshTokenOptions.DefaultExpirySeconds);
-            refreshToken = await _refreshTokenService.Create(new RefreshToken
+            await _refreshTokenService.Create(new RefreshToken
             {
                 Token = refreshTokenString,
                 ExpiresAt = refreshTokenExpiresAt,
@@ -312,7 +420,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 {
                     new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
                 }, jsonWebTokenExpiresAt.UtcDateTime);
-            jsonWebToken = await _jsonWebTokenService.Create(new JsonWebToken
+            await _jsonWebTokenService.Create(new JsonWebToken
                 {
                     Token = jsonWebTokenString,
                     ExpiresAt = jsonWebTokenExpiresAt,
@@ -347,6 +455,10 @@ public class AuthHandler : HandlerBase, IAuthHandler
             {
                 warnings.Add(new WarningModelResultEntry(WarningType.Security, Localize.Warning.XssVulnerable));
             }
+
+            user.LastSignIn = DateTimeOffset.UtcNow;
+
+            await _userService.Save(user, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 

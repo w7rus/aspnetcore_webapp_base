@@ -5,7 +5,7 @@ using Common.Models;
 
 namespace DTO.Models.Auth
 {
-    public class AuthSignInViaEmail
+    public class AuthSignIn
     {
         [Required]
         [RegularExpression(RegexExpressions.Email)]

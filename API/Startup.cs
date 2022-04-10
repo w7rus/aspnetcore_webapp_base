@@ -204,6 +204,8 @@ namespace API
 
             app.UseWebSockets();
 
+            app.UseMiddleware<LastActivityMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -95,16 +95,17 @@ public static class Localize
     {
         #region Middleware
 
-        public static string MiddlewareForwardStart(string assemblyName) =>
-            $"[Middleware] {assemblyName} (Forward-Start)";
+        public static string MiddlewareForwardStart(Type type) =>
+            $"[Middleware {type.Name}] (Forward-Start)";
 
-        public static string MiddlewareForwardEnd(string assemblyName) => $"[Middleware] {assemblyName} (Forward-End)";
+        public static string MiddlewareForwardEnd(Type type) => 
+            $"[Middleware {type.Name}] (Forward-End)";
 
-        public static string MiddlewareBackwardStart(string assemblyName) =>
-            $"[Middleware] {assemblyName} (Backward-End)";
+        public static string MiddlewareBackwardStart(Type type) =>
+            $"[Middleware {type.Name}] (Backward-End)";
 
-        public static string MiddlewareBackwardEnd(string assemblyName) =>
-            $"[Middleware] {assemblyName} (Backward-End)";
+        public static string MiddlewareBackwardEnd(Type type) =>
+            $"[Middleware {type.Name}] (Backward-End)";
 
         #endregion
 

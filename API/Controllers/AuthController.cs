@@ -45,6 +45,20 @@ namespace API.Controllers
         #endregion
 
         #region Endpoints
+        
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("signupinasguest")]
+        [SwaggerOperation(Summary = "Sign Up In for creating a new Guest account",
+            Description = "Sign Up for creating a new Guest account")]
+        [ProducesResponseType(typeof(AuthSignUpResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SignUpInAsGuest(
+            [Required] [FromBody] AuthSignUpInAsGuest data,
+            CancellationToken cancellationToken = default
+        )
+        {
+            return ResponseWith(await _authHandler.SignUpInAsGuest(data, cancellationToken));
+        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -66,12 +80,12 @@ namespace API.Controllers
         [SwaggerOperation(Summary = "Sign In to an existing User account",
             Description = "Sign In to an existing User account")]
         [ProducesResponseType(typeof(AuthSignInResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> SignInViaEmail(
-            [Required] [FromBody] AuthSignInViaEmail data,
+        public async Task<IActionResult> SignIn(
+            [Required] [FromBody] AuthSignIn data,
             CancellationToken cancellationToken = default
         )
         {
-            return ResponseWith(await _authHandler.SignInViaEmail(data, cancellationToken));
+            return ResponseWith(await _authHandler.SignIn(data, cancellationToken));
         }
 
         [HttpPost]

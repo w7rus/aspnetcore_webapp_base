@@ -20,12 +20,11 @@ namespace Domain.Entities.Base
         /// <summary>
         /// Group mappings to Entities
         /// </summary>
-        public virtual ICollection<EntityToEntityMappingBase<TEntity, TGroup>> GroupToEntityMappings { get; set; }
+        public virtual ICollection<EntityToEntityMappingBase<TEntity, TGroup>> EntityToEntityGroupMappings { get; set; }
 
         /// <summary>
         /// Group mappings to PermissionValues
         /// </summary>
-        public virtual ICollection<EntityPermissionValueBase<TGroup>>
-            PermissionValues { get; set; }
+        public virtual ICollection<EntityPermissionValueBase<TGroup>> PermissionValues { get; set; }
     }
 }
