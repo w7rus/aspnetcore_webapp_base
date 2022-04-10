@@ -64,12 +64,14 @@ namespace Domain.Entities
         public bool IsTemporary { get; set; }
 
         /// <summary>
-        /// User mappings to UserGroups
+        /// [Proxy]
+        /// User to UserGroups mappings
         /// </summary>
         public virtual ICollection<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
 
         /// <summary>
-        /// Profile of a user (if exists)
+        /// [Proxy]
+        /// UserProfile referencing this User
         /// </summary>
         public virtual UserProfile UserProfile { get; set; }
     }

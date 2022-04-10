@@ -11,17 +11,18 @@ namespace Domain.Entities
         public string Token { get; set; }
 
         /// <summary>
-        /// Date past which RefreshToken expires
+        /// Date after RefreshToken is expired
         /// </summary>
         public DateTimeOffset ExpiresAt { get; set; }
 
         /// <summary>
-        /// Id of a User this JsonWebToken belongs to
+        /// Id of a User this RefreshToken references
         /// </summary>
         public Guid UserId { get; set; }
 
         /// <summary>
-        /// User this JsonWebToken belongs to
+        /// [Proxy]
+        /// User this RefreshToken references
         /// </summary>
         public virtual User User { get; set; }
     }

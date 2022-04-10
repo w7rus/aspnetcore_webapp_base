@@ -34,6 +34,14 @@ public class File : EntityBase<Guid>
     [NotMapped]
     public string ContentType { get; set; }
 
+    /// <summary>
+    /// Id of a User this File references
+    /// </summary>
     public Guid? UserId { get; set; }
+    
+    /// <summary>
+    /// [Proxy]
+    /// User this File references
+    /// </summary>
     public virtual User User { get; set; }
 }

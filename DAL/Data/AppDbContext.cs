@@ -2516,11 +2516,7 @@ namespace DAL.Data
 
             builder.Entity<UserToUserGroupMapping>(_ =>
             {
-                _.HasIndex(__ => new
-                {
-                    EntityId = __.EntityLeftId,
-                    GroupId = __.EntityRightId
-                }).IsUnique();
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
 
                 _.HasData(appDbContextSeedLists.UserToUserGroupMappings);
             });

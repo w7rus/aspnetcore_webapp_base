@@ -8,7 +8,14 @@ namespace Domain.Entities.Base
         [Key]
         public TKey Id { get; set; }
 
+        /// <summary>
+        /// Date at which entity was created
+        /// </summary>
         public DateTimeOffset CreatedAt { get; set; }
+        
+        /// <summary>
+        /// Date at which entity was updated
+        /// </summary>
         public DateTimeOffset UpdatedAt { get; set; }
 
         public bool IsNew()
