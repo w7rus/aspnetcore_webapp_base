@@ -28,12 +28,13 @@ namespace Domain.Entities
         public string Description { get; set; }
 
         /// <summary>
-        /// Id of a User this UserProfile belongs to
+        /// Id of a User this UserProfile references
         /// </summary>
         public Guid UserId { get; set; }
-        
+
         /// <summary>
-        /// User this UserProfile belongs to
+        /// [Proxy]
+        /// User this UserProfile references
         /// </summary>
         public virtual User User { get; set; }
     }

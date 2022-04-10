@@ -9,8 +9,12 @@ public class WarningModelResultEntry
     public WarningType WarningType { get; }
     public string Message { get; }
     public WarningEntryType WarningEntryType { get; }
-    
-    public WarningModelResultEntry(WarningType warningType, string message, WarningEntryType warningEntryType = WarningEntryType.None)
+
+    public WarningModelResultEntry(
+        WarningType warningType,
+        string message,
+        WarningEntryType warningEntryType = WarningEntryType.None
+    )
     {
         WarningType = warningType;
         Message = message;

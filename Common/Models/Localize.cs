@@ -8,10 +8,8 @@ public static class Localize
     {
         #region Auth
 
-        public static string AuthSignUpFailed => "AuthSignUpFailed";
-        public static string AuthSignInFailed => "AuthSignInFailed";
-        public static string AuthRefreshFailed => "AuthRefreshFailed";
-        public static string AuthSignOutFailed => "AuthSignOutFailed";
+        public static string UserDoesNotExistOrWrongCredentials => "UserDoesNotExistOrWrongCredentials";
+        public static string UserDoesNotExistOrHttpContextMissingClaims => "UserDoesNotExistOrHttpContextMissingClaims";
 
         #endregion
 
@@ -42,7 +40,7 @@ public static class Localize
 
         #region File
 
-        public static string FileCreateFailed => "FileCreateFailed";
+        public static string FileSaveFailedNameChangeNotAllowedForExisting => "FileSaveFailedNameChangeNotAllowedForExisting";
         public static string FileReadFailed => "FileReadFailed";
         public static string FileDeleteFailed => "FileDeleteFailed";
 
@@ -82,7 +80,8 @@ public static class Localize
 
         #region UnhandledException
 
-        public const string UnhandledExceptionContactSystemAdministrator = "UnhandledExceptionContactSystemAdministrator";
+        public const string UnhandledExceptionContactSystemAdministrator =
+            "UnhandledExceptionContactSystemAdministrator";
 
         #endregion
     }
@@ -96,33 +95,34 @@ public static class Localize
     {
         #region Middleware
 
-        public static string MiddlewareForwardStart(string assemblyName) =>
-            $"[Middleware] {assemblyName} (Forward-Start)";
+        public static string MiddlewareForwardStart(Type type) =>
+            $"[Middleware {type.Name}] (Forward-Start)";
 
-        public static string MiddlewareForwardEnd(string assemblyName) => $"[Middleware] {assemblyName} (Forward-End)";
+        public static string MiddlewareForwardEnd(Type type) => 
+            $"[Middleware {type.Name}] (Forward-End)";
 
-        public static string MiddlewareBackwardStart(string assemblyName) =>
-            $"[Middleware] {assemblyName} (Backward-End)";
+        public static string MiddlewareBackwardStart(Type type) =>
+            $"[Middleware {type.Name}] (Backward-End)";
 
-        public static string MiddlewareBackwardEnd(string assemblyName) =>
-            $"[Middleware] {assemblyName} (Backward-End)";
+        public static string MiddlewareBackwardEnd(Type type) =>
+            $"[Middleware {type.Name}] (Backward-End)";
 
         #endregion
 
         #region Method
 
-        public static string MethodStart(string assemblyName, string methodName) =>
-            $"[{assemblyName}.{methodName}] (Start)";
-        
-        public static string Method(string assemblyName, string methodName, string message) =>
-            $"[{assemblyName}.{methodName}] {message}";
+        public static string MethodStart(Type type, string methodName) =>
+            $"[{type.Name}.{methodName}] (Start)";
 
-        public static string MethodEnd(string assemblyName, string methodName) =>
-            $"[{assemblyName}.{methodName}] (End)";
+        public static string Method(Type type, string methodName, string message) =>
+            $"[{type.Name}.{methodName}] {message}";
 
-        public static string MethodError(string assemblyName, string methodName, string message) =>
-            $"[{assemblyName}.{methodName}] (Error) {Environment.NewLine + message}";
-        
+        public static string MethodEnd(Type type, string methodName) =>
+            $"[{type.Name}.{methodName}] (End)";
+
+        public static string MethodError(Type type, string methodName, string message) =>
+            $"[{type.Name}.{methodName}] (Error) {Environment.NewLine + message}";
+
         public static string UnhandledMethodError(string traceId, string message) =>
             $"[{traceId}] (UnhandledError) {Environment.NewLine + message}";
 
@@ -148,7 +148,7 @@ public static class Localize
 
         public static string JobExecuted(string assemblyName) =>
             $"[{assemblyName}] Executed";
-        
+
         public static string JobAborted(string assemblyName) =>
             $"[{assemblyName}] Aborted";
 

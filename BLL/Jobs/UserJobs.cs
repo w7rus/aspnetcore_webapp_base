@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services;
@@ -9,33 +8,29 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Jobs;
 
-public interface IJsonWebTokenJobs
+public interface IUserJobs
 {
     public Task PurgeAsync(CancellationToken stoppingToken = default);
 }
 
-public class JsonWebTokenJobs : IJsonWebTokenJobs
+public class UserJobs : IUserJobs
 {
     #region Fields
 
     private readonly string _fullName;
-    private readonly ILogger<JsonWebTokenJobs> _logger;
-    private readonly IJsonWebTokenService _jsonWebTokenService;
+    private readonly ILogger<UserJobs> _logger;
+    private readonly IUserService _userService;
     private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 
     #region Ctor
 
-    public JsonWebTokenJobs(
-        ILogger<JsonWebTokenJobs> logger,
-        IJsonWebTokenService jsonWebTokenService,
-        IAppDbContextAction appDbContextAction
-    )
+    public UserJobs(ILogger<UserJobs> logger, IUserService userService, IAppDbContextAction appDbContextAction)
     {
         _fullName = GetType().FullName;
         _logger = logger;
-        _jsonWebTokenService = jsonWebTokenService;
+        _userService = userService;
         _appDbContextAction = appDbContextAction;
     }
 
@@ -46,17 +41,17 @@ public class JsonWebTokenJobs : IJsonWebTokenJobs
     public async Task PurgeAsync(CancellationToken stoppingToken = default)
     {
         var jobName = $"{_fullName}.PurgeAsync";
-
+        
         _logger.Log(LogLevel.Information, Localize.Log.JobExecuted(jobName));
 
         stoppingToken.Register(() =>
             _logger.Log(LogLevel.Information, Localize.Log.JobAborted(jobName)));
-
+        
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            await _jsonWebTokenService.PurgeAsync(stoppingToken);
+            await _userService.PurgeAsync(stoppingToken);
 
             await _appDbContextAction.CommitTransactionAsync();
         }

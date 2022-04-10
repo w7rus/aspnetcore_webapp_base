@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
+using Common.Models;
 using DAL.Data;
 using DAL.Repository;
 using Domain.Entities;
@@ -43,30 +44,34 @@ public class UserToUserGroupMappingService : IUserToUserGroupMappingService
 
     #region Methods
 
-    public async Task Save(UserToUserGroupMapping @group, CancellationToken cancellationToken = default)
+    public async Task<UserToUserGroupMapping> Save(UserToUserGroupMapping entity, CancellationToken cancellationToken = default)
     {
-        _userToUserGroupMappingRepository.Save(@group);
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+
+        _userToUserGroupMappingRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
-    public async Task Delete(UserToUserGroupMapping @group, CancellationToken cancellationToken = default)
+    public async Task Delete(UserToUserGroupMapping entity, CancellationToken cancellationToken = default)
     {
-        _userToUserGroupMappingRepository.Delete(@group);
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+
+        _userToUserGroupMappingRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<UserToUserGroupMapping> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _userToUserGroupMappingRepository.SingleOrDefaultAsync(_ => _.Id == id);
-    }
+        var entity = await _userToUserGroupMappingRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
-    public async Task<UserToUserGroupMapping> Create(
-        UserToUserGroupMapping @group,
-        CancellationToken cancellationToken = default
-    )
-    {
-        await Save(@group, cancellationToken);
-        return @group;
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     #endregion

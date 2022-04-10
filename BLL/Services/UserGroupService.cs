@@ -51,38 +51,50 @@ public class UserGroupService : IUserGroupService
 
     #region Methods
 
-    public async Task Save(UserGroup entity, CancellationToken cancellationToken = default)
+    public async Task<UserGroup> Save(UserGroup entity, CancellationToken cancellationToken = default)
     {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+
         if (entity.IsSystem)
             throw new CustomException(Localize.Error.UserGroupIsSystemManagementNotAllowed);
-        
+
         _userGroupRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(UserGroup entity, CancellationToken cancellationToken = default)
     {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+
         if (entity.IsSystem)
             throw new CustomException(Localize.Error.UserGroupIsSystemManagementNotAllowed);
-        
+
         _userGroupRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<UserGroup> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _userGroupRepository.SingleOrDefaultAsync(_ => _.Id == id);
-    }
+        var entity = await _userGroupRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
-    public async Task<UserGroup> Create(UserGroup entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+
         return entity;
     }
 
     public async Task<UserGroup> GetByAliasAsync(string alias)
     {
-        return await _userGroupRepository.SingleOrDefaultAsync(_ => _.Alias == alias);
+        var entity = await _userGroupRepository.SingleOrDefaultAsync(_ => _.Alias == alias);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByAliasAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     #endregion

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.WebSockets;
 using System.Threading;
 using API.AuthHandlers;
 using API.Extensions;
@@ -28,6 +30,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
+using AuthenticationSchemes = Common.Models.AuthenticationSchemes;
 
 namespace API
 {
@@ -51,11 +54,8 @@ namespace API
 
             services.AddCustomOptions(Configuration);
 
-            services.AddControllers(options =>
-            {
-                options.Filters.Add<HttpResponseExceptionFilter>();
-            });
-            
+            services.AddControllers(options => { options.Filters.Add<HttpResponseExceptionFilter>(); });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -122,6 +122,7 @@ namespace API
             }
 
             services.AddAutoMapper(typeof(AutoMapperProfile));
+            services.AddSignalR();
 
             services.AddCustomDbContext(Configuration);
             services.AddRepositories();
@@ -169,9 +170,11 @@ namespace API
                     "[{httpContextTraceIdentifier}] {httpContextRequestProtocol} {httpContextRequestMethod} {httpContextRequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
                 options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
                 {
-                    diagnosticContext.Set("httpContextTraceIdentifier", Activity.Current?.Id ?? httpContext.TraceIdentifier);
+                    diagnosticContext.Set("httpContextTraceIdentifier",
+                        Activity.Current?.Id ?? httpContext.TraceIdentifier);
                     diagnosticContext.Set("httpContextConnectionId", httpContext.Connection.Id);
-                    diagnosticContext.Set("httpContextConnectionRemoteIpAddress", httpContext.Connection.RemoteIpAddress);
+                    diagnosticContext.Set("httpContextConnectionRemoteIpAddress",
+                        httpContext.Connection.RemoteIpAddress);
                     diagnosticContext.Set("httpContextConnectionRemotePort", httpContext.Connection.RemotePort);
                     diagnosticContext.Set("httpContextRequestHost", httpContext.Request.Host);
                     diagnosticContext.Set("httpContextRequestPath", httpContext.Request.Path);
@@ -187,7 +190,7 @@ namespace API
                     diagnosticContext.Set("httpContextRequestCookies", httpContext.Request.Cookies);
                 };
             });
-            
+
             app.UseExceptionHandler("/Error");
 
             // app.UseHttpsRedirection();
@@ -199,6 +202,10 @@ namespace API
 
             app.UseCors();
 
+            app.UseWebSockets();
+
+            app.UseMiddleware<LastActivityMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -206,8 +213,12 @@ namespace API
             });
 
             Log.Logger.Information($"Add/Update Recurring Jobs for Hangfire");
+            
             recurringJobManager.AddOrUpdate<IJsonWebTokenJobs>(RecurringJobId.JsonWebTokenPurge,
                 _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Minutely);
+            
+            recurringJobManager.AddOrUpdate<IUserJobs>(RecurringJobId.UsersPurge,
+                _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Daily);
         }
     }
 }

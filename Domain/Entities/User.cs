@@ -16,7 +16,7 @@ namespace Domain.Entities
         /// <summary>
         /// Is Users email validated?
         /// </summary>
-        public bool IsEmailValidated { get; set; }
+        public bool IsEmailVerified { get; set; }
 
         /// <summary>
         /// Phone number of a User
@@ -42,14 +42,12 @@ namespace Domain.Entities
         /// Date until which sign in is disabled for a User
         /// </summary>
         public DateTimeOffset? DisableSignInUntil { get; set; }
-
-        //TODO: Make use of this field (Also auth refresh)
+        
         /// <summary>
         /// Date of last sign in of a User
         /// </summary>
         public DateTimeOffset LastSignIn { get; set; }
-
-        //TODO: Make use of this field (Add middleware)
+        
         /// <summary>
         /// Date of last activity of a User
         /// </summary>
@@ -59,15 +57,28 @@ namespace Domain.Entities
         /// Last IP Address of a User
         /// </summary>
         public string LastIpAddress { get; set; }
+        
+        /// <summary>
+        /// Is User temporary?
+        /// </summary>
+        public bool IsTemporary { get; set; }
 
         /// <summary>
-        /// User mappings to UserGroups
+        /// [Proxy]
+        /// User to UserGroups mappings
         /// </summary>
         public virtual ICollection<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
 
         /// <summary>
-        /// Profile of a user (if exists)
+        /// [Proxy]
+        /// UserProfile referencing this User
         /// </summary>
         public virtual UserProfile UserProfile { get; set; }
+        
+        /// <summary>
+        /// [Proxy]
+        /// Files referencing this User
+        /// </summary>
+        public virtual ICollection<File> Files { get; set; }
     }
 }

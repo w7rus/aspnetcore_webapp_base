@@ -30,7 +30,7 @@ public class CustomControllerBase : ControllerBase
     internal IActionResult ResponseWith(DTOResultBase response)
     {
         response.TraceId = Activity.Current?.Id ?? _httpContext.TraceIdentifier;
-        
+
         if (response.Errors != null && response.Errors.Any())
             return new BadRequestObjectResult(response);
         if (response is FileReadResult result)

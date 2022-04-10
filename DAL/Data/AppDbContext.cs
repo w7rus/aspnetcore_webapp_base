@@ -787,6 +787,7 @@ namespace DAL.Data
                         "System user group with root like permission set. Also used to store system wise permission values",
                     IsSystem = true
                 },
+                //TODO: Add UserGroup.Priority in order to find result of authorization (so this group would have all permission values as NonSkippable and would override any permission values of the previous groups)
                 new()
                 {
                     Id = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
@@ -800,11 +801,19 @@ namespace DAL.Data
                     Alias = "Member",
                     Description = "System user group with member like permission set",
                     IsSystem = true
+                },
+                new()
+                {
+                    Id = new Guid("b26a9112-211b-462f-bd41-8f38a3568106"),
+                    Alias = "Guest",
+                    Description = "System user group with guest like permission set",
+                    IsSystem = true
                 }
             };
 
             var rootUserGroup = userGroups.First(__ => __.Alias == "Root");
             var memberUserGroup = userGroups.First(__ => __.Alias == "Member");
+            var guestUserGroup = userGroups.First(__ => __.Alias == "Guest");
 
             appDbContextSeedLists.UserGroups.AddRange(userGroups);
 
@@ -814,6 +823,7 @@ namespace DAL.Data
 
             var rootUserGroupPower = Consts.RootUserGroupPowerBase;
             var memberUserGroupPower = Consts.MemberUserGroupPowerBase;
+            var guestUserGroupPower = Consts.GuestUserGroupPowerBase;
 
             var rootUserGroupPermissionValues = new List<UserGroupPermissionValue>()
             {
@@ -1941,9 +1951,557 @@ namespace DAL.Data
 
                 #endregion
             };
+            
+            var guestUserGroupPermissionValues = new List<UserGroupPermissionValue>()
+            {
+                #region Any
+            
+                new()
+                {
+                    Id = new Guid("153fe6db-28fa-481f-a5db-8440dd6b0c79"),
+                    Value = BitConverter.GetBytes(true),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "boolean_any_view_permission_overview").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("64921217-d5c9-4794-94ef-114c288aea89"),
+                    Value = BitConverter.GetBytes(0),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_any_modify_permission_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Group
+            
+                #region Create
+            
+                new()
+                {
+                    Id = new Guid("932c9f44-4419-477a-b7b6-4417684e1e29"),
+                    Value = BitConverter.GetBytes(false),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "boolean_group_create_groups").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Read
+            
+                new()
+                {
+                    Id = new Guid("ae7de5e3-f26a-470e-b3cc-101c53d72349"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_group_view_groups_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("0b461028-4abb-4d5b-bcbd-2f8d84ed248e"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_group_view_groups_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("593dfb93-b399-4e9b-b9fa-654940c11988"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_group_view_groups_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Modify
+            
+                new()
+                {
+                    Id = new Guid("4fe02dbc-5d7e-4e21-8e2e-40fe0b4f6fb7"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_group_modify_groups_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("4f90991c-7062-41db-8b52-3e76958d1e74"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_group_modify_groups_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("fc72a14f-ec13-407f-a9c4-a0b2cdb1469c"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_group_modify_groups_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #endregion
+            
+                #region User
+            
+                #region Read (Email)
+            
+                new()
+                {
+                    Id = new Guid("8ef8c2dd-f9b5-4b6a-b023-91bb6b52f99a"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_view_email_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("721e17d1-4147-49c4-b712-8a77c87abeca"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_view_email_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("5c8dcd17-d3b2-4bfd-818d-c4efeda97121"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_view_email_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Modify (Email)
+            
+                new()
+                {
+                    Id = new Guid("201516fc-fe8b-41c9-be2b-c7d6a79e5e04"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_email_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("438bdab7-d582-4f16-b901-ceb10e79e857"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_email_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("0b72daed-69c8-470d-94e6-10b824c065d9"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_email_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Read (LastIpAddress)
+            
+                new()
+                {
+                    Id = new Guid("42b2cddb-dc70-4d12-a255-9ae52e25338f"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64t_user_view_lastipaddress_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("7b9acad9-f862-4b60-b1c7-bcd34410719f"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64t_user_view_lastipaddress_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("eafc39be-2988-47cf-b320-7a67422396bf"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64t_user_view_lastipaddress_own_power_needed")
+                        .Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Delete
+            
+                new()
+                {
+                    Id = new Guid("e3df77b1-f584-43e2-b62b-6c49b98636c6"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_user_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("18fde4c8-73ce-41a4-9ed9-06f3fe9cde28"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_user_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("3f591397-7aae-48ee-900a-2892a93e01d5"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_delete_user_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Action (Communication Private)
+            
+                new()
+                {
+                    Id = new Guid("98423929-a7e4-4a12-bfde-1e7444f274d7"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("1e85989a-5ee9-4de8-a67e-865795fa691c"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_private_power_needed")
+                        .Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("c29ce338-1fd3-40af-908d-69cb51980cd6"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions
+                        .First(_ => _.Alias == "uint64_user_communication_private_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Action (Communication Global)
+            
+                new()
+                {
+                    Id = new Guid("c5157f19-1a85-4015-9803-65d209bf745e"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_communication_global_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Action (Communication Poke)
+            
+                new()
+                {
+                    Id = new Guid("a907139e-e459-4cb8-a5c0-0c869c4de0ac"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_poke_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("20faed07-6c15-4e9c-a525-192e886d52dd"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_poke_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Complaints
+            
+                new()
+                {
+                    Id = new Guid("8092e228-4cbf-4266-b486-1eaf1eee5efc"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_complaints_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("1ab92689-d37d-42d2-aef4-0f7460b5392c"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_complaints_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("24182b68-6414-4a71-b148-1aecee718649"),
+                    Value = BitConverter.GetBytes(false),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_complaints").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("c55f4945-db64-4262-8f23-1591bd9816f5"),
+                    Value = BitConverter.GetBytes(true),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_complaints_own").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("ea4a093b-50a0-46ad-887e-629f46cfd424"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("98c6963a-9f43-4d54-8fb6-861bcb23aa3c"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("b0f23b80-e0bf-4e5d-917c-b281d54cdf57"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_complaints_own_power_needed")
+                        .Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Bans
+            
+                new()
+                {
+                    Id = new Guid("e04c4c3e-0174-4b80-b87d-cc92535d7b49"),
+                    Value = BitConverter.GetBytes(0),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_bans_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("b3e01ead-a0a9-4478-a234-d1ec334d4488"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_create_bans_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("6c607e78-33b5-4094-8a3c-db96414d271d"),
+                    Value = BitConverter.GetBytes(false),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_bans").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("9325ff23-8f9e-43e8-970b-59ce5a41325e"),
+                    Value = BitConverter.GetBytes(false),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "boolean_user_view_bans_own").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("35a0a694-9588-43dd-ba4c-df48b0708f2c"),
+                    Value = BitConverter.GetBytes(0),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_bans_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("afdfc69f-864b-47d6-8965-0cd03d758d62"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_bans_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("0f90ddf2-a1f4-419b-878d-5fecd5c5ab4e"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_modify_bans_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("de1ad39b-55d2-4f1d-bed9-9b043467ca0f"),
+                    Value = BitConverter.GetBytes(ulong.MaxValue),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_user_max_ban_time").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #endregion
+            
+                #region User Profile
+            
+                #region Modify
+            
+                new()
+                {
+                    Id = new Guid("47f1bbbc-1f62-4b23-b5f5-0e39fddf81ab"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_userprofile_modify_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("856ea04c-ff9b-49e7-bbde-58689f79687b"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_userprofile_modify_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("de7fdfbc-4ad3-4ec5-851c-43728d171d83"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_userprofile_modify_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                new()
+                {
+                    Id = new Guid("22e37f7a-3d40-471a-94ba-1aeab856a1a0"),
+                    Value = BitConverter.GetBytes(0),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_userprofile_avatar_maxfilesize").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region File
+            
+                #region Create
+            
+                new()
+                {
+                    Id = new Guid("9da1387a-38df-4b54-a690-a303c3ba96e6"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_file_create_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #region FileCreate->File AutoMapper Permissions
+            
+                new()
+                {
+                    Id = new Guid("327dc7fc-7f82-4f53-9eb8-4fb095f96a17"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_filecreate_automap_file.agerating_power")
+                        .Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #endregion
+            
+                #region Read
+            
+                new()
+                {
+                    Id = new Guid("30eead85-11bc-4415-9507-10b798593ab2"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_file_read_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("ee8d421a-f608-4c09-9bc5-2d5f4e3ed3e8"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_file_read_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("8014f4ac-fd26-42ad-a0d3-fdb76b111a96"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_file_read_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #region Modify
+            
+                new()
+                {
+                    Id = new Guid("54699996-9a63-45b1-816a-35a1a5982743"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_file_modify_power").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("1d975033-89ef-44f3-901c-1024e7b58251"),
+                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_file_modify_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+                new()
+                {
+                    Id = new Guid("62e8cccc-9440-4930-ab2c-6cb410cc9825"),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
+                    Grant = rootUserGroupPower,
+                    PermissionId = permissions.First(_ => _.Alias == "uint64_file_modify_own_power_needed").Id,
+                    EntityId = guestUserGroup.Id,
+                },
+            
+                #endregion
+            
+                #endregion
+            };
 
             appDbContextSeedLists.UserGroupPermissionValues.AddRange(rootUserGroupPermissionValues);
             appDbContextSeedLists.UserGroupPermissionValues.AddRange(memberUserGroupPermissionValues);
+            appDbContextSeedLists.UserGroupPermissionValues.AddRange(guestUserGroupPermissionValues);
 
             #endregion
 
@@ -1977,7 +2535,7 @@ namespace DAL.Data
 
             builder.Entity<User>(_ =>
             {
-                _.HasIndex(__ => __.Email).IsUnique();
+                _.HasIndex(__ => __.Email).IsUnique().HasFilter(null);
 
                 //Allow PhoneNumber to remain empty
                 // _.HasIndex(__ => __.PhoneNumber).IsUnique().HasFilter(null);
@@ -2024,11 +2582,7 @@ namespace DAL.Data
 
             builder.Entity<UserToUserGroupMapping>(_ =>
             {
-                _.HasIndex(__ => new
-                {
-                    EntityId = __.EntityLeftId,
-                    GroupId = __.EntityRightId
-                }).IsUnique();
+                _.HasIndex(__ => new {__.EntityLeftId, __.EntityRightId}).IsUnique();
 
                 _.HasData(appDbContextSeedLists.UserToUserGroupMappings);
             });

@@ -51,9 +51,14 @@ public class UserAdvancedService : IUserAdvancedService
     {
         if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.UserId)?.Value,
                 out var userId))
-            throw new CustomException(Localize.Error.UserIdRetrievalFailed);
+            return null;
 
-        return await _userService.GetByIdAsync(userId, cancellationToken);
+        var entity = await _userService.GetByIdAsync(userId, cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetFromHttpContext), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     #endregion

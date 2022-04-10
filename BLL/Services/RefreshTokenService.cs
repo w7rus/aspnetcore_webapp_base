@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
+using Common.Models;
 using DAL.Data;
 using DAL.Repository;
 using Domain.Entities;
@@ -62,32 +63,44 @@ public class RefreshTokenService : IRefreshTokenService
 
     #region Methods
 
-    public async Task Save(RefreshToken entity, CancellationToken cancellationToken = default)
+    public async Task<RefreshToken> Save(RefreshToken entity, CancellationToken cancellationToken = default)
     {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+
         _refreshTokenRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(RefreshToken entity, CancellationToken cancellationToken = default)
     {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+
         _refreshTokenRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<RefreshToken> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _refreshTokenRepository.SingleOrDefaultAsync(_ => _.Id == id);
-    }
+        var entity = await _refreshTokenRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
-    public async Task<RefreshToken> Create(RefreshToken entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+
         return entity;
     }
 
     public async Task<RefreshToken> GetByTokenAsync(string token)
     {
-        return await _refreshTokenRepository.SingleOrDefaultAsync(_ => _.Token == token);
+        var entity = await _refreshTokenRepository.SingleOrDefaultAsync(_ => _.Token == token);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByTokenAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     public async Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(
@@ -95,8 +108,15 @@ public class RefreshTokenService : IRefreshTokenService
         CancellationToken cancellationToken = default
     )
     {
-        return await _refreshTokenRepository.QueryMany(_ => _.UserId == userId && _.ExpiresAt < DateTimeOffset.UtcNow)
+        var result = await _refreshTokenRepository
+            .QueryMany(_ => _.UserId == userId && _.ExpiresAt < DateTimeOffset.UtcNow)
             .ToArrayAsync(cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetExpiredByUserIdAsync),
+                $"{result.GetType().Name} {result.Length}"));
+
+        return result;
     }
 
     #endregion

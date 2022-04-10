@@ -8,24 +8,25 @@ namespace Domain.Entities.Base
         where TGroup : EntityBase<Guid>
     {
         /// <summary>
-        /// Alias of the Group
+        /// Alias of the EntityGroup
         /// </summary>
         public string Alias { get; set; }
 
         /// <summary>
-        /// Description of the Group
+        /// Description of the EntityGroup
         /// </summary>
         public string Description { get; set; }
 
         /// <summary>
-        /// Group mappings to Entities
+        /// [Proxy]
+        /// Entities to EntityGroup mappings
         /// </summary>
-        public virtual ICollection<EntityToEntityMappingBase<TEntity, TGroup>> GroupToEntityMappings { get; set; }
+        public virtual ICollection<EntityToEntityMappingBase<TEntity, TGroup>> EntityToEntityGroupMappings { get; set; }
 
         /// <summary>
-        /// Group mappings to PermissionValues
+        /// [Proxy]
+        /// PermissionValues referencing this EntityGroup
         /// </summary>
-        public virtual ICollection<EntityPermissionValueBase<TGroup>>
-            PermissionValues { get; set; }
+        public virtual ICollection<EntityPermissionValueBase<TGroup>> PermissionValues { get; set; }
     }
 }

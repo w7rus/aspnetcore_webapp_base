@@ -20,7 +20,7 @@ public class AuthHandlerTests
             new()
             {
                 Email = "test123@email.com",
-                IsEmailValidated = false,
+                IsEmailVerified = false,
                 PhoneNumber = null,
                 IsPhoneNumberVerified = false,
                 Password = "test123",

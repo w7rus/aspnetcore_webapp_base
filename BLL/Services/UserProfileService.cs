@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
+using Common.Models;
 using DAL.Data;
 using DAL.Repository;
 using Domain.Entities;
@@ -20,7 +21,7 @@ public interface IUserProfileService : IEntityServiceBase<UserProfile>
     /// <param name="username"></param>
     /// <returns></returns>
     Task<UserProfile> GetByUsernameAsync(string username);
-    
+
     /// <summary>
     /// Gets entity with UserId that equals give one
     /// </summary>
@@ -56,37 +57,54 @@ public class UserProfileService : IUserProfileService
 
     #region Methods
 
-    public async Task Save(UserProfile entity, CancellationToken cancellationToken = default)
+    public async Task<UserProfile> Save(UserProfile entity, CancellationToken cancellationToken = default)
     {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+
         _userProfileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
+        
+        return entity;
     }
 
     public async Task Delete(UserProfile entity, CancellationToken cancellationToken = default)
     {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+
         _userProfileRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
     public async Task<UserProfile> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _userProfileRepository.SingleOrDefaultAsync(_ => _.Id == id);
-    }
+        var entity = await _userProfileRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
-    public async Task<UserProfile> Create(UserProfile entity, CancellationToken cancellationToken = default)
-    {
-        await Save(entity, cancellationToken);
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+
         return entity;
     }
 
     public async Task<UserProfile> GetByUsernameAsync(string username)
     {
-        return await _userProfileRepository.SingleOrDefaultAsync(_ => _.Username == username);
+        var entity = await _userProfileRepository.SingleOrDefaultAsync(_ => _.Username == username);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByUsernameAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     public async Task<UserProfile> GetByUserIdAsync(Guid userId)
     {
-        return await _userProfileRepository.SingleOrDefaultAsync(_ => _.UserId == userId);
+        var entity = await _userProfileRepository.SingleOrDefaultAsync(_ => _.UserId == userId);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByUsernameAsync), $"{entity.GetType().Name} {entity.Id}"));
+
+        return entity;
     }
 
     #endregion

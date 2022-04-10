@@ -12,22 +12,23 @@ namespace Domain.Entities
         public string Token { get; set; }
 
         /// <summary>
-        /// Date past which JsonWebToken expires
+        /// Date after JsonWebToken is expired
         /// </summary>
         public DateTimeOffset ExpiresAt { get; set; }
 
         /// <summary>
-        /// Date past which JsonWebToken is pruneable
+        /// Date after JsonWebToken is pruneable
         /// </summary>
         public DateTimeOffset DeleteAfter { get; set; }
 
         /// <summary>
-        /// Id of a User this JsonWebToken belongs to
+        /// Id of a User this JsonWebToken references
         /// </summary>
         public Guid UserId { get; set; }
-        
+
         /// <summary>
-        /// User this JsonWebToken belongs to
+        /// [Proxy]
+        /// User this JsonWebToken references
         /// </summary>
         public virtual User User { get; set; }
     }

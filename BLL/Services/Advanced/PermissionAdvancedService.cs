@@ -25,7 +25,7 @@ public interface IPermissionAdvancedService
     ) where TEntity : EntityBase<Guid> where TEntityCompared : EntityBase<Guid>;
 
     /// <summary>
-    /// Authorizes PermissionValue.Value to given value
+    /// Authorizes PermissionValue.Value to given custom value
     /// </summary>
     /// <param name="entityPermissionValue">PermissionValue compared</param>
     /// <param name="_valueCompared">Comparable value</param>

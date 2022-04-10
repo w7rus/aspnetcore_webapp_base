@@ -20,6 +20,10 @@ namespace Domain.Entities.Base
         /// </summary>
         public Guid PermissionId { get; set; }
 
+        /// <summary>
+        /// [Proxy]
+        /// A Permission to which permission value bound to
+        /// </summary>
         public virtual Permission Permission { get; set; }
 
         /// <summary>
@@ -27,6 +31,10 @@ namespace Domain.Entities.Base
         /// </summary>
         public Guid EntityId { get; set; }
 
+        /// <summary>
+        /// [Proxy]
+        /// An Entity to which permission value bound to
+        /// </summary>
         public virtual TEntity Entity { get; set; }
     }
 }
