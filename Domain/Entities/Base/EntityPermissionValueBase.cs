@@ -9,6 +9,7 @@ namespace Domain.Entities.Base
         /// </summary>
         public byte[] Value { get; set; }
 
+        ///TODO: Grant supposed to be a limit of what action can set as Value with their permission set (if they are allowed to edit permissions)
         /// <summary>
         /// Amount of power needed to modify this permission value
         /// Compared with uint64_any_modify_permission_power

@@ -120,17 +120,17 @@ public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
     ) where TEntityCompared : EntityBase<Guid>
     {
         var userGroups = user.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
+        Array.Sort(userGroups, (userGroupA, userGroupB) => userGroupA.Priority.CompareTo(userGroupB.Priority));
+        
         var result = false;
 
-        //TODO: Add UserGroup.Priority in order to find result of authorization
         foreach (var userGroup in userGroups)
         {
             if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, userPermission.Id,
                     cancellationToken) is var permissionValue && permissionValue == null)
                 continue;
 
-            //TODO: Add PermissionValue.Skip in order to apply &= or |= operator
-            result |= _permissionAdvancedService.Authorize(permissionValue,
+            result = _permissionAdvancedService.Authorize(permissionValue,
                 entityPermissionValueCompared);
         }
 
@@ -150,17 +150,17 @@ public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
     )
     {
         var userGroups = user.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
+        Array.Sort(userGroups, (userGroupA, userGroupB) => userGroupA.Priority.CompareTo(userGroupB.Priority));
+        
         var result = false;
 
-        //TODO: Add UserGroup.Priority in order to find result of authorization
         foreach (var userGroup in userGroups)
         {
             if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, userPermission.Id,
                     cancellationToken) is var permissionValue && permissionValue == null)
                 continue;
 
-            //TODO: Add PermissionValue.Skip in order to apply &= or |= operator
-            result |= _permissionAdvancedService.Authorize(permissionValue,
+            result = _permissionAdvancedService.Authorize(permissionValue,
                 _valueCompared);
         }
 
@@ -197,9 +197,10 @@ public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
     )
     {
         var userGroups = user.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
+        Array.Sort(userGroups, (userGroupA, userGroupB) => userGroupA.Priority.CompareTo(userGroupB.Priority));
+        
         var result = false;
 
-        //TODO: Add UserGroup.Priority in order to find result of authorization
         foreach (var userGroup in userGroups)
         {
             if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id,
@@ -207,8 +208,7 @@ public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
                     cancellationToken) is var permissionValue && permissionValue == null)
                 continue;
 
-            //TODO: Add PermissionValue.Skip in order to apply &= or |= operator
-            result |= await AuthorizeUserPermissionToAnyPermissionValue(user, userPermission, permissionValue,
+            result = await AuthorizeUserPermissionToAnyPermissionValue(user, userPermission, permissionValue,
                 cancellationToken);
         }
 
