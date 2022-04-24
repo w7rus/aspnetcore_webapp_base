@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BLL.Handlers.Base;
+using BLL.Maps;
 using BLL.Services;
 using BLL.Services.Advanced;
 using Common.Enums;
@@ -12,6 +13,7 @@ using Common.Exceptions;
 using Common.Models;
 using Common.Models.Base;
 using DAL.Data;
+using Domain.Enums;
 using DTO.Models.File;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -23,6 +25,7 @@ public interface IFileHandler
 {
     Task<DTOResultBase> Create(FileCreate data, IFormFile formFile, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Read(FileRead data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Update(FileUpdate data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Delete(FileDelete data, CancellationToken cancellationToken = default);
 }
 
@@ -30,7 +33,6 @@ public class FileHandler : HandlerBase, IFileHandler
 {
     #region Fields
 
-    private readonly string _fullName;
     private readonly ILogger<HandlerBase> _logger;
     private readonly IAppDbContextAction _appDbContextAction;
     private readonly IFileService _fileService;
@@ -61,7 +63,6 @@ public class FileHandler : HandlerBase, IFileHandler
         IUserAdvancedService userAdvancedService
     )
     {
-        _fullName = GetType().FullName;
         _logger = logger;
         _appDbContextAction = appDbContextAction;
         _fileService = fileService;
@@ -108,12 +109,13 @@ public class FileHandler : HandlerBase, IFileHandler
                 Localize.Log.Method(GetType(), nameof(Create), $"Copied {ms.Length} bytes from form file"));
 
             //Get file creation Permission that will be compared
-            var permission = await _permissionService.GetByAliasAsync("uint64_file_create_power");
+            var permission =
+                await _permissionService.GetByAliasAndTypeAsync("g_file_a_create_o_file", PermissionType.Value);
 
             //Get file creation comparable system PermissionValue
             var permissionValueComparedSystem =
                 await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
-                    "uint64_file_create_power_needed_system",
+                    "g_file_a_create_o_file",
                     cancellationToken);
 
             //Authorize file creation
@@ -123,34 +125,30 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            //Get AgeRating model field mapping Permission that will be compared
-            var permissionFileCreateAutomapFileAgerating =
-                await _permissionService.GetByAliasAsync("uint64_filecreate_automap_file.agerating_power");
-
-            //Get AgeRating model field mapping comparable system PermissionValue
-            var permissionValueFileCreateAutomapFileAgeratingComparedSystem =
-                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
-                    "uint64_filecreate_automap_file.agerating_power_needed_system", cancellationToken);
+            var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData(
+                user,
+                null,
+                new Dictionary<string, AutoMapperModelFieldAuthorizeData>
+                {
+                    {
+                        nameof(File.AgeRating),
+                        new AutoMapperModelFieldAuthorizeData
+                        {
+                            PermissionComparable =
+                                await _permissionService.GetByAliasAndTypeAsync(
+                                    "g_file_a_create_o_file.o_agerating_l_automapper", PermissionType.Value),
+                            PermissionCompared = null,
+                            PermissionValueSystemCompared =
+                                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                                    "g_file_a_create_o_file.o_agerating_l_automapper", cancellationToken),
+                            CustomValueCompared = null
+                        }
+                    }
+                });
 
             //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
-            var file = _mapper.Map<File>(data, opts =>
-            {
-                opts.Items["user"] = user;
-                opts.Items["modelFieldMappingPermissionAuthorizationTuples"] =
-                    new Dictionary<string, AutoMapperComparePermissionToTuple>
-                    {
-                        {
-                            nameof(File.AgeRating), new AutoMapperComparePermissionToTuple
-                            {
-                                ComparedPermission = permissionFileCreateAutomapFileAgerating,
-                                ComparablePermissionValue = null,
-                                ComparablePermissionValueSystem =
-                                    permissionValueFileCreateAutomapFileAgeratingComparedSystem,
-                                ComparableCustomValue = null
-                            }
-                        }
-                    };
-            });
+            var file = _mapper.Map<File>(data,
+                opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
 
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create),
@@ -202,45 +200,26 @@ public class FileHandler : HandlerBase, IFileHandler
 
             var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
 
-            //Get file creation Permission that will be compared
-            var permission = await _permissionService.GetByAliasAsync("uint64_file_read_power");
+            var userPermissionComparable =
+                await _permissionService.GetByAliasAndTypeAsync("g_file_a_read_o_file", PermissionType.Value);
 
-            //Get file creation comparable PermissionValue
-            var permissionValueCompared = await _permissionService.GetByAliasAsync("uint64_file_read_power_needed");
-
-            //Get file creation comparable own PermissionValue
-            var permissionValuesComparedOwn =
-                await _permissionService.GetByAliasAsync("uint64_file_read_own_power_needed");
-
-            //Get file creation comparable system PermissionValue
-            var permissionValueComparedSystem =
-                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
-                    "uint64_file_read_power_needed_system",
-                    cancellationToken);
-
-            //Authorize file read (system PermissionValue)
-            if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToAnyPermissionValue(user, permission,
-                    permissionValueComparedSystem,
+            //Authorize file read
+            if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToAnyPermissionValue(user,
+                    userPermissionComparable,
+                    await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                        "g_file_a_read_o_file",
+                        cancellationToken),
                     cancellationToken))
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            if (file.UserId == user.Id)
-            {
-                //Authorize file read own PermissionValue
-                if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user, permission,
-                        permissionValuesComparedOwn, cancellationToken))
-                    throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                        Localize.Error.PermissionInsufficientPermissions);
-            }
-            else
-            {
-                //Authorize file read PermissionValue
-                if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user, permission,
-                        permissionValueCompared, cancellationToken))
-                    throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                        Localize.Error.PermissionInsufficientPermissions);
-            }
+            if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user,
+                    userPermissionComparable, file.User,
+                    await _permissionService.GetByAliasAndTypeAsync("g_file_a_read_o_file",
+                        file.UserId == user.Id ? PermissionType.ValueNeededSelf : PermissionType.ValueNeededOthers),
+                    cancellationToken))
+                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                    Localize.Error.PermissionInsufficientPermissions);
 
             var contentDisposition = new System.Net.Mime.ContentDisposition
             {
@@ -258,6 +237,94 @@ public class FileHandler : HandlerBase, IFileHandler
                 Data = file.Data,
                 ContentType = file.ContentType
             };
+        }
+        catch (Exception)
+        {
+            await _appDbContextAction.RollbackTransactionAsync();
+
+            throw;
+        }
+    }
+
+    public async Task<DTOResultBase> Update(FileUpdate data, CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Update)));
+
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
+
+        try
+        {
+            await _appDbContextAction.BeginTransactionAsync();
+
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            if (user == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
+
+            var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
+
+            var userPermissionComparable =
+                await _permissionService.GetByAliasAndTypeAsync("g_file_a_update_o_file", PermissionType.Value);
+
+            //Authorize file update
+            if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToAnyPermissionValue(user,
+                    userPermissionComparable,
+                    await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                        "g_file_a_update_o_file",
+                        cancellationToken),
+                    cancellationToken))
+                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                    Localize.Error.PermissionInsufficientPermissions);
+
+            if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user,
+                    userPermissionComparable, file.User,
+                    await _permissionService.GetByAliasAndTypeAsync("g_file_a_update_o_file",
+                        file.UserId == user.Id ? PermissionType.ValueNeededSelf : PermissionType.ValueNeededOthers),
+                    cancellationToken))
+                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                    Localize.Error.PermissionInsufficientPermissions);
+
+            var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData(
+                user,
+                file.User,
+                new Dictionary<string, AutoMapperModelFieldAuthorizeData>
+                {
+                    {
+                        nameof(File.AgeRating),
+                        new AutoMapperModelFieldAuthorizeData
+                        {
+                            PermissionComparable =
+                                await _permissionService.GetByAliasAndTypeAsync(
+                                    "g_file_a_update_o_file.o_agerating_l_automapper", PermissionType.Value),
+                            PermissionCompared = await _permissionService.GetByAliasAndTypeAsync(
+                                "g_file_a_update_o_file.o_agerating_l_automapper",
+                                file.UserId == user.Id
+                                    ? PermissionType.ValueNeededSelf
+                                    : PermissionType.ValueNeededOthers),
+                            PermissionValueSystemCompared =
+                                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                                    "g_file_a_update_o_file.o_agerating_l_automapper", cancellationToken),
+                            CustomValueCompared = null
+                        }
+                    }
+                });
+
+            //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
+            _mapper.Map(data, file,
+                opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
+
+            _logger.Log(LogLevel.Information,
+                Localize.Log.Method(GetType(), nameof(Create),
+                    $"{data.GetType().Name} mapped to {file.GetType().Name}"));
+
+            await _fileService.Save(file, cancellationToken);
+
+            await _appDbContextAction.CommitTransactionAsync();
+
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Update)));
+
+            return new FileUpdateResult { };
         }
         catch (Exception)
         {
@@ -286,44 +353,26 @@ public class FileHandler : HandlerBase, IFileHandler
             var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
 
             //Get file creation Permission that will be compared
-            var permission = await _permissionService.GetByAliasAsync("uint64_file_modify_power");
+            var userPermissionComparable =
+                await _permissionService.GetByAliasAndTypeAsync("g_file_a_delete_o_file", PermissionType.Value);
 
-            //Get file creation comparable PermissionValue
-            var permissionValueCompared = await _permissionService.GetByAliasAsync("uint64_file_modify_power_needed");
-
-            //Get file creation comparable own PermissionValue
-            var permissionValuesComparedOwn =
-                await _permissionService.GetByAliasAsync("uint64_file_modify_own_power_needed");
-
-            //Get file creation comparable system PermissionValue
-            var permissionValueComparedSystem =
-                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
-                    "uint64_file_modify_power_needed_system",
-                    cancellationToken);
-
-            //Authorize file read (system PermissionValue)
-            if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToAnyPermissionValue(user, permission,
-                    permissionValueComparedSystem,
+            //Authorize file delete
+            if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToAnyPermissionValue(user,
+                    userPermissionComparable,
+                    await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                        "g_file_a_delete_o_file",
+                        cancellationToken),
                     cancellationToken))
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            if (file.UserId == user.Id)
-            {
-                //Authorize file read own PermissionValue
-                if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user, permission,
-                        permissionValuesComparedOwn, cancellationToken))
-                    throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                        Localize.Error.PermissionInsufficientPermissions);
-            }
-            else
-            {
-                //Authorize file read PermissionValue
-                if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user, permission,
-                        permissionValueCompared, cancellationToken))
-                    throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                        Localize.Error.PermissionInsufficientPermissions);
-            }
+            if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user,
+                    userPermissionComparable, file.User,
+                    await _permissionService.GetByAliasAndTypeAsync("g_file_a_delete_o_file",
+                        file.UserId == user.Id ? PermissionType.ValueNeededSelf : PermissionType.ValueNeededOthers),
+                    cancellationToken))
+                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                    Localize.Error.PermissionInsufficientPermissions);
 
             await _fileService.Delete(file, cancellationToken);
 

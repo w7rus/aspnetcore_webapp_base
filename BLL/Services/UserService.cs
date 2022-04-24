@@ -21,14 +21,14 @@ namespace BLL.Services;
 public interface IUserService : IEntityServiceBase<User>
 {
     /// <summary>
-    /// Gets entity with Email that equals given one
+    /// Gets entity with equal Email
     /// </summary>
     /// <param name="email"></param>
     /// <returns></returns>
     Task<User> GetByEmailAsync(string email);
 
     /// <summary>
-    /// Gets entities with PhoneNumber that equals given one
+    /// Gets entities with equal PhoneNumber
     /// </summary>
     /// <param name="phoneNumber"></param>
     /// <param name="cancellationToken"></param>
@@ -72,7 +72,7 @@ public interface IUserService : IEntityServiceBase<User>
     );
 
     /// <summary>
-    /// Gets entities with IpAddress that equals given one
+    /// Gets entities with equal IpAddress
     /// </summary>
     /// <param name="ipAddress"></param>
     /// <param name="cancellationToken"></param>

@@ -5,6 +5,7 @@ using BLL.Services.Base;
 using Common.Models;
 using DAL.Repository;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace BLL.Services;
@@ -16,11 +17,12 @@ namespace BLL.Services;
 public interface IPermissionService : IEntityServiceBase<Permission>
 {
     /// <summary>
-    /// Gets entity with Alias that equals given one
+    /// Gets entity by equal Alias & equal Type
     /// </summary>
     /// <param name="alias"></param>
+    /// <param name="permissionType"></param>
     /// <returns></returns>
-    Task<Permission> GetByAliasAsync(string alias);
+    Task<Permission> GetByAliasAndTypeAsync(string alias, PermissionType permissionType);
 }
 
 public class PermissionService : IPermissionService
@@ -64,12 +66,12 @@ public class PermissionService : IPermissionService
         return entity;
     }
 
-    public async Task<Permission> GetByAliasAsync(string alias)
+    public async Task<Permission> GetByAliasAndTypeAsync(string alias, PermissionType permissionType)
     {
-        var entity = await _permissionRepository.SingleOrDefaultAsync(_ => _.Alias == alias);
+        var entity = await _permissionRepository.SingleOrDefaultAsync(_ => _.Alias == alias && _.Type == permissionType);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByAliasAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByAliasAndTypeAsync), $"{entity.GetType().Name} {entity.Id}"));
 
         return entity;
     }

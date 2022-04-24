@@ -18,14 +18,14 @@ namespace BLL.Services;
 public interface IRefreshTokenService : IEntityServiceBase<RefreshToken>
 {
     /// <summary>
-    /// Gets entity with Token that equals given one
+    /// Gets entity with equal Token
     /// </summary>
     /// <param name="token"></param>
     /// <returns></returns>
     Task<RefreshToken> GetByTokenAsync(string token);
 
     /// <summary>
-    /// Gets entities with UserId that equals given one & ExpiresAt that is less than current date
+    /// Gets entities with equal UserId & DateTime.UtcNow() less than ExpiresAt
     /// </summary>
     /// <param name="userId"></param>
     /// <param name="cancellationToken"></param>

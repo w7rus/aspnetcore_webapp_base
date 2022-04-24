@@ -50,8 +50,8 @@ public static class Localize
 
         public static string PermissionDynamicManagementNotAllowed => "PermissionDynamicManagementNotAllowed";
 
-        public static string PermissionAuthorizePermissionValueAtLeastOneRequired =>
-            "PermissionAuthorizePermissionValueAtLeastOneRequired";
+        public static string PermissionComparedOrCustomValueComparedRequired =>
+            "PermissionComparedOrCustomValueComparedRequired";
 
         public static string PermissionInsufficientPermissions => "PermissionInsufficientPermissions";
 

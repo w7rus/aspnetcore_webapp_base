@@ -16,7 +16,7 @@ namespace BLL.Services;
 public interface IUserProfileService : IEntityServiceBase<UserProfile>
 {
     /// <summary>
-    /// Gets entity with Username that equals given one
+    /// Gets entity with equal Username
     /// </summary>
     /// <param name="username"></param>
     /// <returns></returns>

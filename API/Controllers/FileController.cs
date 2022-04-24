@@ -72,6 +72,20 @@ public class FileController : CustomControllerBase
     {
         return ResponseWith(await _fileHandler.Read(data, cancellationToken));
     }
+    
+    [HttpPut]
+    [SwaggerOperation(Summary = "Updates file",
+        Description = "Updates file")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(
+        [Required] [FromBody] FileUpdate data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _fileHandler.Update(data, cancellationToken));
+    }
 
     [HttpDelete]
     [SwaggerOperation(Summary = "Deletes file",

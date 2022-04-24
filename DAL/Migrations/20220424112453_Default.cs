@@ -1,0 +1,593 @@
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace DAL.Migrations
+{
+    public partial class Default : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql("create extension if not exists hstore");
+            
+            migrationBuilder.CreateTable(
+                name: "Permissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Alias = table.Column<string>(type: "text", nullable: true),
+                    ValueType = table.Column<int>(type: "integer", nullable: false),
+                    CompareMode = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserGroups",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsSystem = table.Column<bool>(type: "boolean", nullable: false),
+                    Priority = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    Alias = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserGroups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    IsEmailVerified = table.Column<bool>(type: "boolean", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    IsPhoneNumberVerified = table.Column<bool>(type: "boolean", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: true),
+                    FailedSignInAttempts = table.Column<int>(type: "integer", nullable: false),
+                    DisableSignInUntil = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LastSignIn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastActivity = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastIpAddress = table.Column<string>(type: "text", nullable: true),
+                    IsTemporary = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EntityPermissionValueBase<UserGroup>",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Value = table.Column<byte[]>(type: "bytea", nullable: true),
+                    PermissionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EntityPermissionValueBase<UserGroup>", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EntityPermissionValueBase<UserGroup>_Permissions_Permission~",
+                        column: x => x.PermissionId,
+                        principalTable: "Permissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EntityPermissionValueBase<UserGroup>_UserGroups_EntityId",
+                        column: x => x.EntityId,
+                        principalTable: "UserGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EntityToEntityMappingBase<User, UserGroup>",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityLeftId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityRightId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EntityToEntityMappingBase<User, UserGroup>", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EntityToEntityMappingBase<User, UserGroup>_UserGroups_Entit~",
+                        column: x => x.EntityRightId,
+                        principalTable: "UserGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EntityToEntityMappingBase<User, UserGroup>_Users_EntityLeft~",
+                        column: x => x.EntityLeftId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Files",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Size = table.Column<int>(type: "integer", nullable: false),
+                    AgeRating = table.Column<int>(type: "integer", nullable: false),
+                    Metadata = table.Column<Dictionary<string, string>>(type: "hstore", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Files", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Files_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JsonWebTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Token = table.Column<string>(type: "text", nullable: true),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    DeleteAfter = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JsonWebTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JsonWebTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Token = table.Column<string>(type: "text", nullable: true),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: true),
+                    FirstName = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserProfiles_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Permissions",
+                columns: new[] { "Id", "Alias", "CompareMode", "CreatedAt", "Type", "UpdatedAt", "ValueType" },
+                values: new object[,]
+                {
+                    { new Guid("082f33f0-b2c9-4930-9d5b-358299b75514"), "g_group_a_update_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"), "g_userprofile_a_update_o_userprofile", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("0ba51d69-ce7a-4969-b072-d5000229b8fb"), "g_file_a_delete_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("0d5ed48d-91a5-49fe-b27c-b288de79a7c3"), "g_user_a_delete_o_user", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("196ddfa6-4791-48ef-afcd-9cb9183a840b"), "g_any_a_update_o_permissionvalue", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 5, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("1b672176-169c-4efb-8ff2-c66b9640ccd5"), "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize", 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("1eb9b46c-99c6-41ca-9a4e-06b4de8f6d55"), "g_userprofile_a_read_o_userprofile", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("22501ebc-5ebc-42a1-b07e-967b0fbed171"), "g_file_a_create_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("242a70b6-d66a-4cc4-945f-76a36db71e25"), "g_userprofile_a_read_o_userprofile", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("2715f18b-5f30-40fa-baaa-76693cc31b35"), "g_any_a_delete_o_permissionvalue", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("2995da7c-72af-437a-8b6e-b23141eb60c1"), "g_group_a_delete_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("2c67f167-0a16-434c-afb6-1b274d21e8c0"), "g_file_a_update_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("2f59c415-94bb-435b-837f-9b61f33a8723"), "g_file_a_read_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("343f5600-0233-4d33-a734-39aab148eed6"), "g_user_a_update_o_user", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("49ef7d3b-3d35-45e5-9995-6d4920413a8b"), "g_file_a_read_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("4ed3b03a-4e42-4311-8baf-bda5651770ee"), "g_userprofile_a_read_o_userprofile", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("505502c4-4055-4267-b631-ff869f14885d"), "g_any_a_read_o_permissionvalue", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 5, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("5deb5229-4488-4c2c-974a-a16279b29794"), "g_group_a_read_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("5ee1fd85-4a95-4409-a0d8-96da8ccf855b"), "g_file_a_delete_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("634b0339-1e37-4510-b32e-4b549e37fb7e"), "g_group_a_update_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("64700a31-b2bc-4c6d-bd7e-25e2c62443dc"), "g_any_a_delete_o_permissionvalue", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 5, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("6fc92a20-2405-45e3-95e5-234642d49221"), "g_file_a_create_o_file.o_agerating_l_automapper", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("780ebed2-c70e-43f0-95aa-1fd336d170b2"), "g_file_a_delete_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("7be23488-ba3f-41d9-98dd-0386bb7aa6e4"), "g_user_a_read_o_user", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("81970fd1-592a-4248-bed5-fb77e1b13477"), "g_user_a_read_o_user", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("830e69e1-dfe4-445d-a60b-a9e6f8444463"), "g_user_a_delete_o_user", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("86ce307c-f9db-4a5a-9347-8a3ea7ef2442"), "g_userprofile_a_update_o_userprofile", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("874e3654-8445-4e10-b2b5-c07e96ebfa3c"), "g_group_a_create_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("88625409-fa6a-47d3-9dd2-bd90d89a4930"), "g_file_a_update_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"), "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize", 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 5, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("91360170-bf30-45dc-9c3c-a984c504f0fd"), "g_file_a_update_o_file.o_agerating_l_automapper", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("91cd8f02-88e5-4807-b30c-3d2166aa6880"), "g_group_a_delete_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("952cea7f-6d88-43c8-982d-4e7bf212d6db"), "g_user_a_update_o_user", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("9ac1bb65-f9b8-4aab-9a0c-0c3b2d7838b1"), "g_user_a_update_o_user", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("a14c1e1c-3761-476d-8037-edaf7e4840c7"), "g_group_a_delete_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("b316b212-6b69-48ea-982b-f986bc478a7a"), "g_group_a_read_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("b441034f-bdac-4dc5-b1c2-22b35e37dd1d"), "g_file_a_update_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("b599c5a5-de3c-41a7-af74-4829ace6e3fe"), "g_file_a_update_o_file.o_agerating_l_automapper", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"), "g_file_a_create_o_file.o_agerating_l_automapper", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("b89b5856-18dd-49c7-9295-26927214276c"), "g_file_a_read_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("bf308070-53a1-4893-b348-e6267659573e"), "g_group_a_update_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("cf05b493-8bb2-4a3f-a467-a073720c5d46"), "g_file_a_delete_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("d1344244-8ea2-42f1-bf5c-5803794333b4"), "g_any_a_update_o_permissionvalue", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("d4e32d88-643c-4a34-842a-fb3b8ab502cd"), "g_file_a_read_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("d69efce7-c9a0-4c46-9dae-a7e42d947372"), "g_any_a_read_o_permissionvalue", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("dbf7a44d-03ff-45ad-8b3c-9ba2e05ca4b3"), "g_file_a_update_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"), "g_file_a_create_o_file", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("f5bd5b91-4ce6-4686-8521-0ebfbed21fff"), "g_user_a_delete_o_user", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 4, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("f7462ca7-43e6-415e-817e-c942f5471e25"), "g_group_a_read_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("f77d8f8a-9fc1-4ae7-b5a4-49633595fb8a"), "g_file_a_update_o_file.o_agerating_l_automapper", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("fa8071de-d010-43c4-ae7e-bae0f47cb6bd"), "g_group_a_create_o_usergroup", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("fb19032e-081f-465e-bba7-c95f8539c1e6"), "g_file_a_update_o_file.o_agerating_l_automapper", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("fd8bb6bc-5dc7-4cfd-be3c-7ff4dff6ae9b"), "g_userprofile_a_update_o_userprofile", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 3, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 },
+                    { new Guid("fe3271d0-acd0-45d0-82e1-f99af8ea2988"), "g_user_a_read_o_user", 6, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 2, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), 9 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserGroups",
+                columns: new[] { "Id", "Alias", "CreatedAt", "Description", "IsSystem", "Priority", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"), "Banned", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "User group with banned like permission set", true, 18446744073709551614m, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { new Guid("55119e40-f094-4560-877f-42d18ff197db"), "Root", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "User group with root like permission set. Also used to store system wise permission values", true, 18446744073709551615m, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), "Member", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "User group with member like permission set", true, 50m, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { new Guid("b26a9112-211b-462f-bd41-8f38a3568106"), "Guest", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "User group with guest like permission set", true, 25m, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "EntityPermissionValueBase<UserGroup>",
+                columns: new[] { "Id", "CreatedAt", "Discriminator", "EntityId", "PermissionId", "UpdatedAt", "Value" },
+                values: new object[,]
+                {
+                    { new Guid("051412c8-c191-4b53-be7c-3090818b47c1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fd8bb6bc-5dc7-4cfd-be3c-7ff4dff6ae9b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("0815f34f-97d7-4862-83d4-a4351f265a5d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("d69efce7-c9a0-4c46-9dae-a7e42d947372"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("08ef1677-648f-465d-9bb4-1644976b6f4d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("5deb5229-4488-4c2c-974a-a16279b29794"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("090c2124-eef4-4eb1-8ef7-4dc45a06ee3c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("634b0339-1e37-4510-b32e-4b549e37fb7e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("0940be2f-173c-476d-82cd-510d07f6f002"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("5ee1fd85-4a95-4409-a0d8-96da8ccf855b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("0ca8d362-1818-4825-8fcf-b157fcb265f4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("5ee1fd85-4a95-4409-a0d8-96da8ccf855b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("0fd8aa6c-8b13-43b7-8d34-55c28f5c74c9"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fe3271d0-acd0-45d0-82e1-f99af8ea2988"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("0fe1fc45-7b09-403c-96c5-531059f806db"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b316b212-6b69-48ea-982b-f986bc478a7a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("10f5cadb-b5d9-4c90-b09a-5f80737b520c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f7462ca7-43e6-415e-817e-c942f5471e25"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("11570cbd-2545-436f-bfec-826bcc5941bb"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2f59c415-94bb-435b-837f-9b61f33a8723"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("1410f199-2385-4c82-ba21-0f238ad0269c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("18ca59a8-115d-47d5-9029-fe9059eed27a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("634b0339-1e37-4510-b32e-4b549e37fb7e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("1988cf6a-7e3a-4ecd-97e0-12ef75161f8b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("7be23488-ba3f-41d9-98dd-0386bb7aa6e4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("19d14d6f-264b-4bd8-9553-95f4f072ae46"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("d1344244-8ea2-42f1-bf5c-5803794333b4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("1ac10d52-db5f-4577-809d-738773ddb334"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2715f18b-5f30-40fa-baaa-76693cc31b35"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("1bf2369e-1043-4590-b428-310e19aec3e8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fe3271d0-acd0-45d0-82e1-f99af8ea2988"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("1cd9fce9-0bca-4ca8-9193-6b695281fd04"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f7462ca7-43e6-415e-817e-c942f5471e25"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("203cbb0b-8ad8-4bee-ae9b-c723d2fdfdbf"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2f59c415-94bb-435b-837f-9b61f33a8723"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("218584d5-fd7b-46a9-b90c-c6ac22f66eb7"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("343f5600-0233-4d33-a734-39aab148eed6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("21986af2-bb75-4ce4-8799-12a2621b55d7"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b89b5856-18dd-49c7-9295-26927214276c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("219fd9f6-0424-4004-af44-8583fbd8364c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("9ac1bb65-f9b8-4aab-9a0c-0c3b2d7838b1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("21a7e09e-4b25-427a-a178-ac7f984e1e74"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("81970fd1-592a-4248-bed5-fb77e1b13477"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("238f17b9-bbb1-4a53-a1fd-6a0ddce2718a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("49ef7d3b-3d35-45e5-9995-6d4920413a8b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("23d107a0-91ac-40ac-9258-0cd08f1e8b7c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b316b212-6b69-48ea-982b-f986bc478a7a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("27862712-cbe2-4078-9b91-578aa53e7c89"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("64700a31-b2bc-4c6d-bd7e-25e2c62443dc"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("289b7951-e119-4f05-a733-0b7fb167810b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("22501ebc-5ebc-42a1-b07e-967b0fbed171"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("29fb45d0-241f-481d-ae2c-b8334a042d64"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("196ddfa6-4791-48ef-afcd-9cb9183a840b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("2a0965b8-111c-47a6-982b-38421b148fe8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("830e69e1-dfe4-445d-a60b-a9e6f8444463"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("2c75b400-a7e0-46c7-ad65-411d4419a627"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b316b212-6b69-48ea-982b-f986bc478a7a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("307e5fa9-0860-4280-8351-0dd2fd50d750"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("5deb5229-4488-4c2c-974a-a16279b29794"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("30807702-e7c6-498a-bb84-60ebaab60536"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f77d8f8a-9fc1-4ae7-b5a4-49633595fb8a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("33e1b489-aa57-406f-90b4-f2efdf8d294f"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("952cea7f-6d88-43c8-982d-4e7bf212d6db"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("35647d94-5113-4514-8601-eab79001d35e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("634b0339-1e37-4510-b32e-4b549e37fb7e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("36caa2de-cf8f-4256-9eed-43ccd95e9917"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2995da7c-72af-437a-8b6e-b23141eb60c1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("36f529f7-3c46-4418-817c-6264835f60e3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b89b5856-18dd-49c7-9295-26927214276c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("387f1423-ba2f-487e-a7fb-8aa68a6d7577"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("082f33f0-b2c9-4930-9d5b-358299b75514"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("393d47c5-5dbb-4d4c-9e32-d4db7ca3e291"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("6fc92a20-2405-45e3-95e5-234642d49221"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("3a2e675b-4c10-41d7-bac3-e9206ded6e1e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("bf308070-53a1-4893-b348-e6267659573e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("3a401e2f-c092-41ea-a105-d71149fc43a8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b599c5a5-de3c-41a7-af74-4829ace6e3fe"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("3ab1a512-dc95-4f02-be1b-8d1811270624"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("3fce2734-7f11-43f0-8aa0-42727e18517b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("242a70b6-d66a-4cc4-945f-76a36db71e25"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("4a22d7c0-d592-40ac-a333-11c9a21fc65b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("cf05b493-8bb2-4a3f-a467-a073720c5d46"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("4c4ff163-12e3-49cb-a968-f62584277af3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fb19032e-081f-465e-bba7-c95f8539c1e6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("4df8bab9-a8d1-4484-aafc-80cce374d007"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("bf308070-53a1-4893-b348-e6267659573e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("4ec7f7d6-9f43-4d48-855d-647477b0c5cc"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("505502c4-4055-4267-b631-ff869f14885d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("4f847479-5ac8-4a77-bb1b-14f731ffef9b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b89b5856-18dd-49c7-9295-26927214276c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("52d2b4df-1361-4598-af65-efc5b3ebf984"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("bf308070-53a1-4893-b348-e6267659573e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("5421de83-fe57-43ef-9730-1a91bd415007"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0ba51d69-ce7a-4969-b072-d5000229b8fb"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("542e6f70-ba52-449c-9c2d-8b8f3b91a302"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("49ef7d3b-3d35-45e5-9995-6d4920413a8b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("566e5381-52bc-4897-b5eb-c234becb7525"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("1eb9b46c-99c6-41ca-9a4e-06b4de8f6d55"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("57606dfc-31c2-4e2f-af18-61046cd9328a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2995da7c-72af-437a-8b6e-b23141eb60c1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("5777bc3f-38dd-4aff-8884-be843cb5cf63"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2f59c415-94bb-435b-837f-9b61f33a8723"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("59c33d82-a184-4457-8e4d-6f8b7adba2b4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2995da7c-72af-437a-8b6e-b23141eb60c1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("5be97199-4ac7-4478-afde-ae5a60927b1b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("6fc92a20-2405-45e3-95e5-234642d49221"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("5f349562-19ac-471e-b086-81196b03c6a2"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("64700a31-b2bc-4c6d-bd7e-25e2c62443dc"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("5f8698b5-50ef-4348-99a4-e64b2149f1fb"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("dbf7a44d-03ff-45ad-8b3c-9ba2e05ca4b3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("61786026-802e-4bdf-9864-cd7fa2be2901"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("830e69e1-dfe4-445d-a60b-a9e6f8444463"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("6271c986-1c74-4705-9410-89b6606e1a03"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("505502c4-4055-4267-b631-ff869f14885d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("64c6590e-cb26-46af-a32f-48ee03d0a71b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0d5ed48d-91a5-49fe-b27c-b288de79a7c3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("66bfbe83-6dc1-4be3-8387-f24be04ff2a5"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("86ce307c-f9db-4a5a-9347-8a3ea7ef2442"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("66df72fe-4806-4c04-8971-e54772691d6a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("874e3654-8445-4e10-b2b5-c07e96ebfa3c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("69bf2bb1-20dc-4aba-aeeb-896337f19543"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("242a70b6-d66a-4cc4-945f-76a36db71e25"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("6f1f4a27-5f87-441e-954c-050d9aabacdd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("d4e32d88-643c-4a34-842a-fb3b8ab502cd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("6f9c61cf-afd6-4695-b404-25e12cc7bc5f"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fa8071de-d010-43c4-ae7e-bae0f47cb6bd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("6ff670c3-30a5-4186-b785-bacddd4e2cba"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("81970fd1-592a-4248-bed5-fb77e1b13477"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("7083d8f1-e83c-4d90-8057-108dfc323ef7"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b89b5856-18dd-49c7-9295-26927214276c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("7186bc47-8fde-4dae-b538-ef1b66bf7a8d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("d69efce7-c9a0-4c46-9dae-a7e42d947372"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("71f90ed1-660c-4731-ad9a-d587a6986e4a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("6fc92a20-2405-45e3-95e5-234642d49221"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("73e512cc-0939-49a3-ad9a-31954d493eb4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0d5ed48d-91a5-49fe-b27c-b288de79a7c3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("747c2eac-bbb7-44be-8a93-cdd95da0ebb6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fa8071de-d010-43c4-ae7e-bae0f47cb6bd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("75537c46-c27d-4651-a66b-207eb4a5d8c7"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("cf05b493-8bb2-4a3f-a467-a073720c5d46"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("76c93ef1-ac7f-45bd-a389-0c5402b0dd2a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fa8071de-d010-43c4-ae7e-bae0f47cb6bd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("77084c95-3460-472d-922f-97ed1cdd2641"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("343f5600-0233-4d33-a734-39aab148eed6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("782cb8cc-6869-4a77-983e-adf502f552df"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("7a9e75a8-b89f-42f2-9409-68e0ed4e38f8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("343f5600-0233-4d33-a734-39aab148eed6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("7bb5c75e-87e9-493c-9f00-562ff410ba29"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("81970fd1-592a-4248-bed5-fb77e1b13477"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("7fd067b8-dce3-48b3-9c03-0e490e7e8146"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("830e69e1-dfe4-445d-a60b-a9e6f8444463"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("7ffdcc78-db99-4928-afd4-ab4d924eda9c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("7be23488-ba3f-41d9-98dd-0386bb7aa6e4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("801bf2d7-ca98-4d29-bc7b-6105e66ce628"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("91cd8f02-88e5-4807-b30c-3d2166aa6880"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("81511bbd-1ca1-4102-8754-d8f0d766922e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("88625409-fa6a-47d3-9dd2-bd90d89a4930"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("83bbc265-3324-4baa-9d3d-63a6313cd695"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("5deb5229-4488-4c2c-974a-a16279b29794"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("84959e6b-6b84-445c-bda4-f68867ce179f"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("343f5600-0233-4d33-a734-39aab148eed6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("85fa4d31-8b55-4f4b-bb4f-ee38e9ae6c6a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f77d8f8a-9fc1-4ae7-b5a4-49633595fb8a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("87468cfd-8fe0-41ab-a96e-eded9f295b8e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("49ef7d3b-3d35-45e5-9995-6d4920413a8b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("8c7e2d57-e062-4dcc-96d5-2cda10f88741"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("22501ebc-5ebc-42a1-b07e-967b0fbed171"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("8e2c2051-c7bd-492e-9242-d2ebe201bd0c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("86ce307c-f9db-4a5a-9347-8a3ea7ef2442"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("8f95bed0-163e-4965-9ec9-17849e780227"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("cf05b493-8bb2-4a3f-a467-a073720c5d46"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("9302d241-fd5d-484e-a06f-cc8c809fce89"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("93ec425a-7ade-4fa0-b51a-c9707fc6424d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("082f33f0-b2c9-4930-9d5b-358299b75514"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("9447fefa-f9b6-4311-a638-146296aab793"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0ba51d69-ce7a-4969-b072-d5000229b8fb"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("95b71cbc-823e-4a76-b036-8b41b74f9142"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f5bd5b91-4ce6-4686-8521-0ebfbed21fff"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("979158ef-f4c6-4752-ad2c-9c935c4bdd49"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("a14c1e1c-3761-476d-8037-edaf7e4840c7"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("97921fc5-7e36-47b4-b3a8-058f8f035ffa"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("64700a31-b2bc-4c6d-bd7e-25e2c62443dc"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("97ddaaee-f3ee-4b51-9e2a-46d0ebdc6b98"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("91360170-bf30-45dc-9c3c-a984c504f0fd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("98ecd932-362b-4edc-8083-3616db7339a6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("4ed3b03a-4e42-4311-8baf-bda5651770ee"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("99b0ba9d-39ba-4015-93eb-a78002f67661"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("4ed3b03a-4e42-4311-8baf-bda5651770ee"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("9a5741c3-3034-4f71-b1da-91a2f769a909"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("9a733949-1f3d-4e77-b74d-22bebbc49d55"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0ba51d69-ce7a-4969-b072-d5000229b8fb"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("9a9fbeb3-fc31-4089-bf04-fc1c81138ff8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fe3271d0-acd0-45d0-82e1-f99af8ea2988"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("9d1bd7fb-f86d-461e-9ba8-01a4e3f92cb4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("505502c4-4055-4267-b631-ff869f14885d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("9d265a5c-a75d-4d7d-8a50-1b702c474c7e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("91cd8f02-88e5-4807-b30c-3d2166aa6880"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("9d569b58-9678-4586-90b5-ef6e36d5f0fe"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("9ac1bb65-f9b8-4aab-9a0c-0c3b2d7838b1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("9f789166-eee5-412a-8d20-850806ef1b29"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("cf05b493-8bb2-4a3f-a467-a073720c5d46"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("a024fb6a-eeab-4b0d-adf7-f8fd412af2d3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("196ddfa6-4791-48ef-afcd-9cb9183a840b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("a048f842-f8f0-4e4f-81b6-b54e446162a4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0d5ed48d-91a5-49fe-b27c-b288de79a7c3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("a1f6913e-7657-40a6-bc37-7423baeccaff"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fe3271d0-acd0-45d0-82e1-f99af8ea2988"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("a276a178-192a-4d3d-9ca5-0671ab70130a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("a14c1e1c-3761-476d-8037-edaf7e4840c7"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("a2e13b1b-bdbd-46ae-a34a-0511cb52ef49"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("082f33f0-b2c9-4930-9d5b-358299b75514"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("a4b5ffe5-a137-4ad3-aa80-9b5f5f288362"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 16, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("a4e111aa-8237-486c-b742-a1b989e89af2"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2f59c415-94bb-435b-837f-9b61f33a8723"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("a6515d52-3a4d-4de5-98cc-a35413a0957e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("5ee1fd85-4a95-4409-a0d8-96da8ccf855b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("a6c5c26a-b06e-4a6a-89d0-133c29a9c981"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("952cea7f-6d88-43c8-982d-4e7bf212d6db"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("a8d3b92e-751d-4fc5-b435-2f7cc44ec813"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("196ddfa6-4791-48ef-afcd-9cb9183a840b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("a969094a-25c0-4bda-8121-00d3f85984a8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2715f18b-5f30-40fa-baaa-76693cc31b35"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("aa811d1a-04ba-474c-9071-9f377fb29325"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f5bd5b91-4ce6-4686-8521-0ebfbed21fff"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("ab3c97bf-e7a3-4118-8244-4ce7a4c4c4db"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("dbf7a44d-03ff-45ad-8b3c-9ba2e05ca4b3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("ac3036ee-0cdd-4718-95b6-a86340953bd3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("1b672176-169c-4efb-8ff2-c66b9640ccd5"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 16, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("b2818b20-07e2-4930-8d94-0710d742d95f"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("1eb9b46c-99c6-41ca-9a4e-06b4de8f6d55"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("b2d23951-c9f9-4997-bc4d-d96a42f606eb"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 8, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("b7672bea-e3bf-4844-ba42-6fb8e8738fbb"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("d69efce7-c9a0-4c46-9dae-a7e42d947372"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("b9292452-29b7-4831-a6a5-5ce7b0c6aeaa"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("88625409-fa6a-47d3-9dd2-bd90d89a4930"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("b931e72d-e3a4-41ca-bcb6-a87d0662c9ca"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("7be23488-ba3f-41d9-98dd-0386bb7aa6e4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("b9e1efa0-df57-42e9-b603-b75e6b4b0b64"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("88625409-fa6a-47d3-9dd2-bd90d89a4930"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("bb117641-de17-4489-a19f-fcf351eb08f9"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("4ed3b03a-4e42-4311-8baf-bda5651770ee"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("c09930e4-6234-45c4-87a4-395a4a90a6f1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b599c5a5-de3c-41a7-af74-4829ace6e3fe"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("c0ba85ad-2849-4023-9740-5b51d3d1128c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("91360170-bf30-45dc-9c3c-a984c504f0fd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("c212b9e4-6f21-45b7-b330-2e43ebebf7d8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("c57fac13-2c34-4fe2-92ee-1fc4bc1e7211"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b441034f-bdac-4dc5-b1c2-22b35e37dd1d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("c7023877-47d1-4e15-aecb-1e25603d9671"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("64700a31-b2bc-4c6d-bd7e-25e2c62443dc"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("c7bd5411-2d0c-42d4-bd3c-edbbab6c5695"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("91360170-bf30-45dc-9c3c-a984c504f0fd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("c7f8d3f5-a5be-4df7-a8df-8be77dd312c4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("91360170-bf30-45dc-9c3c-a984c504f0fd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("c813792d-f622-4bb2-b74e-3d4bbebdb067"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("91cd8f02-88e5-4807-b30c-3d2166aa6880"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("c9030be7-3755-4c25-b9ac-4774abb5c54f"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("a14c1e1c-3761-476d-8037-edaf7e4840c7"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("c9759755-5662-46e3-8615-81758b44cd04"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b316b212-6b69-48ea-982b-f986bc478a7a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("ca30ce9e-d943-49db-9d3e-f4801f480e2d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("242a70b6-d66a-4cc4-945f-76a36db71e25"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("ca332118-cbfb-495d-9ad5-1085fbcef1cd"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2c67f167-0a16-434c-afb6-1b274d21e8c0"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("cafc37fb-9627-4e3e-9d24-22ef138b6b5d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("634b0339-1e37-4510-b32e-4b549e37fb7e"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("cb953d83-c9be-4427-96c1-ca9e566d9416"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("505502c4-4055-4267-b631-ff869f14885d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("cca6064e-c943-4347-9660-9bdaaf994256"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("22501ebc-5ebc-42a1-b07e-967b0fbed171"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("cd102ba6-a84c-44e8-94d9-ccc4d0ebd29b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("86ce307c-f9db-4a5a-9347-8a3ea7ef2442"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("cf14f643-5b3f-4d85-94a2-243731bd57f8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("9ac1bb65-f9b8-4aab-9a0c-0c3b2d7838b1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("d0d2d84b-efd4-429a-914e-f5395ee41af8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f7462ca7-43e6-415e-817e-c942f5471e25"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("d181f458-4118-4ab8-8e71-1b9ffd7ff43c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("196ddfa6-4791-48ef-afcd-9cb9183a840b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("d1a35165-9dfc-4239-9cc2-15709f3bf8ec"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2c67f167-0a16-434c-afb6-1b274d21e8c0"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("d37635c6-b013-493c-ad7e-5d20a50aec1c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("d73489c9-f72e-47c0-ac82-0e4f246a72ab"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("91cd8f02-88e5-4807-b30c-3d2166aa6880"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("d82d8665-8204-4fd0-aca5-c1035453bffb"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("81970fd1-592a-4248-bed5-fb77e1b13477"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("dae1a5de-ac03-4ba4-87bb-04fd6346400c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f5bd5b91-4ce6-4686-8521-0ebfbed21fff"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("dc03af7e-ddf7-4a58-ba11-c2422239789c"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("88625409-fa6a-47d3-9dd2-bd90d89a4930"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("dcc9a2a6-5621-4d83-889a-9b0587b2465d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("dbf7a44d-03ff-45ad-8b3c-9ba2e05ca4b3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("e2b7d4f7-a33f-4f81-b9e2-c00c85afb4d8"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("7be23488-ba3f-41d9-98dd-0386bb7aa6e4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("e3320704-c972-4d08-99b6-6e8473bb7b1a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("5deb5229-4488-4c2c-974a-a16279b29794"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("e50b4aac-cd8b-40cd-92b1-f49b517c1099"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fd8bb6bc-5dc7-4cfd-be3c-7ff4dff6ae9b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("e6591c25-8257-4434-a2c4-acace713d2f9"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("242a70b6-d66a-4cc4-945f-76a36db71e25"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("e7780ada-4489-44f4-9a38-4d2cd3045f40"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("49ef7d3b-3d35-45e5-9995-6d4920413a8b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("e9eb7fc1-51f5-4336-8311-c8531a570431"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f7462ca7-43e6-415e-817e-c942f5471e25"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("eb094c7a-4115-4e05-a4d8-3447efbc794a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("1eb9b46c-99c6-41ca-9a4e-06b4de8f6d55"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("eb43016d-ff51-476a-a217-97fc74259acc"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("1eb9b46c-99c6-41ca-9a4e-06b4de8f6d55"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("eb7faaf0-0539-46e6-bffb-00a7deb845fa"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2995da7c-72af-437a-8b6e-b23141eb60c1"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("ecbb8be2-df4f-4deb-84fe-3ac923ddf474"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("d1344244-8ea2-42f1-bf5c-5803794333b4"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("efdf0b13-a1a9-4ccc-b94b-83c313e84113"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f77d8f8a-9fc1-4ae7-b5a4-49633595fb8a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("f109982b-0aa2-4ca8-861f-ba839aa27e0a"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("0d5ed48d-91a5-49fe-b27c-b288de79a7c3"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("f4dbb4f6-6dfa-4578-a5de-de87f8e9ce8f"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("2c67f167-0a16-434c-afb6-1b274d21e8c0"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("f4f9f030-bf0f-4959-97bd-49f5b3c10d91"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("082f33f0-b2c9-4930-9d5b-358299b75514"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("f9562b2e-baa8-4829-887e-0d961100e61d"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("f5bd5b91-4ce6-4686-8521-0ebfbed21fff"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("fb48d6cb-39e6-43a1-a9d9-e98a17b1f9cf"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("780ebed2-c70e-43f0-95aa-1fd336d170b2"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("fb55e4bb-b8e2-48f5-85ff-bfcee3ec4e99"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("830e69e1-dfe4-445d-a60b-a9e6f8444463"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("fc09e800-e777-4765-9367-73ab10a3c0e0"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("4ed3b03a-4e42-4311-8baf-bda5651770ee"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 } },
+                    { new Guid("fcdef237-7b7d-4457-8da5-e5eb05f4f06f"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("fd8bb6bc-5dc7-4cfd-be3c-7ff4dff6ae9b"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("fe2b3ef1-ce4b-4696-a5b2-35b9020db09f"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("b599c5a5-de3c-41a7-af74-4829ace6e3fe"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 } },
+                    { new Guid("fe4ce055-285f-4c24-a55f-fe4c8d0bd3c2"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserGroupPermissionValue", new Guid("55119e40-f094-4560-877f-42d18ff197db"), new Guid("952cea7f-6d88-43c8-982d-4e7bf212d6db"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 } }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityPermissionValueBase<UserGroup>_EntityId",
+                table: "EntityPermissionValueBase<UserGroup>",
+                column: "EntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityPermissionValueBase<UserGroup>_PermissionId",
+                table: "EntityPermissionValueBase<UserGroup>",
+                column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityPermissionValueBase<UserGroup>_PermissionId_EntityId",
+                table: "EntityPermissionValueBase<UserGroup>",
+                columns: new[] { "PermissionId", "EntityId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityToEntityMappingBase<User, UserGroup>_EntityLeftId_Ent~",
+                table: "EntityToEntityMappingBase<User, UserGroup>",
+                columns: new[] { "EntityLeftId", "EntityRightId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityToEntityMappingBase<User, UserGroup>_EntityRightId",
+                table: "EntityToEntityMappingBase<User, UserGroup>",
+                column: "EntityRightId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Files_Name",
+                table: "Files",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Files_UserId",
+                table: "Files",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JsonWebTokens_Token",
+                table: "JsonWebTokens",
+                column: "Token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JsonWebTokens_UserId",
+                table: "JsonWebTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Permissions_Alias_Type",
+                table: "Permissions",
+                columns: new[] { "Alias", "Type" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_Token",
+                table: "RefreshTokens",
+                column: "Token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserGroups_Alias",
+                table: "UserGroups",
+                column: "Alias",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserProfiles_UserId",
+                table: "UserProfiles",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserProfiles_Username",
+                table: "UserProfiles",
+                column: "Username",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "EntityPermissionValueBase<UserGroup>");
+
+            migrationBuilder.DropTable(
+                name: "EntityToEntityMappingBase<User, UserGroup>");
+
+            migrationBuilder.DropTable(
+                name: "Files");
+
+            migrationBuilder.DropTable(
+                name: "JsonWebTokens");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
+
+            migrationBuilder.DropTable(
+                name: "UserProfiles");
+
+            migrationBuilder.DropTable(
+                name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "UserGroups");
+
+            migrationBuilder.DropTable(
+                name: "Users");
+        }
+    }
+}

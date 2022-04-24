@@ -17,7 +17,7 @@ namespace BLL.Services;
 public interface IUserGroupService : IEntityServiceBase<UserGroup>
 {
     /// <summary>
-    /// Gets entity with Alias that equals given one
+    /// Gets entity with equal Alias
     /// </summary>
     /// <param name="alias"></param>
     /// <returns></returns>

@@ -17,7 +17,7 @@ public interface
     where TEntity : EntityBase<Guid>
 {
     /// <summary>
-    /// Gets entities with PermissionId that equals given one
+    /// Gets entities with equal PermissionId
     /// </summary>
     /// <param name="permissionId"></param>
     /// <param name="cancellationToken"></param>
@@ -28,7 +28,7 @@ public interface
     );
 
     /// <summary>
-    /// Gets entities with EntityId that equals given one
+    /// Gets entities with equal EntityId
     /// </summary>
     /// <param name="entityId"></param>
     /// <param name="cancellationToken"></param>
@@ -39,7 +39,7 @@ public interface
     );
 
     /// <summary>
-    /// Gets entity with PermissionId & EntityId that equals given one
+    /// Gets entity with equal PermissionId & equal EntityId
     /// </summary>
     /// <param name="entityId"></param>
     /// <param name="permissionId"></param>
