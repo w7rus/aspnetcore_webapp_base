@@ -5,7 +5,7 @@ public enum PermissionType
     None,
     Unknown,
     Value,
-    ValueNeededSelf,
+    ValueNeededOwner,
     ValueNeededOthers,
     ValueNeededAny,
     ValueNeededSystem,

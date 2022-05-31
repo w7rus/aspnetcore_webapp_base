@@ -35,20 +35,6 @@ public interface IPermissionAdvancedService
         EntityPermissionValueBase<TEntity> entityPermissionValue,
         byte[] _valueCompared
     ) where TEntity : EntityBase<Guid>;
-
-    // /// <summary>
-    // /// Authorizes "uint64_g_any_a_update_o_permissionvalue_power" PermissionValue.Value to another PermissionValue.Grant
-    // /// Authorizes saving of new PermissionValue data
-    // /// </summary>
-    // /// <param name="entityPermissionValue">PermissionValue compared</param>
-    // /// <param name="entityPermissionValueCompared">Comparable PermissionValue</param>
-    // /// <typeparam name="TEntity">Type of Compared PermissionValue</typeparam>
-    // /// <typeparam name="TEntityCompared">Type of Comparable PermissionValue</typeparam>
-    // /// <returns>Authorization result</returns>
-    // bool AuthorizeSave<TEntity, TEntityCompared>(
-    //     EntityPermissionValueBase<TEntity> entityPermissionValue,
-    //     EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared
-    // ) where TEntity : EntityBase<Guid> where TEntityCompared : EntityBase<Guid>;
 }
 
 public class PermissionAdvancedService : IPermissionAdvancedService
@@ -362,30 +348,6 @@ public class PermissionAdvancedService : IPermissionAdvancedService
             _ => throw new ArgumentOutOfRangeException()
         };
     }
-
-    // public bool AuthorizeSave<TEntity, TEntityCompared>(
-    //     EntityPermissionValueBase<TEntity> entityPermissionValue,
-    //     EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared
-    // ) where TEntity : EntityBase<Guid> where TEntityCompared : EntityBase<Guid>
-    // {
-    //     if (entityPermissionValue.Permission.Alias != "uint64_g_any_a_update_o_permissionvalue_power")
-    //         throw new CustomException(
-    //             $"{nameof(entityPermissionValue.Permission.Alias)} does not match uint64_g_any_a_update_o_permissionvalue_power");
-    //
-    //     if (entityPermissionValue.Permission.Type != PermissionType.UInt64)
-    //         throw new CustomException(
-    //             $"{nameof(entityPermissionValue.Permission.Type)} does not match {nameof(PermissionType.UInt64)}");
-    //
-    //     if (entityPermissionValue.Permission.CompareMode != PermissionCompareMode.GreaterOrEqual)
-    //         throw new CustomException(
-    //             $"{nameof(entityPermissionValue.Permission.CompareMode)} does not match {nameof(PermissionCompareMode.GreaterOrEqual)}");
-    //
-    //     var value = BitConverter.ToUInt64(entityPermissionValue.Value);
-    //     var valueCompared = entityPermissionValueCompared.Grant;
-    //     var compareToResult = value.CompareTo(valueCompared);
-    //
-    //     return compareToResult >= 0;
-    // }
 
     #endregion
 }

@@ -216,7 +216,7 @@ public class FileHandler : HandlerBase, IFileHandler
             if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user,
                     userPermissionComparable, file.User,
                     await _permissionService.GetByAliasAndTypeAsync("g_file_a_read_o_file",
-                        file.UserId == user.Id ? PermissionType.ValueNeededSelf : PermissionType.ValueNeededOthers),
+                        file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
                     cancellationToken))
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
@@ -280,7 +280,7 @@ public class FileHandler : HandlerBase, IFileHandler
             if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user,
                     userPermissionComparable, file.User,
                     await _permissionService.GetByAliasAndTypeAsync("g_file_a_update_o_file",
-                        file.UserId == user.Id ? PermissionType.ValueNeededSelf : PermissionType.ValueNeededOthers),
+                        file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
                     cancellationToken))
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
@@ -300,7 +300,7 @@ public class FileHandler : HandlerBase, IFileHandler
                             PermissionCompared = await _permissionService.GetByAliasAndTypeAsync(
                                 "g_file_a_update_o_file.o_agerating_l_automapper",
                                 file.UserId == user.Id
-                                    ? PermissionType.ValueNeededSelf
+                                    ? PermissionType.ValueNeededOwner
                                     : PermissionType.ValueNeededOthers),
                             PermissionValueSystemCompared =
                                 await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
@@ -369,7 +369,7 @@ public class FileHandler : HandlerBase, IFileHandler
             if (!await _userToUserGroupAdvancedService.AuthorizeUserPermissionToUserPermission(user,
                     userPermissionComparable, file.User,
                     await _permissionService.GetByAliasAndTypeAsync("g_file_a_delete_o_file",
-                        file.UserId == user.Id ? PermissionType.ValueNeededSelf : PermissionType.ValueNeededOthers),
+                        file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
                     cancellationToken))
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
