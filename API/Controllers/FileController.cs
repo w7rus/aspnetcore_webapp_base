@@ -16,8 +16,6 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status401Unauthorized)]
-[ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status400BadRequest)]
 public class FileController : CustomControllerBase
 {
     #region Fields

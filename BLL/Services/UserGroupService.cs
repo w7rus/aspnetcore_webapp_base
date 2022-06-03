@@ -54,7 +54,7 @@ public class UserGroupService : IUserGroupService
     public async Task<UserGroup> Save(UserGroup entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
 
         if (entity.IsSystem)
             throw new CustomException(Localize.Error.UserGroupIsSystemManagementNotAllowed);
@@ -68,7 +68,7 @@ public class UserGroupService : IUserGroupService
     public async Task Delete(UserGroup entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
 
         if (entity.IsSystem)
             throw new CustomException(Localize.Error.UserGroupIsSystemManagementNotAllowed);
@@ -82,7 +82,7 @@ public class UserGroupService : IUserGroupService
         var entity = await _userGroupRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -92,7 +92,7 @@ public class UserGroupService : IUserGroupService
         var entity = await _userGroupRepository.SingleOrDefaultAsync(_ => _.Alias == alias);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByAliasAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByAliasAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }

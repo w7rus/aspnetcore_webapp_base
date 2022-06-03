@@ -93,6 +93,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     #region Methods
     
+    //TODO: Rename in SignIn
     public async Task<DTOResultBase> SignUpInAsGuest(AuthSignUpInAsGuest data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignUpInAsGuest)));
@@ -185,6 +186,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignUpInAsGuest)));
 
+            //TODO: Custom model when useCookies=false
             return new AuthSignUpResult
             {
                 UserId = user.Id
@@ -478,7 +480,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 Warnings = warnings
             };
         }
-        catch (Exception e)
+        catch (Exception)
         {
             await _appDbContextAction.RollbackTransactionAsync();
 
@@ -552,7 +554,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             return new AuthSignOutResult();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             await _appDbContextAction.RollbackTransactionAsync();
 

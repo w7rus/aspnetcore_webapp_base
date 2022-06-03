@@ -66,7 +66,7 @@ public class RefreshTokenService : IRefreshTokenService
     public async Task<RefreshToken> Save(RefreshToken entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _refreshTokenRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -77,7 +77,7 @@ public class RefreshTokenService : IRefreshTokenService
     public async Task Delete(RefreshToken entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _refreshTokenRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -88,7 +88,7 @@ public class RefreshTokenService : IRefreshTokenService
         var entity = await _refreshTokenRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -98,7 +98,7 @@ public class RefreshTokenService : IRefreshTokenService
         var entity = await _refreshTokenRepository.SingleOrDefaultAsync(_ => _.Token == token);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByTokenAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByTokenAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -114,7 +114,7 @@ public class RefreshTokenService : IRefreshTokenService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetExpiredByUserIdAsync),
-                $"{result.GetType().Name} {result.Length}"));
+                $"{result?.GetType().Name} {result?.Length}"));
 
         return result;
     }

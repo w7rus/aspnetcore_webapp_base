@@ -70,7 +70,7 @@ public class FileService : IFileService
     public async Task<File> Save(File entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
 
         if (entity.IsNew())
         {
@@ -135,7 +135,7 @@ public class FileService : IFileService
                 Localize.Error.ResponseStatusCodeUnsuccessful);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _fileRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -171,7 +171,7 @@ public class FileService : IFileService
         file.ContentType = response.Content.Headers.ContentType?.ToString();
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{file.GetType().Name} {file.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{file?.GetType().Name} {file?.Id}"));
 
         return file;
     }

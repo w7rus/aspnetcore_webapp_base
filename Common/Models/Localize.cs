@@ -54,6 +54,8 @@ public static class Localize
             "PermissionComparedOrCustomValueComparedRequired";
 
         public static string PermissionInsufficientPermissions => "PermissionInsufficientPermissions";
+        public static string PermissionDoesNotExist => "PermissionDoesNotExist";
+        public static string PermissionValueDoesNotExist => "PermissionValueDoesNotExist";
 
         #endregion
 
@@ -75,6 +77,7 @@ public static class Localize
         #region UserGroup
 
         public static string UserGroupIsSystemManagementNotAllowed => "UserGroupIsSystemManagementNotAllowed";
+        public static string UserGroupDoesNotExist => "UserGroupDoesNotExist";
 
         #endregion
 
@@ -102,7 +105,7 @@ public static class Localize
             $"[Middleware {type.Name}] (Forward-End)";
 
         public static string MiddlewareBackwardStart(Type type) =>
-            $"[Middleware {type.Name}] (Backward-End)";
+            $"[Middleware {type.Name}] (Backward-Start)";
 
         public static string MiddlewareBackwardEnd(Type type) =>
             $"[Middleware {type.Name}] (Backward-End)";

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Models;
 using Common.Models.Base;
 using DTO.Models.File;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.Base;
 
+[ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status400BadRequest)]
 public class CustomControllerBase : ControllerBase
 {
     #region Fields
@@ -16,7 +19,7 @@ public class CustomControllerBase : ControllerBase
 
     #endregion
 
-    #region Methods
+    #region Ctor
 
     public CustomControllerBase(IHttpContextAccessor httpContextAccessor)
     {

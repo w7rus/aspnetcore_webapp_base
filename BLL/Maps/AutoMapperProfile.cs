@@ -8,6 +8,7 @@ using Common.Models;
 using Domain.Entities;
 using Domain.Entities.Base;
 using DTO.Models.File;
+using DTO.Models.PermissionValue;
 
 namespace BLL.Maps;
 
@@ -49,6 +50,16 @@ public class AutoMapperProfile : Profile
                 // options.MapFrom(__ => __.AgeRating);
             });
 
+        CreateMap<PermissionValueUpdate, UserGroupPermissionValue>()
+            .ForMember(_ => _.Id, options => options.Ignore())
+            .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
+
+        CreateMap<UserGroupPermissionValue, PermissionValueReadResult>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
+            .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
+            .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
+
         #endregion
     }
 
@@ -85,7 +96,7 @@ public class AutoMapperProfile : Profile
         if (autoMapperModelFieldAuthorizeData.PermissionValueSystemCompared != null)
         {
             authorizeSystemResult = userToUserGroupService
-                .AuthorizeUserPermissionToAnyPermissionValue(
+                .AuthorizePermissionToPermissionValue(
                     autoMapperModelAuthorizeData.UserComparable,
                     autoMapperModelFieldAuthorizeData.PermissionComparable,
                     autoMapperModelFieldAuthorizeData.PermissionValueSystemCompared
@@ -98,7 +109,7 @@ public class AutoMapperProfile : Profile
         if (autoMapperModelFieldAuthorizeData.CustomValueCompared != null)
         {
             authorizeResult = userToUserGroupService
-                .AuthorizeUserPermissionToCustomValue(
+                .AuthorizePermissionToCustomValue(
                     autoMapperModelAuthorizeData.UserComparable,
                     autoMapperModelFieldAuthorizeData.PermissionComparable,
                     autoMapperModelFieldAuthorizeData.CustomValueCompared
@@ -108,7 +119,7 @@ public class AutoMapperProfile : Profile
         else if (autoMapperModelFieldAuthorizeData.PermissionCompared != null)
         {
             authorizeResult = userToUserGroupService
-                .AuthorizeUserPermissionToUserPermission(
+                .AuthorizePermissionToPermission(
                     autoMapperModelAuthorizeData.UserComparable,
                     autoMapperModelFieldAuthorizeData.PermissionComparable,
                     autoMapperModelAuthorizeData.UserCompared,

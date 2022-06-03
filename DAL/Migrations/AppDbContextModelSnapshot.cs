@@ -18,7 +18,7 @@ namespace DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -897,6 +897,9 @@ namespace DAL.Migrations
                     b.Property<bool>("IsSystem")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid?>("OwnerUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<decimal>("Priority")
                         .HasColumnType("numeric(20,0)");
 
@@ -907,6 +910,8 @@ namespace DAL.Migrations
 
                     b.HasIndex("Alias")
                         .IsUnique();
+
+                    b.HasIndex("OwnerUserId");
 
                     b.ToTable("UserGroups");
 
@@ -2052,7 +2057,7 @@ namespace DAL.Migrations
                             EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
                             PermissionId = new Guid("505502c4-4055-4267-b631-ff869f14885d"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 }
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -2475,7 +2480,7 @@ namespace DAL.Migrations
                             EntityId = new Guid("b26a9112-211b-462f-bd41-8f38a3568106"),
                             PermissionId = new Guid("28e18150-c23e-4552-be6e-67492f3d290b"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 }
+                            Value = new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -2484,7 +2489,7 @@ namespace DAL.Migrations
                             EntityId = new Guid("b26a9112-211b-462f-bd41-8f38a3568106"),
                             PermissionId = new Guid("505502c4-4055-4267-b631-ff869f14885d"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 }
+                            Value = new byte[] { 25, 0, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -2809,6 +2814,15 @@ namespace DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserGroup", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "OwnerUser")
+                        .WithMany()
+                        .HasForeignKey("OwnerUserId");
+
+                    b.Navigation("OwnerUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserProfile", b =>

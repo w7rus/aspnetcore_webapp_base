@@ -53,7 +53,7 @@ public class LastActivityMiddleware
 
             await appDbContextAction.CommitTransactionAsync();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             await appDbContextAction.RollbackTransactionAsync();
 

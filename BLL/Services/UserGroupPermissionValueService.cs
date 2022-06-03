@@ -50,7 +50,7 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
     public async Task<UserGroupPermissionValue> Save(UserGroupPermissionValue entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _userGroupPermissionValueRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -61,7 +61,7 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
     public async Task Delete(UserGroupPermissionValue entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _userGroupPermissionValueRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -72,7 +72,7 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
         var entity = await _userGroupPermissionValueRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -86,7 +86,7 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
             .ToArrayAsync(cancellationToken);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByPermissionId), $"{result.GetType().Name} {result.Length}"));
+            Localize.Log.Method(GetType(), nameof(GetByPermissionId), $"{result?.GetType().Name} {result?.Length}"));
 
         return result;
     }
@@ -100,7 +100,7 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
             .ToArrayAsync(cancellationToken);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByEntityId), $"{result.GetType().Name} {result.Length}"));
+            Localize.Log.Method(GetType(), nameof(GetByEntityId), $"{result?.GetType().Name} {result?.Length}"));
 
         return result;
     }
@@ -115,7 +115,7 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
             _.EntityId == entityId && _.PermissionId == permissionId);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByEntityIdPermissionId), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByEntityIdPermissionId), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }

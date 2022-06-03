@@ -107,7 +107,7 @@ namespace BLL.Services
         public async Task<JsonWebToken> Save(JsonWebToken entity, CancellationToken cancellationToken = default)
         {
             _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+                Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
 
             _jsonWebTokenRepository.Save(entity);
             await _appDbContextAction.CommitAsync(cancellationToken);
@@ -118,7 +118,7 @@ namespace BLL.Services
         public async Task Delete(JsonWebToken entity, CancellationToken cancellationToken = default)
         {
             _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+                Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
 
             _jsonWebTokenRepository.Delete(entity);
             await _appDbContextAction.CommitAsync(cancellationToken);
@@ -129,7 +129,7 @@ namespace BLL.Services
             var entity = await _jsonWebTokenRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
             _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+                Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
             return entity;
         }
@@ -139,7 +139,7 @@ namespace BLL.Services
             var entity = await _jsonWebTokenRepository.SingleOrDefaultAsync(_ => _.Token == token);
 
             _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+                Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
             return entity;
         }
@@ -155,7 +155,7 @@ namespace BLL.Services
 
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(GetExpiredByUserIdAsync),
-                    $"{result.GetType().Name} {result.Length}"));
+                    $"{result?.GetType().Name} {result?.Length}"));
 
             return result;
         }
@@ -170,7 +170,7 @@ namespace BLL.Services
 
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(GetExpiredByUserIdAsync),
-                    $"{result.GetType().Name} {result.Length}"));
+                    $"{result?.GetType().Name} {result?.Length}"));
 
             return result;
         }

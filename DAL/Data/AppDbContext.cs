@@ -1904,7 +1904,7 @@ namespace DAL.Data
                 new()
                 {
                     Id = new Guid("9d1bd7fb-f86d-461e-9ba8-01a4e3f92cb4"),
-                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Value = BitConverter.GetBytes(memberUserGroupPower),
                     PermissionId = permissions.Single(_ => _.Alias == "g_any_a_read_o_permissionvalue" && _.Type == PermissionType.ValueNeededOthers).Id,
                     EntityId = memberUserGroup.Id,
                 },
@@ -2352,14 +2352,14 @@ namespace DAL.Data
                 new()
                 {
                     Id = new Guid("585349da-33b1-4461-9d55-3fb4a21b4ef2"),
-                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
                     PermissionId = permissions.Single(_ => _.Alias == "g_any_a_read_o_permissionvalue" && _.Type == PermissionType.ValueNeededOwner).Id,
                     EntityId = guestUserGroup.Id,
                 },
                 new()
                 {
                     Id = new Guid("4ec7f7d6-9f43-4d48-855d-647477b0c5cc"),
-                    Value = BitConverter.GetBytes(rootUserGroupPower),
+                    Value = BitConverter.GetBytes(guestUserGroupPower),
                     PermissionId = permissions.Single(_ => _.Alias == "g_any_a_read_o_permissionvalue" && _.Type == PermissionType.ValueNeededOthers).Id,
                     EntityId = guestUserGroup.Id,
                 },

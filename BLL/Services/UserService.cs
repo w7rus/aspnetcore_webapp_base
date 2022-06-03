@@ -119,7 +119,7 @@ public class UserService : IUserService
     public async Task<User> Save(User entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _userRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -130,7 +130,7 @@ public class UserService : IUserService
     public async Task Delete(User entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _userRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -141,7 +141,7 @@ public class UserService : IUserService
         var entity = await _userRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -151,7 +151,7 @@ public class UserService : IUserService
         var entity = await _userRepository.SingleOrDefaultAsync(_ => _.Email == email);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByEmailAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByEmailAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -164,7 +164,7 @@ public class UserService : IUserService
         var result = await _userRepository.QueryMany(_ => _.PhoneNumber == phoneNumber).ToArrayAsync(cancellationToken);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByPhoneNumberAsync), $"{result.GetType().Name} {result.Length}"));
+            Localize.Log.Method(GetType(), nameof(GetByPhoneNumberAsync), $"{result?.GetType().Name} {result?.Length}"));
 
         return result;
     }
@@ -178,7 +178,7 @@ public class UserService : IUserService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetExpiredByDisableSignInUntil),
-                $"{result.GetType().Name} {result.Length}"));
+                $"{result?.GetType().Name} {result?.Length}"));
 
         return result;
     }
@@ -193,7 +193,7 @@ public class UserService : IUserService
             .ToArrayAsync(cancellationToken);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetInRangeByLastSignIn), $"{result.GetType().Name} {result.Length}"));
+            Localize.Log.Method(GetType(), nameof(GetInRangeByLastSignIn), $"{result?.GetType().Name} {result?.Length}"));
 
         return result;
     }
@@ -209,7 +209,7 @@ public class UserService : IUserService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetInRangeByLastActivity),
-                $"{result.GetType().Name} {result.Length}"));
+                $"{result?.GetType().Name} {result?.Length}"));
 
         return result;
     }
@@ -222,7 +222,7 @@ public class UserService : IUserService
         var result = await _userRepository.QueryMany(_ => _.LastIpAddress == ipAddress).ToArrayAsync(cancellationToken);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByLastIpAddress), $"{result.GetType().Name} {result.Length}"));
+            Localize.Log.Method(GetType(), nameof(GetByLastIpAddress), $"{result?.GetType().Name} {result?.Length}"));
 
         return result;
     }

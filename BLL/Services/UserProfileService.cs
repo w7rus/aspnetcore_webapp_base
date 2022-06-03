@@ -60,7 +60,7 @@ public class UserProfileService : IUserProfileService
     public async Task<UserProfile> Save(UserProfile entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Save), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _userProfileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -71,7 +71,7 @@ public class UserProfileService : IUserProfileService
     public async Task Delete(UserProfile entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Delete), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _userProfileRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -82,7 +82,7 @@ public class UserProfileService : IUserProfileService
         var entity = await _userProfileRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -92,7 +92,7 @@ public class UserProfileService : IUserProfileService
         var entity = await _userProfileRepository.SingleOrDefaultAsync(_ => _.Username == username);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByUsernameAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByUsernameAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -102,7 +102,7 @@ public class UserProfileService : IUserProfileService
         var entity = await _userProfileRepository.SingleOrDefaultAsync(_ => _.UserId == userId);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByUsernameAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByUsernameAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }

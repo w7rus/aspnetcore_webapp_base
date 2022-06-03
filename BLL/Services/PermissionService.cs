@@ -61,7 +61,7 @@ public class PermissionService : IPermissionService
         var entity = await _permissionRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -71,7 +71,7 @@ public class PermissionService : IPermissionService
         var entity = await _permissionRepository.SingleOrDefaultAsync(_ => _.Alias == alias && _.Type == permissionType);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByAliasAndTypeAsync), $"{entity.GetType().Name} {entity.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByAliasAndTypeAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }

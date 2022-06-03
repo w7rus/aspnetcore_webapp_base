@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common.Models.Base;
 
 namespace Common.Models
 {
@@ -11,7 +12,7 @@ namespace Common.Models
         public static PageModel Default => new PageModel {Page = 1, PageSize = 10};
     }
 
-    public class PageModel<T> : PageModel
+    public class PageModelResult<T> : DTOResultBase
     {
         public int Total { get; set; }
         public IEnumerable<T> Items { get; set; }

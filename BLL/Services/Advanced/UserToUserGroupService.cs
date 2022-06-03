@@ -16,34 +16,35 @@ namespace BLL.Services.Advanced;
 /// </summary>
 public interface IUserToUserGroupAdvancedService
 {
+    //TODO: Fix
     /// <summary>
     /// Authorizes PermissionValue[] from UserGroup[] given user is member of to another PermissionValue
     /// </summary>
-    /// <param name="userComparable">Subject that initiates an action</param>
-    /// <param name="userPermissionComparable">Permission of a Subject that initiates an action</param>
-    /// <param name="entityPermissionValueCompared">PermissionValue against which authorization will run</param>
+    /// <param name="userLeft">Equation left-side subject</param>
+    /// <param name="permissionLeft">Equation left-side subject Permission</param>
+    /// <param name="entityPermissionValueRight">Equation right-side PermissionValue</param>
     /// <param name="cancellationToken"></param>
     /// <typeparam name="TEntityCompared"></typeparam>
     /// <returns></returns>
-    Task<bool> AuthorizeUserPermissionToAnyPermissionValue<TEntityCompared>(
-        User userComparable,
-        Permission userPermissionComparable,
-        EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
+    Task<bool> AuthorizePermissionToPermissionValue<TEntityCompared>(
+        User userLeft,
+        Permission permissionLeft,
+        EntityPermissionValueBase<TEntityCompared> entityPermissionValueRight,
         CancellationToken cancellationToken = default
     ) where TEntityCompared : EntityBase<Guid>;
     
     /// <summary>
-    /// Authorizes PermissionValue[] from UserGroup[] given user is member of to custom value
+    /// Authorizes left-side User to custom value
     /// </summary>
-    /// <param name="userComparable">Subject that initiates an action</param>
-    /// <param name="userPermissionComparable">Permission of a Subject that initiates an action</param>
-    /// <param name="valueCompared">Value against which authorization will run</param>
+    /// <param name="userLeft">Equation left-side subject</param>
+    /// <param name="permissionLeft">Equation left-side subject Permission</param>
+    /// <param name="valueRight">Equation right-side value</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> AuthorizeUserPermissionToCustomValue(
-        User userComparable,
-        Permission userPermissionComparable,
-        byte[] valueCompared,
+    Task<bool> AuthorizePermissionToCustomValue(
+        User userLeft,
+        Permission permissionLeft,
+        byte[] valueRight,
         CancellationToken cancellationToken = default
     );
 
@@ -57,21 +58,38 @@ public interface IUserToUserGroupAdvancedService
         string alias,
         CancellationToken cancellationToken = default
     );
-
+    
     /// <summary>
-    /// Authorizes PermissionValue[] from UserGroup[] to another PermissionValue[] from UserGroup[] user is member of
+    /// Authorizes left-side User to right-side User
     /// </summary>
-    /// <param name="userComparable">Subject that initiates an action</param>
-    /// <param name="userPermissionComparable">Permission of a Subject that initiates an action</param>
-    /// <param name="userCompared">Object's Subject over which the action is performed</param>
-    /// <param name="userPermissionCompared">Permission of a Object's Subject over which the action is performed</param>
+    /// <param name="userLeft">Equation left-side subject</param>
+    /// <param name="permissionLeft">Equation left-side subject Permission</param>
+    /// <param name="userRight">Equation right-side subject</param>
+    /// <param name="permissionRight">Equation right-side subject Permission</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> AuthorizeUserPermissionToUserPermission(
-        User userComparable,
-        Permission userPermissionComparable,
-        User userCompared,
-        Permission userPermissionCompared,
+    Task<bool> AuthorizePermissionToPermission(
+        User userLeft,
+        Permission permissionLeft,
+        User userRight,
+        Permission permissionRight,
+        CancellationToken cancellationToken = default
+    );
+    
+    /// <summary>
+    /// Authorizes left-side User to right-side UserGroup
+    /// </summary>
+    /// <param name="userLeft">Equation left-side subject</param>
+    /// <param name="permissionLeft">Equation left-side subject Permission</param>
+    /// <param name="userGroupRight">Equation right-side subject</param>
+    /// <param name="permissionRight">Equation right-side subject Permission</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<bool> AuthorizePermissionToPermission(
+        User userLeft,
+        Permission permissionLeft,
+        UserGroup userGroupRight,
+        Permission permissionRight,
         CancellationToken cancellationToken = default
     );
 }
@@ -115,37 +133,37 @@ public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
 
     #region Methods
 
-    public async Task<bool> AuthorizeUserPermissionToAnyPermissionValue<TEntityCompared>(
-        User userComparable,
-        Permission userPermissionComparable,
-        EntityPermissionValueBase<TEntityCompared> entityPermissionValueCompared,
+    public async Task<bool> AuthorizePermissionToPermissionValue<TEntityCompared>(
+        User userLeft,
+        Permission permissionLeft,
+        EntityPermissionValueBase<TEntityCompared> entityPermissionValueRight,
         CancellationToken cancellationToken = default
     ) where TEntityCompared : EntityBase<Guid>
     {
-        var userGroups = userComparable.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
+        var userGroups = userLeft.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
         Array.Sort(userGroups, (userGroupA, userGroupB) => userGroupA.Priority.CompareTo(userGroupB.Priority));
         
         var result = false;
 
         foreach (var userGroup in userGroups)
         {
-            if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, userPermissionComparable.Id,
-                    cancellationToken) is var permissionValue && permissionValue == null)
+            if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, permissionLeft.Id,
+                    cancellationToken) is var entityPermissionValueLeft && entityPermissionValueLeft == null)
                 continue;
 
-            result = _permissionAdvancedService.Authorize(permissionValue,
-                entityPermissionValueCompared);
+            result = _permissionAdvancedService.Authorize(entityPermissionValueLeft,
+                entityPermissionValueRight);
         }
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(),
-                $"{nameof(AuthorizeUserPermissionToAnyPermissionValue)}<{typeof(TEntityCompared).Name}>",
-                $"{entityPermissionValueCompared.Permission.Alias} authorized {userPermissionComparable.Alias} as {result}"));
+                $"{nameof(AuthorizePermissionToPermissionValue)}<{typeof(TEntityCompared).Name}>",
+                $"{entityPermissionValueRight.Permission.Alias} authorized {permissionLeft.Alias} as {result}"));
 
         return result;
     }
 
-    public async Task<bool> AuthorizeUserPermissionToCustomValue(
+    public async Task<bool> AuthorizePermissionToCustomValue(
         User userComparable,
         Permission userPermissionComparable,
         byte[] valueCompared,
@@ -168,7 +186,7 @@ public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
         }
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), $"{nameof(AuthorizeUserPermissionToCustomValue)}",
+            Localize.Log.Method(GetType(), $"{nameof(AuthorizePermissionToCustomValue)}",
                 $"{Convert.ToBase64String(valueCompared)} authorized {userPermissionComparable.Alias} as {result}"));
 
         return result;
@@ -192,15 +210,15 @@ public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
         return permissionValue;
     }
 
-    public async Task<bool> AuthorizeUserPermissionToUserPermission(
-        User userComparable,
-        Permission userPermissionComparable,
-        User userCompared,
-        Permission userPermissionCompared,
+    public async Task<bool> AuthorizePermissionToPermission(
+        User userLeft,
+        Permission permissionLeft,
+        User userRight,
+        Permission permissionRight,
         CancellationToken cancellationToken = default
     )
     {
-        var userGroups = userComparable.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
+        var userGroups = userRight.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
         Array.Sort(userGroups, (userGroupA, userGroupB) => userGroupA.Priority.CompareTo(userGroupB.Priority));
         
         var result = false;
@@ -208,18 +226,42 @@ public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
         foreach (var userGroup in userGroups)
         {
             if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id,
-                    userPermissionCompared.Id,
-                    cancellationToken) is var permissionValue && permissionValue == null)
+                    permissionRight.Id,
+                    cancellationToken) is var entityPermissionValueRight && entityPermissionValueRight == null)
                 continue;
 
-            result = await AuthorizeUserPermissionToAnyPermissionValue(userCompared, userPermissionComparable, permissionValue,
+            result = await AuthorizePermissionToPermissionValue(userLeft, permissionLeft, entityPermissionValueRight,
                 cancellationToken);
         }
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(),
-                $"{nameof(AuthorizeUserPermissionToUserPermission)}",
-                $"{userPermissionCompared.Alias} authorized {userPermissionComparable.Alias} as {result}"));
+                $"{nameof(AuthorizePermissionToPermission)}",
+                $"{permissionRight.Alias} authorized {permissionLeft.Alias} as {result}"));
+
+        return result;
+    }
+    
+    public async Task<bool> AuthorizePermissionToPermission(
+        User userLeft,
+        Permission permissionLeft,
+        UserGroup userGroupRight,
+        Permission permissionRight,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroupRight.Id,
+                permissionRight.Id,
+                cancellationToken) is var entityPermissionValueRight && entityPermissionValueRight == null)
+            return false;
+
+        var result = await AuthorizePermissionToPermissionValue(userLeft, permissionLeft, entityPermissionValueRight,
+            cancellationToken);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(),
+                $"{nameof(AuthorizePermissionToPermission)}",
+                $"{permissionRight.Alias} authorized {permissionLeft.Alias} as {result}"));
 
         return result;
     }
