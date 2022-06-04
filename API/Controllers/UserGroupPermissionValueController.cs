@@ -15,20 +15,20 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class PermissionValueController : CustomControllerBase
+public class UserGroupPermissionValueController : CustomControllerBase
 {
     #region Fields
 
-    private readonly ILogger<PermissionValueController> _logger;
+    private readonly ILogger<UserGroupPermissionValueController> _logger;
     private readonly IUserGroupPermissionValueHandler _userGroupPermissionValueHandler;
 
     #endregion
 
     #region Ctor
 
-    public PermissionValueController(
+    public UserGroupPermissionValueController(
         IHttpContextAccessor httpContextAccessor,
-        ILogger<PermissionValueController> logger,
+        ILogger<UserGroupPermissionValueController> logger,
         IUserGroupPermissionValueHandler userGroupPermissionValueHandler
     ) : base(httpContextAccessor)
     {

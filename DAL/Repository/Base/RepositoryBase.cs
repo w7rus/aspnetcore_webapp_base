@@ -32,6 +32,11 @@ namespace DAL.Repository.Base
         IQueryable<TEntity> QueryMany(Expression<Func<TEntity, bool>> predicate);
         IQueryable<TResult> QueryAll<TResult>(Expression<Func<TEntity, TResult>> selector);
         IQueryable<TEntity> QueryAll();
+        IQueryable<TEntity> FromFormattableSql(FormattableString sql);
+        IQueryable<TEntity> FromSql(string sql, params object[] parameters);
+
+        Type GetEntityType();
+        string GetTableName();
     }
 
     public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey>
@@ -122,6 +127,30 @@ namespace DAL.Repository.Base
         public IQueryable<TEntity> QueryAll()
         {
             return DbSet;
+        }
+        
+        public IQueryable<TEntity> FromFormattableSql(FormattableString sql)
+        {
+            return DbSet.FromSqlInterpolated(sql);
+        }
+        
+        public IQueryable<TEntity> FromSql(string sql, params object[] parameters)
+        {
+            return DbSet.FromSqlRaw(sql, parameters);
+        }
+
+        public Type GetEntityType()
+        {
+            return typeof(TEntity);
+        }
+
+        public string GetTableName()
+        {
+            var model = AppDbContext.Model;
+            var entityTypes = model.GetEntityTypes();
+            var entityType = entityTypes.First(t => t.ClrType == typeof(TEntity));
+            var tableNameAnnotation = entityType.GetAnnotation("Relational:TableName");
+            return tableNameAnnotation.Value?.ToString();
         }
     }
 }

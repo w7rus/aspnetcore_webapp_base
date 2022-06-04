@@ -56,6 +56,7 @@ public static class Localize
         public static string PermissionInsufficientPermissions => "PermissionInsufficientPermissions";
         public static string PermissionDoesNotExist => "PermissionDoesNotExist";
         public static string PermissionValueDoesNotExist => "PermissionValueDoesNotExist";
+        public static string PermissionValueTypeUnknown => "PermissionValueTypeUnknown";
 
         #endregion
 
@@ -85,6 +86,14 @@ public static class Localize
 
         public const string UnhandledExceptionContactSystemAdministrator =
             "UnhandledExceptionContactSystemAdministrator";
+
+        #endregion
+
+        #region FilterMatchModel
+
+        public static string FilterMatchModelItemValueTypeUnknown => "FilterMatchModelItemValueTypeUnknown";
+        public static string FilterMatchModelPropertyUnavailable => "FilterMatchModelPropertyUnavailable";
+        public static string FilterMatchModelValueTypeNotSuitable => "FilterMatchModelValueTypeNotSuitable";
 
         #endregion
     }

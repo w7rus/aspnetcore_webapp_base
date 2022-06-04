@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Text;
 using Common.Exceptions;
+using Common.Models;
 using Domain.Entities.Base;
 using Domain.Enums;
 using Microsoft.Extensions.Logging;
@@ -221,7 +223,7 @@ public class PermissionAdvancedService : IPermissionAdvancedService
         switch (entityPermissionValueLeft.Permission.ValueType)
         {
             case PermissionValueType.Unknown:
-                return false;
+                throw new CustomException(Localize.Error.PermissionValueTypeUnknown);
             case PermissionValueType.Boolean:
             {
                 var value = BitConverter.ToBoolean(entityPermissionValueLeft.Value);
@@ -320,8 +322,8 @@ public class PermissionAdvancedService : IPermissionAdvancedService
             }
             case PermissionValueType.String:
             {
-                var value = BitConverter.ToString(entityPermissionValueLeft.Value);
-                var valueCompared = BitConverter.ToString(_valueCompared);
+                var value = Encoding.UTF8.GetString(entityPermissionValueLeft.Value);
+                var valueCompared = Encoding.UTF8.GetString(_valueCompared);
                 compareToResult = string.Compare(value, valueCompared, StringComparison.Ordinal);
                 break;
             }

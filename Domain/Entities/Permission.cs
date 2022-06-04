@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Attributes;
 using Domain.Entities.Base;
 using Domain.Enums;
 
@@ -14,29 +15,32 @@ namespace Domain.Entities
         /// <summary>
         /// Alias of the Permission.
         /// </summary>
+        [AllowFilterMatch]
+        [AllowFilterSort]
         public string Alias { get; set; }
-
-        // /// <summary>
-        // /// FullAlias of the Permission. Unique field.
-        // /// </summary>
-        // public string FullAlias => $"{ValueType.ToString().ToLower()}_{Alias}_{Type.ToString().ToLower()}";
 
         /// <summary>
         /// Value Type of the Permission.
         /// Compared permissions Value Type must equal!
         /// </summary>
+        [AllowFilterMatch]
+        [AllowFilterSort]
         public PermissionValueType ValueType { get; set; }
 
         /// <summary>
         /// Compare mode of the permission. Defines how permission values are compared against each other.
         /// Compared permissions CompareMode must equal!
         /// </summary>
+        [AllowFilterMatch]
+        [AllowFilterSort]
         public PermissionCompareMode CompareMode { get; set; }
-        
+
         /// <summary>
         /// Type of the Permission.
         /// Compared permissions Type must be one of {Self, Others, System}!
         /// </summary>
+        [AllowFilterMatch]
+        [AllowFilterSort]
         public PermissionType Type { get; set; }
     }
 }

@@ -187,6 +187,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         }
     }
 
+    //TODO: Rename DTO (Filtered) + inherit PageModel + Add Sorting Model
     public async Task<DTOResultBase> ReadByEntity(
         PermissionValueReadByEntity data,
         CancellationToken cancellationToken = default
@@ -250,6 +251,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         }
     }
 
+    //TODO: Rename DTO (Filtered) + inherit PageModel + Add Sorting Model
     public async Task<DTOResultBase> ReadByPermission(
         PermissionValueReadByPermission data,
         CancellationToken cancellationToken = default

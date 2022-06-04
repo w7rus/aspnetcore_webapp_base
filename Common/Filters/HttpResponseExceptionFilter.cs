@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using Common.Enums;
 using Common.Exceptions;
 using Common.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -30,6 +32,22 @@ public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
             context.Result = new ObjectResult(errorModelResult)
             {
                 StatusCode = httpResponseException.StatusCode
+            };
+
+            context.ExceptionHandled = true;
+        } else if (context.Exception is CustomException customException)
+        {
+            var errorModelResult = new ErrorModelResult
+            {
+                TraceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier
+            };
+
+            errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.Unknown,
+                customException.Message));
+
+            context.Result = new ObjectResult(errorModelResult)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
             };
 
             context.ExceptionHandled = true;

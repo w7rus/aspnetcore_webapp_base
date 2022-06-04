@@ -71,6 +71,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IAuthHandler, AuthHandler>();
         serviceCollection.AddScoped<IFileHandler, FileHandler>();
         serviceCollection.AddScoped<IUserGroupPermissionValueHandler, UserGroupPermissionValueHandler>();
+        serviceCollection.AddScoped<IPermissionHandler, PermissionHandler>();
 
         return serviceCollection;
     }
