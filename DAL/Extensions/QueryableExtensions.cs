@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Common.Models;
+using DAL.Repository.Base;
+using Domain.Entities.Base;
 
 namespace DAL.Extensions
 {

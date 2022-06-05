@@ -92,8 +92,21 @@ public static class Localize
         #region FilterMatchModel
 
         public static string FilterMatchModelItemValueTypeUnknown => "FilterMatchModelItemValueTypeUnknown";
+        public static string FilterMatchModelItemValueTypeNotSupported => "FilterMatchModelItemValueTypeNotSupported";
         public static string FilterMatchModelPropertyUnavailable => "FilterMatchModelPropertyUnavailable";
         public static string FilterMatchModelValueTypeNotSuitable => "FilterMatchModelValueTypeNotSuitable";
+
+        #endregion
+        
+        #region FilterSortModel
+        
+        public static string FilterSortModelPropertyUnavailable => "FilterSortModelPropertyUnavailable";
+
+        #endregion
+
+        #region DbContext
+
+        public static string DbProviderNotSupported => "DbProviderNotSupported";
 
         #endregion
     }

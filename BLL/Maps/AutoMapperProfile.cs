@@ -8,6 +8,7 @@ using Common.Models;
 using Domain.Entities;
 using Domain.Entities.Base;
 using DTO.Models.File;
+using DTO.Models.Permission;
 using DTO.Models.PermissionValue;
 
 namespace BLL.Maps;
@@ -53,12 +54,23 @@ public class AutoMapperProfile : Profile
         CreateMap<PermissionValueUpdate, UserGroupPermissionValue>()
             .ForMember(_ => _.Id, options => options.Ignore())
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
+        
+        #endregion
+
+        #region From DOMAIN to DTO
 
         CreateMap<UserGroupPermissionValue, PermissionValueReadResult>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
             .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
+
+        CreateMap<Permission, PermissionReadCollectionItemResult>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
+            .ForMember(_ => _.ValueType, options => options.MapFrom(__ => __.ValueType))
+            .ForMember(_ => _.CompareMode, options => options.MapFrom(__ => __.CompareMode))
+            .ForMember(_ => _.Type, options => options.MapFrom(__ => __.Type));
 
         #endregion
     }

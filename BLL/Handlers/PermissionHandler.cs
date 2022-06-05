@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using Common.Exceptions;
 using Common.Models;
 using Common.Models.Base;
 using DAL.Data;
+using Domain.Entities;
 using DTO.Models.Permission;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -75,7 +77,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
             
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
             
-            return _mapper.Map<PermissionReadCollectionResult>(permission);
+            return _mapper.Map<PermissionReadResult>(permission);
         }
         catch (Exception)
         {
@@ -88,23 +90,6 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
     //TODO: Rename DTO (Filtered) + inherit PageModel + Add Sorting Model
     public async Task<DTOResultBase> ReadFilteredSortedPaged(PermissionReadCollection data, CancellationToken cancellationToken = default)
     {
-        var vl = Convert.ToBase64String(BitConverter.GetBytes(9));
-        vl = Convert.ToBase64String(BitConverter.GetBytes(8));
-        
-        data.FilterMatchModel = new FilterMatchModel
-        {
-            MatchRules = new[]
-            {
-                new FilterMatchModelItem
-                {
-                    Key = "ValueType",
-                    Value = Convert.FromBase64String("CAAAAA=="), //CQAAAA== 9 //CAAAAA== 8
-                    ValueType = ValueType.Int32,
-                    FilterMatchMode = FilterMatchMode.Equal
-                }
-            }
-        };
-
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -119,11 +104,11 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
             
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
 
-            return new PermissionReadFilteredResult()
+            return new PermissionReadCollectionResult()
             {
-                Total = permissions.Total,
-                Items = permissions.Items.Select(_ =>
-                    _mapper.ProjectTo<PermissionReadCollectionResult>(new[] {_}.AsQueryable()).Single())
+                Total = permissions.total,
+                Items = permissions.entities.Select(_ =>
+                    _mapper.ProjectTo<PermissionReadCollectionItemResult>(new[] {_}.AsQueryable()).Single())
             };
         }
         catch (Exception)

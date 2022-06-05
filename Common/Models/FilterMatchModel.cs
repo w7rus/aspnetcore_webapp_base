@@ -6,4 +6,5 @@ namespace Common.Models;
 public class FilterMatchModel
 {
     public IEnumerable<FilterMatchModelItem> MatchRules { get; set; }
+    
 }

@@ -1,8 +1,8 @@
-﻿using Common.Models.Base;
+﻿using Common.Models;
 
 namespace DTO.Models.Permission;
 
-public class PermissionReadCollectionResult : DTOResultBase
+public class PermissionReadCollectionResult : PageModelResult<PermissionReadCollectionItemResult>
 {
     
 }
