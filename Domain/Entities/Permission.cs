@@ -15,7 +15,7 @@ namespace Domain.Entities
         /// <summary>
         /// Alias of the Permission.
         /// </summary>
-        [AllowFilterMatch]
+        [AllowFilterExpression]
         [AllowFilterSort]
         public string Alias { get; set; }
 
@@ -23,7 +23,7 @@ namespace Domain.Entities
         /// Value Type of the Permission.
         /// Compared permissions Value Type must equal!
         /// </summary>
-        [AllowFilterMatch]
+        [AllowFilterExpression]
         [AllowFilterSort]
         public PermissionValueType ValueType { get; set; }
 
@@ -31,7 +31,7 @@ namespace Domain.Entities
         /// Compare mode of the permission. Defines how permission values are compared against each other.
         /// Compared permissions CompareMode must equal!
         /// </summary>
-        [AllowFilterMatch]
+        [AllowFilterExpression]
         [AllowFilterSort]
         public PermissionCompareMode CompareMode { get; set; }
 
@@ -39,7 +39,7 @@ namespace Domain.Entities
         /// Type of the Permission.
         /// Compared permissions Type must be one of {Self, Others, System}!
         /// </summary>
-        [AllowFilterMatch]
+        [AllowFilterExpression]
         [AllowFilterSort]
         public PermissionType Type { get; set; }
     }

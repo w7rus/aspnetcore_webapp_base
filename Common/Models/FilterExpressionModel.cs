@@ -3,7 +3,7 @@ using Common.Enums;
 
 namespace Common.Models;
 
-public class FilterMatchModel : FilterMatchModelItemScope
+public class FilterExpressionModel : FilterExpressionModelItemScope
 {
     
 }

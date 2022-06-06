@@ -3,9 +3,9 @@ using Domain.Enums;
 
 namespace DTO.Models.Permission;
 
-public class PermissionReadCollection
+public class PermissionReadFSPCollection
 {
     public PageModel PageModel { get; set; }
-    public FilterMatchModel FilterMatchModel { get; set; }
+    public FilterExpressionModel FilterExpressionModel { get; set; }
     public FilterSortModel FilterSortModel { get; set; }
 }

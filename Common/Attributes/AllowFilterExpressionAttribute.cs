@@ -3,7 +3,7 @@
 namespace Common.Attributes;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-public class AllowFilterMatchAttribute : Attribute
+public class AllowFilterExpressionAttribute : Attribute
 {
     
 }

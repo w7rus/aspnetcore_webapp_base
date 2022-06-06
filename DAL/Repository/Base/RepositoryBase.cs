@@ -50,7 +50,7 @@ namespace DAL.Repository.Base
         string GetTableName();
 
         public (int total, IQueryable<TEntity> entities) GetFilteredSortedPaged(
-            FilterMatchModel filterMatchModel,
+            FilterExpressionModel filterExpressionModel,
             FilterSortModel filterSortModel,
             PageModel pageModel
         );
@@ -166,7 +166,7 @@ namespace DAL.Repository.Base
         }
 
         public (int total, IQueryable<TEntity> entities) GetFilteredSortedPaged(
-            FilterMatchModel filterMatchModel,
+            FilterExpressionModel filterExpressionModel,
             FilterSortModel filterSortModel,
             PageModel pageModel
         )
@@ -179,7 +179,7 @@ namespace DAL.Repository.Base
 
             var rawSql = "SELECT * FROM " + '"' + GetTableName() + '"';
 
-            var rawSqlParameters = new Dictionary<string, NpgsqlParameter>();
+            var rawSqlParameters = new List<NpgsqlParameter>();
 
             void AddMatchParameter<TValue>(
                 MemberInfo property,
@@ -209,7 +209,7 @@ namespace DAL.Repository.Base
 
                 rawSql += '"' + property.Name + '"' + filterMatchOperationAsString + '@' + sqlParameterName;
 
-                rawSqlParameters.Add(sqlParameterName, new NpgsqlParameter<TValue>(sqlParameterName, value));
+                rawSqlParameters.Add(new NpgsqlParameter<TValue>(sqlParameterName, value));
             }
 
             void AddMatchParameterString(
@@ -237,14 +237,13 @@ namespace DAL.Repository.Base
 
                 rawSql += '"' + property.Name + '"' + filterMatchOperationAsString + '@' + sqlParameterName;
 
-                rawSqlParameters.Add(sqlParameterName,
-                    new NpgsqlParameter<string>(sqlParameterName,
-                        (filterMatchOperation is FilterMatchOperation.Contains or FilterMatchOperation.StartsWith
-                            ? '%'
-                            : string.Empty) + value +
-                        (filterMatchOperation is FilterMatchOperation.Contains or FilterMatchOperation.EndsWith
-                            ? '%'
-                            : string.Empty)));
+                rawSqlParameters.Add(new NpgsqlParameter<string>(sqlParameterName,
+                    (filterMatchOperation is FilterMatchOperation.Contains or FilterMatchOperation.StartsWith
+                        ? '%'
+                        : string.Empty) + value +
+                    (filterMatchOperation is FilterMatchOperation.Contains or FilterMatchOperation.EndsWith
+                        ? '%'
+                        : string.Empty)));
             }
 
             void AddMatchParameterDateTime(
@@ -275,26 +274,25 @@ namespace DAL.Repository.Base
 
                 rawSql += '"' + property.Name + '"' + filterMatchOperationAsString + '@' + sqlParameterName;
 
-                rawSqlParameters.Add(sqlParameterName,
-                    new NpgsqlParameter<string>(sqlParameterName,
-                        "to_timestamp(" + value.ToString("yyyy-MM-dd HH:mm:ss zzz") +
-                        "\'YYYY-MM-DD HH24:MI:SS TZH:TZM\')"));
+                rawSqlParameters.Add(new NpgsqlParameter<string>(sqlParameterName,
+                    "to_timestamp(" + value.ToString("yyyy-MM-dd HH:mm:ss zzz") +
+                    "\'YYYY-MM-DD HH24:MI:SS TZH:TZM\')"));
             }
 
             var sqlParameterCounter = 0;
 
             //Match
 
-            if (filterMatchModel.Items.Any())
+            if (filterExpressionModel.Items.Any())
                 rawSql += " WHERE ";
 
-            var stack = new Stack<FilterMatchModelItemStackItem>();
-            stack.Push(new FilterMatchModelItemStackItem()
+            var stack = new Stack<FilterExpressionModelItemStackItem>();
+            stack.Push(new FilterExpressionModelItemStackItem()
             {
-                Items = filterMatchModel.Items,
+                Items = filterExpressionModel.Items,
                 Index = 0
             });
-            if (filterMatchModel.ExpressionLogicalOperation > ExpressionLogicalOperation.Not)
+            if (filterExpressionModel.ExpressionLogicalOperation > ExpressionLogicalOperation.Not)
                 throw new CustomException(Localize.Error
                     .FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly);
             rawSql += '(';
@@ -334,10 +332,10 @@ namespace DAL.Repository.Base
                             throw new ArgumentOutOfRangeException();
                     }
 
-                    if (scopeItem is FilterMatchModelItemScope itemScope)
+                    if (scopeItem is FilterExpressionModelItemScope itemScope)
                     {
                         current.Index++;
-                        stack.Push(new FilterMatchModelItemStackItem()
+                        stack.Push(new FilterExpressionModelItemStackItem()
                         {
                             Items = itemScope.Items,
                             Index = 0
@@ -346,11 +344,11 @@ namespace DAL.Repository.Base
                         break;
                     }
 
-                    if (scopeItem is FilterMatchModelItemExpression itemExpression)
+                    if (scopeItem is FilterExpressionModelItemExpression itemExpression)
                     {
                         var property = entityType.GetProperty(itemExpression.Key);
 
-                        if (property == null || property.GetCustomAttribute<AllowFilterMatchAttribute>(true) == null)
+                        if (property == null || property.GetCustomAttribute<AllowFilterExpressionAttribute>(true) == null)
                             throw new CustomException(Localize.Error.FilterMatchModelPropertyNotFoundOrUnavailable);
 
                         var sqlParameterCounterAsString = sqlParameterCounter.ToString();
@@ -516,7 +514,7 @@ namespace DAL.Repository.Base
             rawSql += string.Join(", ", rawSqlSortParameters);
 
             // ReSharper disable once CoVariantArrayConversion
-            var query = FromSql(rawSql, rawSqlParameters.Select(_ => _.Value).ToArray());
+            var query = FromSql(rawSql, rawSqlParameters.ToArray());
 
             return (query.Count(), query.GetPage(pageModel));
         }

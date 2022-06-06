@@ -3,7 +3,7 @@ using Domain.Enums;
 
 namespace DTO.Models.Permission;
 
-public class PermissionReadCollectionItemResult
+public class PermissionReadFSPCollectionItemResult
 {
     public Guid Id { get; set; }
     public string Alias { get; set; }

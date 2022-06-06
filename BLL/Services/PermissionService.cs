@@ -34,7 +34,7 @@ public interface IPermissionService : IEntityServiceBase<Permission>
     Task<Permission> GetByAliasAndTypeAsync(string alias, PermissionType permissionType);
 
     Task<(int total, IReadOnlyCollection<Permission> entities)> GetFilteredSortedPaged(
-        FilterMatchModel filterMatchModel,
+        FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
         CancellationToken cancellationToken = default
@@ -94,14 +94,14 @@ public class PermissionService : IPermissionService
     }
 
     public async Task<(int total, IReadOnlyCollection<Permission> entities)> GetFilteredSortedPaged(
-        FilterMatchModel filterMatchModel,
+        FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
         CancellationToken cancellationToken = default
     )
     {
-        var result = _permissionRepository.GetFilteredSortedPaged(filterMatchModel, filterSortModel, pageModel);
-            
+        var result = _permissionRepository.GetFilteredSortedPaged(filterExpressionModel, filterSortModel, pageModel);
+
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),
                 $"{result.entities?.GetType().Name} {result.entities?.Count()}"));

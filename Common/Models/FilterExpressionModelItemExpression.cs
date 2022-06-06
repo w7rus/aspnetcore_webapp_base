@@ -2,7 +2,7 @@
 
 namespace Common.Models;
 
-public class FilterMatchModelItemExpression : FilterMatchModelItem
+public class FilterExpressionModelItemExpression : FilterExpressionModelItem
 {
     public string Key { get; set; }
     public byte[] Value { get; set; }

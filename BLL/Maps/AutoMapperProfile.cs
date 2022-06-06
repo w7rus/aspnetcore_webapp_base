@@ -65,7 +65,7 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
             .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
 
-        CreateMap<Permission, PermissionReadCollectionItemResult>()
+        CreateMap<Permission, PermissionReadFSPCollectionItemResult>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
             .ForMember(_ => _.ValueType, options => options.MapFrom(__ => __.ValueType))

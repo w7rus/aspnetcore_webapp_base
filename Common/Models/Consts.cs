@@ -12,4 +12,5 @@ public static class Consts
     public const ulong BannedUserGroupPriority = ulong.MaxValue - 1;
     public const string AutoMapperModelAuthorizeDataKey = "AutoMapperModelAuthorizeData";
     public const string NpgSqlEntityFrameworkCorePostgreSQLProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
+    public const string DomainNamespace = "Domain.Entities";
 }

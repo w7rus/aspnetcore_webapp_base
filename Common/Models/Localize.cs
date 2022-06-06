@@ -113,6 +113,12 @@ public static class Localize
         public static string DbProviderNotSupported => "DbProviderNotSupported";
 
         #endregion
+
+        #region Generic
+
+        public static string TypeNotFound => "TypeNotFound";
+
+        #endregion
     }
 
     public static class Warning

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
-using DTO.Models.Permission;
+using DTO.Models.DomainInfo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,59 +15,55 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class PermissionController : CustomControllerBase
+public class DomainInfoController : CustomControllerBase
 {
     #region Fields
 
-    private readonly ILogger<PermissionController> _logger;
-    private readonly IPermissionHandler _permissionHandler;
+    private readonly ILogger<DomainInfoController> _logger;
+    private readonly IDomainInfoHandler _domainInfoHandler;
 
     #endregion
 
     #region Ctor
 
-    public PermissionController(
+    public DomainInfoController(
         IHttpContextAccessor httpContextAccessor,
-        ILogger<PermissionController> logger,
-        IPermissionHandler permissionHandler
-    ) : base(
-        httpContextAccessor)
+        ILogger<DomainInfoController> logger,
+        IDomainInfoHandler domainInfoHandler
+    ) : base(httpContextAccessor)
     {
         _logger = logger;
-        _permissionHandler = permissionHandler;
+        _domainInfoHandler = domainInfoHandler;
     }
 
     #endregion
 
     #region Methods
-
+    
     [HttpGet]
-    [SwaggerOperation(Summary = "Reads Permission",
-        Description = "Reads Permission")]
+    [SwaggerOperation(Summary = "Reads Domain Info (Assembly properties with value types)",
+        Description = "Reads Domain Info (Assembly properties with value types)")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Read(
-        [Required] [FromQuery] PermissionRead data,
+    public IActionResult Read(
+        [Required] [FromQuery] DomainInfoRead data,
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _permissionHandler.Read(data, cancellationToken));
+        return ResponseWith(_domainInfoHandler.Read(data));
     }
     
     [HttpGet]
-    [Route("FSPCollection")]
-    [SwaggerOperation(Summary = "Reads Permission[]",
-        Description = "Reads Permission[]")]
+    [Route("assemblyQualifiedNames")]
+    [SwaggerOperation(Summary = "Reads Domain Info (Available assembly qualified names under Domain.Entities)",
+        Description = "Reads Domain Info (Available assembly qualified names under Domain.Entities)")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> ReadFSPCollection(
-        [Required] [FromQuery] PermissionReadFSPCollection data,
-        CancellationToken cancellationToken = default
-    )
+    public IActionResult ReadAssemblyQualifiedNames()
     {
-        return ResponseWith(await _permissionHandler.ReadFSPCollection(data, cancellationToken));
+        return ResponseWith(_domainInfoHandler.ReadAssemblyQualifiedNames());
     }
 
     #endregion
