@@ -94,8 +94,55 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            // var permissions = await _permissionService.GetBySubAliasAndTypeAsync(data.SubAlias, data.PermissionType,
-            //     data.Page, data.PageSize, cancellationToken);
+            data.FilterMatchModel = new FilterMatchModel
+            {
+                ExpressionLogicalOperation = ExpressionLogicalOperation.Not,
+                Items = new List<FilterMatchModelItem>()
+                {
+                    new FilterMatchModelItemScope
+                    {
+                        ExpressionLogicalOperation = ExpressionLogicalOperation.None,
+                        Items = new List<FilterMatchModelItem>()
+                        {
+                            new FilterMatchModelItemExpression
+                            {
+                                ExpressionLogicalOperation = ExpressionLogicalOperation.Not,
+                                Key = "ValueType",
+                                Value = BitConverter.GetBytes(8),
+                                FilterMatchOperation = FilterMatchOperation.Equal
+                            },
+                            new FilterMatchModelItemExpression
+                            {
+                                ExpressionLogicalOperation = ExpressionLogicalOperation.And,
+                                Key = "ValueType",
+                                Value = BitConverter.GetBytes(9),
+                                FilterMatchOperation = FilterMatchOperation.Equal
+                            }
+                        }
+                    },
+                    new FilterMatchModelItemExpression
+                    {
+                        ExpressionLogicalOperation = ExpressionLogicalOperation.And,
+                        Key = "Alias",
+                        Value = Encoding.UTF8.GetBytes("file"),
+                        FilterMatchOperation = FilterMatchOperation.Contains
+                    },
+                    new FilterMatchModelItemScope
+                    {
+                        ExpressionLogicalOperation = ExpressionLogicalOperation.Or,
+                        Items = new List<FilterMatchModelItem>()
+                        {
+                            new FilterMatchModelItemExpression
+                            {
+                                ExpressionLogicalOperation = ExpressionLogicalOperation.Not,
+                                Key = "ValueType",
+                                Value = BitConverter.GetBytes(8),
+                                FilterMatchOperation = FilterMatchOperation.Equal
+                            },
+                        }
+                    },
+                }
+            };
 
             var permissions = await _permissionService.GetFilteredSortedPaged(data.FilterMatchModel,
                 data.FilterSortModel, data.PageModel, cancellationToken);

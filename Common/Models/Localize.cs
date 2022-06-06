@@ -90,17 +90,21 @@ public static class Localize
         #endregion
 
         #region FilterMatchModel
+        
+        public static string FilterMatchModelItemExpressionValueTypeNotSupported => "FilterMatchModelItemExpressionValueTypeNotSupported";
+        public static string FilterMatchModelPropertyNotFoundOrUnavailable => "FilterMatchModelPropertyNotFoundOrUnavailable";
+        public static string FilterMatchModelValueTypeNotCompatible => "FilterMatchModelValueTypeNotCompatible";
 
-        public static string FilterMatchModelItemValueTypeUnknown => "FilterMatchModelItemValueTypeUnknown";
-        public static string FilterMatchModelItemValueTypeNotSupported => "FilterMatchModelItemValueTypeNotSupported";
-        public static string FilterMatchModelPropertyUnavailable => "FilterMatchModelPropertyUnavailable";
-        public static string FilterMatchModelValueTypeNotSuitable => "FilterMatchModelValueTypeNotSuitable";
+        public static string FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly =>
+            "FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly";
+        public static string FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly =>
+            "FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly";
 
         #endregion
         
         #region FilterSortModel
         
-        public static string FilterSortModelPropertyUnavailable => "FilterSortModelPropertyUnavailable";
+        public static string FilterSortModelPropertyNotFoundOrUnavailable => "FilterSortModelPropertyNotFoundOrUnavailable";
 
         #endregion
 

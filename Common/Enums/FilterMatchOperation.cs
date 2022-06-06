@@ -1,6 +1,6 @@
 ﻿namespace Common.Enums;
 
-public enum FilterMatchMode
+public enum FilterMatchOperation
 {
     None,
     Equal,
@@ -9,6 +9,7 @@ public enum FilterMatchMode
     LessOrEqual,
     Greater,
     GreaterOrEqual,
-    StringContains,
-    StringNotContains
+    Contains,
+    StartsWith,
+    EndsWith
 }

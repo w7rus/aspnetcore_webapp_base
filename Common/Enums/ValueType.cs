@@ -2,6 +2,7 @@
 
 public enum ValueType
 {
+    None,
     Unknown,
     Boolean,
     Int8,

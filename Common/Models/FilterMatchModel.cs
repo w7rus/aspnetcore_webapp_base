@@ -3,8 +3,7 @@ using Common.Enums;
 
 namespace Common.Models;
 
-public class FilterMatchModel
+public class FilterMatchModel : FilterMatchModelItemScope
 {
-    public IEnumerable<FilterMatchModelItem> MatchRules { get; set; }
     
 }

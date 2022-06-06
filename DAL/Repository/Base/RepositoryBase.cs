@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 using Common.Attributes;
 using Common.Enums;
 using Common.Exceptions;
+using Common.Extensions;
 using Common.Models;
 using DAL.Data;
 using DAL.Extensions;
 using Domain.Entities;
 using Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Npgsql;
+using Serilog;
 using ValueType = Common.Enums.ValueType;
 
 namespace DAL.Repository.Base
@@ -173,204 +176,335 @@ namespace DAL.Repository.Base
                 throw new CustomException(Localize.Error.DbProviderNotSupported);
 
             var entityType = GetEntityType();
-            
+
             var rawSql = "SELECT * FROM " + '"' + GetTableName() + '"';
-            
-            var rawSqlMatchParameters = new Dictionary<string, (string name, NpgsqlParameter parameter)>();
-            
-            void AddMatchParameter<TValue>(PropertyInfo property, FilterMatchMode filterMatchMode, string sqlParameterName, TValue value)
+
+            var rawSqlParameters = new Dictionary<string, NpgsqlParameter>();
+
+            void AddMatchParameter<TValue>(
+                MemberInfo property,
+                FilterMatchOperation filterMatchOperation,
+                string sqlParameterName,
+                TValue value
+            )
             {
-                var filterMatchOp = filterMatchMode switch
+                var filterMatchOperationAsString = filterMatchOperation switch
                 {
-                    FilterMatchMode.None => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.Equal => " = ",
-                    FilterMatchMode.NotEqual => " != ",
-                    FilterMatchMode.Less => " < ",
-                    FilterMatchMode.LessOrEqual => " <= ",
-                    FilterMatchMode.Greater => " > ",
-                    FilterMatchMode.GreaterOrEqual => " >= ",
-                    FilterMatchMode.StringContains => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.StringNotContains => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
+                    FilterMatchOperation.None => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Equal => " = ",
+                    FilterMatchOperation.NotEqual => " != ",
+                    FilterMatchOperation.Less => " < ",
+                    FilterMatchOperation.LessOrEqual => " <= ",
+                    FilterMatchOperation.Greater => " > ",
+                    FilterMatchOperation.GreaterOrEqual => " >= ",
+                    FilterMatchOperation.Contains => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.StartsWith => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.EndsWith => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
-                rawSqlMatchParameters.Add('"' + property.Name + '"' + filterMatchOp,
-                    (sqlParameterName, new NpgsqlParameter<TValue>(sqlParameterName, value)));
+                rawSql += '"' + property.Name + '"' + filterMatchOperationAsString + '@' + sqlParameterName;
+
+                rawSqlParameters.Add(sqlParameterName, new NpgsqlParameter<TValue>(sqlParameterName, value));
             }
-            void AddMatchParameterString(PropertyInfo property, FilterMatchMode filterMatchMode, string sqlParameterName, string value)
+
+            void AddMatchParameterString(
+                MemberInfo property,
+                FilterMatchOperation filterMatchOperation,
+                string sqlParameterName,
+                string value
+            )
             {
-                var filterMatchOp = filterMatchMode switch
+                var filterMatchOperationAsString = filterMatchOperation switch
                 {
-                    FilterMatchMode.None => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.Equal => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.NotEqual => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.Less => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.LessOrEqual => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.Greater => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.GreaterOrEqual => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.StringContains => " LIKE ",
-                    FilterMatchMode.StringNotContains => " NOT LIKE ",
+                    FilterMatchOperation.None => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Equal => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.NotEqual => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Less => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.LessOrEqual => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Greater => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.GreaterOrEqual => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Contains => " LIKE ",
+                    FilterMatchOperation.StartsWith => " LIKE ",
+                    FilterMatchOperation.EndsWith => " LIKE ",
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
-                rawSqlMatchParameters.Add('"' + property.Name + '"' + filterMatchOp,
-                    (sqlParameterName, new NpgsqlParameter<string>(sqlParameterName, '%' + value + '%')));
+                rawSql += '"' + property.Name + '"' + filterMatchOperationAsString + '@' + sqlParameterName;
+
+                rawSqlParameters.Add(sqlParameterName,
+                    new NpgsqlParameter<string>(sqlParameterName,
+                        (filterMatchOperation is FilterMatchOperation.Contains or FilterMatchOperation.StartsWith
+                            ? '%'
+                            : string.Empty) + value +
+                        (filterMatchOperation is FilterMatchOperation.Contains or FilterMatchOperation.EndsWith
+                            ? '%'
+                            : string.Empty)));
             }
-            void AddMatchParameterDateTime(PropertyInfo property, FilterMatchMode filterMatchMode, string sqlParameterName, DateTime value)
+
+            void AddMatchParameterDateTime(
+                MemberInfo property,
+                FilterMatchOperation filterMatchOperation,
+                string sqlParameterName,
+                DateTime value
+            )
             {
-                var filterMatchOp = filterMatchMode switch
+                var filterMatchOperationAsString = filterMatchOperation switch
                 {
-                    FilterMatchMode.None => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.Equal => " = ",
-                    FilterMatchMode.NotEqual => " != ",
-                    FilterMatchMode.Less => " < ",
-                    FilterMatchMode.LessOrEqual => " <= ",
-                    FilterMatchMode.Greater => " > ",
-                    FilterMatchMode.GreaterOrEqual => " >= ",
-                    FilterMatchMode.StringContains => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
-                    FilterMatchMode.StringNotContains => throw new CustomException(Localize.Error.FilterMatchModelValueTypeNotSuitable),
+                    FilterMatchOperation.None => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Equal => " = ",
+                    FilterMatchOperation.NotEqual => " != ",
+                    FilterMatchOperation.Less => " < ",
+                    FilterMatchOperation.LessOrEqual => " <= ",
+                    FilterMatchOperation.Greater => " > ",
+                    FilterMatchOperation.GreaterOrEqual => " >= ",
+                    FilterMatchOperation.Contains => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.StartsWith => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.EndsWith => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
-                rawSqlMatchParameters.Add('"' + property.Name + '"' + filterMatchOp,
-                    (sqlParameterName, new NpgsqlParameter<string>(sqlParameterName, "to_timestamp(" + value.ToString("yyyy-MM-dd HH:mm:ss zzz") + "\'YYYY-MM-DD HH24:MI:SS TZH:TZM\')")));
+                rawSql += '"' + property.Name + '"' + filterMatchOperationAsString + '@' + sqlParameterName;
+
+                rawSqlParameters.Add(sqlParameterName,
+                    new NpgsqlParameter<string>(sqlParameterName,
+                        "to_timestamp(" + value.ToString("yyyy-MM-dd HH:mm:ss zzz") +
+                        "\'YYYY-MM-DD HH24:MI:SS TZH:TZM\')"));
             }
-            
+
             var sqlParameterCounter = 0;
-            
+
             //Match
-            
-            if (filterMatchModel.MatchRules.Any())
+
+            if (filterMatchModel.Items.Any())
                 rawSql += " WHERE ";
-            
-            foreach (var matchRule in filterMatchModel.MatchRules)
+
+            var stack = new Stack<FilterMatchModelItemStackItem>();
+            stack.Push(new FilterMatchModelItemStackItem()
             {
-                var property = entityType.GetProperty(matchRule.Key);
+                Items = filterMatchModel.Items,
+                Index = 0
+            });
+            if (filterMatchModel.ExpressionLogicalOperation > ExpressionLogicalOperation.Not)
+                throw new CustomException(Localize.Error
+                    .FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly);
+            rawSql += '(';
 
-                if (property == null || property.GetCustomAttribute<AllowFilterMatchAttribute>(true) == null)
-                    throw new CustomException(Localize.Error.FilterMatchModelPropertyUnavailable);
+            while (stack.Any())
+            {
+                var current = stack.Peek();
 
-                var sqlParameterCounterAsString = sqlParameterCounter.ToString();
-
-                switch (matchRule.ValueType)
+                for (; current.Index < current.Items.Count; current.Index++)
                 {
-                    case ValueType.Unknown:
-                        throw new CustomException(Localize.Error.FilterMatchModelItemValueTypeUnknown);
-                    case ValueType.Boolean:
+                    var scopeItem = current.Items[current.Index];
+
+                    switch (current.Index)
                     {
-                        var value = BitConverter.ToBoolean(matchRule.Value);
-                        AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
+                        case 0 when scopeItem.ExpressionLogicalOperation > ExpressionLogicalOperation.Not:
+                            throw new CustomException(Localize.Error
+                                .FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly);
+                        case > 0 when scopeItem.ExpressionLogicalOperation <= ExpressionLogicalOperation.Not:
+                            throw new CustomException(Localize.Error
+                                .FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly);
+                    }
+
+                    switch (scopeItem.ExpressionLogicalOperation)
+                    {
+                        case ExpressionLogicalOperation.None:
+                            break;
+                        case ExpressionLogicalOperation.Not:
+                            rawSql += "NOT ";
+                            break;
+                        case ExpressionLogicalOperation.And:
+                            rawSql += " AND ";
+                            break;
+                        case ExpressionLogicalOperation.Or:
+                            rawSql += " OR ";
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    if (scopeItem is FilterMatchModelItemScope itemScope)
+                    {
+                        current.Index++;
+                        stack.Push(new FilterMatchModelItemStackItem()
+                        {
+                            Items = itemScope.Items,
+                            Index = 0
+                        });
+                        rawSql += '(';
                         break;
                     }
-                    case ValueType.Int8:
+
+                    if (scopeItem is FilterMatchModelItemExpression itemExpression)
                     {
-                        var value = matchRule.Value[0];
-                        AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        break;
+                        var property = entityType.GetProperty(itemExpression.Key);
+
+                        if (property == null || property.GetCustomAttribute<AllowFilterMatchAttribute>(true) == null)
+                            throw new CustomException(Localize.Error.FilterMatchModelPropertyNotFoundOrUnavailable);
+
+                        var sqlParameterCounterAsString = sqlParameterCounter.ToString();
+
+                        switch (property.GetValueType())
+                        {
+                            case ValueType.None:
+                            case ValueType.Unknown:
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                            case ValueType.Boolean:
+                            {
+                                var value = BitConverter.ToBoolean(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Int8:
+                            {
+                                var value = (sbyte) itemExpression.Value[0];
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Int16:
+                            {
+                                var value = BitConverter.ToInt16(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Int32:
+                            {
+                                var value = BitConverter.ToInt32(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Int64:
+                            {
+                                var value = BitConverter.ToInt64(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.UInt8:
+                            {
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
+                                // var value = matchRule.Value[0];
+                                // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
+                                // break;
+                            }
+                            case ValueType.UInt16:
+                            {
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
+                                // var value = BitConverter.ToUInt16(matchRule.Value);
+                                // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
+                                // break;
+                            }
+                            case ValueType.UInt32:
+                            {
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
+                                // var value = BitConverter.ToUInt32(matchRule.Value);
+                                // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
+                                // break;
+                            }
+                            case ValueType.UInt64:
+                            {
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
+                                // var value = BitConverter.ToUInt64(matchRule.Value);
+                                // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
+                                // break;
+                            }
+                            case ValueType.Float:
+                            {
+                                var value = BitConverter.ToSingle(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Double:
+                            {
+                                var value = BitConverter.ToDouble(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Decimal:
+                            {
+                                var value = new decimal(BitConverter.ToInt32(itemExpression.Value),
+                                    BitConverter.ToInt32(itemExpression.Value, sizeof(int)),
+                                    BitConverter.ToInt32(itemExpression.Value, sizeof(int) * 2),
+                                    itemExpression.Value[15] == 0x80,
+                                    itemExpression.Value[14]);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.String:
+                            {
+                                var value = Encoding.UTF8.GetString(itemExpression.Value);
+                                AddMatchParameterString(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.DateTime:
+                            {
+                                var value = DateTime.FromBinary(BitConverter.ToInt64(itemExpression.Value));
+                                AddMatchParameterDateTime(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+
+                        sqlParameterCounter++;
                     }
-                    case ValueType.Int16:
-                    {
-                        var value = BitConverter.ToInt16(matchRule.Value);
-                        AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        break;
-                    }
-                    case ValueType.Int32:
-                    {
-                        var value = BitConverter.ToInt32(matchRule.Value);
-                        AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        break;
-                    }
-                    case ValueType.Int64:
-                    {
-                        var value = BitConverter.ToInt64(matchRule.Value);
-                        AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        break;
-                    }
-                    case ValueType.UInt8:
-                    {
-                        throw new CustomException(Localize.Error.FilterMatchModelItemValueTypeNotSupported);
-                        //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
-                        // var value = matchRule.Value[0];
-                        // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        // break;
-                    }
-                    case ValueType.UInt16:
-                    {
-                        throw new CustomException(Localize.Error.FilterMatchModelItemValueTypeNotSupported);
-                        //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
-                        // var value = BitConverter.ToUInt16(matchRule.Value);
-                        // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        // break;
-                    }
-                    case ValueType.UInt32:
-                    {
-                        throw new CustomException(Localize.Error.FilterMatchModelItemValueTypeNotSupported);
-                        //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
-                        // var value = BitConverter.ToUInt32(matchRule.Value);
-                        // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        // break;
-                    }
-                    case ValueType.UInt64:
-                    {
-                        throw new CustomException(Localize.Error.FilterMatchModelItemValueTypeNotSupported);
-                        //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
-                        // var value = BitConverter.ToUInt64(matchRule.Value);
-                        // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        // break;
-                    }
-                    case ValueType.Float:
-                    {
-                        var value = BitConverter.ToSingle(matchRule.Value);
-                        AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        break;
-                    }
-                    case ValueType.Double:
-                    {
-                        var value = BitConverter.ToDouble(matchRule.Value);
-                        AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        break;
-                    }
-                    case ValueType.Decimal:
-                    {
-                        var value = new decimal(BitConverter.ToInt32(matchRule.Value),
-                            BitConverter.ToInt32(matchRule.Value, sizeof(int)),
-                            BitConverter.ToInt32(matchRule.Value, sizeof(int) * 2), matchRule.Value[15] == 0x80,
-                            matchRule.Value[14]);
-                        AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        break;
-                    }
-                    case ValueType.String:
-                    {
-                        var value = Encoding.UTF8.GetString(matchRule.Value);
-                        AddMatchParameterString(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        break;
-                    }
-                    case ValueType.DateTime:
-                    {
-                        var value = DateTime.FromBinary(BitConverter.ToInt64(matchRule.Value));
-                        AddMatchParameterDateTime(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                        break;
-                    }
-                    default:
-                        throw new ArgumentOutOfRangeException();
                 }
+
+                current = stack.Peek();
+
+                if (current.Index < current.Items.Count) continue;
+
+                stack.Pop();
+                rawSql += ')';
             }
-            
-            //TODO: User defined logical operation + scopes
-            rawSql += string.Join(" AND ", rawSqlMatchParameters.Select(_ => _.Key + '@' + _.Value.name));
-            
+
             //Sort
 
             var rawSqlSortParameters = new List<string>();
             if (filterSortModel.SortRules.Any())
                 rawSql += " ORDER BY ";
-        
+
             foreach (var sortRule in filterSortModel.SortRules)
             {
                 var property = entityType.GetProperty(sortRule.Key);
-            
+
                 if (property == null || property.GetCustomAttribute<AllowFilterSortAttribute>(true) == null)
-                    throw new CustomException(Localize.Error.FilterSortModelPropertyUnavailable);
+                    throw new CustomException(Localize.Error.FilterSortModelPropertyNotFoundOrUnavailable);
 
                 switch (sortRule.FilterSortMode)
                 {
@@ -384,10 +518,11 @@ namespace DAL.Repository.Base
                         throw new ArgumentOutOfRangeException();
                 }
             }
+
             rawSql += string.Join(", ", rawSqlSortParameters);
-            
+
             // ReSharper disable once CoVariantArrayConversion
-            var query = FromSql(rawSql, rawSqlMatchParameters.Select(_ => _.Value.parameter).ToArray());
+            var query = FromSql(rawSql, rawSqlParameters.Select(_ => _.Value).ToArray());
 
             return (query.Count(), query.GetPage(pageModel));
         }
