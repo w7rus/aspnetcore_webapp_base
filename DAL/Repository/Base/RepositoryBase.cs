@@ -223,18 +223,12 @@ namespace DAL.Repository.Base
                 {
                     FilterMatchOperation.None => throw new CustomException(Localize.Error
                         .FilterMatchModelValueTypeNotCompatible),
-                    FilterMatchOperation.Equal => throw new CustomException(Localize.Error
-                        .FilterMatchModelValueTypeNotCompatible),
-                    FilterMatchOperation.NotEqual => throw new CustomException(Localize.Error
-                        .FilterMatchModelValueTypeNotCompatible),
-                    FilterMatchOperation.Less => throw new CustomException(Localize.Error
-                        .FilterMatchModelValueTypeNotCompatible),
-                    FilterMatchOperation.LessOrEqual => throw new CustomException(Localize.Error
-                        .FilterMatchModelValueTypeNotCompatible),
-                    FilterMatchOperation.Greater => throw new CustomException(Localize.Error
-                        .FilterMatchModelValueTypeNotCompatible),
-                    FilterMatchOperation.GreaterOrEqual => throw new CustomException(Localize.Error
-                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Equal => " = ",
+                    FilterMatchOperation.NotEqual => " != ",
+                    FilterMatchOperation.Less => " < ",
+                    FilterMatchOperation.LessOrEqual => " <= ",
+                    FilterMatchOperation.Greater => " > ",
+                    FilterMatchOperation.GreaterOrEqual => " >= ",
                     FilterMatchOperation.Contains => " LIKE ",
                     FilterMatchOperation.StartsWith => " LIKE ",
                     FilterMatchOperation.EndsWith => " LIKE ",
