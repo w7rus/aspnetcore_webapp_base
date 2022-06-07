@@ -64,6 +64,10 @@ public static class PropertyInfoExtensions
         {
             return ValueType.DateTime;
         }
+        if (propertyInfo.PropertyType == typeof(Guid))
+        {
+            return ValueType.Guid;
+        }
 
         return propertyInfo.PropertyType.IsEnum ? ValueType.Int32 : ValueType.Unknown;
     }

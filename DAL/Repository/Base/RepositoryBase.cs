@@ -212,6 +212,41 @@ namespace DAL.Repository.Base
                 rawSqlParameters.Add(new NpgsqlParameter<TValue>(sqlParameterName, value));
             }
 
+            void AddMatchParameterEquatable<TValue>(
+                MemberInfo property,
+                FilterMatchOperation filterMatchOperation,
+                string sqlParameterName,
+                TValue value
+            )
+            {
+                var filterMatchOperationAsString = filterMatchOperation switch
+                {
+                    FilterMatchOperation.None => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Equal => " = ",
+                    FilterMatchOperation.NotEqual => " != ",
+                    FilterMatchOperation.Less => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.LessOrEqual => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Greater => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.GreaterOrEqual => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.Contains => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.StartsWith => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    FilterMatchOperation.EndsWith => throw new CustomException(Localize.Error
+                        .FilterMatchModelValueTypeNotCompatible),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+
+                rawSql += '"' + property.Name + '"' + filterMatchOperationAsString + '@' + sqlParameterName;
+
+                rawSqlParameters.Add(new NpgsqlParameter<TValue>(sqlParameterName, value));
+            }
+
             void AddMatchParameterString(
                 MemberInfo property,
                 FilterMatchOperation filterMatchOperation,
@@ -348,7 +383,8 @@ namespace DAL.Repository.Base
                     {
                         var property = entityType.GetProperty(itemExpression.Key);
 
-                        if (property == null || property.GetCustomAttribute<AllowFilterExpressionAttribute>(true) == null)
+                        if (property == null ||
+                            property.GetCustomAttribute<AllowFilterExpressionAttribute>(true) == null)
                             throw new CustomException(Localize.Error.FilterMatchModelPropertyNotFoundOrUnavailable);
 
                         var sqlParameterCounterAsString = sqlParameterCounter.ToString();
@@ -362,7 +398,7 @@ namespace DAL.Repository.Base
                             case ValueType.Boolean:
                             {
                                 var value = BitConverter.ToBoolean(itemExpression.Value);
-                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                AddMatchParameterEquatable(property, itemExpression.FilterMatchOperation,
                                     sqlParameterCounterAsString, value);
                                 break;
                             }
@@ -466,6 +502,15 @@ namespace DAL.Repository.Base
                             {
                                 var value = DateTime.FromBinary(BitConverter.ToInt64(itemExpression.Value));
                                 AddMatchParameterDateTime(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Guid:
+                            {
+                                if (!Guid.TryParse(Encoding.UTF8.GetString(itemExpression.Value), out var value))
+                                    throw new CustomException(Localize.Error
+                                        .FilterMatchModelItemExpressionValueFailedToParseGuid);
+                                AddMatchParameterEquatable(property, itemExpression.FilterMatchOperation,
                                     sqlParameterCounterAsString, value);
                                 break;
                             }

@@ -269,7 +269,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var user = await _userService.GetByEmailAsync(data.Email);
             if (user == null || user.IsTemporary || !customPasswordHasher.VerifyPassword(user.Password, data.Password))
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Model,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserDoesNotExistOrWrongCredentials);
 
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);

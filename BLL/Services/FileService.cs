@@ -39,6 +39,7 @@ public class FileService : IFileService
     private readonly IFileRepository<File> _fileRepository;
     private readonly IAppDbContextAction _appDbContextAction;
     private readonly MiscOptions _miscOptions;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     #endregion
 
@@ -48,12 +49,14 @@ public class FileService : IFileService
         ILogger<FileService> logger,
         IFileRepository<File> fileRepository,
         IAppDbContextAction appDbContextAction,
-        IOptions<MiscOptions> miscOptions
+        IOptions<MiscOptions> miscOptions,
+        IHttpClientFactory httpClientFactory
     )
     {
         _logger = logger;
         _fileRepository = fileRepository;
         _appDbContextAction = appDbContextAction;
+        _httpClientFactory = httpClientFactory;
         _miscOptions = miscOptions.Value;
     }
 
@@ -74,7 +77,7 @@ public class FileService : IFileService
 
         if (entity.IsNew())
         {
-            var httpClient = new HttpClient();
+            var httpClient = _httpClientFactory.CreateClient();
             var uriBuilder = new UriBuilder(_miscOptions.FileServer.Scheme, _miscOptions.FileServer.Host,
                 _miscOptions.FileServer.Port, _miscOptions.FileServer.Path);
             var response = await httpClient.PostAsync(uriBuilder.ToString(), new MultipartFormDataContent
@@ -82,8 +85,7 @@ public class FileService : IFileService
                 {JsonContent.Create(new FileCDNCreate()), "data"},
                 {new ByteArrayContent(entity.Data), "file", entity.Name}
             }, cancellationToken);
-
-            httpClient.Dispose();
+            
             if (!response.IsSuccessStatusCode)
                 throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
                     Localize.Error.ResponseStatusCodeUnsuccessful);
@@ -120,7 +122,7 @@ public class FileService : IFileService
     /// <exception cref="CustomException"></exception>
     public async Task Delete(File entity, CancellationToken cancellationToken = default)
     {
-        var httpClient = new HttpClient();
+        var httpClient = _httpClientFactory.CreateClient();
         var uriBuilder = new UriBuilder(_miscOptions.FileServer.Scheme, _miscOptions.FileServer.Host,
             _miscOptions.FileServer.Port, _miscOptions.FileServer.Path, "?" + await Utilities.ToHttpQueryString(
                 new FileCDNDelete
@@ -128,8 +130,7 @@ public class FileService : IFileService
                     FileName = entity.Name
                 }));
         var response = await httpClient.DeleteAsync(uriBuilder.ToString(), cancellationToken);
-
-        httpClient.Dispose();
+        
         if (!response.IsSuccessStatusCode)
             throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
                 Localize.Error.ResponseStatusCodeUnsuccessful);
@@ -152,17 +153,18 @@ public class FileService : IFileService
     {
         var file = await _fileRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
-        var cdnServer = _miscOptions.CDNServers.FirstOrDefault() ?? throw new CustomException();
+        var random = new Random();
+        
+        var cdnServer = _miscOptions.CDNServers.ElementAt(random.Next(0, _miscOptions.CDNServers.Count)) ?? throw new CustomException();
 
-        var httpClient = new HttpClient();
+        var httpClient = _httpClientFactory.CreateClient();
         var uriBuilder = new UriBuilder(cdnServer.Scheme, cdnServer.Host,
             cdnServer.Port, cdnServer.Path, "?" + await Utilities.ToHttpQueryString(new FileCDNRead
             {
                 FileName = file.Name
             }));
         var response = await httpClient.GetAsync(uriBuilder.ToString(), cancellationToken);
-
-        httpClient.Dispose();
+        
         if (!response.IsSuccessStatusCode)
             throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
                 Localize.Error.ResponseStatusCodeUnsuccessful);

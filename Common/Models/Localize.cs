@@ -92,6 +92,7 @@ public static class Localize
         #region FilterMatchModel
         
         public static string FilterMatchModelItemExpressionValueTypeNotSupported => "FilterMatchModelItemExpressionValueTypeNotSupported";
+        public static string FilterMatchModelItemExpressionValueFailedToParseGuid => "FilterMatchModelItemExpressionValueFailedToParseGuid";
         public static string FilterMatchModelPropertyNotFoundOrUnavailable => "FilterMatchModelPropertyNotFoundOrUnavailable";
         public static string FilterMatchModelValueTypeNotCompatible => "FilterMatchModelValueTypeNotCompatible";
 

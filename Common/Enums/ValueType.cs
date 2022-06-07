@@ -17,5 +17,6 @@ public enum ValueType
     Double,
     Decimal,
     String,
-    DateTime
+    DateTime,
+    Guid
 }

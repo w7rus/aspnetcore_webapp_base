@@ -3,12 +3,11 @@
 public enum ErrorType
 {
     None,
-    Unknown,
+    Generic,
     Unhandled,
     ModelState,
     HttpContext,
     Auth,
-    Model,
     Permission,
     HttpClient,
     JsonConvert

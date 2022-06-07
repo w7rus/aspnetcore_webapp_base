@@ -131,6 +131,8 @@ namespace API
             services.AddHandlers();
             // services.AddBackgroundServices();
 
+            services.AddHttpClient();
+
             services.AddCustomHangfire(Configuration);
         }
 

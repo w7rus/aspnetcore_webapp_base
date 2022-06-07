@@ -42,7 +42,7 @@ public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
                 TraceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier
             };
 
-            errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.Unknown,
+            errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.Generic,
                 customException.Message));
 
             context.Result = new ObjectResult(errorModelResult)
