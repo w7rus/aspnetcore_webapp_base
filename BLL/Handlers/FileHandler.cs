@@ -42,7 +42,7 @@ public class FileHandler : HandlerBase, IFileHandler
     private readonly IPermissionService _permissionService;
     private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
     private readonly IUserGroupService _userGroupService;
-    private readonly IUserToUserGroupAdvancedService _userToUserGroupAdvancedService;
+    private readonly IUserGroupAdvancedService _userGroupAdvancedService;
     private readonly IUserAdvancedService _userAdvancedService;
 
     #endregion
@@ -59,7 +59,7 @@ public class FileHandler : HandlerBase, IFileHandler
         IPermissionService permissionService,
         IUserGroupPermissionValueService userGroupPermissionValueService,
         IUserGroupService userGroupService,
-        IUserToUserGroupAdvancedService userToUserGroupAdvancedService,
+        IUserGroupAdvancedService userGroupAdvancedService,
         IUserAdvancedService userAdvancedService
     )
     {
@@ -71,7 +71,7 @@ public class FileHandler : HandlerBase, IFileHandler
         _permissionService = permissionService;
         _userGroupPermissionValueService = userGroupPermissionValueService;
         _userGroupService = userGroupService;
-        _userToUserGroupAdvancedService = userToUserGroupAdvancedService;
+        _userGroupAdvancedService = userGroupAdvancedService;
         _userAdvancedService = userAdvancedService;
         _httpContext = httpContextAccessor.HttpContext;
     }
@@ -114,12 +114,12 @@ public class FileHandler : HandlerBase, IFileHandler
 
             //Get file creation comparable system PermissionValue
             var permissionValueComparedSystem =
-                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
                     "g_file_a_create_o_file",
                     cancellationToken);
 
             //Authorize file creation
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermissionValue(user, permission,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user, permission,
                     permissionValueComparedSystem,
                     cancellationToken))
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
@@ -139,7 +139,7 @@ public class FileHandler : HandlerBase, IFileHandler
                                     "g_file_a_create_o_file.o_agerating_l_automapper", PermissionType.Value),
                             PermissionCompared = null,
                             PermissionValueSystemCompared =
-                                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                                await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
                                     "g_file_a_create_o_file.o_agerating_l_automapper", cancellationToken),
                             CustomValueCompared = null
                         }
@@ -201,16 +201,16 @@ public class FileHandler : HandlerBase, IFileHandler
                 await _permissionService.GetByAliasAndTypeAsync("g_file_a_read_o_file", PermissionType.Value);
 
             //Authorize file read
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
                     userPermissionComparable,
-                    await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                    await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
                         "g_file_a_read_o_file",
                         cancellationToken),
                     cancellationToken))
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermission(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
                     userPermissionComparable, file.User,
                     await _permissionService.GetByAliasAndTypeAsync("g_file_a_read_o_file",
                         file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
@@ -265,16 +265,16 @@ public class FileHandler : HandlerBase, IFileHandler
                 await _permissionService.GetByAliasAndTypeAsync("g_file_a_update_o_file", PermissionType.Value);
 
             //Authorize file update
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
                     userPermissionComparable,
-                    await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                    await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
                         "g_file_a_update_o_file",
                         cancellationToken),
                     cancellationToken))
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermission(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
                     userPermissionComparable, file.User,
                     await _permissionService.GetByAliasAndTypeAsync("g_file_a_update_o_file",
                         file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
@@ -300,7 +300,7 @@ public class FileHandler : HandlerBase, IFileHandler
                                     ? PermissionType.ValueNeededOwner
                                     : PermissionType.ValueNeededOthers),
                             PermissionValueSystemCompared =
-                                await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                                await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
                                     "g_file_a_update_o_file.o_agerating_l_automapper", cancellationToken),
                             CustomValueCompared = null
                         }
@@ -354,16 +354,16 @@ public class FileHandler : HandlerBase, IFileHandler
                 await _permissionService.GetByAliasAndTypeAsync("g_file_a_delete_o_file", PermissionType.Value);
 
             //Authorize file delete
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
                     userPermissionComparable,
-                    await _userToUserGroupAdvancedService.GetSystemPermissionValueByAlias(
+                    await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
                         "g_file_a_delete_o_file",
                         cancellationToken),
                     cancellationToken))
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermission(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
                     userPermissionComparable, file.User,
                     await _permissionService.GetByAliasAndTypeAsync("g_file_a_delete_o_file",
                         file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),

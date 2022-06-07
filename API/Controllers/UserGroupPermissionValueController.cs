@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
+using BLL.Services;
+using BLL.Services.Advanced;
 using Common.Models;
 using DTO.Models.PermissionValue;
 using Microsoft.AspNetCore.Authorization;
@@ -29,8 +31,9 @@ public class UserGroupPermissionValueController : CustomControllerBase
     public UserGroupPermissionValueController(
         IHttpContextAccessor httpContextAccessor,
         ILogger<UserGroupPermissionValueController> logger,
-        IUserGroupPermissionValueHandler userGroupPermissionValueHandler
-    ) : base(httpContextAccessor)
+        IUserGroupPermissionValueHandler userGroupPermissionValueHandler,
+        IWarningAdvancedService warningAdvancedService
+    ) : base(httpContextAccessor, warningAdvancedService)
     {
         _logger = logger;
         _userGroupPermissionValueHandler = userGroupPermissionValueHandler;
@@ -53,7 +56,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     {
         return ResponseWith(await _userGroupPermissionValueHandler.Create(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [SwaggerOperation(Summary = "Reads PermissionValue",
         Description = "Reads PermissionValue")]
@@ -67,7 +70,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     {
         return ResponseWith(await _userGroupPermissionValueHandler.Read(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [Route("readByEntity")]
     [SwaggerOperation(Summary = "Reads PermissionValues by Entity",
@@ -82,7 +85,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     {
         return ResponseWith(await _userGroupPermissionValueHandler.ReadByEntity(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [Route("readByPermission")]
     [SwaggerOperation(Summary = "Reads PermissionValues by Permission",
@@ -97,7 +100,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     {
         return ResponseWith(await _userGroupPermissionValueHandler.ReadByPermission(data, cancellationToken));
     }
-    
+
     [HttpPut]
     [SwaggerOperation(Summary = "Updates PermissionValue",
         Description = "Updates PermissionValue")]
@@ -111,7 +114,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     {
         return ResponseWith(await _userGroupPermissionValueHandler.Update(data, cancellationToken));
     }
-    
+
     [HttpDelete]
     [SwaggerOperation(Summary = "Deletes PermissionValue",
         Description = "Deletes PermissionValue")]

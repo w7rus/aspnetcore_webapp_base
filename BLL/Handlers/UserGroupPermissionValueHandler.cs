@@ -45,7 +45,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
     private readonly IUserGroupService _userGroupService;
-    private readonly IUserToUserGroupAdvancedService _userToUserGroupAdvancedService;
+    private readonly IUserGroupAdvancedService _userGroupAdvancedService;
     private readonly IUserAdvancedService _userAdvancedService;
 
     #endregion
@@ -59,7 +59,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         IMapper mapper,
         IPermissionService permissionService,
         IUserGroupService userGroupService,
-        IUserToUserGroupAdvancedService userToUserGroupAdvancedService,
+        IUserGroupAdvancedService userGroupAdvancedService,
         IUserAdvancedService userAdvancedService
     )
     {
@@ -69,7 +69,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         _mapper = mapper;
         _permissionService = permissionService;
         _userGroupService = userGroupService;
-        _userToUserGroupAdvancedService = userToUserGroupAdvancedService;
+        _userGroupAdvancedService = userGroupAdvancedService;
         _userAdvancedService = userAdvancedService;
     }
 
@@ -95,11 +95,11 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var userGroup = await _userGroupService.GetByIdAsync(data.EntityId, cancellationToken);
             if (userGroup == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserGroupDoesNotExist);
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Unknown,
+                    Localize.Error.UserGroupNotFound);
 
             //Authorize permissionValue creation
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermission(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_create_o_permissionvalue",
                         PermissionType.Value), userGroup,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_create_o_permissionvalue",
@@ -111,8 +111,8 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var permission = await _permissionService.GetByIdAsync(data.PermissionId, cancellationToken);
             if (permission == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.PermissionDoesNotExist);
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Permission,
+                    Localize.Error.PermissionNotFound);
 
             var permissionValue = _mapper.Map<UserGroupPermissionValue>(data);
             
@@ -154,16 +154,16 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var permissionValue = await _userGroupPermissionValueService.GetByIdAsync(data.Id, cancellationToken);
             if (permissionValue == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.PermissionValueDoesNotExist);
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Unknown,
+                    Localize.Error.PermissionValueNotFound);
 
             var userGroup = await _userGroupService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
             if (userGroup == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserGroupDoesNotExist);
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Unknown,
+                    Localize.Error.UserGroupNotFound);
             
             //Authorize permissionValue reading
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermission(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
                         PermissionType.Value), userGroup,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
@@ -217,11 +217,11 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 
                 var userGroup = await _userGroupService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
                 if (userGroup == null)
-                    throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                        Localize.Error.UserGroupDoesNotExist);
+                    throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Unknown,
+                        Localize.Error.UserGroupNotFound);
                 
                 //Authorize permissionValue reading
-                if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermission(user,
+                if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
                         PermissionType.Value), userGroup,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
@@ -281,11 +281,11 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 
                 var userGroup = await _userGroupService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
                 if (userGroup == null)
-                    throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                        Localize.Error.UserGroupDoesNotExist);
+                    throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Unknown,
+                        Localize.Error.UserGroupNotFound);
                 
                 //Authorize permissionValue reading
-                if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermission(user,
+                if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
                         PermissionType.Value), userGroup,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
@@ -333,16 +333,16 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var permissionValue = await _userGroupPermissionValueService.GetByIdAsync(data.Id, cancellationToken);
             if (permissionValue == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.PermissionValueDoesNotExist);
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Unknown,
+                    Localize.Error.PermissionValueNotFound);
             
             var userGroup = await _userGroupService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
             if (userGroup == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserGroupDoesNotExist);
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Unknown,
+                    Localize.Error.UserGroupNotFound);
             
             //Authorize permissionValue update
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermission(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_update_o_permissionvalue",
                         PermissionType.Value), userGroup,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_update_o_permissionvalue",
@@ -392,16 +392,16 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var permissionValue = await _userGroupPermissionValueService.GetByIdAsync(data.Id, cancellationToken);
             if (permissionValue == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.PermissionValueDoesNotExist);
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Unknown,
+                    Localize.Error.PermissionValueNotFound);
             
             var userGroup = await _userGroupService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
             if (userGroup == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserGroupDoesNotExist);
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Unknown,
+                    Localize.Error.UserGroupNotFound);
             
             //Authorize permissionValue update
-            if (!await _userToUserGroupAdvancedService.AuthorizePermissionToPermission(user,
+            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_delete_o_permissionvalue",
                         PermissionType.Value), userGroup,
                     await _permissionService.GetByAliasAndTypeAsync("g_any_a_delete_o_permissionvalue",

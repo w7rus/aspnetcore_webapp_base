@@ -70,8 +70,8 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
 
             var permission = await _permissionService.GetByIdAsync(data.Id, cancellationToken);
             if (permission == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Permission,
-                    Localize.Error.PermissionDoesNotExist);
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Permission,
+                    Localize.Error.PermissionNotFound);
             
             await _appDbContextAction.CommitTransactionAsync();
             

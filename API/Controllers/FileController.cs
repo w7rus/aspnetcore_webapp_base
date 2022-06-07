@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
+using BLL.Services;
+using BLL.Services.Advanced;
 using BrunoZell.ModelBinding;
 using Common.Models;
 using DTO.Models.File;
@@ -30,8 +32,9 @@ public class FileController : CustomControllerBase
     public FileController(
         ILogger<FileController> logger,
         IFileHandler fileHandler,
-        IHttpContextAccessor httpContextAccessor
-    ) : base(httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        IWarningAdvancedService warningAdvancedService
+    ) : base(httpContextAccessor, warningAdvancedService)
     {
         _logger = logger;
         _fileHandler = fileHandler;

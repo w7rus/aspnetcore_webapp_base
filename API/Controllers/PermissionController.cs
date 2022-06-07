@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
+using BLL.Services;
+using BLL.Services.Advanced;
 using DTO.Models.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -29,9 +31,10 @@ public class PermissionController : CustomControllerBase
     public PermissionController(
         IHttpContextAccessor httpContextAccessor,
         ILogger<PermissionController> logger,
-        IPermissionHandler permissionHandler
+        IPermissionHandler permissionHandler,
+        IWarningAdvancedService warningAdvancedService
     ) : base(
-        httpContextAccessor)
+        httpContextAccessor, warningAdvancedService)
     {
         _logger = logger;
         _permissionHandler = permissionHandler;

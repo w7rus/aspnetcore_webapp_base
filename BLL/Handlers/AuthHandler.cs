@@ -27,7 +27,7 @@ namespace BLL.Handlers;
 
 public interface IAuthHandler
 {
-    Task<DTOResultBase> SignUpInAsGuest(AuthSignUpInAsGuest data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> SignInAsGuest(AuthSignUpInAsGuest data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> SignIn(AuthSignIn data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = default);
@@ -52,6 +52,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
     private readonly IUserGroupService _userGroupService;
     private readonly IUserAdvancedService _userAdvancedService;
     private readonly IJsonWebTokenAdvancedService _jsonWebTokenAdvancedService;
+    private readonly IWarningAdvancedService _warningAdvancedService;
 
     #endregion
 
@@ -70,7 +71,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
         IUserToUserGroupMappingService userToUserGroupMappingService,
         IUserGroupService userGroupService,
         IUserAdvancedService userAdvancedService,
-        IJsonWebTokenAdvancedService jsonWebTokenAdvancedService
+        IJsonWebTokenAdvancedService jsonWebTokenAdvancedService,
+        IWarningAdvancedService warningAdvancedService
     )
     {
         _fullName = GetType().FullName;
@@ -83,6 +85,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         _userGroupService = userGroupService;
         _userAdvancedService = userAdvancedService;
         _jsonWebTokenAdvancedService = jsonWebTokenAdvancedService;
+        _warningAdvancedService = warningAdvancedService;
         _refreshTokenOptions = refreshTokenOptions.Value;
         _jsonWebTokenOptions = jsonWebTokenOptions.Value;
         _httpContext = httpContextAccessor.HttpContext;
@@ -93,16 +96,13 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     #region Methods
     
-    //TODO: Rename in SignIn
-    public async Task<DTOResultBase> SignUpInAsGuest(AuthSignUpInAsGuest data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> SignInAsGuest(AuthSignUpInAsGuest data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignUpInAsGuest)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignInAsGuest)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-        
-        var warnings = new List<WarningModelResultEntry>();
-        
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -175,7 +175,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             }
             else
             {
-                warnings.Add(new WarningModelResultEntry(WarningType.Security, Localize.Warning.XssVulnerable));
+                _warningAdvancedService.Add(new WarningModelResultEntry(WarningType.Security, Localize.Warning.XssVulnerable));
             }
 
             user.LastSignIn = DateTimeOffset.UtcNow;
@@ -184,12 +184,15 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignUpInAsGuest)));
-
-            //TODO: Custom model when useCookies=false
-            return new AuthSignUpResult
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignInAsGuest)));
+            
+            return new AuthSignInResult
             {
-                UserId = user.Id
+                UserId = user.Id,
+                JsonWebToken = !data.UseCookies ? jsonWebTokenString : null,
+                JsonWebTokenExpiresAt = jsonWebTokenExpiresAt,
+                RefreshToken = !data.UseCookies ? refreshTokenString : null,
+                RefreshTokenExpiresAt = refreshTokenExpiresAt
             };
         }
         catch (Exception)
@@ -257,9 +260,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-
-        var warnings = new List<WarningModelResultEntry>();
-
+        
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -324,7 +325,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             }
             else
             {
-                warnings.Add(new WarningModelResultEntry(WarningType.Security, Localize.Warning.XssVulnerable));
+                _warningAdvancedService.Add(new WarningModelResultEntry(WarningType.Security, Localize.Warning.XssVulnerable));
             }
 
             user.LastSignIn = DateTimeOffset.UtcNow;
@@ -341,8 +342,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 JsonWebToken = !data.UseCookies ? jsonWebTokenString : null,
                 JsonWebTokenExpiresAt = jsonWebTokenExpiresAt,
                 RefreshToken = !data.UseCookies ? refreshTokenString : null,
-                RefreshTokenExpiresAt = refreshTokenExpiresAt,
-                Warnings = warnings
+                RefreshTokenExpiresAt = refreshTokenExpiresAt
             };
         }
         catch (Exception)
@@ -384,7 +384,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var refreshToken = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
             if (refreshToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Auth,
                     Localize.Error.RefreshTokenNotFound);
 
             if (refreshToken.ExpiresAt < DateTimeOffset.UtcNow)
@@ -399,7 +399,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken);
             if (jsonWebToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Auth,
                     Localize.Error.JsonWebTokenNotFound);
 
             await _jsonWebTokenService.Delete(jsonWebToken, cancellationToken);
@@ -513,7 +513,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var refreshToken = await _refreshTokenService.GetByTokenAsync(data.RefreshToken);
             if (refreshToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Auth,
                     Localize.Error.RefreshTokenNotFound);
 
             if (refreshToken.ExpiresAt < DateTimeOffset.UtcNow)
@@ -528,7 +528,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken);
             if (jsonWebToken == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Auth,
                     Localize.Error.JsonWebTokenNotFound);
 
             // Middleware already validated this case

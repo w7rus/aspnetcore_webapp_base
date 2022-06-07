@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using BLL.Services;
+using BLL.Services.Advanced;
 using Common.Models;
 using Common.Models.Base;
 using DTO.Models.File;
@@ -16,13 +18,15 @@ public class CustomControllerBase : ControllerBase
     #region Fields
 
     private readonly HttpContext _httpContext;
+    private readonly IWarningAdvancedService _warningAdvancedService;
 
     #endregion
 
     #region Ctor
 
-    public CustomControllerBase(IHttpContextAccessor httpContextAccessor)
+    public CustomControllerBase(IHttpContextAccessor httpContextAccessor, IWarningAdvancedService warningAdvancedService)
     {
+        _warningAdvancedService = warningAdvancedService;
         _httpContext = httpContextAccessor.HttpContext;
     }
 
@@ -33,6 +37,8 @@ public class CustomControllerBase : ControllerBase
     internal IActionResult ResponseWith(DTOResultBase response)
     {
         response.TraceId = Activity.Current?.Id ?? _httpContext.TraceIdentifier;
+
+        response.Warnings = _warningAdvancedService.GetAll();
 
         if (response.Errors != null && response.Errors.Any())
             return new BadRequestObjectResult(response);

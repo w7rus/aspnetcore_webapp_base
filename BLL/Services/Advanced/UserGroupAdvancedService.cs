@@ -14,9 +14,8 @@ namespace BLL.Services.Advanced;
 /// <summary>
 /// Advanced Service for User and UserGroup management
 /// </summary>
-public interface IUserToUserGroupAdvancedService
+public interface IUserGroupAdvancedService
 {
-    //TODO: Fix
     /// <summary>
     /// Authorizes PermissionValue[] from UserGroup[] given user is member of to another PermissionValue
     /// </summary>
@@ -94,11 +93,11 @@ public interface IUserToUserGroupAdvancedService
     );
 }
 
-public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
+public class UserGroupAdvancedService : IUserGroupAdvancedService
 {
     #region Fields
 
-    private readonly ILogger<UserToUserGroupAdvancedService> _logger;
+    private readonly ILogger<UserGroupAdvancedService> _logger;
     private readonly IPermissionAdvancedService _permissionAdvancedService;
     private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
     private readonly IUserToUserGroupMappingService _userToUserGroupMappingService;
@@ -110,8 +109,8 @@ public class UserToUserGroupAdvancedService : IUserToUserGroupAdvancedService
 
     #region Ctor
 
-    public UserToUserGroupAdvancedService(
-        ILogger<UserToUserGroupAdvancedService> logger,
+    public UserGroupAdvancedService(
+        ILogger<UserGroupAdvancedService> logger,
         IPermissionAdvancedService permissionAdvancedService,
         IUserGroupPermissionValueService userGroupPermissionValueService,
         IUserToUserGroupMappingService userToUserGroupMappingService,

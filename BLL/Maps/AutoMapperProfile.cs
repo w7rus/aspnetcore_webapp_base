@@ -83,9 +83,9 @@ public class AutoMapperProfile : Profile
     {
         var userToUserGroupService = (context
                                           .Options
-                                          .ServiceCtor(typeof(IUserToUserGroupAdvancedService)) ??
+                                          .ServiceCtor(typeof(IUserGroupAdvancedService)) ??
                                       throw new CustomException(Localize.Error.DependencyInjectionFailed)) as
-                                     IUserToUserGroupAdvancedService ??
+                                     IUserGroupAdvancedService ??
                                      throw new CustomException(Localize.Error.ObjectCastFailed);
 
         //Get AutoMapperModelAuthorizeData from the context items

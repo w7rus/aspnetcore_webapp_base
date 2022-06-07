@@ -61,7 +61,8 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IPermissionAdvancedService, PermissionAdvancedService>();
         serviceCollection.AddScoped<IJsonWebTokenAdvancedService, JsonWebTokenAdvancedService>();
         serviceCollection.AddScoped<IUserAdvancedService, UserAdvancedService>();
-        serviceCollection.AddScoped<IUserToUserGroupAdvancedService, UserToUserGroupAdvancedService>();
+        serviceCollection.AddScoped<IUserGroupAdvancedService, UserGroupAdvancedService>();
+        serviceCollection.AddTransient<IWarningAdvancedService, WarningAdvancedService>();
 
         return serviceCollection;
     }

@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
+using BLL.Services;
+using BLL.Services.Advanced;
 using DTO.Models.DomainInfo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -29,8 +30,9 @@ public class DomainInfoController : CustomControllerBase
     public DomainInfoController(
         IHttpContextAccessor httpContextAccessor,
         ILogger<DomainInfoController> logger,
-        IDomainInfoHandler domainInfoHandler
-    ) : base(httpContextAccessor)
+        IDomainInfoHandler domainInfoHandler,
+        IWarningAdvancedService warningAdvancedService
+    ) : base(httpContextAccessor, warningAdvancedService)
     {
         _logger = logger;
         _domainInfoHandler = domainInfoHandler;
@@ -47,8 +49,7 @@ public class DomainInfoController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult Read(
-        [Required] [FromQuery] DomainInfoRead data,
-        CancellationToken cancellationToken = default
+        [Required] [FromQuery] DomainInfoRead data
     )
     {
         return ResponseWith(_domainInfoHandler.Read(data));

@@ -1,5 +1,7 @@
 ﻿using API.Controllers.Base;
 using BLL.Handlers;
+using BLL.Services;
+using BLL.Services.Advanced;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,8 +24,9 @@ public class UserGroupController : CustomControllerBase
     public UserGroupController(
         IHttpContextAccessor httpContextAccessor,
         ILogger<UserGroupController> logger,
-        IUserGroupHandler userGroupHandler
-    ) : base(httpContextAccessor)
+        IUserGroupHandler userGroupHandler,
+        IWarningAdvancedService warningAdvancedService
+    ) : base(httpContextAccessor, warningAdvancedService)
     {
         _logger = logger;
         _userGroupHandler = userGroupHandler;

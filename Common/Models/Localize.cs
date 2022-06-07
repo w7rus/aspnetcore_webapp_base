@@ -54,8 +54,8 @@ public static class Localize
             "PermissionComparedOrCustomValueComparedRequired";
 
         public static string PermissionInsufficientPermissions => "PermissionInsufficientPermissions";
-        public static string PermissionDoesNotExist => "PermissionDoesNotExist";
-        public static string PermissionValueDoesNotExist => "PermissionValueDoesNotExist";
+        public static string PermissionNotFound => "PermissionDoesNotExist";
+        public static string PermissionValueNotFound => "PermissionValueDoesNotExist";
         public static string PermissionValueTypeUnknown => "PermissionValueTypeUnknown";
 
         #endregion
@@ -78,7 +78,7 @@ public static class Localize
         #region UserGroup
 
         public static string UserGroupIsSystemManagementNotAllowed => "UserGroupIsSystemManagementNotAllowed";
-        public static string UserGroupDoesNotExist => "UserGroupDoesNotExist";
+        public static string UserGroupNotFound => "UserGroupDoesNotExist";
 
         #endregion
 
@@ -157,9 +157,6 @@ public static class Localize
 
         public static string MethodError(Type type, string methodName, string message) =>
             $"[{type.Name}.{methodName}] (Error) {Environment.NewLine + message}";
-
-        public static string UnhandledMethodError(string traceId, string message) =>
-            $"[{traceId}] (UnhandledError) {Environment.NewLine + message}";
 
         #endregion
 

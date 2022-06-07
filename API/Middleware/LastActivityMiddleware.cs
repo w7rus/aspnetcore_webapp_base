@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services;
@@ -8,6 +9,9 @@ using Common.Exceptions;
 using Common.Models;
 using DAL.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace API.Middleware;
@@ -28,7 +32,8 @@ public class LastActivityMiddleware
         ILogger<LastActivityMiddleware> logger,
         IAppDbContextAction appDbContextAction,
         IUserService userService,
-        IUserAdvancedService userAdvancedService
+        IUserAdvancedService userAdvancedService,
+        IHostEnvironment hostEnvironment
     )
     {
         logger.Log(LogLevel.Information, Localize.Log.MiddlewareForwardStart(GetType()));
@@ -53,11 +58,13 @@ public class LastActivityMiddleware
 
             await appDbContextAction.CommitTransactionAsync();
         }
-        catch (Exception)
+        catch (Exception e)
         {
             await appDbContextAction.RollbackTransactionAsync();
+            
+            logger.Log(LogLevel.Error, Localize.Log.MethodError(GetType(), nameof(Invoke), e.ToString()));
 
-            throw;
+            return;
         }
 
         logger.Log(LogLevel.Information, Localize.Log.MiddlewareBackwardEnd(GetType()));

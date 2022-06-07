@@ -1,5 +1,7 @@
 ﻿using API.Controllers.Base;
 using BLL.Handlers;
+using BLL.Services;
+using BLL.Services.Advanced;
 using Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +25,10 @@ public class UserController : CustomControllerBase
     public UserController(
         IHttpContextAccessor httpContextAccessor,
         ILogger<UserController> logger,
-        IUserHandler userHandler
+        IUserHandler userHandler,
+        IWarningAdvancedService warningAdvancedService
     ) : base(
-        httpContextAccessor)
+        httpContextAccessor, warningAdvancedService)
     {
         _logger = logger;
         _userHandler = userHandler;

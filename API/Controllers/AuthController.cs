@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
+using BLL.Services;
 using BLL.Services.Advanced;
 using Common.Attributes;
 using Common.Models;
@@ -35,8 +36,9 @@ namespace API.Controllers
         public AuthController(
             ILogger<AuthController> logger,
             IAuthHandler authHandler,
-            IHttpContextAccessor httpContextAccessor
-        ) : base(httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IWarningAdvancedService warningAdvancedService
+        ) : base(httpContextAccessor, warningAdvancedService)
         {
             _logger = logger;
             _authHandler = authHandler;
@@ -48,16 +50,16 @@ namespace API.Controllers
         
         [HttpPost]
         [AllowAnonymous]
-        [Route("signupinasguest")]
-        [SwaggerOperation(Summary = "Sign Up In for creating a new Guest account",
-            Description = "Sign Up for creating a new Guest account")]
+        [Route("signinasguest")]
+        [SwaggerOperation(Summary = "Sign In as Guest",
+            Description = "Sign In as Guest")]
         [ProducesResponseType(typeof(AuthSignUpResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> SignUpInAsGuest(
+        public async Task<IActionResult> SignInAsGuest(
             [Required] [FromBody] AuthSignUpInAsGuest data,
             CancellationToken cancellationToken = default
         )
         {
-            return ResponseWith(await _authHandler.SignUpInAsGuest(data, cancellationToken));
+            return ResponseWith(await _authHandler.SignInAsGuest(data, cancellationToken));
         }
 
         [HttpPost]

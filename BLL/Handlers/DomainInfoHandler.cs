@@ -41,7 +41,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
     #endregion
 
     #region Methods
-
+    
     public DTOResultBase Read(DomainInfoRead data)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
@@ -50,7 +50,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
             return validationResult;
 
         var type = Type.GetType(data.AssemblyQualifiedName);
-        if (type == null || type.Namespace!.StartsWith(Consts.DomainNamespace))
+        if (type == null || !type.Namespace!.StartsWith(Consts.DomainNamespace))
             throw new CustomException(Localize.Error.TypeNotFound);
 
         var properties = type?.GetProperties();
