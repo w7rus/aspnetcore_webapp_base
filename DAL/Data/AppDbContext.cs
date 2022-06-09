@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Models;
+using DAL.Repository;
 using Domain.Entities;
 using Domain.Entities.Base;
 using Domain.Enums;
@@ -24,7 +25,7 @@ namespace DAL.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserGroup> UserGroups { get; set; }
-        public DbSet<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
+        public DbSet<PermissionValue> PermissionValues { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
         public DbSet<JsonWebToken> JsonWebTokens { get; set; }
@@ -87,7 +88,7 @@ namespace DAL.Data
             public List<Permission> Permissions { get; set; }
             public List<User> Users { get; set; }
             public List<UserGroup> UserGroups { get; set; }
-            public List<UserGroupPermissionValue> UserGroupPermissionValues { get; set; }
+            public List<PermissionValue> PermissionValues { get; set; }
             public List<UserProfile> UserProfiles { get; set; }
             public List<UserToUserGroupMapping> UserToUserGroupMappings { get; set; }
             public List<JsonWebToken> JsonWebTokens { get; set; }
@@ -101,7 +102,7 @@ namespace DAL.Data
                 Permissions = new List<Permission>(),
                 Users = new List<User>(),
                 UserGroups = new List<UserGroup>(),
-                UserGroupPermissionValues = new List<UserGroupPermissionValue>(),
+                PermissionValues = new List<PermissionValue>(),
                 UserProfiles = new List<UserProfile>(),
                 UserToUserGroupMappings = new List<UserToUserGroupMapping>(),
                 JsonWebTokens = new List<JsonWebToken>(),
@@ -833,14 +834,14 @@ namespace DAL.Data
 
             #endregion
 
-            #region UserGroupsPermissionValues
+            #region PermissionValues
 
             var rootUserGroupPower = Consts.RootUserGroupValue;
             var bannedUserGroupPower = Consts.BannedUserGroupValue;
             var memberUserGroupPower = Consts.MemberUserGroupValue;
             var guestUserGroupPower = Consts.GuestUserGroupValue;
 
-            var rootUserGroupPermissionValues = new List<UserGroupPermissionValue>()
+            var rootUserGroupPermissionValues = new List<PermissionValue>()
             {
                 #region Any
 
@@ -1379,7 +1380,7 @@ namespace DAL.Data
                 #endregion
             };
             
-            var bannedUserGroupPermissionValues = new List<UserGroupPermissionValue>()
+            var bannedUserGroupPermissionValues = new List<PermissionValue>()
             {
                 #region Any
 
@@ -1862,7 +1863,7 @@ namespace DAL.Data
                 #endregion
             };
             
-            var memberUserGroupPermissionValues = new List<UserGroupPermissionValue>()
+            var memberUserGroupPermissionValues = new List<PermissionValue>()
             {
                 #region Any
 
@@ -2324,7 +2325,7 @@ namespace DAL.Data
                 #endregion
             };
             
-            var guestUserGroupPermissionValues = new List<UserGroupPermissionValue>()
+            var guestUserGroupPermissionValues = new List<PermissionValue>()
             {
                 #region Any
 
@@ -2651,10 +2652,10 @@ namespace DAL.Data
                 #endregion
             };
 
-            appDbContextSeedLists.UserGroupPermissionValues.AddRange(rootUserGroupPermissionValues);
-            appDbContextSeedLists.UserGroupPermissionValues.AddRange(bannedUserGroupPermissionValues);
-            appDbContextSeedLists.UserGroupPermissionValues.AddRange(memberUserGroupPermissionValues);
-            appDbContextSeedLists.UserGroupPermissionValues.AddRange(guestUserGroupPermissionValues);
+            appDbContextSeedLists.PermissionValues.AddRange(rootUserGroupPermissionValues);
+            appDbContextSeedLists.PermissionValues.AddRange(bannedUserGroupPermissionValues);
+            appDbContextSeedLists.PermissionValues.AddRange(memberUserGroupPermissionValues);
+            appDbContextSeedLists.PermissionValues.AddRange(guestUserGroupPermissionValues);
 
             #endregion
 
@@ -2722,13 +2723,13 @@ namespace DAL.Data
 
             #endregion
 
-            #region UserGroupPermissionValues
+            #region PermissionValues
 
-            builder.Entity<UserGroupPermissionValue>(_ =>
+            builder.Entity<PermissionValue>(_ =>
             {
                 _.HasIndex(__ => new {__.PermissionId, __.EntityId}).IsUnique();
 
-                _.HasData(appDbContextSeedLists.UserGroupPermissionValues);
+                _.HasData(appDbContextSeedLists.PermissionValues);
             });
 
             #endregion

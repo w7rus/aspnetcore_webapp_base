@@ -27,6 +27,6 @@ namespace Domain.Entities.Base
         /// [Proxy]
         /// PermissionValues referencing this EntityGroup
         /// </summary>
-        public virtual ICollection<EntityPermissionValueBase<TGroup>> PermissionValues { get; set; }
+        public virtual ICollection<PermissionValue> PermissionValues { get; set; }
     }
 }

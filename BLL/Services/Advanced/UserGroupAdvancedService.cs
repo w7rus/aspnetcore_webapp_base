@@ -21,16 +21,16 @@ public interface IUserGroupAdvancedService
     /// </summary>
     /// <param name="userLeft">Equation left-side subject</param>
     /// <param name="permissionLeft">Equation left-side subject Permission</param>
-    /// <param name="entityPermissionValueRight">Equation right-side PermissionValue</param>
+    /// <param name="permissionValueRight">Equation right-side PermissionValue</param>
     /// <param name="cancellationToken"></param>
     /// <typeparam name="TEntityCompared"></typeparam>
     /// <returns></returns>
-    Task<bool> AuthorizePermissionToPermissionValue<TEntityCompared>(
+    Task<bool> AuthorizePermissionToPermissionValue(
         User userLeft,
         Permission permissionLeft,
-        EntityPermissionValueBase<TEntityCompared> entityPermissionValueRight,
+        PermissionValue permissionValueRight,
         CancellationToken cancellationToken = default
-    ) where TEntityCompared : EntityBase<Guid>;
+    );
     
     /// <summary>
     /// Authorizes left-side User to custom value
@@ -53,7 +53,7 @@ public interface IUserGroupAdvancedService
     /// <param name="alias"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<UserGroupPermissionValue> GetSystemPermissionValueByAlias(
+    Task<PermissionValue> GetSystemPermissionValueByAlias(
         string alias,
         CancellationToken cancellationToken = default
     );
@@ -99,7 +99,7 @@ public class UserGroupAdvancedService : IUserGroupAdvancedService
 
     private readonly ILogger<UserGroupAdvancedService> _logger;
     private readonly IPermissionAdvancedService _permissionAdvancedService;
-    private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
+    private readonly IPermissionValueService _permissionValueService;
     private readonly IUserToUserGroupMappingService _userToUserGroupMappingService;
     private readonly IUserGroupService _userGroupService;
     private readonly IUserService _userService;
@@ -112,7 +112,7 @@ public class UserGroupAdvancedService : IUserGroupAdvancedService
     public UserGroupAdvancedService(
         ILogger<UserGroupAdvancedService> logger,
         IPermissionAdvancedService permissionAdvancedService,
-        IUserGroupPermissionValueService userGroupPermissionValueService,
+        IPermissionValueService permissionValueService,
         IUserToUserGroupMappingService userToUserGroupMappingService,
         IUserGroupService userGroupService,
         IUserService userService,
@@ -121,7 +121,7 @@ public class UserGroupAdvancedService : IUserGroupAdvancedService
     {
         _logger = logger;
         _permissionAdvancedService = permissionAdvancedService;
-        _userGroupPermissionValueService = userGroupPermissionValueService;
+        _permissionValueService = permissionValueService;
         _userToUserGroupMappingService = userToUserGroupMappingService;
         _userGroupService = userGroupService;
         _userService = userService;
@@ -132,12 +132,12 @@ public class UserGroupAdvancedService : IUserGroupAdvancedService
 
     #region Methods
 
-    public async Task<bool> AuthorizePermissionToPermissionValue<TEntityCompared>(
+    public async Task<bool> AuthorizePermissionToPermissionValue(
         User userLeft,
         Permission permissionLeft,
-        EntityPermissionValueBase<TEntityCompared> entityPermissionValueRight,
+        PermissionValue permissionValueRight,
         CancellationToken cancellationToken = default
-    ) where TEntityCompared : EntityBase<Guid>
+    )
     {
         var userGroups = userLeft.UserToUserGroupMappings.Select(_ => _.EntityRight).ToArray();
         Array.Sort(userGroups, (userGroupA, userGroupB) => userGroupA.Priority.CompareTo(userGroupB.Priority));
@@ -146,18 +146,18 @@ public class UserGroupAdvancedService : IUserGroupAdvancedService
 
         foreach (var userGroup in userGroups)
         {
-            if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, permissionLeft.Id,
+            if (await _permissionValueService.GetByEntityIdPermissionId(userGroup.Id, permissionLeft.Id,
                     cancellationToken) is var entityPermissionValueLeft && entityPermissionValueLeft == null)
                 continue;
 
             result = _permissionAdvancedService.Authorize(entityPermissionValueLeft,
-                entityPermissionValueRight);
+                permissionValueRight);
         }
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(),
-                $"{nameof(AuthorizePermissionToPermissionValue)}<{typeof(TEntityCompared).Name}>",
-                $"{entityPermissionValueRight.Permission.Alias} authorized {permissionLeft.Alias} as {result}"));
+                $"{nameof(AuthorizePermissionToPermissionValue)}",
+                $"{permissionValueRight.Permission.Alias} authorized {permissionLeft.Alias} as {result}"));
 
         return result;
     }
@@ -176,7 +176,7 @@ public class UserGroupAdvancedService : IUserGroupAdvancedService
 
         foreach (var userGroup in userGroups)
         {
-            if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id, userPermissionComparable.Id,
+            if (await _permissionValueService.GetByEntityIdPermissionId(userGroup.Id, userPermissionComparable.Id,
                     cancellationToken) is var permissionValue && permissionValue == null)
                 continue;
 
@@ -191,14 +191,14 @@ public class UserGroupAdvancedService : IUserGroupAdvancedService
         return result;
     }
 
-    public async Task<UserGroupPermissionValue> GetSystemPermissionValueByAlias(
+    public async Task<PermissionValue> GetSystemPermissionValueByAlias(
         string alias,
         CancellationToken cancellationToken = default
     )
     {
         var userGroup = await _userGroupService.GetByAliasAsync("Root");
         var permission = await _permissionService.GetByAliasAndTypeAsync(alias, PermissionType.ValueNeededSystem);
-        var permissionValue = await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id,
+        var permissionValue = await _permissionValueService.GetByEntityIdPermissionId(userGroup.Id,
             permission.Id,
             cancellationToken);
 
@@ -224,7 +224,7 @@ public class UserGroupAdvancedService : IUserGroupAdvancedService
 
         foreach (var userGroup in userGroups)
         {
-            if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroup.Id,
+            if (await _permissionValueService.GetByEntityIdPermissionId(userGroup.Id,
                     permissionRight.Id,
                     cancellationToken) is var entityPermissionValueRight && entityPermissionValueRight == null)
                 continue;
@@ -249,7 +249,7 @@ public class UserGroupAdvancedService : IUserGroupAdvancedService
         CancellationToken cancellationToken = default
     )
     {
-        if (await _userGroupPermissionValueService.GetByEntityIdPermissionId(userGroupRight.Id,
+        if (await _permissionValueService.GetByEntityIdPermissionId(userGroupRight.Id,
                 permissionRight.Id,
                 cancellationToken) is var entityPermissionValueRight && entityPermissionValueRight == null)
             return false;

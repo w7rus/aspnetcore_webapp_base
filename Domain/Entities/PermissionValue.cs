@@ -1,10 +1,11 @@
 ﻿using System;
 using Common.Attributes;
+using Domain.Entities.Base;
 
-namespace Domain.Entities.Base
+namespace Domain.Entities
 {
     //TODO: Remove generic and rely on code logic for working with PermissionValue of TEntity
-    public abstract class EntityPermissionValueBase<TEntity> : EntityBase<Guid> where TEntity : EntityBase<Guid>
+    public class PermissionValue : EntityBase<Guid>
     {
         /// <summary>
         /// Amount of power associated with the action
@@ -30,11 +31,5 @@ namespace Domain.Entities.Base
         [AllowFilterExpression]
         [AllowFilterSort]
         public Guid EntityId { get; set; }
-
-        /// <summary>
-        /// [Proxy]
-        /// An Entity to which permission value bound to
-        /// </summary>
-        public virtual TEntity Entity { get; set; }
     }
 }

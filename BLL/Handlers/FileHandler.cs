@@ -40,7 +40,7 @@ public class FileHandler : HandlerBase, IFileHandler
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
-    private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
+    private readonly IPermissionValueService _permissionValueService;
     private readonly IUserGroupService _userGroupService;
     private readonly IUserGroupAdvancedService _userGroupAdvancedService;
     private readonly IUserAdvancedService _userAdvancedService;
@@ -57,7 +57,7 @@ public class FileHandler : HandlerBase, IFileHandler
         IUserService userService,
         IMapper mapper,
         IPermissionService permissionService,
-        IUserGroupPermissionValueService userGroupPermissionValueService,
+        IPermissionValueService permissionValueService,
         IUserGroupService userGroupService,
         IUserGroupAdvancedService userGroupAdvancedService,
         IUserAdvancedService userAdvancedService
@@ -69,7 +69,7 @@ public class FileHandler : HandlerBase, IFileHandler
         _userService = userService;
         _mapper = mapper;
         _permissionService = permissionService;
-        _userGroupPermissionValueService = userGroupPermissionValueService;
+        _permissionValueService = permissionValueService;
         _userGroupService = userGroupService;
         _userGroupAdvancedService = userGroupAdvancedService;
         _userAdvancedService = userAdvancedService;

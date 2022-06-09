@@ -51,7 +51,7 @@ public class AutoMapperProfile : Profile
                 // options.MapFrom(__ => __.AgeRating);
             });
 
-        CreateMap<PermissionValueUpdate, UserGroupPermissionValue>()
+        CreateMap<PermissionValueUpdate, PermissionValue>()
             .ForMember(_ => _.Id, options => options.Ignore())
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
         
@@ -59,7 +59,7 @@ public class AutoMapperProfile : Profile
 
         #region From DOMAIN to DTO
 
-        CreateMap<UserGroupPermissionValue, PermissionValueReadResult>()
+        CreateMap<PermissionValue, PermissionValueReadResult>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
@@ -72,7 +72,7 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.CompareMode, options => options.MapFrom(__ => __.CompareMode))
             .ForMember(_ => _.Type, options => options.MapFrom(__ => __.Type));
 
-        CreateMap<UserGroupPermissionValue, PermissionValueReadFSCollectionItemResult>()
+        CreateMap<PermissionValue, PermissionValueReadFSCollectionItemResult>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))

@@ -20,7 +20,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Handlers;
 
-public interface IUserGroupPermissionValueHandler
+public interface IPermissionValueHandler
 {
     Task<DTOResultBase> Create(PermissionValueCreate data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Read(PermissionValueRead data, CancellationToken cancellationToken = default);
@@ -34,13 +34,13 @@ public interface IUserGroupPermissionValueHandler
     Task<DTOResultBase> Delete(PermissionValueDelete data, CancellationToken cancellationToken = default);
 }
 
-public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermissionValueHandler
+public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
 {
     #region Fields
 
     private readonly ILogger<HandlerBase> _logger;
     private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IUserGroupPermissionValueService _userGroupPermissionValueService;
+    private readonly IPermissionValueService _permissionValueService;
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
     private readonly IUserGroupService _userGroupService;
@@ -51,10 +51,10 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
     #region Ctor
 
-    public UserGroupPermissionValueHandler(
+    public PermissionValueHandler(
         ILogger<HandlerBase> logger,
         IAppDbContextAction appDbContextAction,
-        IUserGroupPermissionValueService userGroupPermissionValueService,
+        IPermissionValueService permissionValueService,
         IMapper mapper,
         IPermissionService permissionService,
         IUserGroupService userGroupService,
@@ -64,7 +64,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
     {
         _logger = logger;
         _appDbContextAction = appDbContextAction;
-        _userGroupPermissionValueService = userGroupPermissionValueService;
+        _permissionValueService = permissionValueService;
         _mapper = mapper;
         _permissionService = permissionService;
         _userGroupService = userGroupService;
@@ -74,6 +74,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
     #endregion
 
+    //TODO: Those are only for UserGroups for now
     #region Methods
 
     public async Task<DTOResultBase> Create(PermissionValueCreate data, CancellationToken cancellationToken = default)
@@ -113,13 +114,13 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Permission,
                     Localize.Error.PermissionNotFound);
 
-            var permissionValue = _mapper.Map<UserGroupPermissionValue>(data);
+            var permissionValue = _mapper.Map<PermissionValue>(data);
             
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create),
                     $"{data.GetType().Name} mapped to {permissionValue.GetType().Name}"));
 
-            permissionValue = await _userGroupPermissionValueService.Save(permissionValue, cancellationToken);
+            permissionValue = await _permissionValueService.Save(permissionValue, cancellationToken);
             
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -151,7 +152,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
 
-            var permissionValue = await _userGroupPermissionValueService.GetByIdAsync(data.Id, cancellationToken);
+            var permissionValue = await _permissionValueService.GetByIdAsync(data.Id, cancellationToken);
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
@@ -185,7 +186,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             throw;
         }
     }
-
+    
     public async Task<DTOResultBase> ReadFSCollection(PermissionValueReadFSCollection data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadFSCollection)));
@@ -203,12 +204,12 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
 
             var permissionValues =
-                (await _userGroupPermissionValueService.GetFilteredSortedPaged(data.FilterExpressionModel,
+                (await _permissionValueService.GetFilteredSortedPaged(data.FilterExpressionModel,
                     data.FilterSortModel, PageModel.Max, cancellationToken));
 
             var permissionValuesGrouped = permissionValues.entities.GroupBy(_ => _.EntityId);
             
-            var readablePermissionValues = new List<UserGroupPermissionValue>();
+            var readablePermissionValues = new List<PermissionValue>();
 
             foreach (var permissionValuesGroup in permissionValuesGrouped)
             {
@@ -267,7 +268,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
 
-            var permissionValue = await _userGroupPermissionValueService.GetByIdAsync(data.Id, cancellationToken);
+            var permissionValue = await _permissionValueService.GetByIdAsync(data.Id, cancellationToken);
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
@@ -294,7 +295,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 Localize.Log.Method(GetType(), nameof(Update),
                     $"{data.GetType().Name} mapped to {permissionValue.GetType().Name}"));
 
-            await _userGroupPermissionValueService.Save(permissionValue, cancellationToken);
+            await _permissionValueService.Save(permissionValue, cancellationToken);
             
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -326,7 +327,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
 
-            var permissionValue = await _userGroupPermissionValueService.GetByIdAsync(data.Id, cancellationToken);
+            var permissionValue = await _permissionValueService.GetByIdAsync(data.Id, cancellationToken);
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
@@ -347,7 +348,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            await _userGroupPermissionValueService.Delete(permissionValue, cancellationToken);
+            await _permissionValueService.Delete(permissionValue, cancellationToken);
             
             await _appDbContextAction.CommitTransactionAsync();
 

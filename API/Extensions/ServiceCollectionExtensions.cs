@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IJsonWebTokenRepository, JsonWebTokenRepository>();
         serviceCollection.AddScoped<IPermissionRepository, PermissionRepository>();
         serviceCollection.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-        serviceCollection.AddScoped<IUserGroupPermissionValueRepository, UserGroupPermissionValueRepository>();
+        serviceCollection.AddScoped<IPermissionValueRepository, PermissionValueRepository>();
         serviceCollection.AddScoped<IUserGroupRepository, UserGroupRepository>();
         serviceCollection.AddScoped<IUserProfileRepository, UserProfileRepository>();
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
@@ -46,7 +46,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IJsonWebTokenService, JsonWebTokenService>();
         serviceCollection.AddScoped<IPermissionService, PermissionService>();
         serviceCollection.AddScoped<IRefreshTokenService, RefreshTokenService>();
-        serviceCollection.AddScoped<IUserGroupPermissionValueService, UserGroupPermissionValueService>();
+        serviceCollection.AddScoped<IPermissionValueService, PermissionValueService>();
         serviceCollection.AddScoped<IUserGroupService, UserGroupService>();
         serviceCollection.AddScoped<IUserProfileService, UserProfileService>();
         serviceCollection.AddScoped<IUserService, UserService>();
@@ -71,7 +71,7 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddScoped<IAuthHandler, AuthHandler>();
         serviceCollection.AddScoped<IFileHandler, FileHandler>();
-        serviceCollection.AddScoped<IUserGroupPermissionValueHandler, UserGroupPermissionValueHandler>();
+        serviceCollection.AddScoped<IPermissionValueHandler, PermissionValueHandler>();
         serviceCollection.AddScoped<IPermissionHandler, PermissionHandler>();
         serviceCollection.AddScoped<IDomainInfoHandler, DomainInfoHandler>();
 

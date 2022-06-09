@@ -1,0 +1,126 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using BLL.Services.Base;
+using Common.Models;
+using DAL.Data;
+using DAL.Repository;
+using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Linq;
+
+namespace BLL.Services;
+
+/// <summary>
+/// Service to work with PermissionValue entity
+/// </summary>
+public interface IPermissionValueService : IEntityServiceBase<PermissionValue>
+{
+    Task<PermissionValue> GetByEntityIdPermissionId(
+        Guid entityId,
+        Guid permissionId,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<(int total, IReadOnlyCollection<PermissionValue> entities)> GetFilteredSortedPaged(
+        FilterExpressionModel filterExpressionModel,
+        FilterSortModel filterSortModel,
+        PageModel pageModel,
+        CancellationToken cancellationToken = default
+    );
+}
+
+public class PermissionValueService : IPermissionValueService
+{
+    #region Fields
+
+    private readonly ILogger<PermissionValueService> _logger;
+    private readonly IPermissionValueRepository _permissionValueRepository;
+    private readonly IAppDbContextAction _appDbContextAction;
+
+    #endregion
+
+    #region Ctor
+
+    public PermissionValueService(
+        ILogger<PermissionValueService> logger,
+        IPermissionValueRepository permissionValueRepository,
+        IAppDbContextAction appDbContextAction
+    )
+    {
+        _logger = logger;
+        _permissionValueRepository = permissionValueRepository;
+        _appDbContextAction = appDbContextAction;
+    }
+
+    #endregion
+
+    #region Methods
+
+    public async Task<PermissionValue> Save(PermissionValue entity, CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
+
+        _permissionValueRepository.Save(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+
+        return entity;
+    }
+
+    public async Task Delete(PermissionValue entity, CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
+
+        _permissionValueRepository.Delete(entity);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+    }
+
+    public async Task<PermissionValue> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _permissionValueRepository.SingleOrDefaultAsync(_ => _.Id == id);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
+
+        return entity;
+    }
+
+    public async Task<PermissionValue> GetByEntityIdPermissionId(
+        Guid entityId,
+        Guid permissionId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var entity = await _permissionValueRepository.SingleOrDefaultAsync(_ =>
+            _.EntityId == entityId && _.PermissionId == permissionId);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByEntityIdPermissionId),
+                $"{entity?.GetType().Name} {entity?.Id}"));
+
+        return entity;
+    }
+
+    public async Task<(int total, IReadOnlyCollection<PermissionValue> entities)> GetFilteredSortedPaged(
+        FilterExpressionModel filterExpressionModel,
+        FilterSortModel filterSortModel,
+        PageModel pageModel,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var result =
+            _permissionValueRepository.GetFilteredSortedPaged(filterExpressionModel, filterSortModel, pageModel);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),
+                $"{result.entities?.GetType().Name} {result.entities?.Count()}"));
+
+        return (result.total, await result.entities?.ToArrayAsync(cancellationToken)!);
+    }
+
+    #endregion
+}

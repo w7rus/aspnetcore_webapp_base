@@ -20,7 +20,7 @@ public class AutoMapperModelFieldAuthorizeData
     /// This is a permission of a System.
     /// Must be a PermissionType.ValueNeededSystem
     /// </summary>
-    public UserGroupPermissionValue PermissionValueSystemCompared { get; set; }
+    public PermissionValue PermissionValueSystemCompared { get; set; }
     
     /// <summary>
     /// Custom value
