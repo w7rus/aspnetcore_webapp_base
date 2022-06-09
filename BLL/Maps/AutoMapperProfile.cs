@@ -72,6 +72,12 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.CompareMode, options => options.MapFrom(__ => __.CompareMode))
             .ForMember(_ => _.Type, options => options.MapFrom(__ => __.Type));
 
+        CreateMap<UserGroupPermissionValue, PermissionValueReadFSCollectionItemResult>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
+            .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
+            .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
+
         #endregion
     }
 

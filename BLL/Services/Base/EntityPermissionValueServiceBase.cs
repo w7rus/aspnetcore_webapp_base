@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Models;
 using Domain.Entities.Base;
 
 namespace BLL.Services.Base;
@@ -48,6 +49,13 @@ public interface
     Task<TEntityPermissionValue> GetByEntityIdPermissionId(
         Guid entityId,
         Guid permissionId,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<(int total, IReadOnlyCollection<TEntityPermissionValue> entities)> GetFilteredSortedPaged(
+        FilterExpressionModel filterExpressionModel,
+        FilterSortModel filterSortModel,
+        PageModel pageModel,
         CancellationToken cancellationToken = default
     );
 }

@@ -72,33 +72,18 @@ public class UserGroupPermissionValueController : CustomControllerBase
     }
 
     [HttpGet]
-    [Route("readByEntity")]
-    [SwaggerOperation(Summary = "Reads PermissionValues by Entity",
-        Description = "Reads PermissionValues by Entity")]
+    [Route("FSCollection")]
+    [SwaggerOperation(Summary = "Reads PermissionValues",
+        Description = "Reads PermissionValues")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> ReadByEntity(
-        [Required] [FromQuery] PermissionValueReadByEntity data,
+    public async Task<IActionResult> ReadFSCollection(
+        [Required] [FromQuery] PermissionValueReadFSCollection data,
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _userGroupPermissionValueHandler.ReadByEntity(data, cancellationToken));
-    }
-
-    [HttpGet]
-    [Route("readByPermission")]
-    [SwaggerOperation(Summary = "Reads PermissionValues by Permission",
-        Description = "Reads PermissionValues by Permission")]
-    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> ReadByPermission(
-        [Required] [FromQuery] PermissionValueReadByPermission data,
-        CancellationToken cancellationToken = default
-    )
-    {
-        return ResponseWith(await _userGroupPermissionValueHandler.ReadByPermission(data, cancellationToken));
+        return ResponseWith(await _userGroupPermissionValueHandler.ReadFSCollection(data, cancellationToken));
     }
 
     [HttpPut]

@@ -9,6 +9,7 @@ using DAL.Repository;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace BLL.Services;
 
@@ -118,6 +119,22 @@ public class UserGroupPermissionValueService : IUserGroupPermissionValueService
             Localize.Log.Method(GetType(), nameof(GetByEntityIdPermissionId), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
+    }
+
+    public async Task<(int total, IReadOnlyCollection<UserGroupPermissionValue> entities)> GetFilteredSortedPaged(
+        FilterExpressionModel filterExpressionModel,
+        FilterSortModel filterSortModel,
+        PageModel pageModel,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var result = _userGroupPermissionValueRepository.GetFilteredSortedPaged(filterExpressionModel, filterSortModel, pageModel);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),
+                $"{result.entities?.GetType().Name} {result.entities?.Count()}"));
+
+        return (result.total, await result.entities?.ToArrayAsync(cancellationToken)!);
     }
 
     #endregion

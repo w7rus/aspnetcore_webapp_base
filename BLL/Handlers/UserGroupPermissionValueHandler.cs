@@ -24,10 +24,9 @@ public interface IUserGroupPermissionValueHandler
 {
     Task<DTOResultBase> Create(PermissionValueCreate data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Read(PermissionValueRead data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> ReadByEntity(PermissionValueReadByEntity data, CancellationToken cancellationToken = default);
 
-    Task<DTOResultBase> ReadByPermission(
-        PermissionValueReadByPermission data,
+    Task<DTOResultBase> ReadFSCollection(
+        PermissionValueReadFSCollection data,
         CancellationToken cancellationToken = default
     );
 
@@ -187,13 +186,9 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         }
     }
 
-    //TODO: Use FSP
-    public async Task<DTOResultBase> ReadByEntity(
-        PermissionValueReadByEntity data,
-        CancellationToken cancellationToken = default
-    )
+    public async Task<DTOResultBase> ReadFSCollection(PermissionValueReadFSCollection data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadByEntity)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadFSCollection)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -206,9 +201,13 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
-            
-            var permissionValuesGrouped = (await _userGroupPermissionValueService.GetByEntityId(data.EntityId, cancellationToken)).GroupBy(_ => _.Entity);
 
+            var permissionValues =
+                (await _userGroupPermissionValueService.GetFilteredSortedPaged(data.FilterExpressionModel,
+                    data.FilterSortModel, PageModel.Max, cancellationToken));
+
+            var permissionValuesGrouped = permissionValues.entities.GroupBy(_ => _.EntityId);
+            
             var readablePermissionValues = new List<UserGroupPermissionValue>();
 
             foreach (var permissionValuesGroup in permissionValuesGrouped)
@@ -222,12 +221,12 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 
                 //Authorize permissionValue reading
                 if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
-                        PermissionType.Value), userGroup,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
-                        userGroup.OwnerUser == user
-                            ? PermissionType.ValueNeededOwner
-                            : PermissionType.ValueNeededOthers), cancellationToken))
+                        await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
+                            PermissionType.Value), userGroup,
+                        await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
+                            userGroup.OwnerUser == user
+                                ? PermissionType.ValueNeededOwner
+                                : PermissionType.ValueNeededOthers), cancellationToken))
                     continue;
                 
                 readablePermissionValues.AddRange(permissionValuesGroup);
@@ -235,76 +234,13 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ReadByEntity)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ReadFSCollection)));
 
-            return new PermissionValueReadByEntityResult
+            return new PermissionValueReadFSCollectionResult()
             {
                 Total = readablePermissionValues.Count,
-                Items = readablePermissionValues.Select(_ => _mapper.ProjectTo<PermissionValueReadResult>(new [] {_}.AsQueryable()).Single())
-            };
-        }
-        catch (Exception)
-        {
-            await _appDbContextAction.RollbackTransactionAsync();
-
-            throw;
-        }
-    }
-
-    //TODO: Use FSP
-    public async Task<DTOResultBase> ReadByPermission(
-        PermissionValueReadByPermission data,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadByPermission)));
-
-        if (ValidateModel(data) is { } validationResult)
-            return validationResult;
-
-        try
-        {
-            await _appDbContextAction.BeginTransactionAsync();
-            
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
-            if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
-            
-            var permissionValuesGrouped = (await _userGroupPermissionValueService.GetByPermissionId(data.PermissionId, cancellationToken)).GroupBy(_ => _.Entity);
-
-            var readablePermissionValues = new List<UserGroupPermissionValue>();
-
-            foreach (var permissionValuesGroup in permissionValuesGrouped)
-            {
-                var permissionValue = permissionValuesGroup.First();
-                
-                var userGroup = await _userGroupService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
-                if (userGroup == null)
-                    throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
-                        Localize.Error.UserGroupNotFound);
-                
-                //Authorize permissionValue reading
-                if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
-                        PermissionType.Value), userGroup,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
-                        userGroup.OwnerUser == user
-                            ? PermissionType.ValueNeededOwner
-                            : PermissionType.ValueNeededOthers), cancellationToken))
-                    continue;
-                
-                readablePermissionValues.AddRange(permissionValuesGroup);
-            }
-            
-            await _appDbContextAction.CommitTransactionAsync();
-
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ReadByPermission)));
-
-            return new PermissionValueReadByEntityResult
-            {
-                Total = readablePermissionValues.Count,
-                Items = readablePermissionValues.Select(_ => _mapper.ProjectTo<PermissionValueReadResult>(new [] {_}.AsQueryable()).Single())
+                Items = readablePermissionValues.Select(_ =>
+                    _mapper.ProjectTo<PermissionValueReadFSCollectionItemResult>(new[] {_}.AsQueryable()).Single())
             };
         }
         catch (Exception)

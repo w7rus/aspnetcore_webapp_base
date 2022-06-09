@@ -1,7 +1,9 @@
 ﻿using System;
+using Common.Attributes;
 
 namespace Domain.Entities.Base
 {
+    //TODO: Remove generic and rely on code logic for working with PermissionValue of TEntity
     public abstract class EntityPermissionValueBase<TEntity> : EntityBase<Guid> where TEntity : EntityBase<Guid>
     {
         /// <summary>
@@ -12,6 +14,8 @@ namespace Domain.Entities.Base
         /// <summary>
         /// A Permission to which permission value bound to
         /// </summary>
+        [AllowFilterExpression]
+        [AllowFilterSort]
         public Guid PermissionId { get; set; }
 
         /// <summary>
@@ -23,6 +27,8 @@ namespace Domain.Entities.Base
         /// <summary>
         /// An Entity to which permission value bound to
         /// </summary>
+        [AllowFilterExpression]
+        [AllowFilterSort]
         public Guid EntityId { get; set; }
 
         /// <summary>
