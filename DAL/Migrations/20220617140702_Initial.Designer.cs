@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220617110925_Initial")]
+    [Migration("20220617140702_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -535,6 +535,15 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("1c6379e2-8bb9-48a2-9314-8b45db7e42ec"),
+                            Alias = "g_file_a_create_o_file",
+                            CompareMode = 6,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 3,
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
                             Id = new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"),
                             Alias = "g_file_a_create_o_file",
                             CompareMode = 6,
@@ -549,6 +558,15 @@ namespace DAL.Migrations
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("9c8576df-c7d7-4761-9b40-3e4a7e83f988"),
+                            Alias = "g_file_a_create_o_file.o_agerating_l_automapper",
+                            CompareMode = 6,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 3,
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
@@ -1066,10 +1084,46 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("4f835881-f049-470f-ba50-ee39684f6f32"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            PermissionId = new Guid("1c6379e2-8bb9-48a2-9314-8b45db7e42ec"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("5a4f8e2d-7415-4eee-a5cf-4903d8c88e80"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            PermissionId = new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
                             Id = new Guid("393d47c5-5dbb-4d4c-9e32-d4db7ca3e291"),
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
                             PermissionId = new Guid("6fc92a20-2405-45e3-95e5-234642d49221"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("6e2726fc-b92c-4c08-a53e-ee89427d9fff"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            PermissionId = new Guid("9c8576df-c7d7-4761-9b40-3e4a7e83f988"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("adcdd389-1abd-4581-906d-c8478bd50a9a"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            PermissionId = new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
                         },
@@ -1534,12 +1588,48 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("cad5bb96-f21a-41d3-90e0-3be2f02208b3"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
+                            PermissionId = new Guid("1c6379e2-8bb9-48a2-9314-8b45db7e42ec"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("608c9bbf-a76a-40d3-9819-48a8b2c827b5"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
+                            PermissionId = new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
                             Id = new Guid("5be97199-4ac7-4478-afde-ae5a60927b1b"),
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
                             PermissionId = new Guid("6fc92a20-2405-45e3-95e5-234642d49221"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Value = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
+                            Id = new Guid("e9096b87-14ac-418d-8a73-5435c4b0c70b"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
+                            PermissionId = new Guid("9c8576df-c7d7-4761-9b40-3e4a7e83f988"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("0ea47de9-6c1b-4f87-9c28-94a126036081"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
+                            PermissionId = new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
                         },
                         new
                         {
@@ -1975,12 +2065,48 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("60909de9-a5ac-43a2-bc9b-55e54801c9b1"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
+                            PermissionId = new Guid("1c6379e2-8bb9-48a2-9314-8b45db7e42ec"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
+                            Id = new Guid("30018169-c807-4dda-bbcf-78823edd64f1"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
+                            PermissionId = new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
                             Id = new Guid("71f90ed1-660c-4731-ad9a-d587a6986e4a"),
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
                             PermissionId = new Guid("6fc92a20-2405-45e3-95e5-234642d49221"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
+                            Id = new Guid("497d8ee9-1b3b-4a57-828a-3c178bc1a72d"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
+                            PermissionId = new Guid("9c8576df-c7d7-4761-9b40-3e4a7e83f988"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
+                            Id = new Guid("a0312c73-226a-4fa2-9043-120a56fc0d53"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
+                            PermissionId = new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
                         },
                         new
                         {

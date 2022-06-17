@@ -79,6 +79,14 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
             .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
+        
+        CreateMap<File, FileCreateResult>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.AgeRating, options => options.MapFrom(__ => __.AgeRating));
+
+        CreateMap<File, FileUpdateResult>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.AgeRating, options => options.MapFrom(__ => __.AgeRating));
 
         #endregion
     }

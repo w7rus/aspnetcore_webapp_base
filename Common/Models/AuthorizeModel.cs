@@ -25,4 +25,9 @@ public class AuthorizeModel
     {
         return $"SELECT public.\"AuthorizeEntityPermissionToEntityPermission\"({EntityLeftTableName}, {(string.IsNullOrEmpty(EntityLeftGroupsTableName) ? "null" : EntityLeftGroupsTableName)}, {(string.IsNullOrEmpty(EntityLeftEntityToEntityMappingsTableName) ? "null" : EntityLeftEntityToEntityMappingsTableName)}, {EntityLeftId}, {EntityLeftPermissionAlias}, {EntityRightTableName}, {(string.IsNullOrEmpty(EntityRightGroupsTableName) ? "null" : EntityRightGroupsTableName)}, {(string.IsNullOrEmpty(EntityRightEntityToEntityMappingsTableName) ? "null" : EntityRightEntityToEntityMappingsTableName)}, {EntityRightId}, {EntityRightPermissionAlias}, {SQLExpressionPermissionTypeValueNeededOwner}) as Result";
     }
+    
+    public string GetRawSqlStatement()
+    {
+        return $"public.\"AuthorizeEntityPermissionToEntityPermission\"({EntityLeftTableName}, {(string.IsNullOrEmpty(EntityLeftGroupsTableName) ? "null" : EntityLeftGroupsTableName)}, {(string.IsNullOrEmpty(EntityLeftEntityToEntityMappingsTableName) ? "null" : EntityLeftEntityToEntityMappingsTableName)}, {EntityLeftId}, {EntityLeftPermissionAlias}, {EntityRightTableName}, {(string.IsNullOrEmpty(EntityRightGroupsTableName) ? "null" : EntityRightGroupsTableName)}, {(string.IsNullOrEmpty(EntityRightEntityToEntityMappingsTableName) ? "null" : EntityRightEntityToEntityMappingsTableName)}, {EntityRightId}, {EntityRightPermissionAlias}, {SQLExpressionPermissionTypeValueNeededOwner})";
+    }
 }

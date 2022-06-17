@@ -181,12 +181,6 @@ namespace DAL.Repository.Base
 
             var rawSql = "SELECT * FROM " + '"' + GetTableName() + '"';
 
-            if (authorizeModel != null)
-            {
-                rawSql +=
-                    $" WHERE public.\"AuthorizeEntityPermissionToEntityPermission\"({authorizeModel.EntityLeftTableName}, {(string.IsNullOrEmpty(authorizeModel.EntityLeftGroupsTableName) ? "null" : authorizeModel.EntityLeftGroupsTableName)}, {(string.IsNullOrEmpty(authorizeModel.EntityLeftEntityToEntityMappingsTableName) ? "null" : authorizeModel.EntityLeftEntityToEntityMappingsTableName)}, {authorizeModel.EntityLeftId}, {authorizeModel.EntityLeftPermissionAlias}, {authorizeModel.EntityRightTableName}, {(string.IsNullOrEmpty(authorizeModel.EntityRightGroupsTableName) ? "null" : authorizeModel.EntityRightGroupsTableName)}, {(string.IsNullOrEmpty(authorizeModel.EntityRightEntityToEntityMappingsTableName) ? "null" : authorizeModel.EntityRightEntityToEntityMappingsTableName)}, {authorizeModel.EntityRightId}, {authorizeModel.EntityRightPermissionAlias}, {authorizeModel.SQLExpressionPermissionTypeValueNeededOwner}) ";
-            }
-
             var rawSqlParameters = new List<NpgsqlParameter>();
 
             void AddMatchParameter<TValue>(
@@ -329,7 +323,7 @@ namespace DAL.Repository.Base
             if (filterExpressionModel != null)
             {
                 if (filterExpressionModel.Items.Any())
-                    rawSql += authorizeModel == null ? " WHERE" : " AND ";
+                    rawSql += " WHERE ";
 
                 var stack = new Stack<FilterExpressionModelItemStackItem>();
                 stack.Push(new FilterExpressionModelItemStackItem()
@@ -539,6 +533,15 @@ namespace DAL.Repository.Base
                     stack.Pop();
                     rawSql += ')';
                 }
+            }
+
+            //Authorize
+
+            if (authorizeModel != null)
+            {
+                rawSql += filterExpressionModel != null && filterExpressionModel.Items.Any() ? " AND" : " WHERE";
+
+                rawSql += $" {authorizeModel.GetRawSqlStatement()} ";
             }
 
             //Sort
