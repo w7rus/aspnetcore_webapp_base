@@ -84,8 +84,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
     }
 
     #endregion
-
-    //TODO: Those are only for UserGroups for now
+    
     #region Methods
 
     public async Task<DTOResultBase> Create(PermissionValueCreate data, CancellationToken cancellationToken = default)
@@ -111,7 +110,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             //Authorize permissionValue creation
             var authorizeResult = _appDbContext.Set<AuthorizeResult>()
-                .FromSqlRaw((new AuthorizeModel
+                .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
@@ -124,7 +123,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     EntityRightId = $"'{userGroup.Id.ToString()}'",
                     EntityRightPermissionAlias = "'g_any_a_create_o_permissionvalue'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
-                }).GetRawSql()).ToList().SingleOrDefault();
+                }.GetRawSql()).ToList().SingleOrDefault();
             
             if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
@@ -185,7 +184,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             
             //Authorize permissionValue reading
             var authorizeResult = _appDbContext.Set<AuthorizeResult>()
-                .FromSqlRaw((new AuthorizeModel
+                .FromSqlRaw(new AuthorizeModel
             {
                 EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                 EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
@@ -198,7 +197,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 EntityRightId = $"'{userGroup.Id.ToString()}'",
                 EntityRightPermissionAlias = "'g_any_a_read_o_permissionvalue'",
                 SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
-            }).GetRawSql()).ToList().SingleOrDefault();
+            }.GetRawSql()).ToList().SingleOrDefault();
             
             if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
@@ -298,7 +297,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             
             //Authorize permissionValue update
             var authorizeResult = _appDbContext.Set<AuthorizeResult>()
-                .FromSqlRaw((new AuthorizeModel
+                .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
@@ -311,7 +310,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     EntityRightId = $"'{userGroup.Id.ToString()}'",
                     EntityRightPermissionAlias = "'g_any_a_update_o_permissionvalue'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
-                }).GetRawSql()).ToList().SingleOrDefault();
+                }.GetRawSql()).ToList().SingleOrDefault();
             
             if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
@@ -367,7 +366,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             
             //Authorize permissionValue update
             var authorizeResult = _appDbContext.Set<AuthorizeResult>()
-                .FromSqlRaw((new AuthorizeModel
+                .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
@@ -380,7 +379,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     EntityRightId = $"'{userGroup.Id.ToString()}'",
                     EntityRightPermissionAlias = "'g_any_a_delete_o_permissionvalue'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
-                }).GetRawSql()).ToList().SingleOrDefault();
+                }.GetRawSql()).ToList().SingleOrDefault();
             
             if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
