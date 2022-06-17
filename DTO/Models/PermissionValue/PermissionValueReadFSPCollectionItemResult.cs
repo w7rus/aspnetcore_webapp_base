@@ -2,7 +2,7 @@
 
 namespace DTO.Models.PermissionValue;
 
-public class PermissionValueReadFSCollectionItemResult
+public class PermissionValueReadFSPCollectionItemResult
 {
     public Guid Id { get; set; }
     public byte[] Value { get; set; }

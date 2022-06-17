@@ -73,6 +73,7 @@ public class PermissionAdvancedService : IPermissionAdvancedService
 
         switch (permissionValueLeft.Permission.ValueType)
         {
+            case PermissionValueType.None:
             case PermissionValueType.Unknown:
                 return false;
             case PermissionValueType.Boolean:
@@ -82,106 +83,10 @@ public class PermissionAdvancedService : IPermissionAdvancedService
                 compareToResult = value.CompareTo(valueCompared);
                 break;
             }
-            case PermissionValueType.Int8:
-            {
-                var value = (sbyte) permissionValueLeft.Value[0];
-                var valueCompared = (sbyte) permissionValueRight.Value[0];
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Int16:
-            {
-                var value = BitConverter.ToInt16(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToInt16(permissionValueRight.Value);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Int32:
-            {
-                var value = BitConverter.ToInt32(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToInt32(permissionValueRight.Value);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
             case PermissionValueType.Int64:
             {
                 var value = BitConverter.ToInt64(permissionValueLeft.Value);
                 var valueCompared = BitConverter.ToInt64(permissionValueRight.Value);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.UInt8:
-            {
-                var value = permissionValueLeft.Value[0];
-                var valueCompared = permissionValueRight.Value[0];
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.UInt16:
-            {
-                var value = BitConverter.ToUInt16(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToUInt16(permissionValueRight.Value);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.UInt32:
-            {
-                var value = BitConverter.ToUInt32(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToUInt32(permissionValueRight.Value);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.UInt64:
-            {
-                var value = BitConverter.ToUInt64(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToUInt64(permissionValueRight.Value);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Float:
-            {
-                var value = BitConverter.ToSingle(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToSingle(permissionValueRight.Value);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Double:
-            {
-                var value = BitConverter.ToDouble(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToDouble(permissionValueRight.Value);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Decimal:
-            {
-                var value = new decimal(
-                    BitConverter.ToInt32(permissionValueLeft.Value),
-                    BitConverter.ToInt32(permissionValueLeft.Value, sizeof(int)),
-                    BitConverter.ToInt32(permissionValueLeft.Value, sizeof(int) * 2),
-                    permissionValueLeft.Value[15] == 0x80,
-                    permissionValueLeft.Value[14]
-                );
-                var valueCompared = new decimal(
-                    BitConverter.ToInt32(permissionValueRight.Value),
-                    BitConverter.ToInt32(permissionValueRight.Value, sizeof(int)),
-                    BitConverter.ToInt32(permissionValueRight.Value, sizeof(int) * 2),
-                    permissionValueRight.Value[15] == 0x80,
-                    permissionValueRight.Value[14]
-                );
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.String:
-            {
-                var value = BitConverter.ToString(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToString(permissionValueRight.Value);
-                compareToResult = string.Compare(value, valueCompared, StringComparison.Ordinal);
-                break;
-            }
-            case PermissionValueType.DateTime:
-            {
-                var value = DateTime.FromBinary(BitConverter.ToInt64(permissionValueLeft.Value));
-                var valueCompared = DateTime.FromBinary(BitConverter.ToInt64(permissionValueRight.Value));
                 compareToResult = value.CompareTo(valueCompared);
                 break;
             }
@@ -211,6 +116,7 @@ public class PermissionAdvancedService : IPermissionAdvancedService
 
         switch (permissionValueLeft.Permission.ValueType)
         {
+            case PermissionValueType.None:
             case PermissionValueType.Unknown:
                 throw new CustomException(Localize.Error.PermissionValueTypeUnknown);
             case PermissionValueType.Boolean:
@@ -220,106 +126,10 @@ public class PermissionAdvancedService : IPermissionAdvancedService
                 compareToResult = value.CompareTo(valueCompared);
                 break;
             }
-            case PermissionValueType.Int8:
-            {
-                var value = (sbyte) permissionValueLeft.Value[0];
-                var valueCompared = (sbyte) _valueCompared[0];
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Int16:
-            {
-                var value = BitConverter.ToInt16(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToInt16(_valueCompared);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Int32:
-            {
-                var value = BitConverter.ToInt32(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToInt32(_valueCompared);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
             case PermissionValueType.Int64:
             {
                 var value = BitConverter.ToInt64(permissionValueLeft.Value);
                 var valueCompared = BitConverter.ToInt64(_valueCompared);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.UInt8:
-            {
-                var value = permissionValueLeft.Value[0];
-                var valueCompared = _valueCompared[0];
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.UInt16:
-            {
-                var value = BitConverter.ToUInt16(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToUInt16(_valueCompared);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.UInt32:
-            {
-                var value = BitConverter.ToUInt32(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToUInt32(_valueCompared);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.UInt64:
-            {
-                var value = BitConverter.ToUInt64(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToUInt64(_valueCompared);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Float:
-            {
-                var value = BitConverter.ToSingle(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToSingle(_valueCompared);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Double:
-            {
-                var value = BitConverter.ToDouble(permissionValueLeft.Value);
-                var valueCompared = BitConverter.ToDouble(_valueCompared);
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.Decimal:
-            {
-                var value = new decimal(
-                    BitConverter.ToInt32(permissionValueLeft.Value),
-                    BitConverter.ToInt32(permissionValueLeft.Value, sizeof(int)),
-                    BitConverter.ToInt32(permissionValueLeft.Value, sizeof(int) * 2),
-                    permissionValueLeft.Value[15] == 0x80,
-                    permissionValueLeft.Value[14]
-                );
-                var valueCompared = new decimal(
-                    BitConverter.ToInt32(_valueCompared),
-                    BitConverter.ToInt32(_valueCompared, sizeof(int)),
-                    BitConverter.ToInt32(_valueCompared, sizeof(int) * 2),
-                    _valueCompared[15] == 0x80,
-                    _valueCompared[14]
-                );
-                compareToResult = value.CompareTo(valueCompared);
-                break;
-            }
-            case PermissionValueType.String:
-            {
-                var value = Encoding.UTF8.GetString(permissionValueLeft.Value);
-                var valueCompared = Encoding.UTF8.GetString(_valueCompared);
-                compareToResult = string.Compare(value, valueCompared, StringComparison.Ordinal);
-                break;
-            }
-            case PermissionValueType.DateTime:
-            {
-                var value = DateTime.FromBinary(BitConverter.ToInt64(permissionValueLeft.Value));
-                var valueCompared = DateTime.FromBinary(BitConverter.ToInt64(_valueCompared));
                 compareToResult = value.CompareTo(valueCompared);
                 break;
             }

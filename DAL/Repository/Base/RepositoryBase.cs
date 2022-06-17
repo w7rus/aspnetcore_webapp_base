@@ -52,7 +52,8 @@ namespace DAL.Repository.Base
         public (int total, IQueryable<TEntity> entities) GetFilteredSortedPaged(
             FilterExpressionModel filterExpressionModel,
             FilterSortModel filterSortModel,
-            PageModel pageModel
+            PageModel pageModel,
+            AuthorizeModel authorizeModel
         );
     }
 
@@ -164,13 +165,12 @@ namespace DAL.Repository.Base
             var tableNameAnnotation = entityType.GetAnnotation("Relational:TableName");
             return tableNameAnnotation.Value?.ToString();
         }
-
-        //TODO: Complex: Pagination won't go with items that are permission restricted. Create a stored procedure after solving TODO in EntityPermissionValueBase
-        //TODO: Easier: Code Filter-Sort stage first, then query each item and authorize it, then use Filter-Sort query and select specific rows (Skip-Take) and finally paginate result query
+        
         public (int total, IQueryable<TEntity> entities) GetFilteredSortedPaged(
             FilterExpressionModel filterExpressionModel,
             FilterSortModel filterSortModel,
-            PageModel pageModel
+            PageModel pageModel,
+            AuthorizeModel authorizeModel
         )
         {
             var providerName = AppDbContext.Database.ProviderName;
@@ -180,6 +180,12 @@ namespace DAL.Repository.Base
             var entityType = GetEntityType();
 
             var rawSql = "SELECT * FROM " + '"' + GetTableName() + '"';
+
+            if (authorizeModel != null)
+            {
+                rawSql +=
+                    $" WHERE public.\"AuthorizeEntityPermissionToEntityPermission\"({authorizeModel.EntityLeftTableName}, {(string.IsNullOrEmpty(authorizeModel.EntityLeftGroupsTableName) ? "null" : authorizeModel.EntityLeftGroupsTableName)}, {(string.IsNullOrEmpty(authorizeModel.EntityLeftEntityToEntityMappingsTableName) ? "null" : authorizeModel.EntityLeftEntityToEntityMappingsTableName)}, {authorizeModel.EntityLeftId}, {authorizeModel.EntityLeftPermissionAlias}, {authorizeModel.EntityRightTableName}, {(string.IsNullOrEmpty(authorizeModel.EntityRightGroupsTableName) ? "null" : authorizeModel.EntityRightGroupsTableName)}, {(string.IsNullOrEmpty(authorizeModel.EntityRightEntityToEntityMappingsTableName) ? "null" : authorizeModel.EntityRightEntityToEntityMappingsTableName)}, {authorizeModel.EntityRightId}, {authorizeModel.EntityRightPermissionAlias}, {authorizeModel.SQLExpressionPermissionTypeValueNeededOwner}) ";
+            }
 
             var rawSqlParameters = new List<NpgsqlParameter>();
 
@@ -323,7 +329,7 @@ namespace DAL.Repository.Base
             if (filterExpressionModel != null)
             {
                 if (filterExpressionModel.Items.Any())
-                    rawSql += " WHERE ";
+                    rawSql += authorizeModel == null ? " WHERE" : " AND ";
 
                 var stack = new Stack<FilterExpressionModelItemStackItem>();
                 stack.Push(new FilterExpressionModelItemStackItem()

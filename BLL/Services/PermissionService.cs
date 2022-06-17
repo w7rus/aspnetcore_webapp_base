@@ -100,7 +100,7 @@ public class PermissionService : IPermissionService
         CancellationToken cancellationToken = default
     )
     {
-        var result = _permissionRepository.GetFilteredSortedPaged(filterExpressionModel, filterSortModel, pageModel);
+        var result = _permissionRepository.GetFilteredSortedPaged(filterExpressionModel, filterSortModel, pageModel, null);
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),

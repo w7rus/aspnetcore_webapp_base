@@ -177,7 +177,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("b6c6ebb6-3ef3-4b40-8593-b53603c4097e"),
                     Alias = "g_any_a_create_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual,
                 },
@@ -185,7 +185,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("65269b59-0612-4348-a1e1-cbef6259d9e8"),
                     Alias = "g_any_a_create_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual,
                 },
@@ -193,7 +193,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("2fbc4227-7992-4742-a200-8df76ded3cb5"),
                     Alias = "g_any_a_create_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual,
                 },
@@ -206,7 +206,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("d69efce7-c9a0-4c46-9dae-a7e42d947372"),
                     Alias = "g_any_a_read_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual,
                 },
@@ -214,7 +214,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("28e18150-c23e-4552-be6e-67492f3d290b"),
                     Alias = "g_any_a_read_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual,
                 },
@@ -222,7 +222,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("505502c4-4055-4267-b631-ff869f14885d"),
                     Alias = "g_any_a_read_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual,
                 },
@@ -235,7 +235,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("d1344244-8ea2-42f1-bf5c-5803794333b4"),
                     Alias = "g_any_a_update_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -243,7 +243,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("aff2f6f8-b2ec-4811-b5dd-15e1b85d7da6"),
                     Alias = "g_any_a_update_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -251,7 +251,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("196ddfa6-4791-48ef-afcd-9cb9183a840b"),
                     Alias = "g_any_a_update_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -264,7 +264,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("2715f18b-5f30-40fa-baaa-76693cc31b35"),
                     Alias = "g_any_a_delete_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -272,7 +272,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("55825e7b-c355-41b7-a473-90a091237bd7"),
                     Alias = "g_any_a_delete_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -280,7 +280,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("64700a31-b2bc-4c6d-bd7e-25e2c62443dc"),
                     Alias = "g_any_a_delete_o_permissionvalue",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -297,7 +297,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("fa8071de-d010-43c4-ae7e-bae0f47cb6bd"),
                     Alias = "g_group_a_create_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -305,7 +305,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("874e3654-8445-4e10-b2b5-c07e96ebfa3c"),
                     Alias = "g_group_a_create_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededSystem,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -318,7 +318,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("f7462ca7-43e6-415e-817e-c942f5471e25"),
                     Alias = "g_group_a_read_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -326,7 +326,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("5deb5229-4488-4c2c-974a-a16279b29794"),
                     Alias = "g_group_a_read_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -334,7 +334,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("b316b212-6b69-48ea-982b-f986bc478a7a"),
                     Alias = "g_group_a_read_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -347,7 +347,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("bf308070-53a1-4893-b348-e6267659573e"),
                     Alias = "g_group_a_update_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -355,7 +355,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("634b0339-1e37-4510-b32e-4b549e37fb7e"),
                     Alias = "g_group_a_update_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -363,7 +363,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("082f33f0-b2c9-4930-9d5b-358299b75514"),
                     Alias = "g_group_a_update_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -376,7 +376,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("a14c1e1c-3761-476d-8037-edaf7e4840c7"),
                     Alias = "g_group_a_delete_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -384,7 +384,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("91cd8f02-88e5-4807-b30c-3d2166aa6880"),
                     Alias = "g_group_a_delete_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -392,7 +392,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("2995da7c-72af-437a-8b6e-b23141eb60c1"),
                     Alias = "g_group_a_delete_o_usergroup",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -409,7 +409,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("fe3271d0-acd0-45d0-82e1-f99af8ea2988"),
                     Alias = "g_user_a_read_o_user",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -417,7 +417,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("7be23488-ba3f-41d9-98dd-0386bb7aa6e4"),
                     Alias = "g_user_a_read_o_user",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -425,7 +425,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("81970fd1-592a-4248-bed5-fb77e1b13477"),
                     Alias = "g_user_a_read_o_user",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -438,7 +438,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("9ac1bb65-f9b8-4aab-9a0c-0c3b2d7838b1"),
                     Alias = "g_user_a_update_o_user",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -446,7 +446,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("952cea7f-6d88-43c8-982d-4e7bf212d6db"),
                     Alias = "g_user_a_update_o_user",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -454,7 +454,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("343f5600-0233-4d33-a734-39aab148eed6"),
                     Alias = "g_user_a_update_o_user",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -467,7 +467,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("0d5ed48d-91a5-49fe-b27c-b288de79a7c3"),
                     Alias = "g_user_a_delete_o_user",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -475,7 +475,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("830e69e1-dfe4-445d-a60b-a9e6f8444463"),
                     Alias = "g_user_a_delete_o_user",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -483,7 +483,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("f5bd5b91-4ce6-4686-8521-0ebfbed21fff"),
                     Alias = "g_user_a_delete_o_user",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -500,7 +500,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("1eb9b46c-99c6-41ca-9a4e-06b4de8f6d55"),
                     Alias = "g_userprofile_a_read_o_userprofile",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -508,7 +508,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("242a70b6-d66a-4cc4-945f-76a36db71e25"),
                     Alias = "g_userprofile_a_read_o_userprofile",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -516,7 +516,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("4ed3b03a-4e42-4311-8baf-bda5651770ee"),
                     Alias = "g_userprofile_a_read_o_userprofile",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -529,7 +529,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("86ce307c-f9db-4a5a-9347-8a3ea7ef2442"),
                     Alias = "g_userprofile_a_update_o_userprofile",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -537,7 +537,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("fd8bb6bc-5dc7-4cfd-be3c-7ff4dff6ae9b"),
                     Alias = "g_userprofile_a_update_o_userprofile",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -545,7 +545,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"),
                     Alias = "g_userprofile_a_update_o_userprofile",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -556,15 +556,15 @@ namespace DAL.Data
                 {
                     Id = new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"),
                     Alias = "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize",
-                    ValueType = PermissionValueType.UInt64,
-                    Type = PermissionType.ValueNeededAny,
+                    ValueType = PermissionValueType.Int64,
+                    Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.LessOrEqual
                 },
                 new()
                 {
                     Id = new Guid("1b672176-169c-4efb-8ff2-c66b9640ccd5"),
                     Alias = "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededSystem,
                     CompareMode = PermissionCompareMode.LessOrEqual
                 },
@@ -579,7 +579,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("22501ebc-5ebc-42a1-b07e-967b0fbed171"),
                     Alias = "g_file_a_create_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -587,7 +587,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"),
                     Alias = "g_file_a_create_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededSystem,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -598,7 +598,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("6fc92a20-2405-45e3-95e5-234642d49221"),
                     Alias = "g_file_a_create_o_file.o_agerating_l_automapper",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -606,7 +606,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"),
                     Alias = "g_file_a_create_o_file.o_agerating_l_automapper",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededSystem,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -621,7 +621,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("49ef7d3b-3d35-45e5-9995-6d4920413a8b"),
                     Alias = "g_file_a_read_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -629,7 +629,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("b89b5856-18dd-49c7-9295-26927214276c"),
                     Alias = "g_file_a_read_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -637,7 +637,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("2f59c415-94bb-435b-837f-9b61f33a8723"),
                     Alias = "g_file_a_read_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -645,7 +645,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("d4e32d88-643c-4a34-842a-fb3b8ab502cd"),
                     Alias = "g_file_a_read_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededSystem,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -658,7 +658,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("dbf7a44d-03ff-45ad-8b3c-9ba2e05ca4b3"),
                     Alias = "g_file_a_update_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -666,7 +666,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("88625409-fa6a-47d3-9dd2-bd90d89a4930"),
                     Alias = "g_file_a_update_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -674,7 +674,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("2c67f167-0a16-434c-afb6-1b274d21e8c0"),
                     Alias = "g_file_a_update_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -682,7 +682,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("b441034f-bdac-4dc5-b1c2-22b35e37dd1d"),
                     Alias = "g_file_a_update_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededSystem,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -693,7 +693,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("f77d8f8a-9fc1-4ae7-b5a4-49633595fb8a"),
                     Alias = "g_file_a_update_o_file.o_agerating_l_automapper",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -701,7 +701,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("91360170-bf30-45dc-9c3c-a984c504f0fd"),
                     Alias = "g_file_a_update_o_file.o_agerating_l_automapper",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -709,7 +709,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("b599c5a5-de3c-41a7-af74-4829ace6e3fe"),
                     Alias = "g_file_a_update_o_file.o_agerating_l_automapper",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -717,7 +717,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("fb19032e-081f-465e-bba7-c95f8539c1e6"),
                     Alias = "g_file_a_update_o_file.o_agerating_l_automapper",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededSystem,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -732,7 +732,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("0ba51d69-ce7a-4969-b072-d5000229b8fb"),
                     Alias = "g_file_a_delete_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.Value,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -740,7 +740,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("cf05b493-8bb2-4a3f-a467-a073720c5d46"),
                     Alias = "g_file_a_delete_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOthers,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -748,7 +748,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("5ee1fd85-4a95-4409-a0d8-96da8ccf855b"),
                     Alias = "g_file_a_delete_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededOwner,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -756,7 +756,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("780ebed2-c70e-43f0-95aa-1fd336d170b2"),
                     Alias = "g_file_a_delete_o_file",
-                    ValueType = PermissionValueType.UInt64,
+                    ValueType = PermissionValueType.Int64,
                     Type = PermissionType.ValueNeededSystem,
                     CompareMode = PermissionCompareMode.GreaterOrEqual
                 },
@@ -1192,7 +1192,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("a4b5ffe5-a137-4ad3-aa80-9b5f5f288362"),
                     Value = BitConverter.GetBytes(4096ul),
-                    PermissionId = permissions.Single(_ => _.Alias == "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize" && _.Type == PermissionType.ValueNeededAny).Id,
+                    PermissionId = permissions.Single(_ => _.Alias == "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize" && _.Type == PermissionType.ValueNeededOwner).Id,
                     EntityId = rootUserGroup.Id,
                 },
                 new()
@@ -1724,7 +1724,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("9a5741c3-3034-4f71-b1da-91a2f769a909"),
                     Value = BitConverter.GetBytes(0ul),
-                    PermissionId = permissions.Single(_ => _.Alias == "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize" && _.Type == PermissionType.ValueNeededAny).Id,
+                    PermissionId = permissions.Single(_ => _.Alias == "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize" && _.Type == PermissionType.ValueNeededOwner).Id,
                     EntityId = bannedUserGroup.Id,
                 },
 
@@ -2186,7 +2186,7 @@ namespace DAL.Data
                 {
                     Id = new Guid("b2d23951-c9f9-4997-bc4d-d96a42f606eb"),
                     Value = BitConverter.GetBytes(2048ul),
-                    PermissionId = permissions.Single(_ => _.Alias == "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize" && _.Type == PermissionType.ValueNeededAny).Id,
+                    PermissionId = permissions.Single(_ => _.Alias == "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize" && _.Type == PermissionType.ValueNeededOwner).Id,
                     EntityId = memberUserGroup.Id,
                 },
 

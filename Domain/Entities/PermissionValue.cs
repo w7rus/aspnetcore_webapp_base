@@ -4,7 +4,6 @@ using Domain.Entities.Base;
 
 namespace Domain.Entities
 {
-    //TODO: Remove generic and rely on code logic for working with PermissionValue of TEntity
     public class PermissionValue : EntityBase<Guid>
     {
         /// <summary>

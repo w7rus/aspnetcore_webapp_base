@@ -12,6 +12,7 @@ using Common.Exceptions;
 using Common.Models;
 using Common.Models.Base;
 using DAL.Data;
+using DAL.Repository;
 using Domain.Entities;
 using Domain.Enums;
 using DTO.Models.PermissionValue;
@@ -25,8 +26,8 @@ public interface IPermissionValueHandler
     Task<DTOResultBase> Create(PermissionValueCreate data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Read(PermissionValueRead data, CancellationToken cancellationToken = default);
 
-    Task<DTOResultBase> ReadFSCollection(
-        PermissionValueReadFSCollection data,
+    Task<DTOResultBase> ReadFSPCollection(
+        PermissionValueReadFSPCollection data,
         CancellationToken cancellationToken = default
     );
 
@@ -46,6 +47,9 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
     private readonly IUserGroupService _userGroupService;
     private readonly IUserGroupAdvancedService _userGroupAdvancedService;
     private readonly IUserAdvancedService _userAdvancedService;
+    private readonly IUserRepository _userRepository;
+    private readonly IUserGroupRepository _userGroupRepository;
+    private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
 
     #endregion
 
@@ -59,7 +63,10 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
         IPermissionService permissionService,
         IUserGroupService userGroupService,
         IUserGroupAdvancedService userGroupAdvancedService,
-        IUserAdvancedService userAdvancedService
+        IUserAdvancedService userAdvancedService,
+        IUserRepository userRepository,
+        IUserGroupRepository userGroupRepository,
+        IUserToUserGroupMappingRepository userToUserGroupMappingRepository
     )
     {
         _logger = logger;
@@ -70,6 +77,9 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
         _userGroupService = userGroupService;
         _userGroupAdvancedService = userGroupAdvancedService;
         _userAdvancedService = userAdvancedService;
+        _userRepository = userRepository;
+        _userGroupRepository = userGroupRepository;
+        _userToUserGroupMappingRepository = userToUserGroupMappingRepository;
     }
 
     #endregion
@@ -187,9 +197,9 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
         }
     }
     
-    public async Task<DTOResultBase> ReadFSCollection(PermissionValueReadFSCollection data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> ReadFSPCollection(PermissionValueReadFSPCollection data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadFSCollection)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadFSPCollection)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -205,43 +215,30 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
 
             var permissionValues =
                 (await _permissionValueService.GetFilteredSortedPaged(data.FilterExpressionModel,
-                    data.FilterSortModel, PageModel.Max, cancellationToken));
-
-            var permissionValuesGrouped = permissionValues.entities.GroupBy(_ => _.EntityId);
-            
-            var readablePermissionValues = new List<PermissionValue>();
-
-            foreach (var permissionValuesGroup in permissionValuesGrouped)
-            {
-                var permissionValue = permissionValuesGroup.First();
-                
-                var userGroup = await _userGroupService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
-                if (userGroup == null)
-                    throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
-                        Localize.Error.UserGroupNotFound);
-                
-                //Authorize permissionValue reading
-                if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                        await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
-                            PermissionType.Value), userGroup,
-                        await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
-                            userGroup.OwnerUser == user
-                                ? PermissionType.ValueNeededOwner
-                                : PermissionType.ValueNeededOthers), cancellationToken))
-                    continue;
-                
-                readablePermissionValues.AddRange(permissionValuesGroup);
-            }
+                    data.FilterSortModel, data.PageModel, new AuthorizeModel
+                    {
+                        EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
+                        EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
+                        EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                        EntityLeftId = $"'{user.Id.ToString()}'",
+                        EntityLeftPermissionAlias = "'g_any_a_read_o_permissionvalue'",
+                        EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
+                        EntityRightGroupsTableName = null,
+                        EntityRightEntityToEntityMappingsTableName = null,
+                        EntityRightId = "\"EntityId\"",
+                        EntityRightPermissionAlias = "'g_any_a_read_o_permissionvalue'",
+                        SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
+                    }, cancellationToken));
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ReadFSCollection)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ReadFSPCollection)));
 
-            return new PermissionValueReadFSCollectionResult()
+            return new PermissionValueReadFSPCollectionResult()
             {
-                Total = readablePermissionValues.Count,
-                Items = readablePermissionValues.Select(_ =>
-                    _mapper.ProjectTo<PermissionValueReadFSCollectionItemResult>(new[] {_}.AsQueryable()).Single())
+                Total = permissionValues.total,
+                Items = permissionValues.entities.Select(_ =>
+                    _mapper.ProjectTo<PermissionValueReadFSPCollectionItemResult>(new[] {_}.AsQueryable()).Single())
             };
         }
         catch (Exception)

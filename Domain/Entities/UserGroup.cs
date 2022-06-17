@@ -14,7 +14,7 @@ namespace Domain.Entities
         /// <summary>
         /// Priority of a UserGroup
         /// </summary>
-        public ulong Priority { get; set; }
+        public long Priority { get; set; }
         
         /// <summary>
         /// Id of a User this UserGroup references

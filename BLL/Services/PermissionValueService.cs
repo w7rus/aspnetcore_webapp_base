@@ -28,6 +28,7 @@ public interface IPermissionValueService : IEntityServiceBase<PermissionValue>
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
+        AuthorizeModel authorizeModel,
         CancellationToken cancellationToken = default
     );
 }
@@ -109,11 +110,12 @@ public class PermissionValueService : IPermissionValueService
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
+        AuthorizeModel authorizeModel,
         CancellationToken cancellationToken = default
     )
     {
         var result =
-            _permissionValueRepository.GetFilteredSortedPaged(filterExpressionModel, filterSortModel, pageModel);
+            _permissionValueRepository.GetFilteredSortedPaged(filterExpressionModel, filterSortModel, pageModel, authorizeModel);
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),

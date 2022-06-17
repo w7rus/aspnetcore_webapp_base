@@ -72,18 +72,18 @@ public class UserGroupPermissionValueController : CustomControllerBase
     }
 
     [HttpGet]
-    [Route("FSCollection")]
+    [Route("FSPCollection")]
     [SwaggerOperation(Summary = "Reads PermissionValues",
         Description = "Reads PermissionValues")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> ReadFSCollection(
-        [Required] [FromQuery] PermissionValueReadFSCollection data,
+    public async Task<IActionResult> ReadFSPCollection(
+        [Required] [FromQuery] PermissionValueReadFSPCollection data,
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _permissionValueHandler.ReadFSCollection(data, cancellationToken));
+        return ResponseWith(await _permissionValueHandler.ReadFSPCollection(data, cancellationToken));
     }
 
     [HttpPut]
