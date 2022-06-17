@@ -40,28 +40,11 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionValueToEntityPermis
           RETURN FResult;
         END IF;
 
-        IF EntityPermissionLeft.""ValueType"" != EntityPermissionRight.""ValueType"" THEN
-          RAISE EXCEPTION ' - - AuthorizeEntityPermissionValueToEntityPermissionValue: ValueType are not the same! %d', FResult;
-        END IF;
-
         IF EntityPermissionLeft.""CompareMode"" != EntityPermissionRight.""CompareMode"" THEN
           RAISE EXCEPTION ' - - AuthorizeEntityPermissionValueToEntityPermissionValue: ValueType are not the same! %d', FResult;
         END IF;
 
-        CASE EntityPermissionLeft.""ValueType""
-          WHEN 0 THEN
-            RAISE NOTICE ' - - AuthorizeEntityPermissionValueToEntityPermissionValue: ValueType is NONE! %d', FResult;
-            RETURN FResult;
-          WHEN 1 THEN
-            RAISE NOTICE ' - - AuthorizeEntityPermissionValueToEntityPermissionValue: ValueType is UNKNOWN! %d', FResult;
-            RETURN FResult;
-          WHEN 2 THEN --Boolean
-            RAISE NOTICE ' - - AuthorizeEntityPermissionValueToEntityPermissionValue: EntityPermissionLeft.ValueType Boolean';
-            ValueLeft := get_byte(EntityPermissionValueLeft.""Value"", 0)::bigint << 8;
-            ValueRight := get_byte(EntityPermissionValueRight.""Value"", 0)::bigint << 8;
-          WHEN 3 THEN --Int64
-            RAISE NOTICE ' - - AuthorizeEntityPermissionValueToEntityPermissionValue: EntityPermissionLeft.ValueType Int64';
-            ValueLeft := get_byte(EntityPermissionValueLeft.""Value"", 7)::bigint << 8
+        ValueLeft := get_byte(EntityPermissionValueLeft.""Value"", 7)::bigint << 8
             | get_byte(EntityPermissionValueLeft.""Value"", 6) << 8
             | get_byte(EntityPermissionValueLeft.""Value"", 5) << 8
             | get_byte(EntityPermissionValueLeft.""Value"", 4) << 8
@@ -69,7 +52,7 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionValueToEntityPermis
             | get_byte(EntityPermissionValueLeft.""Value"", 2) << 8
             | get_byte(EntityPermissionValueLeft.""Value"", 1) << 8
             | get_byte(EntityPermissionValueLeft.""Value"", 0);
-            ValueRight := get_byte(EntityPermissionValueRight.""Value"", 7)::bigint << 8
+        ValueRight := get_byte(EntityPermissionValueRight.""Value"", 7)::bigint << 8
             | get_byte(EntityPermissionValueRight.""Value"", 6) << 8
             | get_byte(EntityPermissionValueRight.""Value"", 5) << 8
             | get_byte(EntityPermissionValueRight.""Value"", 4) << 8
@@ -77,9 +60,6 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionValueToEntityPermis
             | get_byte(EntityPermissionValueRight.""Value"", 2) << 8
             | get_byte(EntityPermissionValueRight.""Value"", 1) << 8
             | get_byte(EntityPermissionValueRight.""Value"", 0);
-          ELSE
-            RAISE EXCEPTION ' - - AuthorizeEntityPermissionValueToEntityPermissionValue: EntityPermissionLeft.ValueType: ArgumentOutOfRangeException';
-        END CASE;
 
         CASE EntityPermissionLeft.""CompareMode""
           WHEN 0 THEN

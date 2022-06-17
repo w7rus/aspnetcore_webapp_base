@@ -7,7 +7,6 @@ public class PermissionReadFSPCollectionItemResult
 {
     public Guid Id { get; set; }
     public string Alias { get; set; }
-    public PermissionValueType ValueType { get; set; }
     public PermissionCompareMode CompareMode { get; set; }
     public PermissionType Type { get; set; }
 }

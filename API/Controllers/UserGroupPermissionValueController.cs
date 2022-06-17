@@ -22,7 +22,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     #region Fields
 
     private readonly ILogger<UserGroupPermissionValueController> _logger;
-    private readonly IPermissionValueHandler _permissionValueHandler;
+    private readonly IUserGroupPermissionValueHandler _userGroupPermissionValueHandler;
 
     #endregion
 
@@ -31,12 +31,12 @@ public class UserGroupPermissionValueController : CustomControllerBase
     public UserGroupPermissionValueController(
         IHttpContextAccessor httpContextAccessor,
         ILogger<UserGroupPermissionValueController> logger,
-        IPermissionValueHandler permissionValueHandler,
+        IUserGroupPermissionValueHandler userGroupPermissionValueHandler,
         IWarningAdvancedService warningAdvancedService
     ) : base(httpContextAccessor, warningAdvancedService)
     {
         _logger = logger;
-        _permissionValueHandler = permissionValueHandler;
+        _userGroupPermissionValueHandler = userGroupPermissionValueHandler;
     }
 
     #endregion
@@ -54,7 +54,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _permissionValueHandler.Create(data, cancellationToken));
+        return ResponseWith(await _userGroupPermissionValueHandler.Create(data, cancellationToken));
     }
 
     [HttpGet]
@@ -68,7 +68,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _permissionValueHandler.Read(data, cancellationToken));
+        return ResponseWith(await _userGroupPermissionValueHandler.Read(data, cancellationToken));
     }
 
     [HttpGet]
@@ -83,7 +83,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _permissionValueHandler.ReadFSPCollection(data, cancellationToken));
+        return ResponseWith(await _userGroupPermissionValueHandler.ReadFSPCollection(data, cancellationToken));
     }
 
     [HttpPut]
@@ -97,7 +97,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _permissionValueHandler.Update(data, cancellationToken));
+        return ResponseWith(await _userGroupPermissionValueHandler.Update(data, cancellationToken));
     }
 
     [HttpDelete]
@@ -111,7 +111,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _permissionValueHandler.Delete(data, cancellationToken));
+        return ResponseWith(await _userGroupPermissionValueHandler.Delete(data, cancellationToken));
     }
 
     #endregion

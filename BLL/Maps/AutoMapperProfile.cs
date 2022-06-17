@@ -68,7 +68,6 @@ public class AutoMapperProfile : Profile
         CreateMap<Permission, PermissionReadFSPCollectionItemResult>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
-            .ForMember(_ => _.ValueType, options => options.MapFrom(__ => __.ValueType))
             .ForMember(_ => _.CompareMode, options => options.MapFrom(__ => __.CompareMode))
             .ForMember(_ => _.Type, options => options.MapFrom(__ => __.Type));
 
@@ -87,70 +86,72 @@ public class AutoMapperProfile : Profile
 
     bool AutoMapperAuthorizeUserPermission(ResolutionContext context, string objFieldName)
     {
-        var userToUserGroupService = (context
-                                          .Options
-                                          .ServiceCtor(typeof(IUserGroupAdvancedService)) ??
-                                      throw new CustomException(Localize.Error.DependencyInjectionFailed)) as
-                                     IUserGroupAdvancedService ??
-                                     throw new CustomException(Localize.Error.ObjectCastFailed);
-
-        //Get AutoMapperModelAuthorizeData from the context items
-        if (!context.Items.TryGetValue(Consts.AutoMapperModelAuthorizeDataKey,
-                out var autoMapperModelAuthorizeDataObject))
-            throw new CustomException(Localize.Error.ValueRetrievalFailed + " " +
-                                      nameof(autoMapperModelAuthorizeDataObject));
-
-        var autoMapperModelAuthorizeData = autoMapperModelAuthorizeDataObject as AutoMapperModelAuthorizeData ??
-                                           throw new CustomException(Localize.Error.ObjectCastFailed);
-
-        //Get AutoMapperModelFieldAuthorizeData for required model field
-        if (!autoMapperModelAuthorizeData.AutoMapperModelFieldAuthorizeDatas.TryGetValue(objFieldName,
-                out var autoMapperModelFieldAuthorizeData))
-            throw new CustomException(
-                Localize.Error.ValueRetrievalFailed + " " + nameof(autoMapperModelFieldAuthorizeData));
-
-        var authorizeSystemResult = true;
+        throw new NotImplementedException("Reimplement via _appDbContext.Set<AuthorizeResult>().FromSqlRaw(...)");
         
-        if (autoMapperModelFieldAuthorizeData.PermissionValueSystemCompared != null)
-        {
-            authorizeSystemResult = userToUserGroupService
-                .AuthorizePermissionToPermissionValue(
-                    autoMapperModelAuthorizeData.UserComparable,
-                    autoMapperModelFieldAuthorizeData.PermissionComparable,
-                    autoMapperModelFieldAuthorizeData.PermissionValueSystemCompared
-                )
-                .ConfigureAwait(false).GetAwaiter().GetResult();
-        }
-
-        bool authorizeResult;
-
-        if (autoMapperModelFieldAuthorizeData.CustomValueCompared != null)
-        {
-            authorizeResult = userToUserGroupService
-                .AuthorizePermissionToCustomValue(
-                    autoMapperModelAuthorizeData.UserComparable,
-                    autoMapperModelFieldAuthorizeData.PermissionComparable,
-                    autoMapperModelFieldAuthorizeData.CustomValueCompared
-                )
-                .ConfigureAwait(false).GetAwaiter().GetResult();
-        }
-        else if (autoMapperModelFieldAuthorizeData.PermissionCompared != null)
-        {
-            authorizeResult = userToUserGroupService
-                .AuthorizePermissionToPermission(
-                    autoMapperModelAuthorizeData.UserComparable,
-                    autoMapperModelFieldAuthorizeData.PermissionComparable,
-                    autoMapperModelAuthorizeData.UserCompared,
-                    autoMapperModelFieldAuthorizeData.PermissionCompared
-                )
-                .ConfigureAwait(false).GetAwaiter().GetResult();
-        }
-        else
-        {
-            throw new CustomException(Localize.Error.PermissionComparedOrCustomValueComparedRequired);
-        }
-        
-        return authorizeResult & authorizeSystemResult;
+        // var userToUserGroupService = (context
+        //                                   .Options
+        //                                   .ServiceCtor(typeof(IUserGroupAdvancedService)) ??
+        //                               throw new CustomException(Localize.Error.DependencyInjectionFailed)) as
+        //                              IUserGroupAdvancedService ??
+        //                              throw new CustomException(Localize.Error.ObjectCastFailed);
+        //
+        // //Get AutoMapperModelAuthorizeData from the context items
+        // if (!context.Items.TryGetValue(Consts.AutoMapperModelAuthorizeDataKey,
+        //         out var autoMapperModelAuthorizeDataObject))
+        //     throw new CustomException(Localize.Error.ValueRetrievalFailed + " " +
+        //                               nameof(autoMapperModelAuthorizeDataObject));
+        //
+        // var autoMapperModelAuthorizeData = autoMapperModelAuthorizeDataObject as AutoMapperModelAuthorizeData ??
+        //                                    throw new CustomException(Localize.Error.ObjectCastFailed);
+        //
+        // //Get AutoMapperModelFieldAuthorizeData for required model field
+        // if (!autoMapperModelAuthorizeData.AutoMapperModelFieldAuthorizeDatas.TryGetValue(objFieldName,
+        //         out var autoMapperModelFieldAuthorizeData))
+        //     throw new CustomException(
+        //         Localize.Error.ValueRetrievalFailed + " " + nameof(autoMapperModelFieldAuthorizeData));
+        //
+        // var authorizeSystemResult = true;
+        //
+        // if (autoMapperModelFieldAuthorizeData.PermissionValueSystemCompared != null)
+        // {
+        //     authorizeSystemResult = userToUserGroupService
+        //         .AuthorizePermissionToPermissionValue(
+        //             autoMapperModelAuthorizeData.UserComparable,
+        //             autoMapperModelFieldAuthorizeData.PermissionComparable,
+        //             autoMapperModelFieldAuthorizeData.PermissionValueSystemCompared
+        //         )
+        //         .ConfigureAwait(false).GetAwaiter().GetResult();
+        // }
+        //
+        // bool authorizeResult;
+        //
+        // if (autoMapperModelFieldAuthorizeData.CustomValueCompared != null)
+        // {
+        //     authorizeResult = userToUserGroupService
+        //         .AuthorizePermissionToCustomValue(
+        //             autoMapperModelAuthorizeData.UserComparable,
+        //             autoMapperModelFieldAuthorizeData.PermissionComparable,
+        //             autoMapperModelFieldAuthorizeData.CustomValueCompared
+        //         )
+        //         .ConfigureAwait(false).GetAwaiter().GetResult();
+        // }
+        // else if (autoMapperModelFieldAuthorizeData.PermissionCompared != null)
+        // {
+        //     authorizeResult = userToUserGroupService
+        //         .AuthorizePermissionToPermission(
+        //             autoMapperModelAuthorizeData.UserComparable,
+        //             autoMapperModelFieldAuthorizeData.PermissionComparable,
+        //             autoMapperModelAuthorizeData.UserCompared,
+        //             autoMapperModelFieldAuthorizeData.PermissionCompared
+        //         )
+        //         .ConfigureAwait(false).GetAwaiter().GetResult();
+        // }
+        // else
+        // {
+        //     throw new CustomException(Localize.Error.PermissionComparedOrCustomValueComparedRequired);
+        // }
+        //
+        // return authorizeResult & authorizeSystemResult;
     }
 
     #endregion

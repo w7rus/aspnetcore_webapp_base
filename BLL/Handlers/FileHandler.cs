@@ -42,7 +42,6 @@ public class FileHandler : HandlerBase, IFileHandler
     private readonly IPermissionService _permissionService;
     private readonly IPermissionValueService _permissionValueService;
     private readonly IUserGroupService _userGroupService;
-    private readonly IUserGroupAdvancedService _userGroupAdvancedService;
     private readonly IUserAdvancedService _userAdvancedService;
 
     #endregion
@@ -59,7 +58,6 @@ public class FileHandler : HandlerBase, IFileHandler
         IPermissionService permissionService,
         IPermissionValueService permissionValueService,
         IUserGroupService userGroupService,
-        IUserGroupAdvancedService userGroupAdvancedService,
         IUserAdvancedService userAdvancedService
     )
     {
@@ -71,7 +69,6 @@ public class FileHandler : HandlerBase, IFileHandler
         _permissionService = permissionService;
         _permissionValueService = permissionValueService;
         _userGroupService = userGroupService;
-        _userGroupAdvancedService = userGroupAdvancedService;
         _userAdvancedService = userAdvancedService;
         _httpContext = httpContextAccessor.HttpContext;
     }
@@ -107,69 +104,71 @@ public class FileHandler : HandlerBase, IFileHandler
 
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create), $"Copied {ms.Length} bytes from form file"));
+            
+            throw new NotImplementedException("Reimplement via _appDbContext.Set<AuthorizeResult>().FromSqlRaw(...)");
 
-            //Get file creation Permission that will be compared
-            var permission =
-                await _permissionService.GetByAliasAndTypeAsync("g_file_a_create_o_file", PermissionType.Value);
-
-            //Get file creation comparable system PermissionValue
-            var permissionValueComparedSystem =
-                await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
-                    "g_file_a_create_o_file",
-                    cancellationToken);
-
-            //Authorize file creation
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user, permission,
-                    permissionValueComparedSystem,
-                    cancellationToken))
-                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                    Localize.Error.PermissionInsufficientPermissions);
-
-            var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData(
-                user,
-                null,
-                new Dictionary<string, AutoMapperModelFieldAuthorizeData>
-                {
-                    {
-                        nameof(File.AgeRating),
-                        new AutoMapperModelFieldAuthorizeData
-                        {
-                            PermissionComparable =
-                                await _permissionService.GetByAliasAndTypeAsync(
-                                    "g_file_a_create_o_file.o_agerating_l_automapper", PermissionType.Value),
-                            PermissionCompared = null,
-                            PermissionValueSystemCompared =
-                                await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
-                                    "g_file_a_create_o_file.o_agerating_l_automapper", cancellationToken),
-                            CustomValueCompared = null
-                        }
-                    }
-                });
-
-            //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
-            var file = _mapper.Map<File>(data,
-                opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
-
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Create),
-                    $"{data.GetType().Name} mapped to {file.GetType().Name}"));
-
-            file.Name = fileName;
-            file.Data = ms.ToArray();
-            file.Size = file.Data.Length;
-            file.Metadata = new Dictionary<string, string>();
-            file.UserId = user.Id;
-
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Create), $"Set additional data to {file.GetType().Name}"));
-
-            file = await _fileService.Save(file, cancellationToken);
-
-            await _appDbContextAction.CommitTransactionAsync();
-
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Create)));
-
-            return _mapper.Map<FileCreateResult>(file);
+            // //Get file creation Permission that will be compared
+            // var permission =
+            //     await _permissionService.GetByAliasAndTypeAsync("g_file_a_create_o_file", PermissionType.Value);
+            //
+            // //Get file creation comparable system PermissionValue
+            // var permissionValueComparedSystem =
+            //     await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
+            //         "g_file_a_create_o_file",
+            //         cancellationToken);
+            //
+            // //Authorize file creation
+            // if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user, permission,
+            //         permissionValueComparedSystem,
+            //         cancellationToken))
+            //     throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+            //         Localize.Error.PermissionInsufficientPermissions);
+            //
+            // var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData(
+            //     user,
+            //     null,
+            //     new Dictionary<string, AutoMapperModelFieldAuthorizeData>
+            //     {
+            //         {
+            //             nameof(File.AgeRating),
+            //             new AutoMapperModelFieldAuthorizeData
+            //             {
+            //                 PermissionComparable =
+            //                     await _permissionService.GetByAliasAndTypeAsync(
+            //                         "g_file_a_create_o_file.o_agerating_l_automapper", PermissionType.Value),
+            //                 PermissionCompared = null,
+            //                 PermissionValueSystemCompared =
+            //                     await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
+            //                         "g_file_a_create_o_file.o_agerating_l_automapper", cancellationToken),
+            //                 CustomValueCompared = null
+            //             }
+            //         }
+            //     });
+            //
+            // //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
+            // var file = _mapper.Map<File>(data,
+            //     opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
+            //
+            // _logger.Log(LogLevel.Information,
+            //     Localize.Log.Method(GetType(), nameof(Create),
+            //         $"{data.GetType().Name} mapped to {file.GetType().Name}"));
+            //
+            // file.Name = fileName;
+            // file.Data = ms.ToArray();
+            // file.Size = file.Data.Length;
+            // file.Metadata = new Dictionary<string, string>();
+            // file.UserId = user.Id;
+            //
+            // _logger.Log(LogLevel.Information,
+            //     Localize.Log.Method(GetType(), nameof(Create), $"Set additional data to {file.GetType().Name}"));
+            //
+            // file = await _fileService.Save(file, cancellationToken);
+            //
+            // await _appDbContextAction.CommitTransactionAsync();
+            //
+            // _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Create)));
+            //
+            // return _mapper.Map<FileCreateResult>(file);
         }
         catch (Exception)
         {
@@ -199,41 +198,43 @@ public class FileHandler : HandlerBase, IFileHandler
 
             var userPermissionComparable =
                 await _permissionService.GetByAliasAndTypeAsync("g_file_a_read_o_file", PermissionType.Value);
+            
+            throw new NotImplementedException("Reimplement via _appDbContext.Set<AuthorizeResult>().FromSqlRaw(...)");
 
-            //Authorize file read
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
-                    userPermissionComparable,
-                    await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
-                        "g_file_a_read_o_file",
-                        cancellationToken),
-                    cancellationToken))
-                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                    Localize.Error.PermissionInsufficientPermissions);
-
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                    userPermissionComparable, file.User,
-                    await _permissionService.GetByAliasAndTypeAsync("g_file_a_read_o_file",
-                        file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
-                    cancellationToken))
-                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                    Localize.Error.PermissionInsufficientPermissions);
-
-            var contentDisposition = new System.Net.Mime.ContentDisposition
-            {
-                FileName = file.Name,
-                Inline = true,
-            };
-            _httpContext.Response.Headers.Append("Content-Disposition", contentDisposition.ToString());
-
-            await _appDbContextAction.CommitTransactionAsync();
-
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
-
-            return new FileReadResult
-            {
-                Data = file.Data,
-                ContentType = file.ContentType
-            };
+            // //Authorize file read
+            // if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
+            //         userPermissionComparable,
+            //         await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
+            //             "g_file_a_read_o_file",
+            //             cancellationToken),
+            //         cancellationToken))
+            //     throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+            //         Localize.Error.PermissionInsufficientPermissions);
+            //
+            // if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
+            //         userPermissionComparable, file.User,
+            //         await _permissionService.GetByAliasAndTypeAsync("g_file_a_read_o_file",
+            //             file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
+            //         cancellationToken))
+            //     throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+            //         Localize.Error.PermissionInsufficientPermissions);
+            //
+            // var contentDisposition = new System.Net.Mime.ContentDisposition
+            // {
+            //     FileName = file.Name,
+            //     Inline = true,
+            // };
+            // _httpContext.Response.Headers.Append("Content-Disposition", contentDisposition.ToString());
+            //
+            // await _appDbContextAction.CommitTransactionAsync();
+            //
+            // _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
+            //
+            // return new FileReadResult
+            // {
+            //     Data = file.Data,
+            //     ContentType = file.ContentType
+            // };
         }
         catch (Exception)
         {
@@ -263,65 +264,67 @@ public class FileHandler : HandlerBase, IFileHandler
 
             var userPermissionComparable =
                 await _permissionService.GetByAliasAndTypeAsync("g_file_a_update_o_file", PermissionType.Value);
+            
+            throw new NotImplementedException("Reimplement via _appDbContext.Set<AuthorizeResult>().FromSqlRaw(...)");
 
-            //Authorize file update
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
-                    userPermissionComparable,
-                    await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
-                        "g_file_a_update_o_file",
-                        cancellationToken),
-                    cancellationToken))
-                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                    Localize.Error.PermissionInsufficientPermissions);
-
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                    userPermissionComparable, file.User,
-                    await _permissionService.GetByAliasAndTypeAsync("g_file_a_update_o_file",
-                        file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
-                    cancellationToken))
-                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                    Localize.Error.PermissionInsufficientPermissions);
-
-            var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData(
-                user,
-                file.User,
-                new Dictionary<string, AutoMapperModelFieldAuthorizeData>
-                {
-                    {
-                        nameof(File.AgeRating),
-                        new AutoMapperModelFieldAuthorizeData
-                        {
-                            PermissionComparable =
-                                await _permissionService.GetByAliasAndTypeAsync(
-                                    "g_file_a_update_o_file.o_agerating_l_automapper", PermissionType.Value),
-                            PermissionCompared = await _permissionService.GetByAliasAndTypeAsync(
-                                "g_file_a_update_o_file.o_agerating_l_automapper",
-                                file.UserId == user.Id
-                                    ? PermissionType.ValueNeededOwner
-                                    : PermissionType.ValueNeededOthers),
-                            PermissionValueSystemCompared =
-                                await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
-                                    "g_file_a_update_o_file.o_agerating_l_automapper", cancellationToken),
-                            CustomValueCompared = null
-                        }
-                    }
-                });
-
-            //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
-            _mapper.Map(data, file,
-                opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
-
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Create),
-                    $"{data.GetType().Name} mapped to {file.GetType().Name}"));
-
-            await _fileService.Save(file, cancellationToken);
-
-            await _appDbContextAction.CommitTransactionAsync();
-
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Update)));
-
-            return _mapper.Map<FileUpdateResult>(file);
+            // //Authorize file update
+            // if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
+            //         userPermissionComparable,
+            //         await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
+            //             "g_file_a_update_o_file",
+            //             cancellationToken),
+            //         cancellationToken))
+            //     throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+            //         Localize.Error.PermissionInsufficientPermissions);
+            //
+            // if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
+            //         userPermissionComparable, file.User,
+            //         await _permissionService.GetByAliasAndTypeAsync("g_file_a_update_o_file",
+            //             file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
+            //         cancellationToken))
+            //     throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+            //         Localize.Error.PermissionInsufficientPermissions);
+            //
+            // var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData(
+            //     user,
+            //     file.User,
+            //     new Dictionary<string, AutoMapperModelFieldAuthorizeData>
+            //     {
+            //         {
+            //             nameof(File.AgeRating),
+            //             new AutoMapperModelFieldAuthorizeData
+            //             {
+            //                 PermissionComparable =
+            //                     await _permissionService.GetByAliasAndTypeAsync(
+            //                         "g_file_a_update_o_file.o_agerating_l_automapper", PermissionType.Value),
+            //                 PermissionCompared = await _permissionService.GetByAliasAndTypeAsync(
+            //                     "g_file_a_update_o_file.o_agerating_l_automapper",
+            //                     file.UserId == user.Id
+            //                         ? PermissionType.ValueNeededOwner
+            //                         : PermissionType.ValueNeededOthers),
+            //                 PermissionValueSystemCompared =
+            //                     await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
+            //                         "g_file_a_update_o_file.o_agerating_l_automapper", cancellationToken),
+            //                 CustomValueCompared = null
+            //             }
+            //         }
+            //     });
+            //
+            // //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
+            // _mapper.Map(data, file,
+            //     opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
+            //
+            // _logger.Log(LogLevel.Information,
+            //     Localize.Log.Method(GetType(), nameof(Create),
+            //         $"{data.GetType().Name} mapped to {file.GetType().Name}"));
+            //
+            // await _fileService.Save(file, cancellationToken);
+            //
+            // await _appDbContextAction.CommitTransactionAsync();
+            //
+            // _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Update)));
+            //
+            // return _mapper.Map<FileUpdateResult>(file);
         }
         catch (Exception)
         {
@@ -352,32 +355,34 @@ public class FileHandler : HandlerBase, IFileHandler
             //Get file creation Permission that will be compared
             var userPermissionComparable =
                 await _permissionService.GetByAliasAndTypeAsync("g_file_a_delete_o_file", PermissionType.Value);
+            
+            throw new NotImplementedException("Reimplement via _appDbContext.Set<AuthorizeResult>().FromSqlRaw(...)");
 
-            //Authorize file delete
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
-                    userPermissionComparable,
-                    await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
-                        "g_file_a_delete_o_file",
-                        cancellationToken),
-                    cancellationToken))
-                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                    Localize.Error.PermissionInsufficientPermissions);
-
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                    userPermissionComparable, file.User,
-                    await _permissionService.GetByAliasAndTypeAsync("g_file_a_delete_o_file",
-                        file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
-                    cancellationToken))
-                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                    Localize.Error.PermissionInsufficientPermissions);
-
-            await _fileService.Delete(file, cancellationToken);
-
-            await _appDbContextAction.CommitTransactionAsync();
-
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Delete)));
-
-            return new FileDeleteResult();
+            // //Authorize file delete
+            // if (!await _userGroupAdvancedService.AuthorizePermissionToPermissionValue(user,
+            //         userPermissionComparable,
+            //         await _userGroupAdvancedService.GetSystemPermissionValueByAlias(
+            //             "g_file_a_delete_o_file",
+            //             cancellationToken),
+            //         cancellationToken))
+            //     throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+            //         Localize.Error.PermissionInsufficientPermissions);
+            //
+            // if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
+            //         userPermissionComparable, file.User,
+            //         await _permissionService.GetByAliasAndTypeAsync("g_file_a_delete_o_file",
+            //             file.UserId == user.Id ? PermissionType.ValueNeededOwner : PermissionType.ValueNeededOthers),
+            //         cancellationToken))
+            //     throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+            //         Localize.Error.PermissionInsufficientPermissions);
+            //
+            // await _fileService.Delete(file, cancellationToken);
+            //
+            // await _appDbContextAction.CommitTransactionAsync();
+            //
+            // _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Delete)));
+            //
+            // return new FileDeleteResult();
         }
         catch (Exception)
         {

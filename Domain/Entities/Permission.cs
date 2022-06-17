@@ -20,14 +20,6 @@ namespace Domain.Entities
         public string Alias { get; set; }
 
         /// <summary>
-        /// Value Type of the Permission.
-        /// Compared permissions Value Type must equal!
-        /// </summary>
-        [AllowFilterExpression]
-        [AllowFilterSort]
-        public PermissionValueType ValueType { get; set; }
-
-        /// <summary>
         /// Compare mode of the permission. Defines how permission values are compared against each other.
         /// Compared permissions CompareMode must equal!
         /// </summary>

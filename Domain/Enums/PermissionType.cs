@@ -6,6 +6,5 @@ public enum PermissionType
     Unknown,
     Value,
     ValueNeededOwner,
-    ValueNeededOthers,
-    ValueNeededSystem,
+    ValueNeededOthers
 }

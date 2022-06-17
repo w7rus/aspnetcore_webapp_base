@@ -20,4 +20,9 @@ public class AuthorizeModel
     /// T1 is EntityLeft, T2 is EntityRight ex. T1."Id" = T2."OwnerUserId"
     /// </summary>
     public string SQLExpressionPermissionTypeValueNeededOwner { get; set; }
+
+    public string GetRawSql()
+    {
+        return $"SELECT public.\"AuthorizeEntityPermissionToEntityPermission\"({EntityLeftTableName}, {(string.IsNullOrEmpty(EntityLeftGroupsTableName) ? "null" : EntityLeftGroupsTableName)}, {(string.IsNullOrEmpty(EntityLeftEntityToEntityMappingsTableName) ? "null" : EntityLeftEntityToEntityMappingsTableName)}, {EntityLeftId}, {EntityLeftPermissionAlias}, {EntityRightTableName}, {(string.IsNullOrEmpty(EntityRightGroupsTableName) ? "null" : EntityRightGroupsTableName)}, {(string.IsNullOrEmpty(EntityRightEntityToEntityMappingsTableName) ? "null" : EntityRightEntityToEntityMappingsTableName)}, {EntityRightId}, {EntityRightPermissionAlias}, {SQLExpressionPermissionTypeValueNeededOwner}) as Result";
+    }
 }

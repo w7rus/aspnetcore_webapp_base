@@ -17,11 +17,12 @@ using Domain.Entities;
 using Domain.Enums;
 using DTO.Models.PermissionValue;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BLL.Handlers;
 
-public interface IPermissionValueHandler
+public interface IUserGroupPermissionValueHandler
 {
     Task<DTOResultBase> Create(PermissionValueCreate data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Read(PermissionValueRead data, CancellationToken cancellationToken = default);
@@ -35,7 +36,7 @@ public interface IPermissionValueHandler
     Task<DTOResultBase> Delete(PermissionValueDelete data, CancellationToken cancellationToken = default);
 }
 
-public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
+public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermissionValueHandler
 {
     #region Fields
 
@@ -45,28 +46,28 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
     private readonly IUserGroupService _userGroupService;
-    private readonly IUserGroupAdvancedService _userGroupAdvancedService;
     private readonly IUserAdvancedService _userAdvancedService;
     private readonly IUserRepository _userRepository;
     private readonly IUserGroupRepository _userGroupRepository;
     private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
+    private readonly AppDbContext _appDbContext;
 
     #endregion
 
     #region Ctor
 
-    public PermissionValueHandler(
+    public UserGroupPermissionValueHandler(
         ILogger<HandlerBase> logger,
         IAppDbContextAction appDbContextAction,
         IPermissionValueService permissionValueService,
         IMapper mapper,
         IPermissionService permissionService,
         IUserGroupService userGroupService,
-        IUserGroupAdvancedService userGroupAdvancedService,
         IUserAdvancedService userAdvancedService,
         IUserRepository userRepository,
         IUserGroupRepository userGroupRepository,
-        IUserToUserGroupMappingRepository userToUserGroupMappingRepository
+        IUserToUserGroupMappingRepository userToUserGroupMappingRepository,
+        AppDbContext appDbContext
     )
     {
         _logger = logger;
@@ -75,11 +76,11 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
         _mapper = mapper;
         _permissionService = permissionService;
         _userGroupService = userGroupService;
-        _userGroupAdvancedService = userGroupAdvancedService;
         _userAdvancedService = userAdvancedService;
         _userRepository = userRepository;
         _userGroupRepository = userGroupRepository;
         _userToUserGroupMappingRepository = userToUserGroupMappingRepository;
+        _appDbContext = appDbContext;
     }
 
     #endregion
@@ -109,13 +110,23 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
                     Localize.Error.UserGroupNotFound);
 
             //Authorize permissionValue creation
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_create_o_permissionvalue",
-                        PermissionType.Value), userGroup,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_create_o_permissionvalue",
-                        userGroup.OwnerUser == user
-                            ? PermissionType.ValueNeededOwner
-                            : PermissionType.ValueNeededOthers), cancellationToken))
+            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+                .FromSqlRaw((new AuthorizeModel
+                {
+                    EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
+                    EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
+                    EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                    EntityLeftId = $"'{user.Id.ToString()}'",
+                    EntityLeftPermissionAlias = "'g_any_a_create_o_permissionvalue'",
+                    EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
+                    EntityRightGroupsTableName = null,
+                    EntityRightEntityToEntityMappingsTableName = null,
+                    EntityRightId = $"'{userGroup.Id.ToString()}'",
+                    EntityRightPermissionAlias = "'g_any_a_create_o_permissionvalue'",
+                    SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
+                }).GetRawSql()).ToList().SingleOrDefault();
+            
+            if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
@@ -173,13 +184,23 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
                     Localize.Error.UserGroupNotFound);
             
             //Authorize permissionValue reading
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
-                        PermissionType.Value), userGroup,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_read_o_permissionvalue",
-                        userGroup.OwnerUser == user
-                            ? PermissionType.ValueNeededOwner
-                            : PermissionType.ValueNeededOthers), cancellationToken))
+            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+                .FromSqlRaw((new AuthorizeModel
+            {
+                EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
+                EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
+                EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                EntityLeftId = $"'{user.Id.ToString()}'",
+                EntityLeftPermissionAlias = "'g_any_a_read_o_permissionvalue'",
+                EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
+                EntityRightGroupsTableName = null,
+                EntityRightEntityToEntityMappingsTableName = null,
+                EntityRightId = $"'{userGroup.Id.ToString()}'",
+                EntityRightPermissionAlias = "'g_any_a_read_o_permissionvalue'",
+                SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
+            }).GetRawSql()).ToList().SingleOrDefault();
+            
+            if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
             
@@ -276,13 +297,23 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
                     Localize.Error.UserGroupNotFound);
             
             //Authorize permissionValue update
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_update_o_permissionvalue",
-                        PermissionType.Value), userGroup,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_update_o_permissionvalue",
-                        userGroup.OwnerUser == user
-                            ? PermissionType.ValueNeededOwner
-                            : PermissionType.ValueNeededOthers), cancellationToken))
+            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+                .FromSqlRaw((new AuthorizeModel
+                {
+                    EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
+                    EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
+                    EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                    EntityLeftId = $"'{user.Id.ToString()}'",
+                    EntityLeftPermissionAlias = "'g_any_a_update_o_permissionvalue'",
+                    EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
+                    EntityRightGroupsTableName = null,
+                    EntityRightEntityToEntityMappingsTableName = null,
+                    EntityRightId = $"'{userGroup.Id.ToString()}'",
+                    EntityRightPermissionAlias = "'g_any_a_update_o_permissionvalue'",
+                    SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
+                }).GetRawSql()).ToList().SingleOrDefault();
+            
+            if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
@@ -335,13 +366,23 @@ public class PermissionValueHandler : HandlerBase, IPermissionValueHandler
                     Localize.Error.UserGroupNotFound);
             
             //Authorize permissionValue update
-            if (!await _userGroupAdvancedService.AuthorizePermissionToPermission(user,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_delete_o_permissionvalue",
-                        PermissionType.Value), userGroup,
-                    await _permissionService.GetByAliasAndTypeAsync("g_any_a_delete_o_permissionvalue",
-                        userGroup.OwnerUser == user
-                            ? PermissionType.ValueNeededOwner
-                            : PermissionType.ValueNeededOthers), cancellationToken))
+            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+                .FromSqlRaw((new AuthorizeModel
+                {
+                    EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
+                    EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
+                    EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                    EntityLeftId = $"'{user.Id.ToString()}'",
+                    EntityLeftPermissionAlias = "'g_any_a_delete_o_permissionvalue'",
+                    EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
+                    EntityRightGroupsTableName = null,
+                    EntityRightEntityToEntityMappingsTableName = null,
+                    EntityRightId = $"'{userGroup.Id.ToString()}'",
+                    EntityRightPermissionAlias = "'g_any_a_delete_o_permissionvalue'",
+                    SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
+                }).GetRawSql()).ToList().SingleOrDefault();
+            
+            if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 

@@ -58,10 +58,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAdvancedServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IApplicationAdvancedService, ApplicationAdvancedService>();
-        serviceCollection.AddScoped<IPermissionAdvancedService, PermissionAdvancedService>();
         serviceCollection.AddScoped<IJsonWebTokenAdvancedService, JsonWebTokenAdvancedService>();
         serviceCollection.AddScoped<IUserAdvancedService, UserAdvancedService>();
-        serviceCollection.AddScoped<IUserGroupAdvancedService, UserGroupAdvancedService>();
         serviceCollection.AddTransient<IWarningAdvancedService, WarningAdvancedService>();
 
         return serviceCollection;
@@ -71,7 +69,7 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddScoped<IAuthHandler, AuthHandler>();
         serviceCollection.AddScoped<IFileHandler, FileHandler>();
-        serviceCollection.AddScoped<IPermissionValueHandler, PermissionValueHandler>();
+        serviceCollection.AddScoped<IUserGroupPermissionValueHandler, UserGroupPermissionValueHandler>();
         serviceCollection.AddScoped<IPermissionHandler, PermissionHandler>();
         serviceCollection.AddScoped<IDomainInfoHandler, DomainInfoHandler>();
 
