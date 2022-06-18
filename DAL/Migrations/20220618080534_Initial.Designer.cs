@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220617140702_Initial")]
+    [Migration("20220618080534_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,12 +25,12 @@ namespace DAL.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entities.AuthorizeResult", b =>
+            modelBuilder.Entity("Domain.Entities.AuthorizeModelResult", b =>
                 {
                     b.Property<bool>("Result")
                         .HasColumnType("boolean");
 
-                    b.ToTable("AuthorizeResult");
+                    b.ToTable("AuthorizeModelResult");
                 });
 
             modelBuilder.Entity("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>
@@ -2588,6 +2588,20 @@ namespace DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("ce374862-f799-4519-9fa8-a8dcf1b9e8ab"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            FailedSignInAttempts = 0,
+                            IsEmailVerified = false,
+                            IsPhoneNumberVerified = false,
+                            IsTemporary = false,
+                            LastActivity = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastSignIn = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.UserGroup", b =>
@@ -2718,6 +2732,16 @@ namespace DAL.Migrations
                         .IsUnique();
 
                     b.HasDiscriminator().HasValue("UserToUserGroupMapping");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("d49b34c2-7970-436a-9c61-0a63466889df"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityLeftId = new Guid("ce374862-f799-4519-9fa8-a8dcf1b9e8ab"),
+                            EntityRightId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>

@@ -11,10 +11,10 @@ namespace DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(Consts.MigrationBulderAdditions.CreateExtensionHStore);
+            migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateExtensionHStore);
             
             migrationBuilder.CreateTable(
-                name: "AuthorizeResult",
+                name: "AuthorizeModelResult",
                 columns: table => new
                 {
                     Result = table.Column<bool>(type: "boolean", nullable: false)
@@ -309,6 +309,16 @@ namespace DAL.Migrations
                     { new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"), "Member", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "User group with member like permission set", true, null, 50L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) },
                     { new Guid("b26a9112-211b-462f-bd41-8f38a3568106"), "Guest", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "User group with guest like permission set", true, null, 25L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "DisableSignInUntil", "Email", "FailedSignInAttempts", "IsEmailVerified", "IsPhoneNumberVerified", "IsTemporary", "LastActivity", "LastIpAddress", "LastSignIn", "Password", "PhoneNumber", "UpdatedAt" },
+                values: new object[] { new Guid("ce374862-f799-4519-9fa8-a8dcf1b9e8ab"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, null, 0, false, false, false, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) });
+
+            migrationBuilder.InsertData(
+                table: "EntityToEntityMappingBase<User, UserGroup>",
+                columns: new[] { "Id", "CreatedAt", "Discriminator", "EntityLeftId", "EntityRightId", "UpdatedAt" },
+                values: new object[] { new Guid("d49b34c2-7970-436a-9c61-0a63466889df"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "UserToUserGroupMapping", new Guid("ce374862-f799-4519-9fa8-a8dcf1b9e8ab"), new Guid("55119e40-f094-4560-877f-42d18ff197db"), new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)) });
 
             migrationBuilder.InsertData(
                 table: "PermissionValues",
@@ -611,15 +621,15 @@ namespace DAL.Migrations
                 column: "Email",
                 unique: true);
             
-            migrationBuilder.Sql(Consts.MigrationBulderAdditions.CreateOrReplaceFunctionAuthorizeEntityPermissionValueToEntityPermissionValue);
-            migrationBuilder.Sql(Consts.MigrationBulderAdditions.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermissionValue);
-            migrationBuilder.Sql(Consts.MigrationBulderAdditions.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermission);
+            migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionValueToEntityPermissionValue);
+            migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermissionValue);
+            migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermission);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AuthorizeResult");
+                name: "AuthorizeModelResult");
 
             migrationBuilder.DropTable(
                 name: "EntityToEntityMappingBase<User, UserGroup>");

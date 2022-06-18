@@ -103,7 +103,7 @@ public class FileHandler : HandlerBase, IFileHandler
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-
+        
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -121,35 +121,20 @@ public class FileHandler : HandlerBase, IFileHandler
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create), $"Copied {ms.Length} bytes from form file"));
 
-            var rawSql = new AuthorizeModel
-            {
-                EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
-                EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                EntityLeftId = $"'{user.Id.ToString()}'",
-                EntityLeftPermissionAlias = "'g_file_a_create_o_file'",
-                EntityRightTableName = $"'{_userRepository.GetTableName()}'",
-                EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                EntityRightId = $"'{user.Id.ToString()}'",
-                EntityRightPermissionAlias = "'g_file_a_create_o_file'",
-                SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
-            }.GetRawSql();
-
             //Authorize file create
-            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
                 .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = "'g_file_a_create_o_file'",
+                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file}'",
                     EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                     EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityRightId = $"'{user.Id.ToString()}'",
-                    EntityRightPermissionAlias = "'g_file_a_create_o_file'",
+                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
             
@@ -163,19 +148,19 @@ public class FileHandler : HandlerBase, IFileHandler
                 {
                     {
                         nameof(File.AgeRating),
-                        _appDbContext.Set<AuthorizeResult>()
+                        _appDbContext.Set<AuthorizeModelResult>()
                             .FromSqlRaw(new AuthorizeModel
                             {
                                 EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                                 EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                                 EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                                 EntityLeftId = $"'{user.Id.ToString()}'",
-                                EntityLeftPermissionAlias = "'g_file_a_create_o_file.o_agerating_l_automapper'",
+                                EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper}'",
                                 EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                                 EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                                 EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                                 EntityRightId = $"'{user.Id.ToString()}'",
-                                EntityRightPermissionAlias = "'g_file_a_create_o_file.o_agerating_l_automapper'",
+                                EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper}'",
                                 SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                             }.GetRawSql()).ToList().SingleOrDefault()?.Result ?? false
                     }
@@ -234,19 +219,19 @@ public class FileHandler : HandlerBase, IFileHandler
             var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
 
             //Authorize file read
-            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
                 .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = "'g_file_a_read_o_file'",
+                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_read_o_file}'",
                     EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                     EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityRightId = $"'{file.UserId.ToString()}'",
-                    EntityRightPermissionAlias = "'g_file_a_read_o_file'",
+                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_read_o_file}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
             
@@ -298,19 +283,19 @@ public class FileHandler : HandlerBase, IFileHandler
             var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
 
             //Authorize file update
-            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
                 .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = "'g_file_a_update_o_file'",
+                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file}'",
                     EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                     EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityRightId = $"'{file.UserId.ToString()}'",
-                    EntityRightPermissionAlias = "'g_file_a_update_o_file'",
+                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
             
@@ -324,19 +309,19 @@ public class FileHandler : HandlerBase, IFileHandler
                 {
                     {
                         nameof(File.AgeRating),
-                        _appDbContext.Set<AuthorizeResult>()
+                        _appDbContext.Set<AuthorizeModelResult>()
                             .FromSqlRaw(new AuthorizeModel
                             {
                                 EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                                 EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                                 EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                                 EntityLeftId = $"'{user.Id.ToString()}'",
-                                EntityLeftPermissionAlias = "'g_file_a_update_o_file.o_agerating_l_automapper'",
+                                EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper}'",
                                 EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                                 EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                                 EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                                 EntityRightId = $"'{file.UserId.ToString()}'",
-                                EntityRightPermissionAlias = "'g_file_a_update_o_file.o_agerating_l_automapper'",
+                                EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper}'",
                                 SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                             }.GetRawSql()).ToList().SingleOrDefault()?.Result ?? false
                     }
@@ -386,19 +371,19 @@ public class FileHandler : HandlerBase, IFileHandler
             var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
 
             //Authorize file delete
-            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
                 .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = "'g_file_a_delete_o_file'",
+                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_delete_o_file}'",
                     EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                     EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityRightId = $"'{file.UserId.ToString()}'",
-                    EntityRightPermissionAlias = "'g_file_a_delete_o_file'",
+                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_delete_o_file}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
             

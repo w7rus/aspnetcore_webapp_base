@@ -109,19 +109,19 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     Localize.Error.UserGroupNotFound);
 
             //Authorize permissionValue creation
-            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
                 .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = "'g_any_a_create_o_permissionvalue'",
+                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_create_o_permissionvalue}'",
                     EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightId = $"'{userGroup.Id.ToString()}'",
-                    EntityRightPermissionAlias = "'g_any_a_create_o_permissionvalue'",
+                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_create_o_permissionvalue}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
             
@@ -183,19 +183,19 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     Localize.Error.UserGroupNotFound);
             
             //Authorize permissionValue reading
-            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
                 .FromSqlRaw(new AuthorizeModel
             {
                 EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                 EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                 EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                 EntityLeftId = $"'{user.Id.ToString()}'",
-                EntityLeftPermissionAlias = "'g_any_a_read_o_permissionvalue'",
+                EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_read_o_permissionvalue}'",
                 EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = $"'{userGroup.Id.ToString()}'",
-                EntityRightPermissionAlias = "'g_any_a_read_o_permissionvalue'",
+                EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_read_o_permissionvalue}'",
                 SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
             }.GetRawSql()).ToList().SingleOrDefault();
             
@@ -241,12 +241,12 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                         EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                         EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                         EntityLeftId = $"'{user.Id.ToString()}'",
-                        EntityLeftPermissionAlias = "'g_any_a_read_o_permissionvalue'",
+                        EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_read_o_permissionvalue}'",
                         EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
                         EntityRightGroupsTableName = null,
                         EntityRightEntityToEntityMappingsTableName = null,
                         EntityRightId = "\"EntityId\"",
-                        EntityRightPermissionAlias = "'g_any_a_read_o_permissionvalue'",
+                        EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_read_o_permissionvalue}'",
                         SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
                     }, cancellationToken));
 
@@ -296,19 +296,19 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     Localize.Error.UserGroupNotFound);
             
             //Authorize permissionValue update
-            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
                 .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = "'g_any_a_update_o_permissionvalue'",
+                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_update_o_permissionvalue}'",
                     EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightId = $"'{userGroup.Id.ToString()}'",
-                    EntityRightPermissionAlias = "'g_any_a_update_o_permissionvalue'",
+                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_update_o_permissionvalue}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
             
@@ -365,19 +365,19 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     Localize.Error.UserGroupNotFound);
             
             //Authorize permissionValue update
-            var authorizeResult = _appDbContext.Set<AuthorizeResult>()
+            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
                 .FromSqlRaw(new AuthorizeModel
                 {
                     EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                     EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = "'g_any_a_delete_o_permissionvalue'",
+                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_delete_o_permissionvalue}'",
                     EntityRightTableName = $"'{_userGroupRepository.GetTableName()}'",
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightId = $"'{userGroup.Id.ToString()}'",
-                    EntityRightPermissionAlias = "'g_any_a_delete_o_permissionvalue'",
+                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_any_a_delete_o_permissionvalue}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"OwnerUserId\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
             
