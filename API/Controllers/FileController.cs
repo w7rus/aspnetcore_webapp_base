@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Net;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
@@ -6,13 +9,20 @@ using BLL.Handlers;
 using BLL.Services;
 using BLL.Services.Advanced;
 using BrunoZell.ModelBinding;
+using Common.Attributes;
+using Common.Enums;
+using Common.Exceptions;
+using Common.Helpers;
 using Common.Models;
 using DTO.Models.File;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using Swashbuckle.AspNetCore.Annotations;
+using AuthenticationSchemes = Common.Models.AuthenticationSchemes;
 
 namespace API.Controllers;
 
@@ -44,20 +54,78 @@ public class FileController : CustomControllerBase
 
     #region Methods
 
+    [DisableFormValueModelBinding]
+    [RequestSizeLimit(134217728L)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 134217728L)]
     [HttpPost]
     [SwaggerOperation(Summary = "Creates file",
         Description = "Creates file")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Create(
-        [Required] [FromForm] [ModelBinder(BinderType = typeof(JsonModelBinder))]
-        FileCreate data,
-        IFormFile file,
-        CancellationToken cancellationToken = default
-    )
+    public async Task<IActionResult> Create(CancellationToken cancellationToken = default)
     {
-        return ResponseWith(await _fileHandler.Create(data, file, cancellationToken));
+        if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
+        {
+            throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
+                Localize.Error.RequestMultipartExpected);
+        }
+        
+        var boundary = MultipartRequestHelper.GetBoundary(MediaTypeHeaderValue.Parse(Request.ContentType));
+        var reader = new MultipartReader(boundary, HttpContext.Request.Body);
+        
+        var multipartSection = await reader.ReadNextSectionAsync(cancellationToken);
+        
+        FileCreate data = null;
+        
+        //First section must be a model, next one is file
+        {
+            if (multipartSection == null)
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
+                    Localize.Error.RequestMultipartSectionNotFound);
+        
+            if (!ContentDispositionHeaderValue.TryParse(
+                    multipartSection.ContentDisposition, out var contentDispositionForm))
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Request,
+                    Localize.Error.RequestContentDispositionParseFailed);
+        
+            if (!MultipartRequestHelper.HasFormDataContentDisposition(contentDispositionForm))
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
+                    Localize.Error.RequestContentDispositionFormExpected);
+            
+            var encoding = multipartSection.GetEncoding();
+            
+            if (encoding == null)
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
+                    Localize.Error.RequestMultipartSectionEncodingNotSupported);
+            
+            using var streamReader = new StreamReader(multipartSection.Body, encoding,
+                detectEncodingFromByteOrderMarks: true, bufferSize: 1024);
+            
+            data = (await JsonSerializer.DeserializeAsync(streamReader.BaseStream, typeof(FileCreate),
+                 cancellationToken: cancellationToken) ??
+             throw new CustomException(Localize.Error.ObjectDeserializationFailed)) as FileCreate ??
+            throw new CustomException(Localize.Error.ObjectCastFailed);
+        }
+        
+        multipartSection = await reader.ReadNextSectionAsync(cancellationToken);
+
+        if (multipartSection == null)
+            throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
+                Localize.Error.RequestMultipartSectionNotFound);
+        
+        if (!ContentDispositionHeaderValue.TryParse(
+                multipartSection.ContentDisposition, out var contentDispositionFile))
+            throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Request,
+                Localize.Error.RequestContentDispositionParseFailed);
+        
+        if (!MultipartRequestHelper.HasFileContentDisposition(contentDispositionFile))
+            throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
+                Localize.Error.RequestContentDispositionFormExpected);
+            
+        await using var fileStream = multipartSection.Body;
+        
+        return ResponseWith(await _fileHandler.Create(data, WebUtility.HtmlEncode(contentDispositionFile.FileName.Value), fileStream, cancellationToken));
     }
 
     [HttpGet]

@@ -25,7 +25,7 @@ public class AutoMapperProfile : Profile
         #region From DTO to DOMAIN
 
         CreateMap<FileCreate, File>()
-            .ForMember(_ => _.Data, options => options.Ignore())
+            .ForMember(_ => _.Stream, options => options.Ignore())
             .ForMember(_ => _.Metadata, options => options.Ignore())
             .ForMember(_ => _.Name, options => options.Ignore())
             .ForMember(_ => _.Size, options => options.Ignore())
@@ -40,7 +40,7 @@ public class AutoMapperProfile : Profile
             });
 
         CreateMap<FileUpdate, File>()
-            .ForMember(_ => _.Data, options => options.Ignore())
+            .ForMember(_ => _.Stream, options => options.Ignore())
             .ForMember(_ => _.Metadata, options => options.Ignore())
             .ForMember(_ => _.Name, options => options.Ignore())
             .ForMember(_ => _.Size, options => options.Ignore())

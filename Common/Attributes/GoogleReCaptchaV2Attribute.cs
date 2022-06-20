@@ -2,13 +2,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Common.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
 
 namespace Common.Attributes
 {
+    public class GoogleReCaptchaResult
+    {
+        private bool Success { get; set; }
+    }
+    
     /// <summary>
     /// Attribute to mark Member of a DTO model to verify that requester had provided valid GoogleReCaptchaV2 token.
     /// </summary>
@@ -37,9 +43,10 @@ namespace Common.Attributes
                 return errorResult.Value;
             }
 
-            var jsonResponse = httpResponse.Content.ReadAsStringAsync().Result;
-            dynamic jsonData = JObject.Parse(jsonResponse);
-            return jsonData.success != true.ToString().ToLower() ? errorResult.Value : ValidationResult.Success;
+            var jsonResponse = httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            // dynamic jsonData = JObject.Parse(jsonResponse);
+            dynamic jsonData = JsonSerializer.Deserialize(jsonResponse, typeof(GoogleReCaptchaResult));
+            return jsonData?.Success != true ? errorResult.Value : ValidationResult.Success;
         }
     }
 }

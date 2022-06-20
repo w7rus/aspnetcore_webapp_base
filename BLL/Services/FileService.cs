@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -22,8 +23,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using File = Domain.Entities.File;
+using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace BLL.Services;
 
@@ -82,21 +83,21 @@ public class FileService : IFileService
                 _miscOptions.FileServer.Port, _miscOptions.FileServer.Path);
             var response = await httpClient.PostAsync(uriBuilder.ToString(), new MultipartFormDataContent
             {
-                {JsonContent.Create(new FileCDNCreate()), "data"},
-                {new ByteArrayContent(entity.Data), "file", entity.Name}
+                // {JsonContent.Create(new FileCDNCreate()), "data"},
+                {new StreamContent(entity.Stream), "file", entity.Name}
             }, cancellationToken);
-            
+
             if (!response.IsSuccessStatusCode)
                 throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
                     Localize.Error.ResponseStatusCodeUnsuccessful);
 
-            var fileCdnCreateResult =
-                JsonConvert.DeserializeObject<FileCDNCreateResult>(
-                    await response.Content.ReadAsStringAsync(cancellationToken));
-
-            if (fileCdnCreateResult == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.JsonConvert,
-                    Localize.Error.ObjectDeserializationFailed);
+            var fileCdnCreateResult = (await JsonSerializer.DeserializeAsync(
+                                           await response.Content.ReadAsStreamAsync(cancellationToken),
+                                           typeof(FileCDNCreateResult),
+                                           cancellationToken: cancellationToken) ??
+                                       throw new CustomException(Localize.Error.ObjectDeserializationFailed)) as
+                                      FileCDNCreateResult ??
+                                      throw new CustomException(Localize.Error.ObjectCastFailed);
 
             entity.Name = fileCdnCreateResult.FileName;
         }
@@ -130,7 +131,7 @@ public class FileService : IFileService
                     FileName = entity.Name
                 }));
         var response = await httpClient.DeleteAsync(uriBuilder.ToString(), cancellationToken);
-        
+
         if (!response.IsSuccessStatusCode)
             throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
                 Localize.Error.ResponseStatusCodeUnsuccessful);
@@ -154,8 +155,9 @@ public class FileService : IFileService
         var file = await _fileRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
         var random = new Random();
-        
-        var cdnServer = _miscOptions.CDNServers.ElementAt(random.Next(0, _miscOptions.CDNServers.Count)) ?? throw new CustomException();
+
+        var cdnServer = _miscOptions.CDNServers.ElementAt(random.Next(0, _miscOptions.CDNServers.Count)) ??
+                        throw new CustomException();
 
         var httpClient = _httpClientFactory.CreateClient();
         var uriBuilder = new UriBuilder(cdnServer.Scheme, cdnServer.Host,
@@ -163,13 +165,15 @@ public class FileService : IFileService
             {
                 FileName = file.Name
             }));
-        var response = await httpClient.GetAsync(uriBuilder.ToString(), cancellationToken);
-        
+
+        var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, uriBuilder.ToString()),
+            HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
         if (!response.IsSuccessStatusCode)
             throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
                 Localize.Error.ResponseStatusCodeUnsuccessful);
 
-        file.Data = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+        file.Stream = await response.Content.ReadAsStreamAsync(cancellationToken);
         file.ContentType = response.Content.Headers.ContentType?.ToString();
 
         _logger.Log(LogLevel.Information,

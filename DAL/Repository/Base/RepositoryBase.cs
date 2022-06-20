@@ -438,37 +438,21 @@ namespace DAL.Repository.Base
                                 {
                                     throw new CustomException(Localize.Error
                                         .FilterMatchModelItemExpressionValueTypeNotSupported);
-                                    //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
-                                    // var value = matchRule.Value[0];
-                                    // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                                    // break;
                                 }
                                 case ValueType.UInt16:
                                 {
                                     throw new CustomException(Localize.Error
                                         .FilterMatchModelItemExpressionValueTypeNotSupported);
-                                    //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
-                                    // var value = BitConverter.ToUInt16(matchRule.Value);
-                                    // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                                    // break;
                                 }
                                 case ValueType.UInt32:
                                 {
                                     throw new CustomException(Localize.Error
                                         .FilterMatchModelItemExpressionValueTypeNotSupported);
-                                    //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
-                                    // var value = BitConverter.ToUInt32(matchRule.Value);
-                                    // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                                    // break;
                                 }
                                 case ValueType.UInt64:
                                 {
                                     throw new CustomException(Localize.Error
                                         .FilterMatchModelItemExpressionValueTypeNotSupported);
-                                    //TODO: PostgreSql does not support unsigned value types, either create mappings or convert to BigInteger or Decimal?
-                                    // var value = BitConverter.ToUInt64(matchRule.Value);
-                                    // AddMatchParameter(property, matchRule.FilterMatchMode, sqlParameterCounterAsString, value);
-                                    // break;
                                 }
                                 case ValueType.Float:
                                 {

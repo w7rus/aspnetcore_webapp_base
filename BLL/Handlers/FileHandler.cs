@@ -27,7 +27,13 @@ namespace BLL.Handlers;
 
 public interface IFileHandler
 {
-    Task<DTOResultBase> Create(FileCreate data, IFormFile formFile, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Create(
+        FileCreate data,
+        string fileNameOriginal,
+        Stream stream,
+        CancellationToken cancellationToken = default
+    );
+
     Task<DTOResultBase> Read(FileRead data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Update(FileUpdate data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Delete(FileDelete data, CancellationToken cancellationToken = default);
@@ -95,7 +101,8 @@ public class FileHandler : HandlerBase, IFileHandler
 
     public async Task<DTOResultBase> Create(
         FileCreate data,
-        IFormFile formFile,
+        string fileNameOriginal,
+        Stream stream,
         CancellationToken cancellationToken = default
     )
     {
@@ -103,7 +110,7 @@ public class FileHandler : HandlerBase, IFileHandler
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-        
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -113,13 +120,8 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
 
-            var fileInfo = new FileInfo(formFile.FileName);
+            var fileInfo = new FileInfo(fileNameOriginal);
             var fileName = Guid.NewGuid() + fileInfo.Extension;
-            var ms = new MemoryStream();
-            await formFile.OpenReadStream().CopyToAsync(ms, cancellationToken);
-
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Create), $"Copied {ms.Length} bytes from form file"));
 
             //Authorize file create
             var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
@@ -132,16 +134,17 @@ public class FileHandler : HandlerBase, IFileHandler
                     EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file}'",
                     EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                     EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                    EntityRightEntityToEntityMappingsTableName =
+                        $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityRightId = $"'{user.Id.ToString()}'",
                     EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
-            
+
             if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
-            
+
             var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData
             {
                 FieldAuthorizeResultDictionary = new Dictionary<string, bool>
@@ -153,43 +156,47 @@ public class FileHandler : HandlerBase, IFileHandler
                             {
                                 EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                                 EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                                EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                                EntityLeftEntityToEntityMappingsTableName =
+                                    $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                                 EntityLeftId = $"'{user.Id.ToString()}'",
-                                EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper}'",
+                                EntityLeftPermissionAlias =
+                                    $"'{Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper}'",
                                 EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                                 EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                                EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                                EntityRightEntityToEntityMappingsTableName =
+                                    $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                                 EntityRightId = $"'{user.Id.ToString()}'",
-                                EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper}'",
+                                EntityRightPermissionAlias =
+                                    $"'{Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper}'",
                                 SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                             }.GetRawSql()).ToList().SingleOrDefault()?.Result ?? false
                     }
                 }
             };
-            
+
             //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
             var file = _mapper.Map<File>(data,
                 opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
-            
+
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create),
                     $"{data.GetType().Name} mapped to {file.GetType().Name}"));
-            
+
             file.Name = fileName;
-            file.Data = ms.ToArray();
-            file.Size = file.Data.Length;
+            file.Stream = stream;
+            file.Size = file.Stream.Length;
             file.Metadata = new Dictionary<string, string>();
             file.UserId = user.Id;
-            
+
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create), $"Set additional data to {file.GetType().Name}"));
-            
+
             file = await _fileService.Save(file, cancellationToken);
-            
+
             await _appDbContextAction.CommitTransactionAsync();
-            
+
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Create)));
-            
+
             return _mapper.Map<FileCreateResult>(file);
         }
         catch (Exception)
@@ -229,31 +236,33 @@ public class FileHandler : HandlerBase, IFileHandler
                     EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_read_o_file}'",
                     EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                     EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                    EntityRightEntityToEntityMappingsTableName =
+                        $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityRightId = $"'{file.UserId.ToString()}'",
                     EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_read_o_file}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
-            
+
             if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
-            
+
             var contentDisposition = new System.Net.Mime.ContentDisposition
             {
                 FileName = file.Name,
                 Inline = true,
             };
             _httpContext.Response.Headers.Append("Content-Disposition", contentDisposition.ToString());
-            
+
             await _appDbContextAction.CommitTransactionAsync();
-            
+
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
-            
+
             return new FileReadResult
             {
-                Data = file.Data,
-                ContentType = file.ContentType
+                FileStream = file.Stream,
+                ContentType = file.ContentType,
+                FileName = file.Name
             };
         }
         catch (Exception)
@@ -293,16 +302,17 @@ public class FileHandler : HandlerBase, IFileHandler
                     EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file}'",
                     EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                     EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                    EntityRightEntityToEntityMappingsTableName =
+                        $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityRightId = $"'{file.UserId.ToString()}'",
                     EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
-            
+
             if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
-            
+
             var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData
             {
                 FieldAuthorizeResultDictionary = new Dictionary<string, bool>
@@ -314,34 +324,38 @@ public class FileHandler : HandlerBase, IFileHandler
                             {
                                 EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
                                 EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                                EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                                EntityLeftEntityToEntityMappingsTableName =
+                                    $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                                 EntityLeftId = $"'{user.Id.ToString()}'",
-                                EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper}'",
+                                EntityLeftPermissionAlias =
+                                    $"'{Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper}'",
                                 EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                                 EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                                EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                                EntityRightEntityToEntityMappingsTableName =
+                                    $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                                 EntityRightId = $"'{file.UserId.ToString()}'",
-                                EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper}'",
+                                EntityRightPermissionAlias =
+                                    $"'{Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper}'",
                                 SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                             }.GetRawSql()).ToList().SingleOrDefault()?.Result ?? false
                     }
                 }
             };
-            
+
             //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
             _mapper.Map(data, file,
                 opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
-            
+
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create),
                     $"{data.GetType().Name} mapped to {file.GetType().Name}"));
-            
+
             await _fileService.Save(file, cancellationToken);
-            
+
             await _appDbContextAction.CommitTransactionAsync();
-            
+
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Update)));
-            
+
             return _mapper.Map<FileUpdateResult>(file);
         }
         catch (Exception)
@@ -381,22 +395,23 @@ public class FileHandler : HandlerBase, IFileHandler
                     EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_delete_o_file}'",
                     EntityRightTableName = $"'{_userRepository.GetTableName()}'",
                     EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityRightEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
+                    EntityRightEntityToEntityMappingsTableName =
+                        $"'{_userToUserGroupMappingRepository.GetTableName()}'",
                     EntityRightId = $"'{file.UserId.ToString()}'",
                     EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_delete_o_file}'",
                     SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                 }.GetRawSql()).ToList().SingleOrDefault();
-            
+
             if (authorizeResult?.Result != null && !authorizeResult.Result)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
-            
+
             await _fileService.Delete(file, cancellationToken);
-            
+
             await _appDbContextAction.CommitTransactionAsync();
-            
+
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Delete)));
-            
+
             return new FileDeleteResult();
         }
         catch (Exception)

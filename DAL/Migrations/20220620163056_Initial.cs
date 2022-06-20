@@ -69,7 +69,7 @@ namespace DAL.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    Size = table.Column<int>(type: "integer", nullable: false),
+                    Size = table.Column<long>(type: "bigint", nullable: false),
                     AgeRating = table.Column<int>(type: "integer", nullable: false),
                     Metadata = table.Column<Dictionary<string, string>>(type: "hstore", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -620,7 +620,7 @@ namespace DAL.Migrations
                 table: "Users",
                 column: "Email",
                 unique: true);
-            
+                
             migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionValueToEntityPermissionValue);
             migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermissionValue);
             migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermission);

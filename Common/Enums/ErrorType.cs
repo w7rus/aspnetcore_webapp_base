@@ -10,5 +10,5 @@ public enum ErrorType
     Auth,
     Permission,
     HttpClient,
-    JsonConvert
+    Request
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using Domain.Entities.Base;
 using Domain.Enums;
 
@@ -16,7 +17,7 @@ public class File : EntityBase<Guid>
     /// <summary>
     /// Size of the File
     /// </summary>
-    public int Size { get; set; }
+    public long Size { get; set; }
 
     /// <summary>
     /// Age rating of the File
@@ -29,7 +30,7 @@ public class File : EntityBase<Guid>
     public Dictionary<string, string> Metadata { get; set; }
 
     [NotMapped]
-    public byte[] Data { get; set; }
+    public Stream Stream { get; set; }
 
     [NotMapped]
     public string ContentType { get; set; }

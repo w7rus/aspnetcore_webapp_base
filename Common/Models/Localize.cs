@@ -66,15 +66,6 @@ public static class Localize
 
         #endregion
 
-        #region Misc
-
-        public static string ObjectDeserializationFailed => "ObjectDeserializationFailed";
-        public static string ObjectCastFailed => "ObjectCastFailed";
-        public static string DependencyInjectionFailed => "DependencyInjectionFailed";
-        public static string ValueRetrievalFailed => "ValueRetrievalFailed";
-
-        #endregion
-
         #region UserGroup
 
         public static string UserGroupIsSystemManagementNotAllowed => "UserGroupIsSystemManagementNotAllowed";
@@ -114,10 +105,27 @@ public static class Localize
         public static string DbProviderNotSupported => "DbProviderNotSupported";
 
         #endregion
+        
+        #region Request
+
+        public const string RequestMultipartExpected = "RequestMultipartExpected";
+        public const string RequestContentTypeBoundaryNotFound = "RequestContentTypeBoundaryNotFound";
+        public const string RequestMultipartBoundaryLengthExceedsLimit = "RequestMultipartBoundaryLengthExceedsLimit";
+        public const string RequestMultipartSectionEncodingNotSupported = "RequestMultipartSectionEncodingNotSupported";
+        public const string RequestMultipartSectionNotFound = "RequestMultipartSectionNotFound";
+        public const string RequestContentDispositionParseFailed = "RequestContentDispositionParseFailed";
+        public const string RequestContentDispositionFileExpected = "RequestContentDispositionFileExpected";
+        public const string RequestContentDispositionFormExpected = "RequestContentDispositionFormExpected";
+
+        #endregion
 
         #region Generic
 
         public static string TypeNotFound => "TypeNotFound";
+        public static string ObjectDeserializationFailed => "ObjectDeserializationFailed";
+        public static string ObjectCastFailed => "ObjectCastFailed";
+        public static string DependencyInjectionFailed => "DependencyInjectionFailed";
+        public static string ValueRetrievalFailed => "ValueRetrievalFailed";
 
         #endregion
     }
