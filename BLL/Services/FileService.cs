@@ -91,13 +91,10 @@ public class FileService : IFileService
                 throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
                     Localize.Error.ResponseStatusCodeUnsuccessful);
 
-            var fileCdnCreateResult = (await JsonSerializer.DeserializeAsync(
-                                           await response.Content.ReadAsStreamAsync(cancellationToken),
-                                           typeof(FileCDNCreateResult),
-                                           cancellationToken: cancellationToken) ??
-                                       throw new CustomException(Localize.Error.ObjectDeserializationFailed)) as
-                                      FileCDNCreateResult ??
-                                      throw new CustomException(Localize.Error.ObjectCastFailed);
+            var fileCdnCreateResult = await JsonSerializer.DeserializeAsync<FileCDNCreateResult>(
+                                          await response.Content.ReadAsStreamAsync(cancellationToken),
+                                          cancellationToken: cancellationToken) ??
+                                      throw new CustomException(Localize.Error.ObjectDeserializationFailed);
 
             entity.Name = fileCdnCreateResult.FileName;
         }

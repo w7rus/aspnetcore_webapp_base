@@ -100,13 +100,17 @@ public class PermissionService : IPermissionService
         CancellationToken cancellationToken = default
     )
     {
-        var result = _permissionRepository.GetFilteredSortedPaged(filterExpressionModel, filterSortModel, pageModel, null);
+        var result = _permissionRepository.GetFilteredSorted(filterExpressionModel, filterSortModel, null);
+        
+        var total = result.Count();
+
+        result = result.GetPage(pageModel);
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),
-                $"{result.entities?.GetType().Name} {result.entities?.Count()}"));
+                $"{result?.GetType().Name} {result?.Count()}"));
 
-        return (result.total, await result.entities?.ToArrayAsync(cancellationToken)!);
+        return (total, await result?.ToArrayAsync(cancellationToken)!);
     }
 
     #endregion

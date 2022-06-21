@@ -78,36 +78,32 @@ public class FileController : CustomControllerBase
         
         FileCreate data = null;
         
-        //First section must be a model, next one is file
-        {
-            if (multipartSection == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
-                    Localize.Error.RequestMultipartSectionNotFound);
+        if (multipartSection == null)
+            throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
+                Localize.Error.RequestMultipartSectionNotFound);
+    
+        if (!ContentDispositionHeaderValue.TryParse(
+                multipartSection.ContentDisposition, out var contentDispositionForm))
+            throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Request,
+                Localize.Error.RequestMultipartSectionContentDispositionParseFailed);
+    
+        if (!MultipartRequestHelper.HasFormDataContentDisposition(contentDispositionForm))
+            throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
+                Localize.Error.RequestMultipartSectionContentDispositionFormExpected);
         
-            if (!ContentDispositionHeaderValue.TryParse(
-                    multipartSection.ContentDisposition, out var contentDispositionForm))
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Request,
-                    Localize.Error.RequestContentDispositionParseFailed);
+        var encoding = multipartSection.GetEncoding();
         
-            if (!MultipartRequestHelper.HasFormDataContentDisposition(contentDispositionForm))
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
-                    Localize.Error.RequestContentDispositionFormExpected);
-            
-            var encoding = multipartSection.GetEncoding();
-            
-            if (encoding == null)
-                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
-                    Localize.Error.RequestMultipartSectionEncodingNotSupported);
-            
-            using var streamReader = new StreamReader(multipartSection.Body, encoding,
-                detectEncodingFromByteOrderMarks: true, bufferSize: 1024);
-            
-            data = (await JsonSerializer.DeserializeAsync(streamReader.BaseStream, typeof(FileCreate),
-                 cancellationToken: cancellationToken) ??
-             throw new CustomException(Localize.Error.ObjectDeserializationFailed)) as FileCreate ??
-            throw new CustomException(Localize.Error.ObjectCastFailed);
-        }
+        if (encoding == null)
+            throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
+                Localize.Error.RequestMultipartSectionEncodingNotSupported);
         
+        using var streamReader = new StreamReader(multipartSection.Body, encoding,
+            detectEncodingFromByteOrderMarks: true, bufferSize: 1024);
+        
+        data = await JsonSerializer.DeserializeAsync<FileCreate>(streamReader.BaseStream,
+                   cancellationToken: cancellationToken) ??
+               throw new CustomException(Localize.Error.ObjectDeserializationFailed);
+
         multipartSection = await reader.ReadNextSectionAsync(cancellationToken);
 
         if (multipartSection == null)
@@ -117,11 +113,11 @@ public class FileController : CustomControllerBase
         if (!ContentDispositionHeaderValue.TryParse(
                 multipartSection.ContentDisposition, out var contentDispositionFile))
             throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Request,
-                Localize.Error.RequestContentDispositionParseFailed);
+                Localize.Error.RequestMultipartSectionContentDispositionParseFailed);
         
         if (!MultipartRequestHelper.HasFileContentDisposition(contentDispositionFile))
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
-                Localize.Error.RequestContentDispositionFormExpected);
+                Localize.Error.RequestMultipartSectionContentDispositionFormExpected);
             
         await using var fileStream = multipartSection.Body;
         

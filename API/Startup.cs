@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using API.AuthHandlers;
 using API.Extensions;
@@ -54,7 +56,13 @@ namespace API
 
             services.AddCustomOptions(Configuration);
 
-            services.AddControllers(options => { options.Filters.Add<HttpResponseExceptionFilter>(); });
+            services
+                .AddControllers(options => { options.Filters.Add<HttpResponseExceptionFilter>(); })
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                });
 
             services.AddSwaggerGen(c =>
             {
@@ -65,7 +73,7 @@ namespace API
                     Description = "An API of ASP.NET Core Web Application Base",
                     Contact = new OpenApiContact
                     {
-                        Name = "Grigory Bragin",
+                        Name = "Grigory (w7rus) Bragin",
                         Url = new Uri("https://t.me/w7rus"),
                         Email = "bragingrigory@gmail.com"
                     }
@@ -215,10 +223,10 @@ namespace API
             });
 
             Log.Logger.Information($"Add/Update Recurring Jobs for Hangfire");
-            
+
             recurringJobManager.AddOrUpdate<IJsonWebTokenJobs>(RecurringJobId.JsonWebTokenPurge,
                 _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Minutely);
-            
+
             recurringJobManager.AddOrUpdate<IUserJobs>(RecurringJobId.UsersPurge,
                 _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Daily);
         }

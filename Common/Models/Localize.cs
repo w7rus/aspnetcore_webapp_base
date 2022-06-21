@@ -113,9 +113,9 @@ public static class Localize
         public const string RequestMultipartBoundaryLengthExceedsLimit = "RequestMultipartBoundaryLengthExceedsLimit";
         public const string RequestMultipartSectionEncodingNotSupported = "RequestMultipartSectionEncodingNotSupported";
         public const string RequestMultipartSectionNotFound = "RequestMultipartSectionNotFound";
-        public const string RequestContentDispositionParseFailed = "RequestContentDispositionParseFailed";
-        public const string RequestContentDispositionFileExpected = "RequestContentDispositionFileExpected";
-        public const string RequestContentDispositionFormExpected = "RequestContentDispositionFormExpected";
+        public const string RequestMultipartSectionContentDispositionParseFailed = "RequestMultipartSectionContentDispositionParseFailed";
+        public const string RequestMultipartSectionContentDispositionFileExpected = "RequestMultipartSectionContentDispositionFileExpected";
+        public const string RequestMultipartSectionContentDispositionFormExpected = "RequestMultipartSectionContentDispositionFormExpected";
 
         #endregion
 

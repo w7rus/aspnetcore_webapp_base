@@ -4,6 +4,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using API.Controllers;
 using API.Extensions;
@@ -54,7 +56,11 @@ public class AuthIntegrationTest
 
                         services.AddCustomOptions(webHostBuilder.Configuration);
 
-                        services.AddControllers();
+                        services.AddControllers().AddJsonOptions(options =>
+                        {
+                            options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
+                            options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                        });;
                         services.AddMvc().AddApplicationPart(typeof(AuthController).Assembly);
 
                         services.AddHttpContextAccessor();

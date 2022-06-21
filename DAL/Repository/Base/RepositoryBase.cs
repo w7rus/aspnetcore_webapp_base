@@ -49,10 +49,9 @@ namespace DAL.Repository.Base
         Type GetEntityType();
         string GetTableName();
 
-        public (int total, IQueryable<TEntity> entities) GetFilteredSortedPaged(
+        public IQueryable<TEntity> GetFilteredSorted(
             FilterExpressionModel filterExpressionModel,
             FilterSortModel filterSortModel,
-            PageModel pageModel,
             AuthorizeModel authorizeModel
         );
     }
@@ -165,11 +164,10 @@ namespace DAL.Repository.Base
             var tableNameAnnotation = entityType.GetAnnotation("Relational:TableName");
             return tableNameAnnotation.Value?.ToString();
         }
-        
-        public (int total, IQueryable<TEntity> entities) GetFilteredSortedPaged(
+
+        public IQueryable<TEntity> GetFilteredSorted(
             FilterExpressionModel filterExpressionModel,
             FilterSortModel filterSortModel,
-            PageModel pageModel,
             AuthorizeModel authorizeModel
         )
         {
@@ -562,14 +560,7 @@ namespace DAL.Repository.Base
             // ReSharper disable once CoVariantArrayConversion
             var query = FromSql(rawSql, rawSqlParameters.ToArray());
 
-            var total = query.Count();
-
-            if (pageModel != null)
-            {
-                query = query.GetPage(pageModel);
-            }
-
-            return (total, query);
+            return query;
         }
     }
 }

@@ -2,13 +2,13 @@
 
 public enum ErrorType
 {
-    None,
+    None = 0,
     Generic,
     Unhandled,
     ModelState,
     HttpContext,
-    Auth,
-    Permission,
+    Request,
     HttpClient,
-    Request
+    Auth = 1024,
+    Permission,
 }

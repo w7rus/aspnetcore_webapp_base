@@ -39,12 +39,11 @@ public static class Utilities
     {
         var ms = new MemoryStream();
         await JsonSerializer.SerializeAsync(ms, obj);
-        ms.Position = 0;
+        ms.Seek(0, SeekOrigin.Begin);
 
         var result = string.Join("&",
-            ((await JsonSerializer.DeserializeAsync(ms, typeof(IDictionary<string, string>)) ??
-              throw new CustomException(Localize.Error.ObjectDeserializationFailed)) as Dictionary<string, string> ??
-             throw new CustomException(Localize.Error.ObjectCastFailed)).Select(_ =>
+            (await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(ms) ??
+              throw new CustomException(Localize.Error.ObjectDeserializationFailed)).Select(_ =>
                 HttpUtility.UrlEncode(_.Key) + "=" + HttpUtility.UrlEncode(_.Value)));
 
         return result;
