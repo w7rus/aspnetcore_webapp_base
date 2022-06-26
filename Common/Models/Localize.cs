@@ -8,14 +8,15 @@ public static class Localize
     {
         #region Auth
 
-        public static string UserDoesNotExistOrWrongCredentials => "UserDoesNotExistOrWrongCredentials";
-        public static string UserDoesNotExistOrHttpContextMissingClaims => "UserDoesNotExistOrHttpContextMissingClaims";
+        public static string UserDoesNotFoundOrWrongCredentials => "UserDoesNotFoundOrWrongCredentials";
+        public static string UserDoesNotFoundOrHttpContextMissingClaims => "UserDoesNotFoundOrHttpContextMissingClaims";
 
         #endregion
 
         #region User
 
         public static string UserIdRetrievalFailed => "UserIdRetrievalFailed";
+        public static string UserNotFound => "UserNotFound";
 
         #endregion
 
@@ -41,6 +42,7 @@ public static class Localize
         #region File
 
         public static string FileSaveFailedNameChangeNotAllowedForExisting => "FileSaveFailedNameChangeNotAllowedForExisting";
+        public static string FileNotFound => "FileNotFound";
         public static string FileReadFailed => "FileReadFailed";
         public static string FileDeleteFailed => "FileDeleteFailed";
 

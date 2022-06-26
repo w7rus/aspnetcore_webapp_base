@@ -12,15 +12,41 @@ namespace DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateExtensionHStore);
+            migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateExtensionUUIDOSSP);
             
             migrationBuilder.CreateTable(
-                name: "AuthorizeModelResult",
+                name: "AuthorizeResult",
                 columns: table => new
                 {
                     Result = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Authorizes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityLeftTableName = table.Column<string>(type: "text", nullable: true),
+                    EntityLeftGroupsTableName = table.Column<string>(type: "text", nullable: true),
+                    EntityLeftEntityToEntityMappingsTableName = table.Column<string>(type: "text", nullable: true),
+                    EntityLeftId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityLeftPermissionAlias = table.Column<string>(type: "text", nullable: true),
+                    EntityRightTableName = table.Column<string>(type: "text", nullable: true),
+                    EntityRightGroupsTableName = table.Column<string>(type: "text", nullable: true),
+                    EntityRightEntityToEntityMappingsTableName = table.Column<string>(type: "text", nullable: true),
+                    EntityRightId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityRightPermissionAlias = table.Column<string>(type: "text", nullable: true),
+                    SQLExpressionPermissionTypeValueNeededOwner = table.Column<string>(type: "text", nullable: true),
+                    Result = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Authorizes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -526,6 +552,12 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Authorizes_EntityLeftTableName_EntityLeftGroupsTableName_En~",
+                table: "Authorizes",
+                columns: new[] { "EntityLeftTableName", "EntityLeftGroupsTableName", "EntityLeftEntityToEntityMappingsTableName", "EntityLeftId", "EntityLeftPermissionAlias", "EntityRightTableName", "EntityRightGroupsTableName", "EntityRightEntityToEntityMappingsTableName", "EntityRightId", "EntityRightPermissionAlias", "SQLExpressionPermissionTypeValueNeededOwner" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EntityToEntityMappingBase<User, UserGroup>_EntityLeftId_Ent~",
                 table: "EntityToEntityMappingBase<User, UserGroup>",
                 columns: new[] { "EntityLeftId", "EntityRightId" },
@@ -620,7 +652,7 @@ namespace DAL.Migrations
                 table: "Users",
                 column: "Email",
                 unique: true);
-                
+            
             migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionValueToEntityPermissionValue);
             migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermissionValue);
             migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermission);
@@ -629,7 +661,10 @@ namespace DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AuthorizeModelResult");
+                name: "AuthorizeResult");
+
+            migrationBuilder.DropTable(
+                name: "Authorizes");
 
             migrationBuilder.DropTable(
                 name: "EntityToEntityMappingBase<User, UserGroup>");

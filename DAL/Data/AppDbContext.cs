@@ -31,6 +31,7 @@ namespace DAL.Data
         public DbSet<JsonWebToken> JsonWebTokens { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<File> Files { get; set; }
+        public DbSet<Authorize> Authorizes { get; set; }
 
         #endregion
 
@@ -96,6 +97,7 @@ namespace DAL.Data
         }
         
         // migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateExtensionHStore);
+        // migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateExtensionUUIDOSSP);
         // migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionValueToEntityPermissionValue);
         // migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermissionValue);
         // migrationBuilder.Sql(Consts.MigrationBuilderRawSql.CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermission);
@@ -651,7 +653,7 @@ namespace DAL.Data
 
             var userRoot = new User
             {
-                Id = new Guid("ce374862-f799-4519-9fa8-a8dcf1b9e8ab"),
+                Id = new Guid(Consts.RootUserId.ToString()),
                 IsTemporary = false
             };
             
@@ -2604,7 +2606,25 @@ namespace DAL.Data
 
             #region Authorize
 
-            builder.Entity<AuthorizeModelResult>().HasNoKey();
+            builder.Entity<Authorize>(_ =>
+            {
+                _.HasIndex(__ => new
+                {
+                    __.EntityLeftTableName,
+                    __.EntityLeftGroupsTableName,
+                    __.EntityLeftEntityToEntityMappingsTableName,
+                    __.EntityLeftId,
+                    __.EntityLeftPermissionAlias,
+                    __.EntityRightTableName,
+                    __.EntityRightGroupsTableName,
+                    __.EntityRightEntityToEntityMappingsTableName,
+                    __.EntityRightId,
+                    __.EntityRightPermissionAlias,
+                    __.SQLExpressionPermissionTypeValueNeededOwner,
+                }).IsUnique();
+            });
+
+            builder.Entity<AuthorizeResult>().HasNoKey();
 
             #endregion
 

@@ -55,8 +55,8 @@ public class FileController : CustomControllerBase
     #region Methods
 
     [DisableFormValueModelBinding]
-    [RequestSizeLimit(134217728L)]
-    [RequestFormLimits(MultipartBodyLengthLimit = 134217728L)]
+    [RequestSizeLimit(134217728L)] //128MB
+    [RequestFormLimits(MultipartBodyLengthLimit = 134217728L)] //128MB
     [HttpPost]
     [SwaggerOperation(Summary = "Creates file",
         Description = "Creates file")]

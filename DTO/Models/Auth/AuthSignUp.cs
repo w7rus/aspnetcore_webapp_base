@@ -20,11 +20,11 @@ namespace DTO.Models.Auth
         // [GoogleReCaptchaV2]
         // public string RecaptchaToken { get; set; }
 
-        /// <summary>
-        /// Name used when displaying user profile page and instead of emails when signin in
-        /// </summary>
-        [Required]
-        [MinLength(1)]
-        public string Username { get; set; }
+        // /// <summary>
+        // /// Name used when displaying user profile page and instead of emails when signin in
+        // /// </summary>
+        // [Required]
+        // [MinLength(1)]
+        // public string Username { get; set; }
     }
 }

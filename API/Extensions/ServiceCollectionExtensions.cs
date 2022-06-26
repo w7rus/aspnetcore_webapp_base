@@ -6,6 +6,7 @@ using BLL.Handlers;
 using BLL.Jobs;
 using BLL.Services;
 using BLL.Services.Advanced;
+using BLL.Services.Entity;
 using Common.Options;
 using DAL.Data;
 using DAL.Repository;
@@ -36,21 +37,25 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserProfileRepository, UserProfileRepository>();
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
         serviceCollection.AddScoped<IUserToUserGroupMappingRepository, UserToUserGroupMappingRepository>();
+        serviceCollection.AddScoped<IAuthorizeRepository, AuthorizeRepository>();
 
         return serviceCollection;
     }
 
     public static IServiceCollection AddServices(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<IFileService, FileService>();
-        serviceCollection.AddScoped<IJsonWebTokenService, JsonWebTokenService>();
-        serviceCollection.AddScoped<IPermissionService, PermissionService>();
-        serviceCollection.AddScoped<IRefreshTokenService, RefreshTokenService>();
-        serviceCollection.AddScoped<IPermissionValueService, PermissionValueService>();
-        serviceCollection.AddScoped<IUserGroupService, UserGroupService>();
-        serviceCollection.AddScoped<IUserProfileService, UserProfileService>();
-        serviceCollection.AddScoped<IUserService, UserService>();
-        serviceCollection.AddScoped<IUserToUserGroupMappingService, UserToUserGroupMappingService>();
+        serviceCollection.AddScoped<IFileEntityService, FileEntityService>();
+        serviceCollection.AddScoped<IJsonWebTokenEntityService, JsonWebTokenEntityService>();
+        serviceCollection.AddScoped<IPermissionEntityService, PermissionEntityService>();
+        serviceCollection.AddScoped<IRefreshTokenEntityService, RefreshTokenEntityService>();
+        serviceCollection.AddScoped<IPermissionValueEntityService, PermissionValueEntityService>();
+        serviceCollection.AddScoped<IUserGroupEntityService, UserGroupEntityService>();
+        serviceCollection.AddScoped<IUserProfileEntityService, UserProfileEntityService>();
+        serviceCollection.AddScoped<IUserEntityService, UserEntityService>();
+        serviceCollection.AddScoped<IUserToUserGroupMappingEntityService, UserToUserGroupMappingEntityService>();
+        serviceCollection.AddScoped<IAuthorizeEntityService, AuthorizeEntityService>();
+        
+        
 
         return serviceCollection;
     }
@@ -61,6 +66,8 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IJsonWebTokenAdvancedService, JsonWebTokenAdvancedService>();
         serviceCollection.AddScoped<IUserAdvancedService, UserAdvancedService>();
         serviceCollection.AddTransient<IWarningAdvancedService, WarningAdvancedService>();
+        serviceCollection.AddScoped<IAuthorizeAdvancedService, AuthorizeAdvancedService>();
+        serviceCollection.AddSingleton<IRedisService, RedisService>();
 
         return serviceCollection;
     }
@@ -72,6 +79,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserGroupPermissionValueHandler, UserGroupPermissionValueHandler>();
         serviceCollection.AddScoped<IPermissionHandler, PermissionHandler>();
         serviceCollection.AddScoped<IDomainInfoHandler, DomainInfoHandler>();
+        serviceCollection.AddScoped<IApplicationHandler, ApplicationHandler>();
 
         return serviceCollection;
     }
@@ -184,6 +192,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.Configure<BackgroundServicesOptions>(
             configuration.GetSection(nameof(BackgroundServicesOptions)));
         serviceCollection.Configure<MiscOptions>(configuration.GetSection(nameof(MiscOptions)));
+        serviceCollection.Configure<RedisOptions>(configuration.GetSection(nameof(RedisOptions)));
 
         return serviceCollection;
     }

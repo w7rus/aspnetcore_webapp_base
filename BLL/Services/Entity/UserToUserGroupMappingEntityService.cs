@@ -8,20 +8,20 @@ using DAL.Repository;
 using Domain.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace BLL.Services;
+namespace BLL.Services.Entity;
 
 /// <summary>
 /// Service to work with UserToUserGroupMapping entity
 /// </summary>
-public interface IUserToUserGroupMappingService : IEntityToEntityMappingServiceBase<UserToUserGroupMapping>
+public interface IUserToUserGroupMappingEntityService : IEntityToEntityMappingServiceBase<UserToUserGroupMapping>
 {
 }
 
-public class UserToUserGroupMappingService : IUserToUserGroupMappingService
+public class UserToUserGroupMappingEntityService : IUserToUserGroupMappingEntityService
 {
     #region Fields
 
-    private readonly ILogger<UserToUserGroupMappingService> _logger;
+    private readonly ILogger<UserToUserGroupMappingEntityService> _logger;
     private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
     private readonly IAppDbContextAction _appDbContextAction;
 
@@ -29,8 +29,8 @@ public class UserToUserGroupMappingService : IUserToUserGroupMappingService
 
     #region Ctor
 
-    public UserToUserGroupMappingService(
-        ILogger<UserToUserGroupMappingService> logger,
+    public UserToUserGroupMappingEntityService(
+        ILogger<UserToUserGroupMappingEntityService> logger,
         IUserToUserGroupMappingRepository userToUserGroupMappingRepository,
         IAppDbContextAction appDbContextAction
     )

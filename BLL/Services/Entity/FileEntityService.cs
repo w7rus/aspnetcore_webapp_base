@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using BLL.Services.Base;
 using Common.Enums;
 using Common.Exceptions;
@@ -17,26 +12,23 @@ using Common.Models;
 using Common.Options;
 using DAL.Data;
 using DAL.Repository;
-using Domain.Enums;
 using DTO.Models.File;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using File = Domain.Entities.File;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace BLL.Services;
+namespace BLL.Services.Entity;
 
-public interface IFileService : IEntityServiceBase<File>
+public interface IFileEntityService : IEntityServiceBase<File>
 {
 }
 
-public class FileService : IFileService
+public class FileEntityService : IFileEntityService
 {
     #region Fields
 
-    private readonly ILogger<FileService> _logger;
+    private readonly ILogger<FileEntityService> _logger;
     private readonly IFileRepository<File> _fileRepository;
     private readonly IAppDbContextAction _appDbContextAction;
     private readonly MiscOptions _miscOptions;
@@ -46,8 +38,8 @@ public class FileService : IFileService
 
     #region Ctor
 
-    public FileService(
-        ILogger<FileService> logger,
+    public FileEntityService(
+        ILogger<FileEntityService> logger,
         IFileRepository<File> fileRepository,
         IAppDbContextAction appDbContextAction,
         IOptions<MiscOptions> miscOptions,

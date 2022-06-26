@@ -9,6 +9,7 @@ using BLL.Handlers.Base;
 using BLL.Maps;
 using BLL.Services;
 using BLL.Services.Advanced;
+using BLL.Services.Entity;
 using Common.Enums;
 using Common.Exceptions;
 using Common.Models;
@@ -45,18 +46,19 @@ public class FileHandler : HandlerBase, IFileHandler
 
     private readonly ILogger<HandlerBase> _logger;
     private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IFileService _fileService;
+    private readonly IFileEntityService _fileEntityService;
     private readonly HttpContext _httpContext;
-    private readonly IUserService _userService;
+    private readonly IUserEntityService _userEntityService;
     private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-    private readonly IPermissionValueService _permissionValueService;
-    private readonly IUserGroupService _userGroupService;
+    private readonly IPermissionEntityService _permissionEntityService;
+    private readonly IPermissionValueEntityService _permissionValueEntityService;
+    private readonly IUserGroupEntityService _userGroupEntityService;
     private readonly IUserAdvancedService _userAdvancedService;
     private readonly IUserRepository _userRepository;
     private readonly IUserGroupRepository _userGroupRepository;
     private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
     private readonly AppDbContext _appDbContext;
+    private readonly IAuthorizeAdvancedService _authorizeAdvancedService;
 
     #endregion
 
@@ -65,33 +67,35 @@ public class FileHandler : HandlerBase, IFileHandler
     public FileHandler(
         ILogger<HandlerBase> logger,
         IAppDbContextAction appDbContextAction,
-        IFileService fileService,
+        IFileEntityService fileEntityService,
         IHttpContextAccessor httpContextAccessor,
-        IUserService userService,
+        IUserEntityService userEntityService,
         IMapper mapper,
-        IPermissionService permissionService,
-        IPermissionValueService permissionValueService,
-        IUserGroupService userGroupService,
+        IPermissionEntityService permissionEntityService,
+        IPermissionValueEntityService permissionValueEntityService,
+        IUserGroupEntityService userGroupEntityService,
         IUserAdvancedService userAdvancedService,
         IUserRepository userRepository,
         IUserGroupRepository userGroupRepository,
         IUserToUserGroupMappingRepository userToUserGroupMappingRepository,
-        AppDbContext appDbContext
+        AppDbContext appDbContext,
+        IAuthorizeAdvancedService authorizeAdvancedService
     )
     {
         _logger = logger;
         _appDbContextAction = appDbContextAction;
-        _fileService = fileService;
-        _userService = userService;
+        _fileEntityService = fileEntityService;
+        _userEntityService = userEntityService;
         _mapper = mapper;
-        _permissionService = permissionService;
-        _permissionValueService = permissionValueService;
-        _userGroupService = userGroupService;
+        _permissionEntityService = permissionEntityService;
+        _permissionValueEntityService = permissionValueEntityService;
+        _userGroupEntityService = userGroupEntityService;
         _userAdvancedService = userAdvancedService;
         _userRepository = userRepository;
         _userGroupRepository = userGroupRepository;
         _userToUserGroupMappingRepository = userToUserGroupMappingRepository;
         _appDbContext = appDbContext;
+        _authorizeAdvancedService = authorizeAdvancedService;
         _httpContext = httpContextAccessor.HttpContext;
     }
 
@@ -118,30 +122,29 @@ public class FileHandler : HandlerBase, IFileHandler
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
+                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
             var fileInfo = new FileInfo(fileNameOriginal);
             var fileName = Guid.NewGuid() + fileInfo.Extension;
 
             //Authorize file create
-            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
-                .FromSqlRaw(new AuthorizeModel
-                {
-                    EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
-                    EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                    EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file}'",
-                    EntityRightTableName = $"'{_userRepository.GetTableName()}'",
-                    EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityRightEntityToEntityMappingsTableName =
-                        $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                    EntityRightId = $"'{user.Id.ToString()}'",
-                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_create_o_file}'",
-                    SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
-                }.GetRawSql()).ToList().SingleOrDefault();
+            var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
+            {
+                EntityLeftTableName = _userRepository.GetTableName(),
+                EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                EntityLeftId = user.Id,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.g_file_a_create_o_file,
+                EntityRightTableName = _userRepository.GetTableName(),
+                EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityRightEntityToEntityMappingsTableName =
+                    _userToUserGroupMappingRepository.GetTableName(),
+                EntityRightId = user.Id,
+                EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_create_o_file,
+                SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
+            });
 
-            if (authorizeResult?.Result != null && !authorizeResult.Result)
+            if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
@@ -151,25 +154,24 @@ public class FileHandler : HandlerBase, IFileHandler
                 {
                     {
                         nameof(File.AgeRating),
-                        _appDbContext.Set<AuthorizeModelResult>()
-                            .FromSqlRaw(new AuthorizeModel
-                            {
-                                EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
-                                EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                                EntityLeftEntityToEntityMappingsTableName =
-                                    $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                                EntityLeftId = $"'{user.Id.ToString()}'",
-                                EntityLeftPermissionAlias =
-                                    $"'{Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper}'",
-                                EntityRightTableName = $"'{_userRepository.GetTableName()}'",
-                                EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                                EntityRightEntityToEntityMappingsTableName =
-                                    $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                                EntityRightId = $"'{user.Id.ToString()}'",
-                                EntityRightPermissionAlias =
-                                    $"'{Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper}'",
-                                SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
-                            }.GetRawSql()).ToList().SingleOrDefault()?.Result ?? false
+                        _authorizeAdvancedService.Authorize(new AuthorizeModel
+                        {
+                            EntityLeftTableName = _userRepository.GetTableName(),
+                            EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                            EntityLeftEntityToEntityMappingsTableName =
+                                _userToUserGroupMappingRepository.GetTableName(),
+                            EntityLeftId = user.Id,
+                            EntityLeftPermissionAlias =
+                                Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper,
+                            EntityRightTableName = _userRepository.GetTableName(),
+                            EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
+                            EntityRightEntityToEntityMappingsTableName =
+                                _userToUserGroupMappingRepository.GetTableName(),
+                            EntityRightId = user.Id,
+                            EntityRightPermissionAlias =
+                                Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper,
+                            SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
+                        })
                     }
                 }
             };
@@ -191,7 +193,7 @@ public class FileHandler : HandlerBase, IFileHandler
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create), $"Set additional data to {file.GetType().Name}"));
 
-            file = await _fileService.Save(file, cancellationToken);
+            file = await _fileEntityService.Save(file, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -221,29 +223,31 @@ public class FileHandler : HandlerBase, IFileHandler
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
+                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
-            var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
+            var file = await _fileEntityService.GetByIdAsync(data.Id, cancellationToken);
+            if (file is not {UserId: { }})
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.FileNotFound);
 
             //Authorize file read
-            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
-                .FromSqlRaw(new AuthorizeModel
-                {
-                    EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
-                    EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                    EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_read_o_file}'",
-                    EntityRightTableName = $"'{_userRepository.GetTableName()}'",
-                    EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityRightEntityToEntityMappingsTableName =
-                        $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                    EntityRightId = $"'{file.UserId.ToString()}'",
-                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_read_o_file}'",
-                    SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
-                }.GetRawSql()).ToList().SingleOrDefault();
+            var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
+            {
+                EntityLeftTableName = _userRepository.GetTableName(),
+                EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                EntityLeftId = user.Id,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.g_file_a_read_o_file,
+                EntityRightTableName = _userRepository.GetTableName(),
+                EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityRightEntityToEntityMappingsTableName =
+                    _userToUserGroupMappingRepository.GetTableName(),
+                EntityRightId = file.UserId.Value,
+                EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_read_o_file,
+                SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
+            });
 
-            if (authorizeResult?.Result != null && !authorizeResult.Result)
+            if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
@@ -287,29 +291,31 @@ public class FileHandler : HandlerBase, IFileHandler
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
+                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
-            var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
+            var file = await _fileEntityService.GetByIdAsync(data.Id, cancellationToken);
+            if (file is not {UserId: { }})
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.FileNotFound);
 
             //Authorize file update
-            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
-                .FromSqlRaw(new AuthorizeModel
-                {
-                    EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
-                    EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                    EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file}'",
-                    EntityRightTableName = $"'{_userRepository.GetTableName()}'",
-                    EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityRightEntityToEntityMappingsTableName =
-                        $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                    EntityRightId = $"'{file.UserId.ToString()}'",
-                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_update_o_file}'",
-                    SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
-                }.GetRawSql()).ToList().SingleOrDefault();
+            var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
+            {
+                EntityLeftTableName = _userRepository.GetTableName(),
+                EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                EntityLeftId = user.Id,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.g_file_a_update_o_file,
+                EntityRightTableName = _userRepository.GetTableName(),
+                EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityRightEntityToEntityMappingsTableName =
+                    _userToUserGroupMappingRepository.GetTableName(),
+                EntityRightId = file.UserId.Value,
+                EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_update_o_file,
+                SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
+            });
 
-            if (authorizeResult?.Result != null && !authorizeResult.Result)
+            if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
@@ -319,25 +325,24 @@ public class FileHandler : HandlerBase, IFileHandler
                 {
                     {
                         nameof(File.AgeRating),
-                        _appDbContext.Set<AuthorizeModelResult>()
-                            .FromSqlRaw(new AuthorizeModel
-                            {
-                                EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
-                                EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                                EntityLeftEntityToEntityMappingsTableName =
-                                    $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                                EntityLeftId = $"'{user.Id.ToString()}'",
-                                EntityLeftPermissionAlias =
-                                    $"'{Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper}'",
-                                EntityRightTableName = $"'{_userRepository.GetTableName()}'",
-                                EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                                EntityRightEntityToEntityMappingsTableName =
-                                    $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                                EntityRightId = $"'{file.UserId.ToString()}'",
-                                EntityRightPermissionAlias =
-                                    $"'{Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper}'",
-                                SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
-                            }.GetRawSql()).ToList().SingleOrDefault()?.Result ?? false
+                        _authorizeAdvancedService.Authorize(new AuthorizeModel
+                        {
+                            EntityLeftTableName = _userRepository.GetTableName(),
+                            EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                            EntityLeftEntityToEntityMappingsTableName =
+                                _userToUserGroupMappingRepository.GetTableName(),
+                            EntityLeftId = user.Id,
+                            EntityLeftPermissionAlias =
+                                Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper,
+                            EntityRightTableName = _userRepository.GetTableName(),
+                            EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
+                            EntityRightEntityToEntityMappingsTableName =
+                                _userToUserGroupMappingRepository.GetTableName(),
+                            EntityRightId = file.UserId.Value,
+                            EntityRightPermissionAlias =
+                                Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper,
+                            SqlExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
+                        })
                     }
                 }
             };
@@ -350,7 +355,7 @@ public class FileHandler : HandlerBase, IFileHandler
                 Localize.Log.Method(GetType(), nameof(Create),
                     $"{data.GetType().Name} mapped to {file.GetType().Name}"));
 
-            await _fileService.Save(file, cancellationToken);
+            await _fileEntityService.Save(file, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -380,33 +385,35 @@ public class FileHandler : HandlerBase, IFileHandler
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotExistOrHttpContextMissingClaims);
+                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
-            var file = await _fileService.GetByIdAsync(data.Id, cancellationToken);
+            var file = await _fileEntityService.GetByIdAsync(data.Id, cancellationToken);
+            if (file is not {UserId: { }})
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.FileNotFound);
 
             //Authorize file delete
-            var authorizeResult = _appDbContext.Set<AuthorizeModelResult>()
-                .FromSqlRaw(new AuthorizeModel
-                {
-                    EntityLeftTableName = $"'{_userRepository.GetTableName()}'",
-                    EntityLeftGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityLeftEntityToEntityMappingsTableName = $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                    EntityLeftId = $"'{user.Id.ToString()}'",
-                    EntityLeftPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_delete_o_file}'",
-                    EntityRightTableName = $"'{_userRepository.GetTableName()}'",
-                    EntityRightGroupsTableName = $"'{_userGroupRepository.GetTableName()}'",
-                    EntityRightEntityToEntityMappingsTableName =
-                        $"'{_userToUserGroupMappingRepository.GetTableName()}'",
-                    EntityRightId = $"'{file.UserId.ToString()}'",
-                    EntityRightPermissionAlias = $"'{Consts.PermissionAlias.g_file_a_delete_o_file}'",
-                    SQLExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
-                }.GetRawSql()).ToList().SingleOrDefault();
+            var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
+            {
+                EntityLeftTableName = _userRepository.GetTableName(),
+                EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                EntityLeftId = user.Id,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.g_file_a_delete_o_file,
+                EntityRightTableName = _userRepository.GetTableName(),
+                EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityRightEntityToEntityMappingsTableName =
+                    _userToUserGroupMappingRepository.GetTableName(),
+                EntityRightId = file.UserId.Value,
+                EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_delete_o_file,
+                SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
+            });
 
-            if (authorizeResult?.Result != null && !authorizeResult.Result)
+            if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            await _fileService.Delete(file, cancellationToken);
+            await _fileEntityService.Delete(file, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 

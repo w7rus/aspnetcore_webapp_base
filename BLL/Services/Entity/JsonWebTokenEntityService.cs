@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading;
@@ -9,19 +8,19 @@ using System.Threading.Tasks;
 using BLL.Services.Base;
 using Common.Models;
 using DAL.Data;
+using DAL.Extensions;
 using DAL.Repository;
 using Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BLL.Services
+namespace BLL.Services.Entity
 {
     /// <summary>
     /// Service to work with JsonWebToken entity
     /// </summary>
-    public interface IJsonWebTokenService : IEntityServiceBase<JsonWebToken>
+    public interface IJsonWebTokenEntityService : IEntityServiceBase<JsonWebToken>
     {
         /// <summary>
         /// Gets entity with equal Token
@@ -38,15 +37,6 @@ namespace BLL.Services
         /// <returns></returns>
         Task<IReadOnlyCollection<JsonWebToken>> GetExpiredByUserIdAsync(
             Guid userId,
-            CancellationToken cancellationToken = default
-        );
-
-        /// <summary>
-        /// Gets entities with DeleteAfter that is less than current date
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task<IReadOnlyCollection<JsonWebToken>> GetDeleteAfterAsync(
             CancellationToken cancellationToken = default
         );
 
@@ -77,11 +67,11 @@ namespace BLL.Services
         );
     }
 
-    public class JsonWebTokenService : IJsonWebTokenService
+    public class JsonWebTokenEntityService : IJsonWebTokenEntityService
     {
         #region Fields
 
-        private readonly ILogger<JsonWebTokenService> _logger;
+        private readonly ILogger<JsonWebTokenEntityService> _logger;
         private readonly IJsonWebTokenRepository _jsonWebTokenRepository;
         private readonly IAppDbContextAction _appDbContextAction;
 
@@ -89,8 +79,8 @@ namespace BLL.Services
 
         #region Ctor
 
-        public JsonWebTokenService(
-            ILogger<JsonWebTokenService> logger,
+        public JsonWebTokenEntityService(
+            ILogger<JsonWebTokenEntityService> logger,
             IJsonWebTokenRepository jsonWebTokenRepository,
             IAppDbContextAction appDbContextAction
         )
@@ -144,6 +134,7 @@ namespace BLL.Services
             return entity;
         }
 
+        //TODO: Paginate Materialization
         public async Task<IReadOnlyCollection<JsonWebToken>> GetExpiredByUserIdAsync(
             Guid userId,
             CancellationToken cancellationToken = default
@@ -160,30 +151,28 @@ namespace BLL.Services
             return result;
         }
 
-        public async Task<IReadOnlyCollection<JsonWebToken>> GetDeleteAfterAsync(
-            CancellationToken cancellationToken = default
-        )
-        {
-            var result = await _jsonWebTokenRepository
-                .QueryMany(_ => _.DeleteAfter < DateTimeOffset.UtcNow)
-                .ToArrayAsync(cancellationToken);
-
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(GetExpiredByUserIdAsync),
-                    $"{result?.GetType().Name} {result?.Length}"));
-
-            return result;
-        }
-
         public async Task PurgeAsync(CancellationToken cancellationToken = default)
         {
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
+            
+            var query = _jsonWebTokenRepository
+                .QueryMany(_ => _.DeleteAfter < DateTimeOffset.UtcNow);
 
-            var jsonWebTokens = await GetDeleteAfterAsync(cancellationToken);
+            for (var page = 1;;page += 1)
+            {
+                var entities = await query.GetPage(new PageModel()
+                {
+                    Page = page,
+                    PageSize = 512
+                }).ToArrayAsync(cancellationToken);
 
-            _jsonWebTokenRepository.Delete(jsonWebTokens);
-            await _appDbContextAction.CommitAsync(cancellationToken);
+                _jsonWebTokenRepository.Delete(entities);
+                await _appDbContextAction.CommitAsync(cancellationToken);
+            
+                if (entities.Length < 512)
+                    break;
+            }
         }
 
         public string CreateWithClaims(

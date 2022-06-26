@@ -119,14 +119,12 @@ public class AuthIntegrationTest
         {
             Email = "test123@email.com",
             Password = "12345678",
-            Username = "test123"
         };
 
         var model2 = new AuthSignUp
         {
             Email = "test123@email.com",
             Password = "12345678",
-            Username = "test123"
         };
 
         var json = JsonContent.Create(model);

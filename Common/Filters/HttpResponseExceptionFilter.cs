@@ -19,38 +19,35 @@ public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
 
     public void OnActionExecuted(ActionExecutedContext context)
     {
-        if (context.Exception is HttpResponseException httpResponseException)
+        var errorModelResult = new ErrorModelResult
         {
-            var errorModelResult = new ErrorModelResult
-            {
-                TraceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier
-            };
+            TraceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier
+        };
 
-            errorModelResult.Errors.Add(new ErrorModelResultEntry(httpResponseException.Type,
-                httpResponseException.Message));
-
-            context.Result = new ObjectResult(errorModelResult)
-            {
-                StatusCode = httpResponseException.StatusCode
-            };
-
-            context.ExceptionHandled = true;
-        } else if (context.Exception is CustomException customException)
+        switch (context.Exception)
         {
-            var errorModelResult = new ErrorModelResult
-            {
-                TraceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier
-            };
+            case HttpResponseException httpResponseException:
+                errorModelResult.Errors.Add(new ErrorModelResultEntry(httpResponseException.Type,
+                    httpResponseException.Message));
 
-            errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.Generic,
-                customException.Message));
+                context.Result = new ObjectResult(errorModelResult)
+                {
+                    StatusCode = httpResponseException.StatusCode
+                };
 
-            context.Result = new ObjectResult(errorModelResult)
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
+                context.ExceptionHandled = true;
+                break;
+            case CustomException customException:
+                errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.Generic,
+                    customException.Message));
 
-            context.ExceptionHandled = true;
+                context.Result = new ObjectResult(errorModelResult)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+
+                context.ExceptionHandled = true;
+                break;
         }
     }
 }

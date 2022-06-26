@@ -8,12 +8,12 @@ using DAL.Repository;
 using Domain.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace BLL.Services;
+namespace BLL.Services.Entity;
 
 /// <summary>
 /// Service to work with UserProfile entity
 /// </summary>
-public interface IUserProfileService : IEntityServiceBase<UserProfile>
+public interface IUserProfileEntityService : IEntityServiceBase<UserProfile>
 {
     /// <summary>
     /// Gets entity with equal Username
@@ -30,11 +30,11 @@ public interface IUserProfileService : IEntityServiceBase<UserProfile>
     Task<UserProfile> GetByUserIdAsync(Guid userId);
 }
 
-public class UserProfileService : IUserProfileService
+public class UserProfileEntityService : IUserProfileEntityService
 {
     #region Fields
 
-    private readonly ILogger<UserProfileService> _logger;
+    private readonly ILogger<UserProfileEntityService> _logger;
     private readonly IUserProfileRepository _userProfileRepository;
     private readonly IAppDbContextAction _appDbContextAction;
 
@@ -42,8 +42,8 @@ public class UserProfileService : IUserProfileService
 
     #region Ctor
 
-    public UserProfileService(
-        ILogger<UserProfileService> logger,
+    public UserProfileEntityService(
+        ILogger<UserProfileEntityService> logger,
         IUserProfileRepository userProfileRepository,
         IAppDbContextAction appDbContextAction
     )

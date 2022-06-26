@@ -10,12 +10,12 @@ using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BLL.Services;
+namespace BLL.Services.Entity;
 
 /// <summary>
 /// Service to work with RefreshToken entity
 /// </summary>
-public interface IRefreshTokenService : IEntityServiceBase<RefreshToken>
+public interface IRefreshTokenEntityService : IEntityServiceBase<RefreshToken>
 {
     /// <summary>
     /// Gets entity with equal Token
@@ -36,11 +36,11 @@ public interface IRefreshTokenService : IEntityServiceBase<RefreshToken>
     );
 }
 
-public class RefreshTokenService : IRefreshTokenService
+public class RefreshTokenEntityService : IRefreshTokenEntityService
 {
     #region Fields
 
-    private readonly ILogger<RefreshTokenService> _logger;
+    private readonly ILogger<RefreshTokenEntityService> _logger;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IAppDbContextAction _appDbContextAction;
 
@@ -48,8 +48,8 @@ public class RefreshTokenService : IRefreshTokenService
 
     #region Ctor
 
-    public RefreshTokenService(
-        ILogger<RefreshTokenService> logger,
+    public RefreshTokenEntityService(
+        ILogger<RefreshTokenEntityService> logger,
         IRefreshTokenRepository refreshTokenRepository,
         IAppDbContextAction appDbContextAction
     )
@@ -103,6 +103,7 @@ public class RefreshTokenService : IRefreshTokenService
         return entity;
     }
 
+    //TODO: Paginate Materialization
     public async Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(
         Guid userId,
         CancellationToken cancellationToken = default

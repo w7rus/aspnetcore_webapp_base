@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
 using Common.Models;
 using DAL.Data;
+using DAL.Extensions;
 using DAL.Repository;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using DAL.Extensions;
 
-namespace BLL.Services;
+namespace BLL.Services.Entity;
 
 /// <summary>
 /// Service to work with PermissionValue entity
 /// </summary>
-public interface IPermissionValueService : IEntityServiceBase<PermissionValue>
+public interface IPermissionValueEntityService : IEntityServiceBase<PermissionValue>
 {
     Task<PermissionValue> GetByEntityIdPermissionId(
         Guid entityId,
@@ -34,11 +34,11 @@ public interface IPermissionValueService : IEntityServiceBase<PermissionValue>
     );
 }
 
-public class PermissionValueService : IPermissionValueService
+public class PermissionValueEntityService : IPermissionValueEntityService
 {
     #region Fields
 
-    private readonly ILogger<PermissionValueService> _logger;
+    private readonly ILogger<PermissionValueEntityService> _logger;
     private readonly IPermissionValueRepository _permissionValueRepository;
     private readonly IAppDbContextAction _appDbContextAction;
 
@@ -46,8 +46,8 @@ public class PermissionValueService : IPermissionValueService
 
     #region Ctor
 
-    public PermissionValueService(
-        ILogger<PermissionValueService> logger,
+    public PermissionValueEntityService(
+        ILogger<PermissionValueEntityService> logger,
         IPermissionValueRepository permissionValueRepository,
         IAppDbContextAction appDbContextAction
     )

@@ -523,7 +523,7 @@ namespace DAL.Repository.Base
             {
                 rawSql += filterExpressionModel != null && filterExpressionModel.Items.Any() ? " AND" : " WHERE";
 
-                rawSql += $" {authorizeModel.GetRawSqlStatement()} ";
+                rawSql += $" {authorizeModel.GetRawSqlExpression()} ";
             }
 
             //Sort

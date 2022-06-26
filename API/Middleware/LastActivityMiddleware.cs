@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services;
 using BLL.Services.Advanced;
+using BLL.Services.Entity;
 using Common.Enums;
 using Common.Exceptions;
 using Common.Models;
@@ -31,7 +32,7 @@ public class LastActivityMiddleware
         HttpContext context,
         ILogger<LastActivityMiddleware> logger,
         IAppDbContextAction appDbContextAction,
-        IUserService userService,
+        IUserEntityService userEntityService,
         IUserAdvancedService userAdvancedService,
         IHostEnvironment hostEnvironment
     )
@@ -54,7 +55,7 @@ public class LastActivityMiddleware
             user.LastActivity = DateTimeOffset.UtcNow;
             user.LastIpAddress = context.Connection.RemoteIpAddress?.ToString();
 
-            await userService.Save(user);
+            await userEntityService.Save(user);
 
             await appDbContextAction.CommitTransactionAsync();
         }

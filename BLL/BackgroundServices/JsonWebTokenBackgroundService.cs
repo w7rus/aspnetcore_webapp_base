@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services;
+using BLL.Services.Entity;
 using Common.Models;
 using Common.Options;
 using DAL.Data;
@@ -17,7 +18,7 @@ public class JsonWebTokenBackgroundService : IScopedProcessingService
 
     private readonly string _fullName;
     private readonly ILogger<JsonWebTokenBackgroundService> _logger;
-    private readonly IJsonWebTokenService _jsonWebTokenService;
+    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
     private readonly IAppDbContextAction _appDbContextAction;
     private readonly BackgroundServicesOptions _backgroundServicesOptions;
 
@@ -27,14 +28,14 @@ public class JsonWebTokenBackgroundService : IScopedProcessingService
 
     public JsonWebTokenBackgroundService(
         ILogger<JsonWebTokenBackgroundService> logger,
-        IJsonWebTokenService jsonWebTokenService,
+        IJsonWebTokenEntityService jsonWebTokenEntityService,
         IAppDbContextAction appDbContextAction,
         IOptions<BackgroundServicesOptions> backgroundServicesOptions
     )
     {
         _fullName = GetType().FullName;
         _logger = logger;
-        _jsonWebTokenService = jsonWebTokenService;
+        _jsonWebTokenEntityService = jsonWebTokenEntityService;
         _appDbContextAction = appDbContextAction;
         _backgroundServicesOptions = backgroundServicesOptions.Value;
     }
@@ -56,7 +57,7 @@ public class JsonWebTokenBackgroundService : IScopedProcessingService
             {
                 await _appDbContextAction.BeginTransactionAsync();
 
-                await _jsonWebTokenService.PurgeAsync(stoppingToken);
+                await _jsonWebTokenEntityService.PurgeAsync(stoppingToken);
 
                 await _appDbContextAction.CommitTransactionAsync();
             }

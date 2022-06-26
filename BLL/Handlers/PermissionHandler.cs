@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BLL.Handlers.Base;
 using BLL.Services;
+using BLL.Services.Entity;
 using Common.Enums;
 using Common.Exceptions;
 using Common.Models;
@@ -34,7 +35,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
     private readonly ILogger<HandlerBase> _logger;
     private readonly IAppDbContextAction _appDbContextAction;
     private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
+    private readonly IPermissionEntityService _permissionEntityService;
 
     #endregion
 
@@ -44,13 +45,13 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
         ILogger<HandlerBase> logger,
         IAppDbContextAction appDbContextAction,
         IMapper mapper,
-        IPermissionService permissionService
+        IPermissionEntityService permissionEntityService
     )
     {
         _logger = logger;
         _appDbContextAction = appDbContextAction;
         _mapper = mapper;
-        _permissionService = permissionService;
+        _permissionEntityService = permissionEntityService;
     }
 
     #endregion
@@ -68,7 +69,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var permission = await _permissionService.GetByIdAsync(data.Id, cancellationToken);
+            var permission = await _permissionEntityService.GetByIdAsync(data.Id, cancellationToken);
             if (permission == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Permission,
                     Localize.Error.PermissionNotFound);
@@ -98,7 +99,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var permissions = await _permissionService.GetFilteredSortedPaged(data.FilterExpressionModel,
+            var permissions = await _permissionEntityService.GetFilteredSortedPaged(data.FilterExpressionModel,
                 data.FilterSortModel, data.PageModel, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();

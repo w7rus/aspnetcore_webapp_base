@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
-using Common.Exceptions;
 using Common.Models;
 using DAL.Data;
 using DAL.Repository;
 using Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BLL.Services;
+namespace BLL.Services.Entity;
 
 /// <summary>
 /// Service to work with User entity
 /// </summary>
-public interface IUserService : IEntityServiceBase<User>
+public interface IUserEntityService : IEntityServiceBase<User>
 {
     /// <summary>
     /// Gets entity with equal Email
@@ -89,11 +86,11 @@ public interface IUserService : IEntityServiceBase<User>
     );
 }
 
-public class UserService : IUserService
+public class UserEntityService : IUserEntityService
 {
     #region Fields
 
-    private readonly ILogger<UserService> _logger;
+    private readonly ILogger<UserEntityService> _logger;
     private readonly IUserRepository _userRepository;
     private readonly IAppDbContextAction _appDbContextAction;
 
@@ -101,8 +98,8 @@ public class UserService : IUserService
 
     #region Ctor
 
-    public UserService(
-        ILogger<UserService> logger,
+    public UserEntityService(
+        ILogger<UserEntityService> logger,
         IUserRepository userRepository,
         IAppDbContextAction appDbContextAction
     )
@@ -156,6 +153,7 @@ public class UserService : IUserService
         return entity;
     }
 
+    //TODO: Paginate Materialization
     public async Task<IReadOnlyCollection<User>> GetByPhoneNumberAsync(
         string phoneNumber,
         CancellationToken cancellationToken = default
@@ -169,6 +167,7 @@ public class UserService : IUserService
         return result;
     }
 
+    //TODO: Paginate Materialization
     public async Task<IReadOnlyCollection<User>> GetExpiredByDisableSignInUntil(
         CancellationToken cancellationToken = default
     )
@@ -183,6 +182,7 @@ public class UserService : IUserService
         return result;
     }
 
+    //TODO: Paginate Materialization
     public async Task<IReadOnlyCollection<User>> GetInRangeByLastSignIn(
         DateTimeOffset @from,
         DateTimeOffset to,
@@ -198,6 +198,7 @@ public class UserService : IUserService
         return result;
     }
 
+    //TODO: Paginate Materialization
     public async Task<IReadOnlyCollection<User>> GetInRangeByLastActivity(
         DateTimeOffset @from,
         DateTimeOffset to,
@@ -214,6 +215,7 @@ public class UserService : IUserService
         return result;
     }
 
+    //TODO: Paginate Materialization
     public async Task<IReadOnlyCollection<User>> GetByLastIpAddress(
         string ipAddress,
         CancellationToken cancellationToken = default
@@ -227,6 +229,7 @@ public class UserService : IUserService
         return result;
     }
 
+    //TODO: Paginate Materialization
     public async Task PurgeAsync(CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.Method(GetType(), nameof(PurgeAsync), null));

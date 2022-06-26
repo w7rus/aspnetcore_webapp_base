@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BLL.Services.Entity;
 using Common.Models;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +25,7 @@ public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
     #region Fields
 
     private readonly ILogger<JsonWebTokenAdvancedService> _logger;
-    private readonly IJsonWebTokenService _jsonWebTokenService;
+    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
     private readonly HttpContext _httpContext;
 
     #endregion
@@ -33,12 +34,12 @@ public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
 
     public JsonWebTokenAdvancedService(
         ILogger<JsonWebTokenAdvancedService> logger,
-        IJsonWebTokenService jsonWebTokenService,
+        IJsonWebTokenEntityService jsonWebTokenEntityService,
         IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
-        _jsonWebTokenService = jsonWebTokenService;
+        _jsonWebTokenEntityService = jsonWebTokenEntityService;
         _httpContext = httpContextAccessor.HttpContext;
     }
 
@@ -52,7 +53,7 @@ public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
                 out var jsonWebTokenId))
             return null;
 
-        var entity = await _jsonWebTokenService.GetByIdAsync(jsonWebTokenId, cancellationToken);
+        var entity = await _jsonWebTokenEntityService.GetByIdAsync(jsonWebTokenId, cancellationToken);
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetFromHttpContext), $"{entity.GetType().Name} {entity.Id}"));

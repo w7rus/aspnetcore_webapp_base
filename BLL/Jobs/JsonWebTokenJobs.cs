@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services;
+using BLL.Services.Entity;
 using Common.Models;
 using DAL.Data;
 using Microsoft.Extensions.Logging;
@@ -20,7 +21,7 @@ public class JsonWebTokenJobs : IJsonWebTokenJobs
 
     private readonly string _fullName;
     private readonly ILogger<JsonWebTokenJobs> _logger;
-    private readonly IJsonWebTokenService _jsonWebTokenService;
+    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
     private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
@@ -29,13 +30,13 @@ public class JsonWebTokenJobs : IJsonWebTokenJobs
 
     public JsonWebTokenJobs(
         ILogger<JsonWebTokenJobs> logger,
-        IJsonWebTokenService jsonWebTokenService,
+        IJsonWebTokenEntityService jsonWebTokenEntityService,
         IAppDbContextAction appDbContextAction
     )
     {
         _fullName = GetType().FullName;
         _logger = logger;
-        _jsonWebTokenService = jsonWebTokenService;
+        _jsonWebTokenEntityService = jsonWebTokenEntityService;
         _appDbContextAction = appDbContextAction;
     }
 
@@ -56,7 +57,7 @@ public class JsonWebTokenJobs : IJsonWebTokenJobs
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            await _jsonWebTokenService.PurgeAsync(stoppingToken);
+            await _jsonWebTokenEntityService.PurgeAsync(stoppingToken);
 
             await _appDbContextAction.CommitTransactionAsync();
         }

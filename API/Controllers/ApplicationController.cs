@@ -1,14 +1,23 @@
-﻿using API.Controllers.Base;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
+using API.Controllers.Base;
 using BLL.Handlers;
 using BLL.Services.Advanced;
+using Common.Models;
+using DTO.Models.Application;
+using DTO.Models.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status400BadRequest)]
 public class ApplicationController : CustomControllerBase
 {
     #region Fields
@@ -35,8 +44,19 @@ public class ApplicationController : CustomControllerBase
     #endregion
 
     #region Methods
-    
-    //TODO: Root user account claim
+
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("setup")]
+    [SwaggerOperation(Summary = "Setup", Description = "Setup")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Setup(
+        [Required] [FromBody] ApplicationSetup data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return Ok(await _applicationHandler.Setup(data, cancellationToken));
+    }
 
     #endregion
 }

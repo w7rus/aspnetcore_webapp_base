@@ -1,35 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
-using Castle.Core.Internal;
-using Common.Attributes;
-using Common.Enums;
-using Common.Exceptions;
 using Common.Models;
 using DAL.Extensions;
 using DAL.Repository;
 using Domain.Entities;
 using Domain.Enums;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Npgsql;
-using IComparable = System.IComparable;
-using ValueType = Common.Enums.ValueType;
 
-namespace BLL.Services;
+namespace BLL.Services.Entity;
 
 /// <summary>
 /// Service to work with Permission entity
 /// Permissions are managed in AppDbContext.Seed
 /// </summary>
-public interface IPermissionService : IEntityServiceBase<Permission>
+public interface IPermissionEntityService : IEntityServiceBase<Permission>
 {
     Task<Permission> GetByAliasAndTypeAsync(string alias, PermissionType permissionType);
 
@@ -41,18 +30,18 @@ public interface IPermissionService : IEntityServiceBase<Permission>
     );
 }
 
-public class PermissionService : IPermissionService
+public class PermissionEntityService : IPermissionEntityService
 {
     #region Fields
 
-    private readonly ILogger<PermissionService> _logger;
+    private readonly ILogger<PermissionEntityService> _logger;
     private readonly IPermissionRepository _permissionRepository;
 
     #endregion
 
     #region Ctor
 
-    public PermissionService(ILogger<PermissionService> logger, IPermissionRepository permissionRepository)
+    public PermissionEntityService(ILogger<PermissionEntityService> logger, IPermissionRepository permissionRepository)
     {
         _logger = logger;
         _permissionRepository = permissionRepository;

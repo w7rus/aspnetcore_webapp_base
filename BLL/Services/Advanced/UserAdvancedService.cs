@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BLL.Services.Entity;
 using Common.Exceptions;
 using Common.Models;
 using Domain.Entities;
@@ -25,7 +26,7 @@ public class UserAdvancedService : IUserAdvancedService
     #region Fields
 
     private readonly ILogger<UserAdvancedService> _logger;
-    private readonly IUserService _userService;
+    private readonly IUserEntityService _userEntityService;
     private readonly HttpContext _httpContext;
 
     #endregion
@@ -34,12 +35,12 @@ public class UserAdvancedService : IUserAdvancedService
 
     public UserAdvancedService(
         ILogger<UserAdvancedService> logger,
-        IUserService userService,
+        IUserEntityService userEntityService,
         IHttpContextAccessor httpContextAccessor
     )
     {
         _logger = logger;
-        _userService = userService;
+        _userEntityService = userEntityService;
         _httpContext = httpContextAccessor.HttpContext;
     }
 
@@ -53,7 +54,7 @@ public class UserAdvancedService : IUserAdvancedService
                 out var userId))
             return null;
 
-        var entity = await _userService.GetByIdAsync(userId, cancellationToken);
+        var entity = await _userEntityService.GetByIdAsync(userId, cancellationToken);
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetFromHttpContext), $"{entity.GetType().Name} {entity.Id}"));

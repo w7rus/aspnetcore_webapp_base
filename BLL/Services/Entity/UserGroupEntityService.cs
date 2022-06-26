@@ -9,12 +9,12 @@ using DAL.Repository;
 using Domain.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace BLL.Services;
+namespace BLL.Services.Entity;
 
 /// <summary>
 /// Service to work with UserGroup entity
 /// </summary>
-public interface IUserGroupService : IEntityServiceBase<UserGroup>
+public interface IUserGroupEntityService : IEntityServiceBase<UserGroup>
 {
     /// <summary>
     /// Gets entity with equal Alias
@@ -24,7 +24,7 @@ public interface IUserGroupService : IEntityServiceBase<UserGroup>
     Task<UserGroup> GetByAliasAsync(string alias);
 }
 
-public class UserGroupService : IUserGroupService
+public class UserGroupEntityService : IUserGroupEntityService
 {
     #region Fields
 
@@ -32,12 +32,12 @@ public class UserGroupService : IUserGroupService
 
     #region Ctor
 
-    private readonly ILogger<UserGroupService> _logger;
+    private readonly ILogger<UserGroupEntityService> _logger;
     private readonly IUserGroupRepository _userGroupRepository;
     private readonly IAppDbContextAction _appDbContextAction;
 
-    public UserGroupService(
-        ILogger<UserGroupService> logger,
+    public UserGroupEntityService(
+        ILogger<UserGroupEntityService> logger,
         IUserGroupRepository userGroupRepository,
         IAppDbContextAction appDbContextAction
     )

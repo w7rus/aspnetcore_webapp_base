@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using BLL.Services;
+using BLL.Services.Entity;
 using Common.Models;
 using Common.Options;
 using Microsoft.AspNetCore.Authentication;
@@ -22,7 +23,7 @@ namespace API.AuthHandlers;
 public class JsonWebTokenAuthenticationHandler : AuthenticationHandler<JsonWebTokenAuthenticationSchemeOptions>
 {
     private readonly JsonWebTokenAuthenticationSchemeOptions _jsonWebTokenAuthenticationSchemeOptions;
-    private readonly IJsonWebTokenService _jsonWebTokenService;
+    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
 
     public JsonWebTokenAuthenticationHandler(
         IOptionsMonitor<JsonWebTokenAuthenticationSchemeOptions> options,
@@ -30,10 +31,10 @@ public class JsonWebTokenAuthenticationHandler : AuthenticationHandler<JsonWebTo
         UrlEncoder encoder,
         ISystemClock clock,
         IOptions<JsonWebTokenOptions> jsonWebTokenOptions,
-        IJsonWebTokenService jsonWebTokenService
+        IJsonWebTokenEntityService jsonWebTokenEntityService
     ) : base(options, logger, encoder, clock)
     {
-        _jsonWebTokenService = jsonWebTokenService;
+        _jsonWebTokenEntityService = jsonWebTokenEntityService;
         _jsonWebTokenAuthenticationSchemeOptions = options.Get(AuthenticationSchemes.JsonWebToken);
     }
 
@@ -75,7 +76,7 @@ public class JsonWebTokenAuthenticationHandler : AuthenticationHandler<JsonWebTo
             return AuthenticateResult.Fail(Localize.Error.JsonWebTokenValidationFailed);
         }
 
-        var jsonWebToken = await _jsonWebTokenService.GetByTokenAsync(authorizationBearerPayload);
+        var jsonWebToken = await _jsonWebTokenEntityService.GetByTokenAsync(authorizationBearerPayload);
         if (jsonWebToken == null)
             return AuthenticateResult.Fail(Localize.Error.JsonWebTokenNotFound);
 

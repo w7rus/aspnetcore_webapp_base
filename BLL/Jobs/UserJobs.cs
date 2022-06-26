@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services;
+using BLL.Services.Entity;
 using Common.Models;
 using DAL.Data;
 using Microsoft.Extensions.Logging;
@@ -19,18 +20,18 @@ public class UserJobs : IUserJobs
 
     private readonly string _fullName;
     private readonly ILogger<UserJobs> _logger;
-    private readonly IUserService _userService;
+    private readonly IUserEntityService _userEntityService;
     private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 
     #region Ctor
 
-    public UserJobs(ILogger<UserJobs> logger, IUserService userService, IAppDbContextAction appDbContextAction)
+    public UserJobs(ILogger<UserJobs> logger, IUserEntityService userEntityService, IAppDbContextAction appDbContextAction)
     {
         _fullName = GetType().FullName;
         _logger = logger;
-        _userService = userService;
+        _userEntityService = userEntityService;
         _appDbContextAction = appDbContextAction;
     }
 
@@ -51,7 +52,7 @@ public class UserJobs : IUserJobs
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            await _userService.PurgeAsync(stoppingToken);
+            await _userEntityService.PurgeAsync(stoppingToken);
 
             await _appDbContextAction.CommitTransactionAsync();
         }

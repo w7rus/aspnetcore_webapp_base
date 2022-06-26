@@ -23,12 +23,68 @@ namespace DAL.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entities.AuthorizeModelResult", b =>
+            modelBuilder.Entity("Domain.Entities.Authorize", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EntityLeftEntityToEntityMappingsTableName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityLeftGroupsTableName")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityLeftId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EntityLeftPermissionAlias")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityLeftTableName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityRightEntityToEntityMappingsTableName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityRightGroupsTableName")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityRightId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EntityRightPermissionAlias")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityRightTableName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Result")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SQLExpressionPermissionTypeValueNeededOwner")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntityLeftTableName", "EntityLeftGroupsTableName", "EntityLeftEntityToEntityMappingsTableName", "EntityLeftId", "EntityLeftPermissionAlias", "EntityRightTableName", "EntityRightGroupsTableName", "EntityRightEntityToEntityMappingsTableName", "EntityRightId", "EntityRightPermissionAlias", "SQLExpressionPermissionTypeValueNeededOwner")
+                        .IsUnique();
+
+                    b.ToTable("Authorizes");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AuthorizeResult", b =>
                 {
                     b.Property<bool>("Result")
                         .HasColumnType("boolean");
 
-                    b.ToTable("AuthorizeModelResult");
+                    b.ToTable("AuthorizeResult");
                 });
 
             modelBuilder.Entity("Domain.Entities.Base.EntityToEntityMappingBase<Domain.Entities.User, Domain.Entities.UserGroup>", b =>

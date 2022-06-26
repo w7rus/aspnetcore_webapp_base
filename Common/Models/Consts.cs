@@ -1,4 +1,6 @@
-﻿namespace Common.Models;
+﻿using System;
+
+namespace Common.Models;
 
 public static class Consts
 {
@@ -13,6 +15,7 @@ public static class Consts
     public const string AutoMapperModelAuthorizeDataKey = "AutoMapperModelAuthorizeData";
     public const string NpgSqlEntityFrameworkCorePostgreSQLProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
     public const string DomainNamespace = "Domain.Entities";
+    public static readonly Guid RootUserId = new Guid("ce374862-f799-4519-9fa8-a8dcf1b9e8ab");
 
     public class PermissionAlias
     {
@@ -50,7 +53,8 @@ public static class Consts
 
     public class MigrationBuilderRawSql
     {
-        public const string CreateExtensionHStore = "create extension if not exists hstore";
+        public const string CreateExtensionHStore = "CREATE extension IF NOT EXISTS hstore";
+        public const string CreateExtensionUUIDOSSP = "CREATE extension IF NOT EXISTS \"uuid-ossp\"";
 
         public const string CreateOrReplaceFunctionAuthorizeEntityPermissionValueToEntityPermissionValue = @"
 CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionValueToEntityPermissionValue""(
@@ -184,6 +188,7 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission"
         EntityRightGroup record := null;
         EntityRightPermission record := null;
         EntityRightPermissionValue record := null;
+        Authorize record := null;
       BEGIN
         EXECUTE format('SELECT * FROM public.""%s"" WHERE ""Id"" = cast($1 as uuid)', EntityLeftTableName) INTO EntityLeft USING EntityLeftUuid;
         EXECUTE format('SELECT * FROM public.""%s"" WHERE ""Id"" = cast($1 as uuid)', EntityRightTableName) INTO EntityRight USING EntityRightUuid;
@@ -193,6 +198,24 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission"
         END IF;
         IF EntityRight IS NULL THEN
           RAISE EXCEPTION '[AuthorizeEntityPermissionToEntityPermission]: EntityRight IS NULL!';
+        END IF;
+        
+        EXECUTE 'SELECT * FROM public.""Authorizes"" WHERE ""EntityLeftTableName"" = $1 AND ""EntityLeftGroupsTableName"" = $2 AND ""EntityLeftEntityToEntityMappingsTableName"" = $3 AND ""EntityLeftId"" = $4 AND ""EntityLeftPermissionAlias"" = $5 AND ""EntityRightTableName"" = $6 AND ""EntityRightGroupsTableName"" = $7 AND ""EntityRightEntityToEntityMappingsTableName"" = $8 AND ""EntityRightId"" = $9 AND ""EntityRightPermissionAlias"" = $10 AND ""SQLExpressionPermissionTypeValueNeededOwner"" = $11'
+            INTO Authorize 
+            USING EntityLeftTableName,
+                EntityLeftGroupsTableName,
+                EntityLeftGroupMappingsTableName,
+                cast(EntityLeft.""Id"" as uuid),
+                EntityLeftPermissionAlias,
+                EntityRightTableName,
+                EntityRightGroupsTableName,
+                EntityRightGroupMappingsTableName,
+                cast(EntityRight.""Id"" as uuid),
+                EntityRightPermissionAlias,
+                SQLExpressionPermissionTypeValueNeededOwner;
+        
+        IF NOT(Authorize IS NULL) THEN
+            RETURN Authorize.Result;
         END IF;
 
         EXECUTE format('SELECT count(*) > 0 FROM public.""%s"" AS T1 WHERE T1.""Id"" = cast($1 as uuid) AND EXISTS (SELECT * FROM public.""%s"" AS T2 WHERE T2.""Id"" = cast($2 as uuid) AND %s)', EntityLeftTableName, EntityRightTableName, SQLExpressionPermissionTypeValueNeededOwner) INTO PermissionTypeValueNeededOwner USING EntityLeftUuid, EntityRightUuid;
@@ -214,7 +237,11 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission"
         IF EntityRightGroupsTableName IS NOT NULL AND EntityRightGroupMappingsTableName IS NOT NULL THEN
           FOR EntityRightGroup IN EXECUTE format('SELECT * FROM public.""%s"" AS T1 WHERE EXISTS (SELECT * FROM public.""%s"" AS T2 WHERE T1.""Id"" = T2.""EntityRightId"" AND T2.""EntityLeftId"" = cast($1 as uuid)) AND EXISTS (SELECT * FROM public.""PermissionValues"" AS T3 WHERE T3.""PermissionId"" = $2 AND T3.""EntityId"" = T1.""Id"") ORDER BY T1.""Priority"" ASC', EntityRightGroupsTableName, EntityRightGroupMappingsTableName) USING EntityRight.""Id"", EntityRightPermission.""Id""
           LOOP
-            EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2' INTO EntityRightPermissionValue USING EntityRightPermission.""Id"", EntityRightGroup.""Id"";
+            EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2'
+                INTO EntityRightPermissionValue USING
+                    EntityRightPermission.""Id"",
+                    EntityRightGroup.""Id"";
+            
             CONTINUE WHEN EntityRightPermissionValue IS NULL;
             FResult := public.""AuthorizeEntityPermissionToEntityPermissionValue""(EntityLeft, EntityLeftGroupsTableName, EntityLeftGroupMappingsTableName, EntityLeftPermission, EntityRightPermission, EntityRightPermissionValue);
             EntityRightPermissionValue := row(null);
@@ -222,11 +249,29 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission"
         END IF;
 
         EntityRightPermissionValue := row(null);
-        EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2' INTO EntityRightPermissionValue USING EntityRightPermission.""Id"", EntityRight.""Id"";
+        EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2'
+            INTO EntityRightPermissionValue USING
+                EntityRightPermission.""Id"",
+                EntityRight.""Id"";
+        
         IF NOT(EntityRightPermissionValue IS NULL) THEN
           FResult := public.""AuthorizeEntityPermissionToEntityPermissionValue""(EntityLeft, EntityLeftGroupsTableName, EntityLeftGroupMappingsTableName, EntityLeftPermission, EntityRightPermission, EntityRightPermissionValue);
         END IF;
-
+        
+        EXECUTE 'INSERT INTO public.""Authorizes"" (""Id"", ""CreatedAt"", ""UpdatedAt"", ""EntityLeftTableName"", ""EntityLeftGroupsTableName"", ""EntityLeftEntityToEntityMappingsTableName"", ""EntityLeftId"", ""EntityLeftPermissionAlias"", ""EntityRightTableName"", ""EntityRightGroupsTableName"", ""EntityRightEntityToEntityMappingsTableName"", ""EntityRightId"", ""EntityRightPermissionAlias"", ""SQLExpressionPermissionTypeValueNeededOwner"", ""Result"") VALUES ((SELECT uuid_generate_v4()), (SELECT CURRENT_TIMESTAMP), (SELECT CURRENT_TIMESTAMP), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)'
+            USING EntityLeftTableName,
+                EntityLeftGroupsTableName,
+                EntityLeftGroupMappingsTableName,
+                cast(EntityLeft.""Id"" as uuid),
+                EntityLeftPermissionAlias,
+                EntityRightTableName,
+                EntityRightGroupsTableName,
+                EntityRightGroupMappingsTableName,
+                cast(EntityRight.""Id"" as uuid),
+                EntityRightPermissionAlias,
+                SQLExpressionPermissionTypeValueNeededOwner,
+                FResult;
+            
         RETURN FResult;
       END;
     $$;

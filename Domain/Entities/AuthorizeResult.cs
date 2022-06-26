@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class AuthorizeModelResult
+public class AuthorizeResult
 {
     public bool Result { get; set; }
 }
