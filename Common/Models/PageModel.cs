@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Common.Models.Base;
 
 namespace Common.Models
@@ -6,6 +7,7 @@ namespace Common.Models
     public class PageModel
     {
         public int Page { get; set; } = 1;
+        [Range(1, 100)]
         public int PageSize { get; set; } = 10;
         public static PageModel Max => new PageModel {Page = 1, PageSize = int.MaxValue};
         public static PageModel Single => new PageModel {Page = 1, PageSize = 1};

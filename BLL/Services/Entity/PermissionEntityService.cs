@@ -20,8 +20,6 @@ namespace BLL.Services.Entity;
 /// </summary>
 public interface IPermissionEntityService : IEntityServiceBase<Permission>
 {
-    Task<Permission> GetByAliasAndTypeAsync(string alias, PermissionType permissionType);
-
     Task<(int total, IReadOnlyCollection<Permission> entities)> GetFilteredSortedPaged(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
@@ -67,17 +65,6 @@ public class PermissionEntityService : IPermissionEntityService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
-
-        return entity;
-    }
-
-    public async Task<Permission> GetByAliasAndTypeAsync(string alias, PermissionType permissionType)
-    {
-        var entity =
-            await _permissionRepository.SingleOrDefaultAsync(_ => _.Alias == alias && _.Type == permissionType);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByAliasAndTypeAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }

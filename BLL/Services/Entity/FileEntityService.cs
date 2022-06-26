@@ -56,13 +56,7 @@ public class FileEntityService : IFileEntityService
     #endregion
 
     #region Methods
-
-    /// <summary>
-    /// Saves entity
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    
     public async Task<File> Save(File entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
@@ -103,13 +97,7 @@ public class FileEntityService : IFileEntityService
 
         return entity;
     }
-
-    /// <summary>
-    /// Deletes entity & Sends response to delete file on FS
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <param name="cancellationToken"></param>
-    /// <exception cref="CustomException"></exception>
+    
     public async Task Delete(File entity, CancellationToken cancellationToken = default)
     {
         var httpClient = _httpClientFactory.CreateClient();
@@ -131,14 +119,7 @@ public class FileEntityService : IFileEntityService
         _fileRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
-
-    /// <summary>
-    /// Gets entity by PK & Retrieves file from CDN or FS
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    /// <exception cref="CustomException"></exception>
+    
     public async Task<File> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var file = await _fileRepository.SingleOrDefaultAsync(_ => _.Id == id);

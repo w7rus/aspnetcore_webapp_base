@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BLL.Services.Base;
 using Common.Models;
 using DAL.Data;
+using DAL.Extensions;
 using DAL.Repository;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -17,70 +18,14 @@ namespace BLL.Services.Entity;
 /// </summary>
 public interface IUserEntityService : IEntityServiceBase<User>
 {
-    /// <summary>
-    /// Gets entity with equal Email
-    /// </summary>
-    /// <param name="email"></param>
-    /// <returns></returns>
     Task<User> GetByEmailAsync(string email);
 
-    /// <summary>
-    /// Gets entities with equal PhoneNumber
-    /// </summary>
-    /// <param name="phoneNumber"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
     Task<IReadOnlyCollection<User>> GetByPhoneNumberAsync(
         string phoneNumber,
+        PageModel pageModel,
         CancellationToken cancellationToken = default
     );
 
-    /// <summary>
-    /// Gets entities with DisableSignInUntil that is less than current date
-    /// </summary>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<IReadOnlyCollection<User>> GetExpiredByDisableSignInUntil(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Gets entities with LastSignIn that are in given inclusive range
-    /// </summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<IReadOnlyCollection<User>> GetInRangeByLastSignIn(
-        DateTimeOffset from,
-        DateTimeOffset to,
-        CancellationToken cancellationToken = default
-    );
-
-    /// <summary>
-    /// Gets entities with LastActivity that are in given inclusive range
-    /// </summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<IReadOnlyCollection<User>> GetInRangeByLastActivity(
-        DateTimeOffset from,
-        DateTimeOffset to,
-        CancellationToken cancellationToken = default
-    );
-
-    /// <summary>
-    /// Gets entities with equal IpAddress
-    /// </summary>
-    /// <param name="ipAddress"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<IReadOnlyCollection<User>> GetByLastIpAddress(string ipAddress, CancellationToken cancellationToken = default);
-    
-    /// <summary>
-    /// Deletes entities with IsTemporary & LastActivity that is less than current date + 1 d
-    /// </summary>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
     Task PurgeAsync(
         CancellationToken cancellationToken = default
     );
@@ -120,7 +65,7 @@ public class UserEntityService : IUserEntityService
 
         _userRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
-        
+
         return entity;
     }
 
@@ -152,93 +97,46 @@ public class UserEntityService : IUserEntityService
 
         return entity;
     }
-
-    //TODO: Paginate Materialization
+    
     public async Task<IReadOnlyCollection<User>> GetByPhoneNumberAsync(
         string phoneNumber,
+        PageModel pageModel,
         CancellationToken cancellationToken = default
     )
     {
-        var result = await _userRepository.QueryMany(_ => _.PhoneNumber == phoneNumber).ToArrayAsync(cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByPhoneNumberAsync), $"{result?.GetType().Name} {result?.Length}"));
-
-        return result;
-    }
-
-    //TODO: Paginate Materialization
-    public async Task<IReadOnlyCollection<User>> GetExpiredByDisableSignInUntil(
-        CancellationToken cancellationToken = default
-    )
-    {
-        var result = await _userRepository.QueryMany(_ => _.DisableSignInUntil < DateTimeOffset.UtcNow)
+        var result = await _userRepository
+            .QueryMany(_ => _.PhoneNumber == phoneNumber)
+            .GetPage(pageModel)
             .ToArrayAsync(cancellationToken);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetExpiredByDisableSignInUntil),
-                $"{result?.GetType().Name} {result?.Length}"));
+            Localize.Log.Method(GetType(), nameof(GetByPhoneNumberAsync),
+                $"{result.GetType().Name} {result.Length}"));
 
         return result;
     }
-
-    //TODO: Paginate Materialization
-    public async Task<IReadOnlyCollection<User>> GetInRangeByLastSignIn(
-        DateTimeOffset @from,
-        DateTimeOffset to,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var result = await _userRepository.QueryMany(_ => _.LastSignIn >= @from && _.LastSignIn <= to)
-            .ToArrayAsync(cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetInRangeByLastSignIn), $"{result?.GetType().Name} {result?.Length}"));
-
-        return result;
-    }
-
-    //TODO: Paginate Materialization
-    public async Task<IReadOnlyCollection<User>> GetInRangeByLastActivity(
-        DateTimeOffset @from,
-        DateTimeOffset to,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var result = await _userRepository.QueryMany(_ => _.LastActivity >= @from && _.LastActivity <= to)
-            .ToArrayAsync(cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetInRangeByLastActivity),
-                $"{result?.GetType().Name} {result?.Length}"));
-
-        return result;
-    }
-
-    //TODO: Paginate Materialization
-    public async Task<IReadOnlyCollection<User>> GetByLastIpAddress(
-        string ipAddress,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var result = await _userRepository.QueryMany(_ => _.LastIpAddress == ipAddress).ToArrayAsync(cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByLastIpAddress), $"{result?.GetType().Name} {result?.Length}"));
-
-        return result;
-    }
-
-    //TODO: Paginate Materialization
+    
     public async Task PurgeAsync(CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
+
+        var query = _userRepository
+            .QueryMany(_ => _.LastActivity <= DateTimeOffset.UtcNow.AddDays(-1) && _.IsTemporary);
         
-        var result = await _userRepository.QueryMany(_ => _.LastActivity <= DateTimeOffset.UtcNow.AddDays(-1) && _.IsTemporary)
-            .ToArrayAsync(cancellationToken);
-        
-        _userRepository.Delete(result);
-        await _appDbContextAction.CommitAsync(cancellationToken);
+        for (var page = 1;;page += 1)
+        {
+            var entities = await query.GetPage(new PageModel()
+            {
+                Page = page,
+                PageSize = 512
+            }).ToArrayAsync(cancellationToken);
+
+            _userRepository.Delete(entities);
+            await _appDbContextAction.CommitAsync(cancellationToken);
+            
+            if (entities.Length < 512)
+                break;
+        }
     }
 
     #endregion

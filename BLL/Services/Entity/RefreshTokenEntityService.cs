@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BLL.Services.Base;
 using Common.Models;
 using DAL.Data;
+using DAL.Extensions;
 using DAL.Repository;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -17,23 +18,8 @@ namespace BLL.Services.Entity;
 /// </summary>
 public interface IRefreshTokenEntityService : IEntityServiceBase<RefreshToken>
 {
-    /// <summary>
-    /// Gets entity with equal Token
-    /// </summary>
-    /// <param name="token"></param>
-    /// <returns></returns>
     Task<RefreshToken> GetByTokenAsync(string token);
-
-    /// <summary>
-    /// Gets entities with equal UserId & DateTime.UtcNow() less than ExpiresAt
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(
-        Guid userId,
-        CancellationToken cancellationToken = default
-    );
+    Task PurgeAsync(CancellationToken cancellationToken = default);
 }
 
 public class RefreshTokenEntityService : IRefreshTokenEntityService
@@ -103,21 +89,28 @@ public class RefreshTokenEntityService : IRefreshTokenEntityService
         return entity;
     }
 
-    //TODO: Paginate Materialization
-    public async Task<IReadOnlyCollection<RefreshToken>> GetExpiredByUserIdAsync(
-        Guid userId,
-        CancellationToken cancellationToken = default
-    )
+    public async Task PurgeAsync(CancellationToken cancellationToken = default)
     {
-        var result = await _refreshTokenRepository
-            .QueryMany(_ => _.UserId == userId && _.ExpiresAt < DateTimeOffset.UtcNow)
-            .ToArrayAsync(cancellationToken);
-
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetExpiredByUserIdAsync),
-                $"{result?.GetType().Name} {result?.Length}"));
+            Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
+            
+        var query = _refreshTokenRepository
+            .QueryMany(_ => _.ExpiresAt < DateTimeOffset.UtcNow);
 
-        return result;
+        for (var page = 1;;page += 1)
+        {
+            var entities = await query.GetPage(new PageModel()
+            {
+                Page = page,
+                PageSize = 512
+            }).ToArrayAsync(cancellationToken);
+
+            _refreshTokenRepository.Delete(entities);
+            await _appDbContextAction.CommitAsync(cancellationToken);
+            
+            if (entities.Length < 512)
+                break;
+        }
     }
 
     #endregion

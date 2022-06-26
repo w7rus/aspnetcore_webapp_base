@@ -19,12 +19,6 @@ namespace BLL.Services.Entity;
 /// </summary>
 public interface IPermissionValueEntityService : IEntityServiceBase<PermissionValue>
 {
-    Task<PermissionValue> GetByEntityIdPermissionId(
-        Guid entityId,
-        Guid permissionId,
-        CancellationToken cancellationToken = default
-    );
-
     Task<(int total, IReadOnlyCollection<PermissionValue> entities)> GetFilteredSortedPaged(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
@@ -87,22 +81,6 @@ public class PermissionValueEntityService : IPermissionValueEntityService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
-
-        return entity;
-    }
-
-    public async Task<PermissionValue> GetByEntityIdPermissionId(
-        Guid entityId,
-        Guid permissionId,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var entity = await _permissionValueRepository.SingleOrDefaultAsync(_ =>
-            _.EntityId == entityId && _.PermissionId == permissionId);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByEntityIdPermissionId),
-                $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading;
@@ -22,42 +23,12 @@ namespace BLL.Services.Entity
     /// </summary>
     public interface IJsonWebTokenEntityService : IEntityServiceBase<JsonWebToken>
     {
-        /// <summary>
-        /// Gets entity with equal Token
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
         Task<JsonWebToken> GetByTokenAsync(string token);
-
-        /// <summary>
-        /// Gets entities with equal UserId & DateTime.UtcNow() less than ExpiresAt
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task<IReadOnlyCollection<JsonWebToken>> GetExpiredByUserIdAsync(
-            Guid userId,
-            CancellationToken cancellationToken = default
-        );
-
-        /// <summary>
-        /// Deletes entities with DeleteAfter that is less than current date
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        
         Task PurgeAsync(
             CancellationToken cancellationToken = default
         );
-
-        /// <summary>
-        /// Creates new JWT object
-        /// </summary>
-        /// <param name="issuerSigningKey"></param>
-        /// <param name="issuer"></param>
-        /// <param name="audience"></param>
-        /// <param name="claims"></param>
-        /// <param name="expires"></param>
-        /// <returns></returns>
+        
         string CreateWithClaims(
             string issuerSigningKey,
             string issuer,
@@ -132,23 +103,6 @@ namespace BLL.Services.Entity
                 Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
             return entity;
-        }
-
-        //TODO: Paginate Materialization
-        public async Task<IReadOnlyCollection<JsonWebToken>> GetExpiredByUserIdAsync(
-            Guid userId,
-            CancellationToken cancellationToken = default
-        )
-        {
-            var result = await _jsonWebTokenRepository
-                .QueryMany(_ => _.UserId == userId && _.ExpiresAt < DateTimeOffset.UtcNow)
-                .ToArrayAsync(cancellationToken);
-
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(GetExpiredByUserIdAsync),
-                    $"{result?.GetType().Name} {result?.Length}"));
-
-            return result;
         }
 
         public async Task PurgeAsync(CancellationToken cancellationToken = default)

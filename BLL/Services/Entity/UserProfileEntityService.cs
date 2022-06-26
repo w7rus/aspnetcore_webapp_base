@@ -15,18 +15,7 @@ namespace BLL.Services.Entity;
 /// </summary>
 public interface IUserProfileEntityService : IEntityServiceBase<UserProfile>
 {
-    /// <summary>
-    /// Gets entity with equal Username
-    /// </summary>
-    /// <param name="username"></param>
-    /// <returns></returns>
     Task<UserProfile> GetByUsernameAsync(string username);
-
-    /// <summary>
-    /// Gets entity with UserId that equals give one
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <returns></returns>
     Task<UserProfile> GetByUserIdAsync(Guid userId);
 }
 
@@ -64,7 +53,7 @@ public class UserProfileEntityService : IUserProfileEntityService
 
         _userProfileRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
-        
+
         return entity;
     }
 

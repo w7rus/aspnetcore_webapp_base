@@ -16,11 +16,6 @@ namespace BLL.Services.Entity;
 /// </summary>
 public interface IUserGroupEntityService : IEntityServiceBase<UserGroup>
 {
-    /// <summary>
-    /// Gets entity with equal Alias
-    /// </summary>
-    /// <param name="alias"></param>
-    /// <returns></returns>
     Task<UserGroup> GetByAliasAsync(string alias);
 }
 
@@ -61,7 +56,7 @@ public class UserGroupEntityService : IUserGroupEntityService
 
         _userGroupRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
-        
+
         return entity;
     }
 
