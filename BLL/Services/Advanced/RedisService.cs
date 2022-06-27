@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
+﻿using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -17,18 +13,17 @@ public interface IRedisService
     IDatabase GetDatabase();
     void SetItem<TEntity>(string key, TEntity value);
     (bool isNullOrEmpty, TEntity entity) GetItem<TEntity>(string key);
-    ValueTask RemoveKeysByPattern(RedisValue serverGlob, Regex clientRegex = null, int database = -1, int batchSize = 1024);
+
+    ValueTask RemoveKeysByPattern(
+        RedisValue serverGlob,
+        Regex clientRegex = null,
+        int database = -1,
+        int batchSize = 1024
+    );
 }
 
 public class RedisService : IRedisService
 {
-    #region Fields
-    
-    private readonly IDatabase _database;
-    private readonly ConnectionMultiplexer _connectionMultiplexer;
-
-    #endregion
-
     #region Ctor
 
     public RedisService(IOptions<RedisOptions> redisOptions)
@@ -39,9 +34,19 @@ public class RedisService : IRedisService
 
     #endregion
 
+    #region Fields
+
+    private readonly IDatabase _database;
+    private readonly ConnectionMultiplexer _connectionMultiplexer;
+
+    #endregion
+
     #region Methods
 
-    public IDatabase GetDatabase() => _database;
+    public IDatabase GetDatabase()
+    {
+        return _database;
+    }
 
     public void SetItem<TEntity>(string key, TEntity value)
     {
@@ -54,7 +59,12 @@ public class RedisService : IRedisService
         return redisResult.IsNullOrEmpty ? (true, default) : (false, JsonSerializer.Deserialize<TEntity>(redisResult));
     }
 
-    public async ValueTask RemoveKeysByPattern(RedisValue serverGlob, Regex clientRegex = null, int database = -1, int batchSize = 1024)
+    public async ValueTask RemoveKeysByPattern(
+        RedisValue serverGlob,
+        Regex clientRegex = null,
+        int database = -1,
+        int batchSize = 1024
+    )
     {
         var endpoints = _connectionMultiplexer.GetEndPoints();
         var db = _connectionMultiplexer.GetDatabase(database);
@@ -65,20 +75,20 @@ public class RedisService : IRedisService
             var server = _connectionMultiplexer.GetServer(endpoint);
 
             if (!server.IsConnected || server.IsReplica) continue;
-            
+
             await foreach (var key in server.KeysAsync(database, serverGlob, 1024).ConfigureAwait(false))
             {
                 if (clientRegex is not null && !clientRegex.IsMatch(key)) continue;
-                    
+
                 // have match; flush if we've hit the batch size
                 batch.Add(key);
                 if (batch.Count == batchSize) await FlushBatch().ConfigureAwait(false);
             }
-                
+
             // make sure we flush per-server so we don't cross shards
             await FlushBatch().ConfigureAwait(false);
         }
-        
+
         Task FlushBatch()
         {
             if (batch.Count == 0) return Task.CompletedTask;
