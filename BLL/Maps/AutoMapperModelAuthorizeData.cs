@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Common.Models;
-using Domain.Entities;
 
 namespace BLL.Maps;
 

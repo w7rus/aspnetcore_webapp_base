@@ -1,44 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BLL.Handlers.Base;
-using BLL.Services;
 using BLL.Services.Entity;
 using Common.Enums;
 using Common.Exceptions;
 using Common.Models;
 using Common.Models.Base;
 using DAL.Data;
-using Domain.Entities;
 using DTO.Models.Permission;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using ValueType = Common.Enums.ValueType;
 
 namespace BLL.Handlers;
 
 public interface IPermissionHandler
 {
     Task<DTOResultBase> Read(PermissionReadDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> ReadFSPCollection(PermissionReadFSPCollectionDto data, CancellationToken cancellationToken = default);
+
+    Task<DTOResultBase> ReadFSPCollection(
+        PermissionReadFSPCollectionDto data,
+        CancellationToken cancellationToken = default
+    );
 }
 
 public class PermissionHandler : HandlerBase, IPermissionHandler
 {
-    #region Fields
-
-    private readonly ILogger<HandlerBase> _logger;
-    private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IMapper _mapper;
-    private readonly IPermissionEntityService _permissionEntityService;
-
-    #endregion
-
     #region Ctor
 
     public PermissionHandler(
@@ -56,6 +45,15 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
 
     #endregion
 
+    #region Fields
+
+    private readonly ILogger<HandlerBase> _logger;
+    private readonly IAppDbContextAction _appDbContextAction;
+    private readonly IMapper _mapper;
+    private readonly IPermissionEntityService _permissionEntityService;
+
+    #endregion
+
     #region Methods
 
     public async Task<DTOResultBase> Read(PermissionReadDto data, CancellationToken cancellationToken = default)
@@ -64,7 +62,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-        
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -73,11 +71,11 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
             if (permission == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Permission,
                     Localize.Error.PermissionNotFound);
-            
+
             await _appDbContextAction.CommitTransactionAsync();
-            
+
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
-            
+
             return _mapper.Map<PermissionReadResultDto>(permission);
         }
         catch (Exception)
@@ -87,14 +85,17 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
             throw;
         }
     }
-    
-    public async Task<DTOResultBase> ReadFSPCollection(PermissionReadFSPCollectionDto data, CancellationToken cancellationToken = default)
+
+    public async Task<DTOResultBase> ReadFSPCollection(
+        PermissionReadFSPCollectionDto data,
+        CancellationToken cancellationToken = default
+    )
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadFSPCollection)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-        
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -103,10 +104,10 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
                 data.FilterSortModel, data.PageModel, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
-            
+
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
 
-            return new PermissionReadFSPCollectionResultDto()
+            return new PermissionReadFSPCollectionResultDto
             {
                 Total = permissions.total,
                 Items = permissions.entities.Select(_ =>

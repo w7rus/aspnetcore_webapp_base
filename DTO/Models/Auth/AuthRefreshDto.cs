@@ -1,18 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace DTO.Models.Auth
+namespace DTO.Models.Auth;
+
+public class AuthRefreshDto
 {
-    public class AuthRefreshDto
-    {
-        /// <summary>
-        /// RefreshToken to use for refreshing auth. If null, retrieve from cookies.
-        /// </summary>
-        public string RefreshToken { get; set; }
-
-        /// <summary>
-        /// Session lifetime
-        /// </summary>
-        public DateTimeOffset? RefreshTokenExpireAt { get; set; }
-    }
+    public string RefreshToken { get; set; }
+    public DateTimeOffset? RefreshTokenExpireAt { get; set; }
 }

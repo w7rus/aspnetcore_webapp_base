@@ -6,10 +6,6 @@ namespace Common.Models;
 
 public class WarningModelResultEntry
 {
-    public WarningType WarningType { get; }
-    public string Message { get; }
-    public WarningEntryType WarningEntryType { get; }
-
     public WarningModelResultEntry(
         WarningType warningType,
         string message,
@@ -20,6 +16,10 @@ public class WarningModelResultEntry
         Message = message;
         WarningEntryType = warningEntryType;
     }
+
+    public WarningType WarningType { get; }
+    public string Message { get; }
+    public WarningEntryType WarningEntryType { get; }
 }
 
 public interface IWarningModelResult

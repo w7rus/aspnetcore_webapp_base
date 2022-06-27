@@ -33,9 +33,7 @@ public class RedisService : IRedisService
 
     public RedisService(IOptions<RedisOptions> redisOptions)
     {
-        // var connectionString = string.Join(",", redisOptions.Value.Endpoints.Select(endpoint => $"{endpoint.Scheme}://{endpoint.Host}:{endpoint.Port}"));
-
-        _connectionMultiplexer = ConnectionMultiplexer.Connect("localhost:49153,user=default,password=redispw");
+        _connectionMultiplexer = ConnectionMultiplexer.Connect(redisOptions.Value.ConnectionString);
         _database = _connectionMultiplexer.GetDatabase();
     }
 

@@ -15,14 +15,6 @@ public interface IAuthorizeJobs
 
 public class AuthorizeJobs : IAuthorizeJobs
 {
-    #region Fields
-
-    private readonly ILogger<AuthorizeJobs> _logger;
-    private readonly IAuthorizeEntityService _authorizeEntityService;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
     public AuthorizeJobs(
@@ -65,6 +57,14 @@ public class AuthorizeJobs : IAuthorizeJobs
 
         _logger.Log(LogLevel.Information, Localize.Log.JobCompleted(jobName));
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<AuthorizeJobs> _logger;
+    private readonly IAuthorizeEntityService _authorizeEntityService;
+    private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 }

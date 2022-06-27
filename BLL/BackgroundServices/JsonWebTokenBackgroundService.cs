@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using BLL.Services;
 using BLL.Services.Entity;
 using Common.Models;
 using Common.Options;
 using DAL.Data;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -14,16 +12,6 @@ namespace BLL.BackgroundServices;
 
 public class JsonWebTokenBackgroundService : IScopedProcessingService
 {
-    #region Fields
-
-    private readonly string _fullName;
-    private readonly ILogger<JsonWebTokenBackgroundService> _logger;
-    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
-    private readonly IAppDbContextAction _appDbContextAction;
-    private readonly BackgroundServicesOptions _backgroundServicesOptions;
-
-    #endregion
-
     #region Ctor
 
     public JsonWebTokenBackgroundService(
@@ -74,4 +62,14 @@ public class JsonWebTokenBackgroundService : IScopedProcessingService
 
         _logger.Log(LogLevel.Information, Localize.Log.BackgroundServiceStopping(_fullName));
     }
+
+    #region Fields
+
+    private readonly string _fullName;
+    private readonly ILogger<JsonWebTokenBackgroundService> _logger;
+    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
+    private readonly IAppDbContextAction _appDbContextAction;
+    private readonly BackgroundServicesOptions _backgroundServicesOptions;
+
+    #endregion
 }

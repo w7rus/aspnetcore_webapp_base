@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
-using BLL.Services;
-using BLL.Services.Advanced;
+﻿using AutoMapper;
 using Common.Exceptions;
 using Common.Models;
-using DAL.Data;
 using Domain.Entities;
-using Domain.Entities.Base;
 using DTO.Models.File;
 using DTO.Models.Permission;
 using DTO.Models.PermissionValue;
-using Microsoft.EntityFrameworkCore;
 
 namespace BLL.Maps;
 
@@ -83,7 +75,7 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
             .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
-        
+
         CreateMap<File, FileCreateResultDto>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.AgeRating, options => options.MapFrom(__ => __.AgeRating));
@@ -99,7 +91,7 @@ public class AutoMapperProfile : Profile
 
     #region Utilities
 
-    bool AutoMapperAuthorizeUserPermission(ResolutionContext context, string objFieldName)
+    private bool AutoMapperAuthorizeUserPermission(ResolutionContext context, string objFieldName)
     {
         //Get AutoMapperModelAuthorizeData from the context items
         if (!context.Items.TryGetValue(Consts.AutoMapperModelAuthorizeDataKey,

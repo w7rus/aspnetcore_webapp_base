@@ -1,34 +1,13 @@
 ﻿using System;
-using Common.Models;
 using Common.Models.Base;
 
-namespace DTO.Models.Auth
+namespace DTO.Models.Auth;
+
+public class AuthSignInResultDto : DTOResultBase
 {
-    public class AuthSignInResultDto : DTOResultBase
-    {
-        /// <summary>
-        /// Id of a user signed in
-        /// </summary>
-        public Guid UserId { get; set; }
-
-        /// <summary>
-        /// Only available when AuthSignIn.UseCookies is false
-        /// </summary>
-        public string JsonWebToken { get; set; }
-
-        /// <summary>
-        /// DateTime before JsonWebToken considered as valid
-        /// </summary>
-        public DateTimeOffset JsonWebTokenExpiresAt { get; set; }
-
-        /// <summary>
-        /// Only available when AuthSignIn.UseCookies is false
-        /// </summary>
-        public string RefreshToken { get; set; }
-
-        /// <summary>
-        /// DateTime before RefreshToken considered as valid
-        /// </summary>
-        public DateTimeOffset RefreshTokenExpiresAt { get; set; }
-    }
+    public Guid UserId { get; set; }
+    public string JsonWebToken { get; set; }
+    public DateTimeOffset JsonWebTokenExpiresAt { get; set; }
+    public string RefreshToken { get; set; }
+    public DateTimeOffset RefreshTokenExpiresAt { get; set; }
 }

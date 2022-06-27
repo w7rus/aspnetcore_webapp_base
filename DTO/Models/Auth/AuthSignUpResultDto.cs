@@ -1,15 +1,9 @@
 ﻿using System;
-using Common.Models;
 using Common.Models.Base;
-using Microsoft.AspNetCore.Mvc;
 
-namespace DTO.Models.Auth
+namespace DTO.Models.Auth;
+
+public class AuthSignUpResultDto : DTOResultBase
 {
-    public class AuthSignUpResultDto : DTOResultBase
-    {
-        /// <summary>
-        /// Id of a user signed up
-        /// </summary>
-        public Guid UserId { get; set; }
-    }
+    public Guid UserId { get; set; }
 }

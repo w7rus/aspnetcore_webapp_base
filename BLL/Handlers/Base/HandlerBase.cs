@@ -27,9 +27,7 @@ public class HandlerBase : IHandlerBase
         };
 
         foreach (var validationResult in validationResults)
-        {
             errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.ModelState, validationResult.ErrorMessage));
-        }
 
         return errorModelResult;
     }

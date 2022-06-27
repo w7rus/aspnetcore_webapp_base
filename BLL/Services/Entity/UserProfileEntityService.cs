@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace BLL.Services.Entity;
 
 /// <summary>
-/// Service to work with UserProfile entity
+///     Service to work with UserProfile entity
 /// </summary>
 public interface IUserProfileEntityService : IEntityServiceBase<UserProfile>
 {
@@ -21,14 +21,6 @@ public interface IUserProfileEntityService : IEntityServiceBase<UserProfile>
 
 public class UserProfileEntityService : IUserProfileEntityService
 {
-    #region Fields
-
-    private readonly ILogger<UserProfileEntityService> _logger;
-    private readonly IUserProfileRepository _userProfileRepository;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
     public UserProfileEntityService(
@@ -41,6 +33,14 @@ public class UserProfileEntityService : IUserProfileEntityService
         _userProfileRepository = userProfileRepository;
         _appDbContextAction = appDbContextAction;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<UserProfileEntityService> _logger;
+    private readonly IUserProfileRepository _userProfileRepository;
+    private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 

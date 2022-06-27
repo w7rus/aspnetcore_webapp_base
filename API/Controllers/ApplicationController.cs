@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
 using BLL.Services.Advanced;
-using Common.Models;
 using DTO.Models.Application;
-using DTO.Models.Auth;
 using DTO.Models.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,13 +18,6 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class ApplicationController : CustomControllerBase
 {
-    #region Fields
-
-    private readonly ILogger<UserController> _logger;
-    private readonly IApplicationHandler _applicationHandler;
-
-    #endregion
-
     #region Ctor
 
     public ApplicationController(
@@ -57,6 +48,13 @@ public class ApplicationController : CustomControllerBase
     {
         return Ok(await _applicationHandler.Setup(data, cancellationToken));
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<UserController> _logger;
+    private readonly IApplicationHandler _applicationHandler;
 
     #endregion
 }

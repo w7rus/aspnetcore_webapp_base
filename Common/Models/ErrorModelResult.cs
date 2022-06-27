@@ -6,10 +6,6 @@ namespace Common.Models;
 
 public class ErrorModelResultEntry
 {
-    public ErrorType ErrorType { get; }
-    public string Message { get; }
-    public ErrorEntryType ErrorEntryType { get; }
-
     public ErrorModelResultEntry(
         ErrorType errorType,
         string message,
@@ -20,6 +16,10 @@ public class ErrorModelResultEntry
         Message = message;
         ErrorEntryType = errorEntryType;
     }
+
+    public ErrorType ErrorType { get; }
+    public string Message { get; }
+    public ErrorEntryType ErrorEntryType { get; }
 }
 
 public interface IErrorModelResult

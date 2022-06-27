@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Handlers.Base;
-using BLL.Services;
 using BLL.Services.Advanced;
 using BLL.Services.Entity;
 using Common.Enums;
@@ -25,15 +24,6 @@ public interface IApplicationHandler
 
 public class ApplicationHandler : HandlerBase, IApplicationHandler
 {
-    #region Fields
-
-    private readonly ILogger<ApplicationHandler> _logger;
-    private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IUserEntityService _userEntityService;
-    private readonly IWarningAdvancedService _warningAdvancedService;
-
-    #endregion
-
     #region Ctor
 
     public ApplicationHandler(
@@ -56,7 +46,7 @@ public class ApplicationHandler : HandlerBase, IApplicationHandler
     public async Task<DTOResultBase> Setup(ApplicationSetupDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Setup)));
-        
+
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
 
@@ -68,22 +58,22 @@ public class ApplicationHandler : HandlerBase, IApplicationHandler
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
                     Localize.Error.UserNotFound);
-            
+
             if (!string.IsNullOrEmpty(user.Password))
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
                     Localize.Error.UserAlreadyClaimed);
-            
+
             var customPasswordHasher = new CustomPasswordHasher();
 
             var passwordHashed = customPasswordHasher.HashPassword(data.Password);
-            
+
             user.Email = data.Email;
             user.Password = passwordHashed;
-            
+
             await _userEntityService.Save(user, cancellationToken);
-            
+
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Setup)));
-            
+
             await _appDbContextAction.CommitTransactionAsync();
 
             return new OkResultDto();
@@ -95,6 +85,15 @@ public class ApplicationHandler : HandlerBase, IApplicationHandler
             throw;
         }
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<ApplicationHandler> _logger;
+    private readonly IAppDbContextAction _appDbContextAction;
+    private readonly IUserEntityService _userEntityService;
+    private readonly IWarningAdvancedService _warningAdvancedService;
 
     #endregion
 }

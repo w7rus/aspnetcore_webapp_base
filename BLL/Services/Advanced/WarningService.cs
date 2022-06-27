@@ -12,13 +12,6 @@ public interface IWarningAdvancedService
 
 public class WarningAdvancedService : IWarningAdvancedService
 {
-    #region Fields
-
-    private readonly ILogger<WarningAdvancedService> _logger;
-    private List<WarningModelResultEntry> _warningModelResultEntries;
-
-    #endregion
-
     #region Ctor
 
     public WarningAdvancedService(ILogger<WarningAdvancedService> logger)
@@ -26,6 +19,13 @@ public class WarningAdvancedService : IWarningAdvancedService
         _logger = logger;
         _warningModelResultEntries = new List<WarningModelResultEntry>();
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<WarningAdvancedService> _logger;
+    private readonly List<WarningModelResultEntry> _warningModelResultEntries;
 
     #endregion
 

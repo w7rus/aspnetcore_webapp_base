@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using BLL.Services;
 using BLL.Services.Entity;
 using Common.Models;
 using DAL.Data;
@@ -16,18 +15,13 @@ public interface IUserJobs
 
 public class UserJobs : IUserJobs
 {
-    #region Fields
-
-    private readonly string _fullName;
-    private readonly ILogger<UserJobs> _logger;
-    private readonly IUserEntityService _userEntityService;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
-    public UserJobs(ILogger<UserJobs> logger, IUserEntityService userEntityService, IAppDbContextAction appDbContextAction)
+    public UserJobs(
+        ILogger<UserJobs> logger,
+        IUserEntityService userEntityService,
+        IAppDbContextAction appDbContextAction
+    )
     {
         _fullName = GetType().FullName;
         _logger = logger;
@@ -42,12 +36,12 @@ public class UserJobs : IUserJobs
     public async Task PurgeAsync(CancellationToken stoppingToken = default)
     {
         var jobName = $"{_fullName}.PurgeAsync";
-        
+
         _logger.Log(LogLevel.Information, Localize.Log.JobExecuted(jobName));
 
         stoppingToken.Register(() =>
             _logger.Log(LogLevel.Information, Localize.Log.JobAborted(jobName)));
-        
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -64,6 +58,15 @@ public class UserJobs : IUserJobs
 
         _logger.Log(LogLevel.Information, Localize.Log.JobCompleted(jobName));
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly string _fullName;
+    private readonly ILogger<UserJobs> _logger;
+    private readonly IUserEntityService _userEntityService;
+    private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 }

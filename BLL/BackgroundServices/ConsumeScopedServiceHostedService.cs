@@ -10,14 +10,6 @@ namespace BLL.BackgroundServices;
 
 public class ConsumeScopedServiceHostedService : BackgroundService
 {
-    #region Fields
-
-    private readonly string _fullName;
-    private readonly ILogger<ConsumeScopedServiceHostedService> _logger;
-    private IServiceProvider ServiceProvider { get; }
-
-    #endregion
-
     #region Ctor
 
     public ConsumeScopedServiceHostedService(
@@ -51,4 +43,12 @@ public class ConsumeScopedServiceHostedService : BackgroundService
 
         _logger.Log(LogLevel.Information, Localize.Log.BackgroundServiceStopping(_fullName));
     }
+
+    #region Fields
+
+    private readonly string _fullName;
+    private readonly ILogger<ConsumeScopedServiceHostedService> _logger;
+    private IServiceProvider ServiceProvider { get; }
+
+    #endregion
 }

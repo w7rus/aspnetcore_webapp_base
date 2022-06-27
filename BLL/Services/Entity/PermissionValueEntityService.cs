@@ -27,14 +27,6 @@ public interface IPermissionValueEntityService : IEntityServiceBase<PermissionVa
 
 public class PermissionValueEntityService : IPermissionValueEntityService
 {
-    #region Fields
-
-    private readonly ILogger<PermissionValueEntityService> _logger;
-    private readonly IPermissionValueRepository _permissionValueRepository;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
     public PermissionValueEntityService(
@@ -47,6 +39,14 @@ public class PermissionValueEntityService : IPermissionValueEntityService
         _permissionValueRepository = permissionValueRepository;
         _appDbContextAction = appDbContextAction;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<PermissionValueEntityService> _logger;
+    private readonly IPermissionValueRepository _permissionValueRepository;
+    private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 

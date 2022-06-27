@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
-using BLL.Services;
 using BLL.Services.Advanced;
 using Common.Models;
 using DTO.Models.Generic;
@@ -20,13 +19,6 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class UserGroupPermissionValueController : CustomControllerBase
 {
-    #region Fields
-
-    private readonly ILogger<UserGroupPermissionValueController> _logger;
-    private readonly IUserGroupPermissionValueHandler _userGroupPermissionValueHandler;
-
-    #endregion
-
     #region Ctor
 
     public UserGroupPermissionValueController(
@@ -39,6 +31,13 @@ public class UserGroupPermissionValueController : CustomControllerBase
         _logger = logger;
         _userGroupPermissionValueHandler = userGroupPermissionValueHandler;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<UserGroupPermissionValueController> _logger;
+    private readonly IUserGroupPermissionValueHandler _userGroupPermissionValueHandler;
 
     #endregion
 

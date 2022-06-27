@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Common.Enums;
 using Common.Exceptions;
 using Common.Models;
@@ -11,8 +10,6 @@ namespace Common.Filters;
 
 public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
 {
-    public int Order => int.MaxValue - 10;
-
     public void OnActionExecuting(ActionExecutingContext context)
     {
     }
@@ -50,4 +47,6 @@ public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
                 break;
         }
     }
+
+    public int Order => int.MaxValue - 10;
 }

@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using BLL.Services;
 using BLL.Services.Advanced;
 using Common.Models;
 using Common.Models.Base;
@@ -16,16 +14,12 @@ namespace API.Controllers.Base;
 [ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status500InternalServerError)]
 public class CustomControllerBase : ControllerBase
 {
-    #region Fields
-
-    private readonly HttpContext _httpContext;
-    private readonly IWarningAdvancedService _warningAdvancedService;
-
-    #endregion
-
     #region Ctor
 
-    public CustomControllerBase(IHttpContextAccessor httpContextAccessor, IWarningAdvancedService warningAdvancedService)
+    public CustomControllerBase(
+        IHttpContextAccessor httpContextAccessor,
+        IWarningAdvancedService warningAdvancedService
+    )
     {
         _warningAdvancedService = warningAdvancedService;
         _httpContext = httpContextAccessor.HttpContext;
@@ -48,6 +42,13 @@ public class CustomControllerBase : ControllerBase
 
         return new OkObjectResult(response);
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly HttpContext _httpContext;
+    private readonly IWarningAdvancedService _warningAdvancedService;
 
     #endregion
 }

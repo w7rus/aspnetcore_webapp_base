@@ -6,9 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
-using BLL.Services;
 using BLL.Services.Advanced;
-using BrunoZell.ModelBinding;
 using Common.Attributes;
 using Common.Enums;
 using Common.Exceptions;
@@ -31,13 +29,6 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class FileController : CustomControllerBase
 {
-    #region Fields
-
-    private readonly ILogger<FileController> _logger;
-    private readonly IFileHandler _fileHandler;
-
-    #endregion
-
     #region Ctor
 
     public FileController(
@@ -50,6 +41,13 @@ public class FileController : CustomControllerBase
         _logger = logger;
         _fileHandler = fileHandler;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<FileController> _logger;
+    private readonly IFileHandler _fileHandler;
 
     #endregion
 
@@ -66,10 +64,8 @@ public class FileController : CustomControllerBase
     public async Task<IActionResult> Create(CancellationToken cancellationToken = default)
     {
         if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
-        {
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
                 Localize.Error.RequestMultipartExpected);
-        }
 
         var boundary = MultipartRequestHelper.GetBoundary(MediaTypeHeaderValue.Parse(Request.ContentType));
         var reader = new MultipartReader(boundary, HttpContext.Request.Body);
@@ -96,7 +92,7 @@ public class FileController : CustomControllerBase
                 Localize.Error.RequestMultipartSectionEncodingNotSupported);
 
         using var streamReader = new StreamReader(multipartSection.Body, encoding,
-            detectEncodingFromByteOrderMarks: true, bufferSize: 1024);
+            true, 1024);
 
         var data = await JsonSerializer.DeserializeAsync<FileCreateDto>(streamReader.BaseStream,
                        cancellationToken: cancellationToken) ??

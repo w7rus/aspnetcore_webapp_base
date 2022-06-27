@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using BLL.Handlers.Base;
 using Common.Attributes;
 using Common.Exceptions;
 using Common.Extensions;
 using Common.Models;
 using Common.Models.Base;
-using Domain.Entities;
 using Domain.Entities.Base;
 using DTO.Models.DomainInfo;
 using Microsoft.Extensions.Logging;
-using ValueType = Common.Enums.ValueType;
 
 namespace BLL.Handlers;
 
@@ -41,7 +37,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
     #endregion
 
     #region Methods
-    
+
     public DTOResultBase Read(DomainInfoReadDto data)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using BLL.Services;
 using BLL.Services.Entity;
 using Common.Models;
 using Common.Options;
@@ -15,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 
 namespace API.AuthHandlers;
@@ -81,9 +78,7 @@ public class JsonWebTokenAuthenticationHandler : AuthenticationHandler<JsonWebTo
             return AuthenticateResult.Fail(Localize.Error.JsonWebTokenNotFound);
 
         if (jsonWebToken.ExpiresAt < DateTimeOffset.UtcNow)
-        {
             return AuthenticateResult.Fail(Localize.Error.JsonWebTokenExpired);
-        }
 
         claims.Add(new Claim(ClaimKey.JsonWebTokenId, jsonWebToken.Id.ToString(),
             ClaimValueTypes.String));

@@ -8,7 +8,6 @@ using Common.Models;
 using DAL.Extensions;
 using DAL.Repository;
 using Domain.Entities;
-using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -26,13 +25,6 @@ public interface IPermissionEntityService : IEntityServiceBase<Permission>
 
 public class PermissionEntityService : IPermissionEntityService
 {
-    #region Fields
-
-    private readonly ILogger<PermissionEntityService> _logger;
-    private readonly IPermissionRepository _permissionRepository;
-
-    #endregion
-
     #region Ctor
 
     public PermissionEntityService(ILogger<PermissionEntityService> logger, IPermissionRepository permissionRepository)
@@ -40,6 +32,13 @@ public class PermissionEntityService : IPermissionEntityService
         _logger = logger;
         _permissionRepository = permissionRepository;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<PermissionEntityService> _logger;
+    private readonly IPermissionRepository _permissionRepository;
 
     #endregion
 

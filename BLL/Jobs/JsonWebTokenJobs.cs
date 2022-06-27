@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using BLL.Services;
 using BLL.Services.Entity;
 using Common.Models;
 using DAL.Data;
@@ -17,14 +15,6 @@ public interface IJsonWebTokenJobs
 
 public class JsonWebTokenJobs : IJsonWebTokenJobs
 {
-    #region Fields
-    
-    private readonly ILogger<JsonWebTokenJobs> _logger;
-    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
     public JsonWebTokenJobs(
@@ -67,6 +57,14 @@ public class JsonWebTokenJobs : IJsonWebTokenJobs
 
         _logger.Log(LogLevel.Information, Localize.Log.JobCompleted(jobName));
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<JsonWebTokenJobs> _logger;
+    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
+    private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 }

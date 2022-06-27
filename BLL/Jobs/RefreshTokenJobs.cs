@@ -15,14 +15,6 @@ public interface IRefreshTokenJobs
 
 public class RefreshTokenJobs : IRefreshTokenJobs
 {
-    #region Fields
-
-    private readonly ILogger<RefreshTokenJobs> _logger;
-    private readonly IRefreshTokenEntityService _refreshTokenEntityService;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
     public RefreshTokenJobs(
@@ -65,6 +57,14 @@ public class RefreshTokenJobs : IRefreshTokenJobs
 
         _logger.Log(LogLevel.Information, Localize.Log.JobCompleted(jobName));
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<RefreshTokenJobs> _logger;
+    private readonly IRefreshTokenEntityService _refreshTokenEntityService;
+    private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 }

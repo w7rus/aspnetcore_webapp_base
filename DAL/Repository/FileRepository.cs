@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
 using DAL.Data;
 using DAL.Repository.Base;
-using File = Domain.Entities.File;
+using Domain.Entities;
 
 namespace DAL.Repository;
 

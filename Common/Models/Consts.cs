@@ -15,7 +15,7 @@ public static class Consts
     public const string AutoMapperModelAuthorizeDataKey = "AutoMapperModelAuthorizeData";
     public const string NpgSqlEntityFrameworkCorePostgreSQLProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
     public const string DomainNamespace = "Domain.Entities";
-    public static readonly Guid RootUserId = new Guid("ce374862-f799-4519-9fa8-a8dcf1b9e8ab");
+    public static readonly Guid RootUserId = new("ce374862-f799-4519-9fa8-a8dcf1b9e8ab");
 
     public class PermissionAlias
     {
@@ -27,7 +27,7 @@ public static class Consts
         public const string g_group_a_read_o_usergroup = "g_group_a_read_o_usergroup";
         public const string g_group_a_update_o_usergroup = "g_group_a_update_o_usergroup";
         public const string g_group_a_delete_o_usergroup = "g_group_a_delete_o_usergroup";
-        
+
         public const string g_user_a_read_o_user = "g_user_a_read_o_user";
         public const string g_user_a_update_o_user = "g_user_a_update_o_user";
         public const string g_user_a_delete_o_user = "g_user_a_delete_o_user";

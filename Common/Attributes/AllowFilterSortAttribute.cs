@@ -5,5 +5,4 @@ namespace Common.Attributes;
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class AllowFilterSortAttribute : Attribute
 {
-    
 }

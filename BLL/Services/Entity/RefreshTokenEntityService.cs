@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace BLL.Services.Entity;
 
 /// <summary>
-/// Service to work with RefreshToken entity
+///     Service to work with RefreshToken entity
 /// </summary>
 public interface IRefreshTokenEntityService : IEntityServiceBase<RefreshToken>
 {
@@ -25,14 +24,6 @@ public interface IRefreshTokenEntityService : IEntityServiceBase<RefreshToken>
 
 public class RefreshTokenEntityService : IRefreshTokenEntityService
 {
-    #region Fields
-
-    private readonly ILogger<RefreshTokenEntityService> _logger;
-    private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
     public RefreshTokenEntityService(
@@ -48,6 +39,14 @@ public class RefreshTokenEntityService : IRefreshTokenEntityService
 
     #endregion
 
+    #region Fields
+
+    private readonly ILogger<RefreshTokenEntityService> _logger;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IAppDbContextAction _appDbContextAction;
+
+    #endregion
+
     #region Methods
 
     public async Task<RefreshToken> Save(RefreshToken entity, CancellationToken cancellationToken = default)
@@ -57,7 +56,7 @@ public class RefreshTokenEntityService : IRefreshTokenEntityService
 
         _refreshTokenRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
-        
+
         return entity;
     }
 
@@ -94,14 +93,14 @@ public class RefreshTokenEntityService : IRefreshTokenEntityService
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
-            
+
         var query = _refreshTokenRepository
             .QueryMany(_ => _.ExpiresAt < DateTimeOffset.UtcNow)
             .OrderBy(_ => _.CreatedAt);
 
-        for (var page = 1;;page += 1)
+        for (var page = 1;; page += 1)
         {
-            var entities = await query.GetPage(new PageModel()
+            var entities = await query.GetPage(new PageModel
             {
                 Page = page,
                 PageSize = 512
@@ -109,7 +108,7 @@ public class RefreshTokenEntityService : IRefreshTokenEntityService
 
             _refreshTokenRepository.Delete(entities);
             await _appDbContextAction.CommitAsync(cancellationToken);
-            
+
             if (entities.Length < 512)
                 break;
         }

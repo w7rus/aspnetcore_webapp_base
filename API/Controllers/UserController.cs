@@ -1,8 +1,6 @@
 ﻿using API.Controllers.Base;
 using BLL.Handlers;
-using BLL.Services;
 using BLL.Services.Advanced;
-using Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,13 +11,6 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class UserController : CustomControllerBase
 {
-    #region Fields
-
-    private readonly ILogger<UserController> _logger;
-    private readonly IUserHandler _userHandler;
-
-    #endregion
-
     #region Ctor
 
     public UserController(
@@ -36,7 +27,16 @@ public class UserController : CustomControllerBase
 
     #endregion
 
+    #region Fields
+
+    private readonly ILogger<UserController> _logger;
+    private readonly IUserHandler _userHandler;
+
+    #endregion
+
     #region Methods
+    
+    //TODO: Endpoints
 
     #endregion
 }

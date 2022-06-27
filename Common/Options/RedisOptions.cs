@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using Common.Models;
-
-namespace Common.Options;
+﻿namespace Common.Options;
 
 public class RedisOptions
 {
-    public ICollection<UriData> Endpoints { get; set; }
+    public string ConnectionString { get; set; }
 }

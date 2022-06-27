@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Entity;
-using Common.Exceptions;
 using Common.Models;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +13,7 @@ namespace BLL.Services.Advanced;
 public interface IUserAdvancedService
 {
     /// <summary>
-    /// Gets entity by HttpContext authorization data
+    ///     Gets entity by HttpContext authorization data
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
@@ -23,14 +22,6 @@ public interface IUserAdvancedService
 
 public class UserAdvancedService : IUserAdvancedService
 {
-    #region Fields
-
-    private readonly ILogger<UserAdvancedService> _logger;
-    private readonly IUserEntityService _userEntityService;
-    private readonly HttpContext _httpContext;
-
-    #endregion
-
     #region Ctor
 
     public UserAdvancedService(
@@ -61,6 +52,14 @@ public class UserAdvancedService : IUserAdvancedService
 
         return entity;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<UserAdvancedService> _logger;
+    private readonly IUserEntityService _userEntityService;
+    private readonly HttpContext _httpContext;
 
     #endregion
 }

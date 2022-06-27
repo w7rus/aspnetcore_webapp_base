@@ -10,5 +10,5 @@ public enum ErrorType
     Request,
     HttpClient,
     Auth = 1024,
-    Permission,
+    Permission
 }

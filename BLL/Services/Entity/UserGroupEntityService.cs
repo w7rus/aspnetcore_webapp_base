@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace BLL.Services.Entity;
 
 /// <summary>
-/// Service to work with UserGroup entity
+///     Service to work with UserGroup entity
 /// </summary>
 public interface IUserGroupEntityService : IEntityServiceBase<UserGroup>
 {

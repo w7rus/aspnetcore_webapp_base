@@ -6,13 +6,13 @@ using Domain.Entities.Base;
 namespace BLL.Services.Base;
 
 /// <summary>
-/// Base service every entity must implement
+///     Base service every entity must implement
 /// </summary>
 /// <typeparam name="TEntity"></typeparam>
 public interface IEntityServiceBase<TEntity> where TEntity : EntityBase<Guid>
 {
     /// <summary>
-    /// Saves entity
+    ///     Saves entity
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="cancellationToken"></param>
@@ -20,7 +20,7 @@ public interface IEntityServiceBase<TEntity> where TEntity : EntityBase<Guid>
     Task<TEntity> Save(TEntity entity, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Deletes entity
+    ///     Deletes entity
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="cancellationToken"></param>
@@ -28,7 +28,7 @@ public interface IEntityServiceBase<TEntity> where TEntity : EntityBase<Guid>
     Task Delete(TEntity entity, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets entity by PK
+    ///     Gets entity by PK
     /// </summary>
     /// <param name="id"></param>
     /// <param name="cancellationToken"></param>

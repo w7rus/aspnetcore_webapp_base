@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace BLL.Services.Entity;
 
 /// <summary>
-/// Service to work with UserToUserGroupMapping entity
+///     Service to work with UserToUserGroupMapping entity
 /// </summary>
 public interface IUserToUserGroupMappingEntityService : IEntityToEntityMappingServiceBase<UserToUserGroupMapping>
 {
@@ -28,14 +28,6 @@ public interface IUserToUserGroupMappingEntityService : IEntityToEntityMappingSe
 
 public class UserToUserGroupMappingEntityService : IUserToUserGroupMappingEntityService
 {
-    #region Fields
-
-    private readonly ILogger<UserToUserGroupMappingEntityService> _logger;
-    private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
     public UserToUserGroupMappingEntityService(
@@ -51,16 +43,27 @@ public class UserToUserGroupMappingEntityService : IUserToUserGroupMappingEntity
 
     #endregion
 
+    #region Fields
+
+    private readonly ILogger<UserToUserGroupMappingEntityService> _logger;
+    private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
+    private readonly IAppDbContextAction _appDbContextAction;
+
+    #endregion
+
     #region Methods
 
-    public async Task<UserToUserGroupMapping> Save(UserToUserGroupMapping entity, CancellationToken cancellationToken = default)
+    public async Task<UserToUserGroupMapping> Save(
+        UserToUserGroupMapping entity,
+        CancellationToken cancellationToken = default
+    )
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
 
         _userToUserGroupMappingRepository.Save(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
-        
+
         return entity;
     }
 
@@ -68,7 +71,7 @@ public class UserToUserGroupMappingEntityService : IUserToUserGroupMappingEntity
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
-        
+
         if (entity == null)
             throw new ArgumentNullException(nameof(entity));
 
@@ -86,20 +89,24 @@ public class UserToUserGroupMappingEntityService : IUserToUserGroupMappingEntity
         return entity;
     }
 
-    public async Task<IReadOnlyCollection<UserToUserGroupMapping>> GetByUserGroupIdAsync(Guid userGroupId, PageModel pageModel, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<UserToUserGroupMapping>> GetByUserGroupIdAsync(
+        Guid userGroupId,
+        PageModel pageModel,
+        CancellationToken cancellationToken = default
+    )
     {
         var result = await _userToUserGroupMappingRepository
             .QueryMany(_ => _.EntityRightId == userGroupId)
             .OrderBy(_ => _.CreatedAt)
             .GetPage(pageModel)
             .ToArrayAsync(cancellationToken);
-        
+
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByUserGroupIdAsync),
                 $"{result.GetType().Name} {result.Length}"));
 
         return result;
     }
-    
+
     #endregion
 }

@@ -1,7 +1,6 @@
-﻿namespace Common.Options
+﻿namespace Common.Options;
+
+public class GoogleReCaptchaV2Options
 {
-    public class GoogleReCaptchaV2Options
-    {
-        public string PrivateKey { get; set; }
-    }
+    public string PrivateKey { get; set; }
 }

@@ -12,11 +12,10 @@ using Common.Models;
 using Common.Options;
 using DAL.Data;
 using DAL.Repository;
+using Domain.Entities;
 using DTO.Models.File;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using File = Domain.Entities.File;
-using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace BLL.Services.Entity;
 
@@ -26,16 +25,6 @@ public interface IFileEntityService : IEntityServiceBase<File>
 
 public class FileEntityService : IFileEntityService
 {
-    #region Fields
-
-    private readonly ILogger<FileEntityService> _logger;
-    private readonly IFileRepository<File> _fileRepository;
-    private readonly IAppDbContextAction _appDbContextAction;
-    private readonly MiscOptions _miscOptions;
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    #endregion
-
     #region Ctor
 
     public FileEntityService(
@@ -55,8 +44,18 @@ public class FileEntityService : IFileEntityService
 
     #endregion
 
+    #region Fields
+
+    private readonly ILogger<FileEntityService> _logger;
+    private readonly IFileRepository<File> _fileRepository;
+    private readonly IAppDbContextAction _appDbContextAction;
+    private readonly MiscOptions _miscOptions;
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    #endregion
+
     #region Methods
-    
+
     public async Task<File> Save(File entity, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
@@ -97,7 +96,7 @@ public class FileEntityService : IFileEntityService
 
         return entity;
     }
-    
+
     public async Task Delete(File entity, CancellationToken cancellationToken = default)
     {
         var httpClient = _httpClientFactory.CreateClient();
@@ -119,7 +118,7 @@ public class FileEntityService : IFileEntityService
         _fileRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
-    
+
     public async Task<File> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var file = await _fileRepository.SingleOrDefaultAsync(_ => _.Id == id);

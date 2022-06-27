@@ -1,73 +1,72 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace DAL.Data
+namespace DAL.Data;
+
+public interface IAppDbContextAction
 {
-    public interface IAppDbContextAction
+    void Commit();
+    Task CommitAsync();
+    Task CommitAsync(CancellationToken cancellationToken);
+    void BeginTransaction();
+    Task BeginTransactionAsync();
+    void CommitTransaction();
+    Task CommitTransactionAsync();
+    void RollbackTransaction();
+    Task RollbackTransactionAsync();
+}
+
+public class AppDbContextAction : IAppDbContextAction
+{
+    private readonly AppDbContext _appDbContext;
+
+    public AppDbContextAction(AppDbContext appDbContext)
     {
-        void Commit();
-        Task CommitAsync();
-        Task CommitAsync(CancellationToken cancellationToken);
-        void BeginTransaction();
-        Task BeginTransactionAsync();
-        void CommitTransaction();
-        Task CommitTransactionAsync();
-        void RollbackTransaction();
-        Task RollbackTransactionAsync();
+        _appDbContext = appDbContext;
     }
 
-    public class AppDbContextAction : IAppDbContextAction
+    public void Commit()
     {
-        private readonly AppDbContext _appDbContext;
+        _appDbContext.SaveChanges();
+    }
 
-        public AppDbContextAction(AppDbContext appDbContext)
-        {
-            _appDbContext = appDbContext;
-        }
+    public async Task CommitAsync()
+    {
+        await _appDbContext.SaveChangesAsync();
+    }
 
-        public void Commit()
-        {
-            _appDbContext.SaveChanges();
-        }
+    public async Task CommitAsync(CancellationToken cancellationToken)
+    {
+        await _appDbContext.SaveChangesAsync(cancellationToken);
+    }
 
-        public async Task CommitAsync()
-        {
-            await _appDbContext.SaveChangesAsync();
-        }
+    public void BeginTransaction()
+    {
+        _appDbContext.Database.BeginTransaction();
+    }
 
-        public async Task CommitAsync(CancellationToken cancellationToken)
-        {
-            await _appDbContext.SaveChangesAsync(cancellationToken);
-        }
+    public async Task BeginTransactionAsync()
+    {
+        await _appDbContext.Database.BeginTransactionAsync();
+    }
 
-        public void BeginTransaction()
-        {
-            _appDbContext.Database.BeginTransaction();
-        }
+    public void CommitTransaction()
+    {
+        _appDbContext.Database.CommitTransaction();
+    }
 
-        public async Task BeginTransactionAsync()
-        {
-            await _appDbContext.Database.BeginTransactionAsync();
-        }
+    public async Task CommitTransactionAsync()
+    {
+        await _appDbContext.Database.CommitTransactionAsync();
+    }
 
-        public void CommitTransaction()
-        {
-            _appDbContext.Database.CommitTransaction();
-        }
+    public void RollbackTransaction()
+    {
+        _appDbContext.Database.RollbackTransaction();
+    }
 
-        public async Task CommitTransactionAsync()
-        {
-            await _appDbContext.Database.CommitTransactionAsync();
-        }
-
-        public void RollbackTransaction()
-        {
-            _appDbContext.Database.RollbackTransaction();
-        }
-
-        public async Task RollbackTransactionAsync()
-        {
-            await _appDbContext.Database.RollbackTransactionAsync();
-        }
+    public async Task RollbackTransactionAsync()
+    {
+        await _appDbContext.Database.RollbackTransactionAsync();
     }
 }

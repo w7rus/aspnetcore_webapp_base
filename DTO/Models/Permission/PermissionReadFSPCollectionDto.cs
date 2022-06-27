@@ -1,5 +1,4 @@
 ﻿using Common.Models;
-using Domain.Enums;
 
 namespace DTO.Models.Permission;
 

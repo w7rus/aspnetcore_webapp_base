@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BLL.Handlers.Base;
 using BLL.Maps;
-using BLL.Services;
 using BLL.Services.Advanced;
 using BLL.Services.Entity;
 using Common.Enums;
@@ -16,12 +15,9 @@ using Common.Models;
 using Common.Models.Base;
 using DAL.Data;
 using DAL.Repository;
-using Domain.Entities;
-using Domain.Enums;
 using DTO.Models.File;
 using DTO.Models.Generic;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using File = Domain.Entities.File;
 
@@ -43,26 +39,6 @@ public interface IFileHandler
 
 public class FileHandler : HandlerBase, IFileHandler
 {
-    #region Fields
-
-    private readonly ILogger<HandlerBase> _logger;
-    private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IFileEntityService _fileEntityService;
-    private readonly HttpContext _httpContext;
-    private readonly IUserEntityService _userEntityService;
-    private readonly IMapper _mapper;
-    private readonly IPermissionEntityService _permissionEntityService;
-    private readonly IPermissionValueEntityService _permissionValueEntityService;
-    private readonly IUserGroupEntityService _userGroupEntityService;
-    private readonly IUserAdvancedService _userAdvancedService;
-    private readonly IUserRepository _userRepository;
-    private readonly IUserGroupRepository _userGroupRepository;
-    private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
-    private readonly AppDbContext _appDbContext;
-    private readonly IAuthorizeAdvancedService _authorizeAdvancedService;
-
-    #endregion
-
     #region Ctor
 
     public FileHandler(
@@ -99,6 +75,26 @@ public class FileHandler : HandlerBase, IFileHandler
         _authorizeAdvancedService = authorizeAdvancedService;
         _httpContext = httpContextAccessor.HttpContext;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<HandlerBase> _logger;
+    private readonly IAppDbContextAction _appDbContextAction;
+    private readonly IFileEntityService _fileEntityService;
+    private readonly HttpContext _httpContext;
+    private readonly IUserEntityService _userEntityService;
+    private readonly IMapper _mapper;
+    private readonly IPermissionEntityService _permissionEntityService;
+    private readonly IPermissionValueEntityService _permissionValueEntityService;
+    private readonly IUserGroupEntityService _userGroupEntityService;
+    private readonly IUserAdvancedService _userAdvancedService;
+    private readonly IUserRepository _userRepository;
+    private readonly IUserGroupRepository _userGroupRepository;
+    private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
+    private readonly AppDbContext _appDbContext;
+    private readonly IAuthorizeAdvancedService _authorizeAdvancedService;
 
     #endregion
 
@@ -252,10 +248,10 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            var contentDisposition = new System.Net.Mime.ContentDisposition
+            var contentDisposition = new ContentDisposition
             {
                 FileName = file.Name,
-                Inline = true,
+                Inline = true
             };
             _httpContext.Response.Headers.Append("Content-Disposition", contentDisposition.ToString());
 

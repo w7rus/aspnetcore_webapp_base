@@ -1,6 +1,4 @@
-﻿using Domain.Enums;
-
-namespace DTO.Models.File;
+﻿namespace DTO.Models.File;
 
 public class FileCDNCreateDto
 {

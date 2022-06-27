@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Web;
+﻿using System.Diagnostics;
 using Common.Enums;
-using Common.Exceptions;
 using Common.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -16,13 +12,6 @@ namespace API.Controllers;
 [ApiController]
 public class ErrorController : ControllerBase
 {
-    #region Fields
-
-    private readonly IHostEnvironment _hostEnvironment;
-    private readonly ILogger<ErrorController> _logger;
-
-    #endregion
-
     #region Ctor
 
     public ErrorController(IHostEnvironment hostEnvironment, ILogger<ErrorController> logger)
@@ -67,6 +56,13 @@ public class ErrorController : ControllerBase
 
         return StatusCode(StatusCodes.Status500InternalServerError, errorModelResult);
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly IHostEnvironment _hostEnvironment;
+    private readonly ILogger<ErrorController> _logger;
 
     #endregion
 }

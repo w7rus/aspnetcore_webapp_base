@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace BLL.Services.Entity;
 
 /// <summary>
-/// Service to work with User entity
+///     Service to work with User entity
 /// </summary>
 public interface IUserEntityService : IEntityServiceBase<User>
 {
@@ -34,14 +34,6 @@ public interface IUserEntityService : IEntityServiceBase<User>
 
 public class UserEntityService : IUserEntityService
 {
-    #region Fields
-
-    private readonly ILogger<UserEntityService> _logger;
-    private readonly IUserRepository _userRepository;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
     public UserEntityService(
@@ -54,6 +46,14 @@ public class UserEntityService : IUserEntityService
         _userRepository = userRepository;
         _appDbContextAction = appDbContextAction;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<UserEntityService> _logger;
+    private readonly IUserRepository _userRepository;
+    private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 
@@ -98,7 +98,7 @@ public class UserEntityService : IUserEntityService
 
         return entity;
     }
-    
+
     public async Task<IReadOnlyCollection<User>> GetByPhoneNumberAsync(
         string phoneNumber,
         PageModel pageModel,
@@ -117,7 +117,7 @@ public class UserEntityService : IUserEntityService
 
         return result;
     }
-    
+
     public async Task PurgeAsync(CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
@@ -125,10 +125,10 @@ public class UserEntityService : IUserEntityService
         var query = _userRepository
             .QueryMany(_ => _.LastActivity <= DateTimeOffset.UtcNow.AddDays(-1) && _.IsTemporary)
             .OrderBy(_ => _.CreatedAt);
-        
-        for (var page = 1;;page += 1)
+
+        for (var page = 1;; page += 1)
         {
-            var entities = await query.GetPage(new PageModel()
+            var entities = await query.GetPage(new PageModel
             {
                 Page = page,
                 PageSize = 512
@@ -136,7 +136,7 @@ public class UserEntityService : IUserEntityService
 
             _userRepository.Delete(entities);
             await _appDbContextAction.CommitAsync(cancellationToken);
-            
+
             if (entities.Length < 512)
                 break;
         }

@@ -6,6 +6,32 @@ public static class Localize
 {
     public static class Error
     {
+        #region UnhandledException
+
+        public const string UnhandledExceptionContactSystemAdministrator =
+            "UnhandledExceptionContactSystemAdministrator";
+
+        #endregion
+
+        #region HttpClient
+
+        public static string ResponseStatusCodeUnsuccessful => "ResponseStatusCodeUnsuccessful";
+
+        #endregion
+
+        #region FilterSortModel
+
+        public static string FilterSortModelPropertyNotFoundOrUnavailable =>
+            "FilterSortModelPropertyNotFoundOrUnavailable";
+
+        #endregion
+
+        #region DbContext
+
+        public static string DbProviderNotSupported => "DbProviderNotSupported";
+
+        #endregion
+
         #region Auth
 
         public static string UserDoesNotFoundOrWrongCredentials => "UserDoesNotFoundOrWrongCredentials";
@@ -42,7 +68,9 @@ public static class Localize
 
         #region File
 
-        public static string FileSaveFailedNameChangeNotAllowedForExisting => "FileSaveFailedNameChangeNotAllowedForExisting";
+        public static string FileSaveFailedNameChangeNotAllowedForExisting =>
+            "FileSaveFailedNameChangeNotAllowedForExisting";
+
         public static string FileNotFound => "FileNotFound";
         public static string FileReadFailed => "FileReadFailed";
         public static string FileDeleteFailed => "FileDeleteFailed";
@@ -63,12 +91,6 @@ public static class Localize
 
         #endregion
 
-        #region HttpClient
-
-        public static string ResponseStatusCodeUnsuccessful => "ResponseStatusCodeUnsuccessful";
-
-        #endregion
-
         #region UserGroup
 
         public static string UserGroupIsSystemManagementNotAllowed => "UserGroupIsSystemManagementNotAllowed";
@@ -76,39 +98,27 @@ public static class Localize
 
         #endregion
 
-        #region UnhandledException
-
-        public const string UnhandledExceptionContactSystemAdministrator =
-            "UnhandledExceptionContactSystemAdministrator";
-
-        #endregion
-
         #region FilterMatchModel
-        
-        public static string FilterMatchModelItemExpressionValueTypeNotSupported => "FilterMatchModelItemExpressionValueTypeNotSupported";
-        public static string FilterMatchModelItemExpressionValueFailedToParseGuid => "FilterMatchModelItemExpressionValueFailedToParseGuid";
-        public static string FilterMatchModelPropertyNotFoundOrUnavailable => "FilterMatchModelPropertyNotFoundOrUnavailable";
+
+        public static string FilterMatchModelItemExpressionValueTypeNotSupported =>
+            "FilterMatchModelItemExpressionValueTypeNotSupported";
+
+        public static string FilterMatchModelItemExpressionValueFailedToParseGuid =>
+            "FilterMatchModelItemExpressionValueFailedToParseGuid";
+
+        public static string FilterMatchModelPropertyNotFoundOrUnavailable =>
+            "FilterMatchModelPropertyNotFoundOrUnavailable";
+
         public static string FilterMatchModelValueTypeNotCompatible => "FilterMatchModelValueTypeNotCompatible";
 
         public static string FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly =>
             "FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly";
+
         public static string FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly =>
             "FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly";
 
         #endregion
-        
-        #region FilterSortModel
-        
-        public static string FilterSortModelPropertyNotFoundOrUnavailable => "FilterSortModelPropertyNotFoundOrUnavailable";
 
-        #endregion
-
-        #region DbContext
-
-        public static string DbProviderNotSupported => "DbProviderNotSupported";
-
-        #endregion
-        
         #region Request
 
         public const string RequestMultipartExpected = "RequestMultipartExpected";
@@ -116,9 +126,15 @@ public static class Localize
         public const string RequestMultipartBoundaryLengthExceedsLimit = "RequestMultipartBoundaryLengthExceedsLimit";
         public const string RequestMultipartSectionEncodingNotSupported = "RequestMultipartSectionEncodingNotSupported";
         public const string RequestMultipartSectionNotFound = "RequestMultipartSectionNotFound";
-        public const string RequestMultipartSectionContentDispositionParseFailed = "RequestMultipartSectionContentDispositionParseFailed";
-        public const string RequestMultipartSectionContentDispositionFileExpected = "RequestMultipartSectionContentDispositionFileExpected";
-        public const string RequestMultipartSectionContentDispositionFormExpected = "RequestMultipartSectionContentDispositionFormExpected";
+
+        public const string RequestMultipartSectionContentDispositionParseFailed =
+            "RequestMultipartSectionContentDispositionParseFailed";
+
+        public const string RequestMultipartSectionContentDispositionFileExpected =
+            "RequestMultipartSectionContentDispositionFileExpected";
+
+        public const string RequestMultipartSectionContentDispositionFormExpected =
+            "RequestMultipartSectionContentDispositionFormExpected";
 
         #endregion
 
@@ -142,65 +158,97 @@ public static class Localize
     {
         #region Middleware
 
-        public static string MiddlewareForwardStart(Type type) =>
-            $"[Middleware {type.Name}] (Forward-Start)";
+        public static string MiddlewareForwardStart(Type type)
+        {
+            return $"[Middleware {type.Name}] (Forward-Start)";
+        }
 
-        public static string MiddlewareForwardEnd(Type type) => 
-            $"[Middleware {type.Name}] (Forward-End)";
+        public static string MiddlewareForwardEnd(Type type)
+        {
+            return $"[Middleware {type.Name}] (Forward-End)";
+        }
 
-        public static string MiddlewareBackwardStart(Type type) =>
-            $"[Middleware {type.Name}] (Backward-Start)";
+        public static string MiddlewareBackwardStart(Type type)
+        {
+            return $"[Middleware {type.Name}] (Backward-Start)";
+        }
 
-        public static string MiddlewareBackwardEnd(Type type) =>
-            $"[Middleware {type.Name}] (Backward-End)";
+        public static string MiddlewareBackwardEnd(Type type)
+        {
+            return $"[Middleware {type.Name}] (Backward-End)";
+        }
 
         #endregion
 
         #region Method
 
-        public static string MethodStart(Type type, string methodName) =>
-            $"[{type.Name}.{methodName}] (Start)";
+        public static string MethodStart(Type type, string methodName)
+        {
+            return $"[{type.Name}.{methodName}] (Start)";
+        }
 
-        public static string Method(Type type, string methodName, string message) =>
-            $"[{type.Name}.{methodName}] {message}";
+        public static string Method(Type type, string methodName, string message)
+        {
+            return $"[{type.Name}.{methodName}] {message}";
+        }
 
-        public static string MethodEnd(Type type, string methodName) =>
-            $"[{type.Name}.{methodName}] (End)";
+        public static string MethodEnd(Type type, string methodName)
+        {
+            return $"[{type.Name}.{methodName}] (End)";
+        }
 
-        public static string MethodError(Type type, string methodName, string message) =>
-            $"[{type.Name}.{methodName}] (Error) {Environment.NewLine + message}";
+        public static string MethodError(Type type, string methodName, string message)
+        {
+            return $"[{type.Name}.{methodName}] (Error) {Environment.NewLine + message}";
+        }
 
         #endregion
 
         #region Background Service
 
-        public static string BackgroundServiceStarting(string assemblyName) =>
-            $"[{assemblyName}] (Starting)";
+        public static string BackgroundServiceStarting(string assemblyName)
+        {
+            return $"[{assemblyName}] (Starting)";
+        }
 
-        public static string BackgroundServiceStopping(string assemblyName) =>
-            $"[{assemblyName}] (End)";
+        public static string BackgroundServiceStopping(string assemblyName)
+        {
+            return $"[{assemblyName}] (End)";
+        }
 
-        public static string BackgroundServiceWorking(string assemblyName) =>
-            $"[{assemblyName}] (Working)";
+        public static string BackgroundServiceWorking(string assemblyName)
+        {
+            return $"[{assemblyName}] (Working)";
+        }
 
-        public static string BackgroundServiceError(string assemblyName, string message) =>
-            $"[{assemblyName}] (Error) {Environment.NewLine + message}";
+        public static string BackgroundServiceError(string assemblyName, string message)
+        {
+            return $"[{assemblyName}] (Error) {Environment.NewLine + message}";
+        }
 
         #endregion
 
         #region Job
 
-        public static string JobExecuted(string assemblyName) =>
-            $"[{assemblyName}] Executed";
+        public static string JobExecuted(string assemblyName)
+        {
+            return $"[{assemblyName}] Executed";
+        }
 
-        public static string JobAborted(string assemblyName) =>
-            $"[{assemblyName}] Aborted";
+        public static string JobAborted(string assemblyName)
+        {
+            return $"[{assemblyName}] Aborted";
+        }
 
-        public static string JobCompleted(string assemblyName) =>
-            $"[{assemblyName}] Completed";
+        public static string JobCompleted(string assemblyName)
+        {
+            return $"[{assemblyName}] Completed";
+        }
 
-        public static string JobError(string assemblyName, string message) =>
-            $"[{assemblyName}] Error {Environment.NewLine + message}";
+        public static string JobError(string assemblyName, string message)
+        {
+            return $"[{assemblyName}] Error {Environment.NewLine + message}";
+        }
 
         #endregion
     }

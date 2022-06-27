@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,14 +21,6 @@ public interface IAuthorizeEntityService : IEntityServiceBase<Authorize>
 
 public class AuthorizeEntityService : IAuthorizeEntityService
 {
-    #region Fields
-
-    private readonly ILogger<AuthorizeEntityService> _logger;
-    private readonly IAuthorizeRepository _authorizeRepository;
-    private readonly IAppDbContextAction _appDbContextAction;
-
-    #endregion
-
     #region Ctor
 
     public AuthorizeEntityService(
@@ -42,6 +33,14 @@ public class AuthorizeEntityService : IAuthorizeEntityService
         _authorizeRepository = authorizeRepository;
         _appDbContextAction = appDbContextAction;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<AuthorizeEntityService> _logger;
+    private readonly IAuthorizeRepository _authorizeRepository;
+    private readonly IAppDbContextAction _appDbContextAction;
 
     #endregion
 
@@ -81,14 +80,14 @@ public class AuthorizeEntityService : IAuthorizeEntityService
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(PurgeByEntityIdAsync), null));
-        
+
         var query = _authorizeRepository
             .QueryMany(_ => _.EntityLeftId == entityIdLeftOrRight || _.EntityRightId == entityIdLeftOrRight)
             .OrderBy(_ => _.CreatedAt);
-        
-        for (var page = 1;;page += 1)
+
+        for (var page = 1;; page += 1)
         {
-            var entities = await query.GetPage(new PageModel()
+            var entities = await query.GetPage(new PageModel
             {
                 Page = page,
                 PageSize = 512
@@ -96,7 +95,7 @@ public class AuthorizeEntityService : IAuthorizeEntityService
 
             _authorizeRepository.Delete(entities);
             await _appDbContextAction.CommitAsync(cancellationToken);
-            
+
             if (entities.Length < 512)
                 break;
         }
@@ -104,17 +103,16 @@ public class AuthorizeEntityService : IAuthorizeEntityService
 
     public async Task PurgeAsync(CancellationToken cancellationToken = default)
     {
-        
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(PurgeByEntityIdAsync), null));
-        
+
         var query = _authorizeRepository
             .QueryMany(_ => _.CreatedAt < DateTimeOffset.UtcNow.AddHours(1))
             .OrderBy(_ => _.CreatedAt);
 
-        for (var page = 1;;page += 1)
+        for (var page = 1;; page += 1)
         {
-            var entities = await query.GetPage(new PageModel()
+            var entities = await query.GetPage(new PageModel
             {
                 Page = page,
                 PageSize = 512
@@ -122,7 +120,7 @@ public class AuthorizeEntityService : IAuthorizeEntityService
 
             _authorizeRepository.Delete(entities);
             await _appDbContextAction.CommitAsync(cancellationToken);
-            
+
             if (entities.Length < 512)
                 break;
         }

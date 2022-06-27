@@ -3,15 +3,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
-using BLL.Services;
 using BLL.Services.Advanced;
+using Common.Models;
 using DTO.Models.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using Common.Models;
 
 namespace API.Controllers;
 
@@ -19,13 +18,6 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class PermissionController : CustomControllerBase
 {
-    #region Fields
-
-    private readonly ILogger<PermissionController> _logger;
-    private readonly IPermissionHandler _permissionHandler;
-
-    #endregion
-
     #region Ctor
 
     public PermissionController(
@@ -39,6 +31,13 @@ public class PermissionController : CustomControllerBase
         _logger = logger;
         _permissionHandler = permissionHandler;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<PermissionController> _logger;
+    private readonly IPermissionHandler _permissionHandler;
 
     #endregion
 

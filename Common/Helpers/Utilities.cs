@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
@@ -43,7 +42,7 @@ public static class Utilities
 
         var result = string.Join("&",
             (await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(ms) ??
-              throw new CustomException(Localize.Error.ObjectDeserializationFailed)).Select(_ =>
+             throw new CustomException(Localize.Error.ObjectDeserializationFailed)).Select(_ =>
                 HttpUtility.UrlEncode(_.Key) + "=" + HttpUtility.UrlEncode(_.Value)));
 
         return result;

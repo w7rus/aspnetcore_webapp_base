@@ -13,7 +13,7 @@ namespace BLL.Services.Advanced;
 public interface IJsonWebTokenAdvancedService
 {
     /// <summary>
-    /// Gets entity by HttpContext authorization data
+    ///     Gets entity by HttpContext authorization data
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
@@ -22,14 +22,6 @@ public interface IJsonWebTokenAdvancedService
 
 public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
 {
-    #region Fields
-
-    private readonly ILogger<JsonWebTokenAdvancedService> _logger;
-    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
-    private readonly HttpContext _httpContext;
-
-    #endregion
-
     #region Ctor
 
     public JsonWebTokenAdvancedService(
@@ -60,6 +52,14 @@ public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
 
         return entity;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<JsonWebTokenAdvancedService> _logger;
+    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
+    private readonly HttpContext _httpContext;
 
     #endregion
 }

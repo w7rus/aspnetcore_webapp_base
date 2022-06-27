@@ -4,12 +4,12 @@ using API.Configuration;
 using BLL.BackgroundServices;
 using BLL.Handlers;
 using BLL.Jobs;
-using BLL.Services;
 using BLL.Services.Advanced;
 using BLL.Services.Entity;
 using Common.Options;
 using DAL.Data;
 using DAL.Repository;
+using Domain.Entities;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication;
@@ -17,10 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Serilog;
-using File = Domain.Entities.File;
 
 namespace API.Extensions;
 
@@ -54,8 +51,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserEntityService, UserEntityService>();
         serviceCollection.AddScoped<IUserToUserGroupMappingEntityService, UserToUserGroupMappingEntityService>();
         serviceCollection.AddScoped<IAuthorizeEntityService, AuthorizeEntityService>();
-        
-        
+
 
         return serviceCollection;
     }

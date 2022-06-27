@@ -2,54 +2,52 @@
 using System.Linq;
 using Common.Attributes;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Common.Helpers
+namespace Common.Helpers;
+
+public sealed class AuthorizeCheckOperationFilter : IOperationFilter
 {
-    public sealed class AuthorizeCheckOperationFilter : IOperationFilter
+    private const string SecuritySchemeId = "Bearer";
+
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        private const string SecuritySchemeId = "Bearer";
+        var hasAuthorize =
+            context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any()
+            || context.MethodInfo.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any();
 
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        var hasAuthorize2 =
+            context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<WrapperTypeFilterAttribute>()
+                .Any(_ => _.TypeInfo == typeof(AuthorizeJsonWebTokenAttribute))
+            || context.MethodInfo.GetCustomAttributes(true).OfType<WrapperTypeFilterAttribute>()
+                .Any(_ => _.TypeInfo == typeof(AuthorizeJsonWebTokenAttribute));
+
+        var hasAuthorizeExpired =
+            context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<WrapperTypeFilterAttribute>()
+                .Any(_ => _.TypeInfo == typeof(AuthorizeExpiredJsonWebTokenAttribute))
+            || context.MethodInfo.GetCustomAttributes(true).OfType<WrapperTypeFilterAttribute>()
+                .Any(_ => _.TypeInfo == typeof(AuthorizeExpiredJsonWebTokenAttribute));
+
+        var hasAllowAnonymous =
+            context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<AllowAnonymousAttribute>().Any()
+            || context.MethodInfo.GetCustomAttributes(true).OfType<AllowAnonymousAttribute>().Any();
+
+        if (!(hasAuthorize || hasAuthorize2 || hasAuthorizeExpired) || hasAllowAnonymous)
+            return;
+
+        // if (!operation.Responses.ContainsKey("401"))
+        //     operation.Responses.Add("401", new OpenApiResponse {Description = "Unauthorized"});
+        // if (!operation.Responses.ContainsKey("403"))
+        //     operation.Responses.Add("403", new OpenApiResponse {Description = "Forbidden"});
+        // if (!operation.Responses.ContainsKey("404"))
+        //     operation.Responses.Add("404", new OpenApiResponse {Description = "NotFound"});
+
+        var scheme = new OpenApiSecurityScheme
         {
-            var hasAuthorize =
-                context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any()
-                || context.MethodInfo.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any();
+            Reference = new OpenApiReference {Type = ReferenceType.SecurityScheme, Id = SecuritySchemeId}
+        };
 
-            var hasAuthorize2 =
-                context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<WrapperTypeFilterAttribute>()
-                    .Any(_ => _.TypeInfo == typeof(AuthorizeJsonWebTokenAttribute))
-                || context.MethodInfo.GetCustomAttributes(true).OfType<WrapperTypeFilterAttribute>()
-                    .Any(_ => _.TypeInfo == typeof(AuthorizeJsonWebTokenAttribute));
-
-            var hasAuthorizeExpired =
-                context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<WrapperTypeFilterAttribute>()
-                    .Any(_ => _.TypeInfo == typeof(AuthorizeExpiredJsonWebTokenAttribute))
-                || context.MethodInfo.GetCustomAttributes(true).OfType<WrapperTypeFilterAttribute>()
-                    .Any(_ => _.TypeInfo == typeof(AuthorizeExpiredJsonWebTokenAttribute));
-
-            var hasAllowAnonymous =
-                context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<AllowAnonymousAttribute>().Any()
-                || context.MethodInfo.GetCustomAttributes(true).OfType<AllowAnonymousAttribute>().Any();
-
-            if (!(hasAuthorize || hasAuthorize2 || hasAuthorizeExpired) || hasAllowAnonymous)
-                return;
-
-            // if (!operation.Responses.ContainsKey("401"))
-            //     operation.Responses.Add("401", new OpenApiResponse {Description = "Unauthorized"});
-            // if (!operation.Responses.ContainsKey("403"))
-            //     operation.Responses.Add("403", new OpenApiResponse {Description = "Forbidden"});
-            // if (!operation.Responses.ContainsKey("404"))
-            //     operation.Responses.Add("404", new OpenApiResponse {Description = "NotFound"});
-
-            var scheme = new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference {Type = ReferenceType.SecurityScheme, Id = SecuritySchemeId}
-            };
-
-            operation.Security.Add(new OpenApiSecurityRequirement {[scheme] = new List<string>()});
-        }
+        operation.Security.Add(new OpenApiSecurityRequirement {[scheme] = new List<string>()});
     }
 }

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Handlers.Base;
-using BLL.Services;
 using BLL.Services.Advanced;
 using BLL.Services.Entity;
-using Common.Attributes;
 using Common.Enums;
 using Common.Exceptions;
 using Common.Helpers;
@@ -21,7 +18,6 @@ using Domain.Entities;
 using DTO.Models.Auth;
 using DTO.Models.Generic;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -38,25 +34,6 @@ public interface IAuthHandler
 
 public class AuthHandler : HandlerBase, IAuthHandler
 {
-    #region Fields
-
-    private readonly ILogger<AuthHandler> _logger;
-    private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
-    private readonly IRefreshTokenEntityService _refreshTokenEntityService;
-    private readonly IUserEntityService _userEntityService;
-    private readonly RefreshTokenOptions _refreshTokenOptions;
-    private readonly JsonWebTokenOptions _jsonWebTokenOptions;
-    private readonly HttpContext _httpContext;
-    private readonly MiscOptions _miscOptions;
-    private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
-    private readonly IUserGroupEntityService _userGroupEntityService;
-    private readonly IUserAdvancedService _userAdvancedService;
-    private readonly IJsonWebTokenAdvancedService _jsonWebTokenAdvancedService;
-    private readonly IWarningAdvancedService _warningAdvancedService;
-
-    #endregion
-
     #region Ctor
 
     public AuthHandler(
@@ -94,9 +71,31 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     #endregion
 
+    #region Fields
+
+    private readonly ILogger<AuthHandler> _logger;
+    private readonly IAppDbContextAction _appDbContextAction;
+    private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
+    private readonly IRefreshTokenEntityService _refreshTokenEntityService;
+    private readonly IUserEntityService _userEntityService;
+    private readonly RefreshTokenOptions _refreshTokenOptions;
+    private readonly JsonWebTokenOptions _jsonWebTokenOptions;
+    private readonly HttpContext _httpContext;
+    private readonly MiscOptions _miscOptions;
+    private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
+    private readonly IUserGroupEntityService _userGroupEntityService;
+    private readonly IUserAdvancedService _userAdvancedService;
+    private readonly IJsonWebTokenAdvancedService _jsonWebTokenAdvancedService;
+    private readonly IWarningAdvancedService _warningAdvancedService;
+
+    #endregion
+
     #region Methods
-    
-    public async Task<DTOResultBase> SignInAsGuest(AuthSignUpInAsGuestDto data, CancellationToken cancellationToken = default)
+
+    public async Task<DTOResultBase> SignInAsGuest(
+        AuthSignUpInAsGuestDto data,
+        CancellationToken cancellationToken = default
+    )
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignInAsGuest)));
 
@@ -113,15 +112,15 @@ public class AuthHandler : HandlerBase, IAuthHandler
                 Password = null,
                 IsTemporary = true
             }, cancellationToken);
-            
+
             var guestUserGroup = await _userGroupEntityService.GetByAliasAsync("Guest");
 
             await _userToUserGroupMappingEntityService.Save(new UserToUserGroupMapping
             {
                 EntityLeftId = user.Id,
-                EntityRightId = guestUserGroup.Id,
+                EntityRightId = guestUserGroup.Id
             }, cancellationToken);
-            
+
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);
             var refreshTokenExpiresAt =
                 data.RefreshTokenExpireAt ??
@@ -137,7 +136,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var jsonWebTokenString = _jsonWebTokenEntityService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
                 _jsonWebTokenOptions.Issuer, _jsonWebTokenOptions.Audience, new List<Claim>
                 {
-                    new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
+                    new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String)
                 }, jsonWebTokenExpiresAt.UtcDateTime);
             await _jsonWebTokenEntityService.Save(new JsonWebToken
                 {
@@ -147,25 +146,25 @@ public class AuthHandler : HandlerBase, IAuthHandler
                     UserId = user.Id
                 },
                 cancellationToken);
-            
+
             if (data.UseCookies)
             {
                 _logger.Log(LogLevel.Information,
-                    Localize.Log.Method(GetType(), nameof(SignIn), $"Client requested to use cookies"));
+                    Localize.Log.Method(GetType(), nameof(SignIn), "Client requested to use cookies"));
 
                 var refreshTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
                     Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
-                    HttpOnly = true,
+                    HttpOnly = true
                 };
                 var jsonWebTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
                     Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
-                    HttpOnly = true,
+                    HttpOnly = true
                 };
 
                 _httpContext.Response.Cookies.Append(CookieKey.RefreshToken, refreshTokenString,
@@ -175,17 +174,18 @@ public class AuthHandler : HandlerBase, IAuthHandler
             }
             else
             {
-                _warningAdvancedService.Add(new WarningModelResultEntry(WarningType.Security, Localize.Warning.XssVulnerable));
+                _warningAdvancedService.Add(new WarningModelResultEntry(WarningType.Security,
+                    Localize.Warning.XssVulnerable));
             }
 
             user.LastSignIn = DateTimeOffset.UtcNow;
-            
+
             await _userEntityService.Save(user, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignInAsGuest)));
-            
+
             return new AuthSignInResultDto
             {
                 UserId = user.Id,
@@ -213,7 +213,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
-            
+
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
@@ -234,7 +234,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             await _userToUserGroupMappingEntityService.Save(new UserToUserGroupMapping
             {
                 EntityLeftId = user.Id,
-                EntityRightId = memberUserGroup.Id,
+                EntityRightId = memberUserGroup.Id
             }, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
@@ -260,7 +260,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
-        
+
         try
         {
             await _appDbContextAction.BeginTransactionAsync();
@@ -287,7 +287,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var jsonWebTokenString = _jsonWebTokenEntityService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
                 _jsonWebTokenOptions.Issuer, _jsonWebTokenOptions.Audience, new List<Claim>
                 {
-                    new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
+                    new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String)
                 }, jsonWebTokenExpiresAt.UtcDateTime);
             await _jsonWebTokenEntityService.Save(new JsonWebToken
                 {
@@ -301,21 +301,21 @@ public class AuthHandler : HandlerBase, IAuthHandler
             if (data.UseCookies)
             {
                 _logger.Log(LogLevel.Information,
-                    Localize.Log.Method(GetType(), nameof(SignIn), $"Client requested to use cookies"));
+                    Localize.Log.Method(GetType(), nameof(SignIn), "Client requested to use cookies"));
 
                 var refreshTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
                     Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
-                    HttpOnly = true,
+                    HttpOnly = true
                 };
                 var jsonWebTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
                     Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
-                    HttpOnly = true,
+                    HttpOnly = true
                 };
 
                 _httpContext.Response.Cookies.Append(CookieKey.RefreshToken, refreshTokenString,
@@ -325,7 +325,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
             }
             else
             {
-                _warningAdvancedService.Add(new WarningModelResultEntry(WarningType.Security, Localize.Warning.XssVulnerable));
+                _warningAdvancedService.Add(new WarningModelResultEntry(WarningType.Security,
+                    Localize.Warning.XssVulnerable));
             }
 
             user.LastSignIn = DateTimeOffset.UtcNow;
@@ -370,7 +371,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             if (useCookies)
                 _logger.Log(LogLevel.Information,
-                    Localize.Log.Method(GetType(), nameof(Refresh), $"Client requested to use cookies"));
+                    Localize.Log.Method(GetType(), nameof(Refresh), "Client requested to use cookies"));
 
             data.RefreshToken ??=
                 _httpContext.Request.Cookies.SingleOrDefault(_ => _.Key == CookieKey.RefreshToken).Value;
@@ -424,7 +425,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
             var jsonWebTokenString = _jsonWebTokenEntityService.CreateWithClaims(_jsonWebTokenOptions.IssuerSigningKey,
                 _jsonWebTokenOptions.Issuer, _jsonWebTokenOptions.Audience, new List<Claim>
                 {
-                    new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String),
+                    new(ClaimKey.UserId, user.Id.ToString(), ClaimValueTypes.String)
                 }, jsonWebTokenExpiresAt.UtcDateTime);
             await _jsonWebTokenEntityService.Save(new JsonWebToken
                 {
@@ -442,14 +443,14 @@ public class AuthHandler : HandlerBase, IAuthHandler
                     Expires = refreshTokenExpiresAt,
                     Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
-                    HttpOnly = true,
+                    HttpOnly = true
                 };
                 var jsonWebTokenCookieOptions = new CookieOptions
                 {
                     Expires = refreshTokenExpiresAt,
                     Secure = _miscOptions.SecureCookies,
                     SameSite = SameSiteMode.Strict,
-                    HttpOnly = true,
+                    HttpOnly = true
                 };
 
                 _httpContext.Response.Cookies.Append(CookieKey.RefreshToken, refreshTokenString,
@@ -470,7 +471,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Refresh)));
 
-            return new AuthRefreshResultDto()
+            return new AuthRefreshResultDto
             {
                 UserId = user.Id,
                 JsonWebToken = !useCookies ? jsonWebTokenString : null,
@@ -503,7 +504,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             if (useCookies)
                 _logger.Log(LogLevel.Information,
-                    Localize.Log.Method(GetType(), nameof(SignOut), $"Client requested to use cookies"));
+                    Localize.Log.Method(GetType(), nameof(SignOut), "Client requested to use cookies"));
 
             data.RefreshToken ??=
                 _httpContext.Request.Cookies.SingleOrDefault(_ => _.Key == CookieKey.RefreshToken).Value;

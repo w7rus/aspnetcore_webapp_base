@@ -6,9 +6,6 @@ namespace Common.Exceptions;
 
 public class HttpResponseException : Exception
 {
-    public int StatusCode { get; }
-    public ErrorType Type { get; }
-
     public HttpResponseException(
         int? statusCode,
         ErrorType? type,
@@ -19,4 +16,7 @@ public class HttpResponseException : Exception
         StatusCode = statusCode ?? StatusCodes.Status500InternalServerError;
         Type = type ?? ErrorType.None;
     }
+
+    public int StatusCode { get; }
+    public ErrorType Type { get; }
 }

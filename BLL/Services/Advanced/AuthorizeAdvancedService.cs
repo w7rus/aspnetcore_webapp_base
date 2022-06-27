@@ -1,16 +1,8 @@
 ﻿using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using BLL.Services.Entity;
-using Common.Enums;
-using Common.Exceptions;
 using Common.Models;
 using DAL.Data;
 using Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace BLL.Services.Advanced;
@@ -22,13 +14,6 @@ public interface IAuthorizeAdvancedService
 
 public class AuthorizeAdvancedService : IAuthorizeAdvancedService
 {
-    #region Fields
-
-    private readonly AppDbContext _appDbContext;
-    private readonly IAuthorizeEntityService _authorizeEntityService;
-
-    #endregion
-
     #region Ctor
 
     public AuthorizeAdvancedService(AppDbContext appDbContext, IAuthorizeEntityService authorizeEntityService)
@@ -44,12 +29,19 @@ public class AuthorizeAdvancedService : IAuthorizeAdvancedService
     public bool Authorize(AuthorizeModel authorizeModel)
     {
         var sql = authorizeModel.GetRawSqlAuthorizeResult();
-        
+
         var authorizeModelResult = _appDbContext.Set<AuthorizeResult>()
             .FromSqlRaw(sql).ToList().SingleOrDefault();
-            
+
         return authorizeModelResult?.Result != null && authorizeModelResult.Result;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly AppDbContext _appDbContext;
+    private readonly IAuthorizeEntityService _authorizeEntityService;
 
     #endregion
 }

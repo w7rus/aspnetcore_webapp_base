@@ -3,16 +3,15 @@ using DAL.Data;
 using DAL.Repository.Base;
 using Domain.Entities;
 
-namespace DAL.Repository
-{
-    public interface IUserGroupRepository : IRepositoryBase<UserGroup, Guid>
-    {
-    }
+namespace DAL.Repository;
 
-    public class UserGroupRepository : RepositoryBase<UserGroup, Guid>, IUserGroupRepository
+public interface IUserGroupRepository : IRepositoryBase<UserGroup, Guid>
+{
+}
+
+public class UserGroupRepository : RepositoryBase<UserGroup, Guid>, IUserGroupRepository
+{
+    public UserGroupRepository(AppDbContext appDbContext) : base(appDbContext)
     {
-        public UserGroupRepository(AppDbContext appDbContext) : base(appDbContext)
-        {
-        }
     }
 }
