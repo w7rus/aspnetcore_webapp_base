@@ -53,9 +53,9 @@ namespace API.Controllers
         [Route("signinasguest")]
         [SwaggerOperation(Summary = "Sign In as Guest",
             Description = "Sign In as Guest")]
-        [ProducesResponseType(typeof(AuthSignUpResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthSignUpResultDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> SignInAsGuest(
-            [Required] [FromBody] AuthSignUpInAsGuest data,
+            [Required] [FromBody] AuthSignUpInAsGuestDto data,
             CancellationToken cancellationToken = default
         )
         {
@@ -67,9 +67,9 @@ namespace API.Controllers
         [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
         [SwaggerOperation(Summary = "Sign Up for creating a new User account",
             Description = "Sign Up for creating a new User account")]
-        [ProducesResponseType(typeof(AuthSignUpResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthSignUpResultDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> SignUp(
-            [Required] [FromBody] AuthSignUp data,
+            [Required] [FromBody] AuthSignUpDto data,
             CancellationToken cancellationToken = default
         )
         {
@@ -81,9 +81,9 @@ namespace API.Controllers
         [AllowAnonymous]
         [SwaggerOperation(Summary = "Sign In to an existing User account",
             Description = "Sign In to an existing User account")]
-        [ProducesResponseType(typeof(AuthSignInResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthSignInResultDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> SignIn(
-            [Required] [FromBody] AuthSignIn data,
+            [Required] [FromBody] AuthSignInDto data,
             CancellationToken cancellationToken = default
         )
         {
@@ -95,9 +95,9 @@ namespace API.Controllers
         [Route("refresh")]
         [SwaggerOperation(Summary = "Refresh Authorization using Refresh Token",
             Description = "Refresh Authorization using Refresh Token")]
-        [ProducesResponseType(typeof(AuthRefreshResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthRefreshResultDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> Refresh(
-            [Required] [FromBody] AuthRefresh data,
+            [Required] [FromBody] AuthRefreshDto data,
             CancellationToken cancellationToken = default
         )
         {
@@ -109,9 +109,9 @@ namespace API.Controllers
         [Route("signout")]
         [SwaggerOperation(Summary = "Sign Out from an existing User account",
             Description = "Sign Out from an existing User account")]
-        [ProducesResponseType(typeof(AuthSignOutResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthSignOutResultDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> SignOut(
-            [Required] [FromBody] AuthSignOut data,
+            [Required] [FromBody] AuthSignOutDto data,
             CancellationToken cancellationToken = default
         )
         {

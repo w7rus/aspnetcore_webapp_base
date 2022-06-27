@@ -77,7 +77,7 @@ public class FileEntityService : IFileEntityService
                 throw new HttpResponseException((int) response.StatusCode, ErrorType.HttpClient,
                     Localize.Error.ResponseStatusCodeUnsuccessful);
 
-            var fileCdnCreateResult = await JsonSerializer.DeserializeAsync<FileCDNCreateResult>(
+            var fileCdnCreateResult = await JsonSerializer.DeserializeAsync<FileCDNCreateResultDto>(
                                           await response.Content.ReadAsStreamAsync(cancellationToken),
                                           cancellationToken: cancellationToken) ??
                                       throw new CustomException(Localize.Error.ObjectDeserializationFailed);
@@ -103,7 +103,7 @@ public class FileEntityService : IFileEntityService
         var httpClient = _httpClientFactory.CreateClient();
         var uriBuilder = new UriBuilder(_miscOptions.FileServer.Scheme, _miscOptions.FileServer.Host,
             _miscOptions.FileServer.Port, _miscOptions.FileServer.Path, "?" + await Utilities.ToHttpQueryString(
-                new FileCDNDelete
+                new FileCDNDeleteDto
                 {
                     FileName = entity.Name
                 }));
@@ -131,7 +131,7 @@ public class FileEntityService : IFileEntityService
 
         var httpClient = _httpClientFactory.CreateClient();
         var uriBuilder = new UriBuilder(cdnServer.Scheme, cdnServer.Host,
-            cdnServer.Port, cdnServer.Path, "?" + await Utilities.ToHttpQueryString(new FileCDNRead
+            cdnServer.Port, cdnServer.Path, "?" + await Utilities.ToHttpQueryString(new FileCDNReadDto
             {
                 FileName = file.Name
             }));

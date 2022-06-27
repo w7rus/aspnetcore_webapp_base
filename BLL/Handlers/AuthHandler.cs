@@ -28,11 +28,11 @@ namespace BLL.Handlers;
 
 public interface IAuthHandler
 {
-    Task<DTOResultBase> SignInAsGuest(AuthSignUpInAsGuest data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> SignIn(AuthSignIn data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> SignInAsGuest(AuthSignUpInAsGuestDto data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> SignUp(AuthSignUpDto data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> SignIn(AuthSignInDto data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Refresh(AuthRefreshDto data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> SignOut(AuthSignOutDto data, CancellationToken cancellationToken = default);
 }
 
 public class AuthHandler : HandlerBase, IAuthHandler
@@ -95,7 +95,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     #region Methods
     
-    public async Task<DTOResultBase> SignInAsGuest(AuthSignUpInAsGuest data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> SignInAsGuest(AuthSignUpInAsGuestDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignInAsGuest)));
 
@@ -185,7 +185,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignInAsGuest)));
             
-            return new AuthSignInResult
+            return new AuthSignInResultDto
             {
                 UserId = user.Id,
                 JsonWebToken = !data.UseCookies ? jsonWebTokenString : null,
@@ -202,7 +202,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> SignUp(AuthSignUp data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> SignUp(AuthSignUpDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignUp)));
 
@@ -240,7 +240,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignUp)));
 
-            return new AuthSignUpResult
+            return new AuthSignUpResultDto
             {
                 UserId = user.Id
             };
@@ -253,7 +253,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> SignIn(AuthSignIn data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> SignIn(AuthSignInDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignIn)));
 
@@ -335,7 +335,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignIn)));
 
-            return new AuthSignInResult
+            return new AuthSignInResultDto
             {
                 UserId = user.Id,
                 JsonWebToken = !data.UseCookies ? jsonWebTokenString : null,
@@ -352,7 +352,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> Refresh(AuthRefresh data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> Refresh(AuthRefreshDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Refresh)));
 
@@ -469,7 +469,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Refresh)));
 
-            return new AuthRefreshResult()
+            return new AuthRefreshResultDto()
             {
                 UserId = user.Id,
                 JsonWebToken = !useCookies ? jsonWebTokenString : null,
@@ -487,7 +487,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> SignOut(AuthSignOut data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> SignOut(AuthSignOutDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignOut)));
 
@@ -551,7 +551,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignOut)));
 
-            return new AuthSignOutResult();
+            return new AuthSignOutResultDto();
         }
         catch (Exception)
         {

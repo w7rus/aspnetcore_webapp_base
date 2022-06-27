@@ -76,7 +76,7 @@ public class FileController : CustomControllerBase
         
         var multipartSection = await reader.ReadNextSectionAsync(cancellationToken);
         
-        FileCreate data = null;
+        FileCreateDto data = null;
         
         if (multipartSection == null)
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
@@ -100,7 +100,7 @@ public class FileController : CustomControllerBase
         using var streamReader = new StreamReader(multipartSection.Body, encoding,
             detectEncodingFromByteOrderMarks: true, bufferSize: 1024);
         
-        data = await JsonSerializer.DeserializeAsync<FileCreate>(streamReader.BaseStream,
+        data = await JsonSerializer.DeserializeAsync<FileCreateDto>(streamReader.BaseStream,
                    cancellationToken: cancellationToken) ??
                throw new CustomException(Localize.Error.ObjectDeserializationFailed);
 
@@ -131,7 +131,7 @@ public class FileController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Read(
-        [Required] [FromQuery] FileRead data,
+        [Required] [FromQuery] FileReadDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -145,7 +145,7 @@ public class FileController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(
-        [Required] [FromBody] FileUpdate data,
+        [Required] [FromBody] FileUpdateDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -159,7 +159,7 @@ public class FileController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
-        [Required] [FromQuery] FileDelete data,
+        [Required] [FromQuery] FileDeleteDto data,
         CancellationToken cancellationToken = default
     )
     {

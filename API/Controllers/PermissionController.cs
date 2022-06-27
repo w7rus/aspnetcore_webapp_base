@@ -51,7 +51,7 @@ public class PermissionController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Read(
-        [Required] [FromQuery] PermissionRead data,
+        [Required] [FromQuery] PermissionReadDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -66,7 +66,7 @@ public class PermissionController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ReadFSPCollection(
-        [Required] [FromQuery] PermissionReadFSPCollection data,
+        [Required] [FromQuery] PermissionReadFSPCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {

@@ -111,7 +111,8 @@ namespace BLL.Services.Entity
                 Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
             
             var query = _jsonWebTokenRepository
-                .QueryMany(_ => _.DeleteAfter < DateTimeOffset.UtcNow);
+                .QueryMany(_ => _.DeleteAfter < DateTimeOffset.UtcNow)
+                .OrderBy(_ => _.CreatedAt);
 
             for (var page = 1;;page += 1)
             {

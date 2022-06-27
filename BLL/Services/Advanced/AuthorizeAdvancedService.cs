@@ -50,7 +50,6 @@ public class AuthorizeAdvancedService : IAuthorizeAdvancedService
             
         var result = authorizeModelResult?.Result != null && authorizeModelResult.Result;
         
-        //TODO: Add hangfire task to remove authorize cache each hour
         //TODO: Remove authorize cache when updating permissionValues
 
         return result;

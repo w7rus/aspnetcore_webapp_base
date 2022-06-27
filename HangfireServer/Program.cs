@@ -43,6 +43,8 @@ public static class Program
                 services.AddRepositories();
                 services.AddServices();
                 services.AddJobs();
+                
+                services.AddHttpClient();
 
                 services.AddCustomHangfire(_.Configuration);
 

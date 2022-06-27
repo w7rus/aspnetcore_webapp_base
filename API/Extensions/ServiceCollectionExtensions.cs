@@ -96,6 +96,8 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddScoped<IJsonWebTokenJobs, JsonWebTokenJobs>();
         serviceCollection.AddScoped<IUserJobs, UserJobs>();
+        serviceCollection.AddScoped<IRefreshTokenJobs, RefreshTokenJobs>();
+        serviceCollection.AddScoped<IAuthorizeJobs, AuthorizeJobs>();
 
         return serviceCollection;
     }

@@ -24,8 +24,8 @@ namespace BLL.Handlers;
 
 public interface IPermissionHandler
 {
-    Task<DTOResultBase> Read(PermissionRead data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> ReadFSPCollection(PermissionReadFSPCollection data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Read(PermissionReadDto data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> ReadFSPCollection(PermissionReadFSPCollectionDto data, CancellationToken cancellationToken = default);
 }
 
 public class PermissionHandler : HandlerBase, IPermissionHandler
@@ -58,7 +58,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
 
     #region Methods
 
-    public async Task<DTOResultBase> Read(PermissionRead data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> Read(PermissionReadDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
 
@@ -78,7 +78,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
             
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
             
-            return _mapper.Map<PermissionReadResult>(permission);
+            return _mapper.Map<PermissionReadResultDto>(permission);
         }
         catch (Exception)
         {
@@ -88,7 +88,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
         }
     }
     
-    public async Task<DTOResultBase> ReadFSPCollection(PermissionReadFSPCollection data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> ReadFSPCollection(PermissionReadFSPCollectionDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadFSPCollection)));
 
@@ -106,11 +106,11 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
             
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
 
-            return new PermissionReadFSPCollectionResult()
+            return new PermissionReadFSPCollectionResultDto()
             {
                 Total = permissions.total,
                 Items = permissions.entities.Select(_ =>
-                    _mapper.ProjectTo<PermissionReadFSPCollectionItemResult>(new[] {_}.AsQueryable()).Single())
+                    _mapper.ProjectTo<PermissionReadFSPCollectionItemResultDto>(new[] {_}.AsQueryable()).Single())
             };
         }
         catch (Exception)

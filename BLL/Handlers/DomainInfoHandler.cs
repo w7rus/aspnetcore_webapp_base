@@ -19,7 +19,7 @@ namespace BLL.Handlers;
 
 public interface IDomainInfoHandler
 {
-    DTOResultBase Read(DomainInfoRead data);
+    DTOResultBase Read(DomainInfoReadDto data);
     DTOResultBase ReadAssemblyQualifiedNames();
 }
 
@@ -42,7 +42,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
 
     #region Methods
     
-    public DTOResultBase Read(DomainInfoRead data)
+    public DTOResultBase Read(DomainInfoReadDto data)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
 
@@ -57,7 +57,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
 
         _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
 
-        return new DomainInfoReadResult()
+        return new DomainInfoReadResultDto()
         {
             PropertiesValueTypes = properties
                 ?.Where(_ =>
@@ -73,7 +73,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
 
         _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ReadAssemblyQualifiedNames)));
 
-        return new DomainInfoReadAssemblyQualifiedNamesResult()
+        return new DomainInfoReadAssemblyQualifiedNamesResultDto()
         {
             AssemblyQualifiedNames = typeof(EntityBase<Guid>).Assembly.GetTypes()
                 .Where(_ => _.Namespace != null && _.Namespace.StartsWith(Consts.DomainNamespace))

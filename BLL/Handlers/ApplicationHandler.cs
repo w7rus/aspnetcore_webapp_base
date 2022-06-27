@@ -19,7 +19,7 @@ namespace BLL.Handlers;
 
 public interface IApplicationHandler
 {
-    Task<DTOResultBase> Setup(ApplicationSetup data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Setup(ApplicationSetupDto data, CancellationToken cancellationToken = default);
 }
 
 public class ApplicationHandler : HandlerBase, IApplicationHandler
@@ -52,7 +52,7 @@ public class ApplicationHandler : HandlerBase, IApplicationHandler
 
     #region Methods
 
-    public async Task<DTOResultBase> Setup(ApplicationSetup data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> Setup(ApplicationSetupDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Setup)));
         
@@ -79,7 +79,7 @@ public class ApplicationHandler : HandlerBase, IApplicationHandler
             
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Setup)));
 
-            return new ApplicationSetupResult();
+            return new ApplicationSetupResultDto();
         }
         catch (Exception)
         {

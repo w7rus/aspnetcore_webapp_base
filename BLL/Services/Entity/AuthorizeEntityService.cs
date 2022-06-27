@@ -83,7 +83,8 @@ public class AuthorizeEntityService : IAuthorizeEntityService
             Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
         
         var query = _authorizeRepository
-            .QueryMany(_ => _.CreatedAt < DateTimeOffset.UtcNow.AddHours(1));
+            .QueryMany(_ => _.CreatedAt < DateTimeOffset.UtcNow.AddHours(1))
+            .OrderBy(_ => _.CreatedAt);
 
         for (var page = 1;;page += 1)
         {

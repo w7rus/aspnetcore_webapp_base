@@ -25,6 +25,8 @@ public class AuthorizeModel
     /// T1 is EntityLeft, T2 is EntityRight ex. $"T1.\"Id\" = T2.\"OwnerUserId\""
     /// </summary>
     public string SqlExpressionPermissionTypeValueNeededOwner { get; set; }
+    
+    public bool UseCache { get; set; }
 
     public string GetRawSqlAuthorizeResult()
     {
@@ -44,7 +46,8 @@ public class AuthorizeModel
             {(string.IsNullOrEmpty(EntityRightEntityToEntityMappingsTableName) ? "null" : $"'{EntityRightEntityToEntityMappingsTableName}'")},
             {(EntityRightId.HasValue ? $"'{EntityRightId.Value.ToString()}'" : (string.IsNullOrEmpty(EntityRightIdRawSql) ? throw new ArgumentNullException(EntityRightIdRawSql) : EntityRightIdRawSql))},
             {(string.IsNullOrEmpty(EntityRightPermissionAlias) ? throw new ArgumentNullException(EntityRightPermissionAlias) : $"'{EntityRightPermissionAlias}'")},
-            {(string.IsNullOrEmpty(SqlExpressionPermissionTypeValueNeededOwner) ? throw new ArgumentNullException(SqlExpressionPermissionTypeValueNeededOwner) : $"'{SqlExpressionPermissionTypeValueNeededOwner}'")}
+            {(string.IsNullOrEmpty(SqlExpressionPermissionTypeValueNeededOwner) ? throw new ArgumentNullException(SqlExpressionPermissionTypeValueNeededOwner) : $"'{SqlExpressionPermissionTypeValueNeededOwner}'")},
+            {$"{UseCache}"}
         )";
     }
 }

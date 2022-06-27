@@ -29,15 +29,15 @@ namespace BLL.Handlers;
 public interface IFileHandler
 {
     Task<DTOResultBase> Create(
-        FileCreate data,
+        FileCreateDto data,
         string fileNameOriginal,
         Stream stream,
         CancellationToken cancellationToken = default
     );
 
-    Task<DTOResultBase> Read(FileRead data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Update(FileUpdate data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Delete(FileDelete data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Read(FileReadDto data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Update(FileUpdateDto data, CancellationToken cancellationToken = default);
+    Task<DTOResultBase> Delete(FileDeleteDto data, CancellationToken cancellationToken = default);
 }
 
 public class FileHandler : HandlerBase, IFileHandler
@@ -104,7 +104,7 @@ public class FileHandler : HandlerBase, IFileHandler
     #region Methods
 
     public async Task<DTOResultBase> Create(
-        FileCreate data,
+        FileCreateDto data,
         string fileNameOriginal,
         Stream stream,
         CancellationToken cancellationToken = default
@@ -199,7 +199,7 @@ public class FileHandler : HandlerBase, IFileHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Create)));
 
-            return _mapper.Map<FileCreateResult>(file);
+            return _mapper.Map<FileCreateResultDto>(file);
         }
         catch (Exception)
         {
@@ -209,7 +209,7 @@ public class FileHandler : HandlerBase, IFileHandler
         }
     }
 
-    public async Task<DTOResultBase> Read(FileRead data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> Read(FileReadDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
 
@@ -262,7 +262,7 @@ public class FileHandler : HandlerBase, IFileHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
 
-            return new FileReadResult
+            return new FileReadResultDto
             {
                 FileStream = file.Stream,
                 ContentType = file.ContentType,
@@ -277,7 +277,7 @@ public class FileHandler : HandlerBase, IFileHandler
         }
     }
 
-    public async Task<DTOResultBase> Update(FileUpdate data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> Update(FileUpdateDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Update)));
 
@@ -361,7 +361,7 @@ public class FileHandler : HandlerBase, IFileHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Update)));
 
-            return _mapper.Map<FileUpdateResult>(file);
+            return _mapper.Map<FileUpdateResultDto>(file);
         }
         catch (Exception)
         {
@@ -371,7 +371,7 @@ public class FileHandler : HandlerBase, IFileHandler
         }
     }
 
-    public async Task<DTOResultBase> Delete(FileDelete data, CancellationToken cancellationToken = default)
+    public async Task<DTOResultBase> Delete(FileDeleteDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Delete)));
 
@@ -419,7 +419,7 @@ public class FileHandler : HandlerBase, IFileHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Delete)));
 
-            return new FileDeleteResult();
+            return new FileDeleteResultDto();
         }
         catch (Exception)
         {

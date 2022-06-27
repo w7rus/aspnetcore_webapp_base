@@ -51,7 +51,7 @@ public class ApplicationController : CustomControllerBase
     [SwaggerOperation(Summary = "Setup", Description = "Setup")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Setup(
-        [Required] [FromBody] ApplicationSetup data,
+        [Required] [FromBody] ApplicationSetupDto data,
         CancellationToken cancellationToken = default
     )
     {

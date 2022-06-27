@@ -49,7 +49,7 @@ public class DomainInfoController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult Read(
-        [Required] [FromQuery] DomainInfoRead data
+        [Required] [FromQuery] DomainInfoReadDto data
     )
     {
         return ResponseWith(_domainInfoHandler.Read(data));

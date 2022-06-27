@@ -115,13 +115,13 @@ public class AuthIntegrationTest
             })
             .StartAsync();
 
-        var model = new AuthSignUp
+        var model = new AuthSignUpDto
         {
             Email = "test123@email.com",
             Password = "12345678",
         };
 
-        var model2 = new AuthSignUp
+        var model2 = new AuthSignUpDto
         {
             Email = "test123@email.com",
             Password = "12345678",

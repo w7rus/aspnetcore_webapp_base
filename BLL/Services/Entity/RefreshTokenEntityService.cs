@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
@@ -95,7 +96,8 @@ public class RefreshTokenEntityService : IRefreshTokenEntityService
             Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
             
         var query = _refreshTokenRepository
-            .QueryMany(_ => _.ExpiresAt < DateTimeOffset.UtcNow);
+            .QueryMany(_ => _.ExpiresAt < DateTimeOffset.UtcNow)
+            .OrderBy(_ => _.CreatedAt);
 
         for (var page = 1;;page += 1)
         {

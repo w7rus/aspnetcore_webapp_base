@@ -18,8 +18,7 @@ public interface IJsonWebTokenJobs
 public class JsonWebTokenJobs : IJsonWebTokenJobs
 {
     #region Fields
-
-    private readonly string _fullName;
+    
     private readonly ILogger<JsonWebTokenJobs> _logger;
     private readonly IJsonWebTokenEntityService _jsonWebTokenEntityService;
     private readonly IAppDbContextAction _appDbContextAction;
@@ -34,7 +33,6 @@ public class JsonWebTokenJobs : IJsonWebTokenJobs
         IAppDbContextAction appDbContextAction
     )
     {
-        _fullName = GetType().FullName;
         _logger = logger;
         _jsonWebTokenEntityService = jsonWebTokenEntityService;
         _appDbContextAction = appDbContextAction;
@@ -46,7 +44,7 @@ public class JsonWebTokenJobs : IJsonWebTokenJobs
 
     public async Task PurgeAsync(CancellationToken stoppingToken = default)
     {
-        var jobName = $"{_fullName}.PurgeAsync";
+        var jobName = $"{GetType().FullName}.PurgeAsync";
 
         _logger.Log(LogLevel.Information, Localize.Log.JobExecuted(jobName));
 

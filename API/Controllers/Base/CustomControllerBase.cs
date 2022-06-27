@@ -42,7 +42,7 @@ public class CustomControllerBase : ControllerBase
 
         if (response.Errors != null && response.Errors.Any())
             return new BadRequestObjectResult(response);
-        if (response is FileReadResult result)
+        if (response is FileReadResultDto result)
             return File(result.FileStream, result.ContentType, result.FileName);
 
         return new OkObjectResult(response);

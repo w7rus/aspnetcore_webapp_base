@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
@@ -121,7 +122,8 @@ public class UserEntityService : IUserEntityService
         _logger.Log(LogLevel.Information, Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
 
         var query = _userRepository
-            .QueryMany(_ => _.LastActivity <= DateTimeOffset.UtcNow.AddDays(-1) && _.IsTemporary);
+            .QueryMany(_ => _.LastActivity <= DateTimeOffset.UtcNow.AddDays(-1) && _.IsTemporary)
+            .OrderBy(_ => _.CreatedAt);
         
         for (var page = 1;;page += 1)
         {

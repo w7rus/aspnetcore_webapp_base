@@ -24,7 +24,7 @@ public class AutoMapperProfile : Profile
     {
         #region From DTO to DOMAIN
 
-        CreateMap<FileCreate, File>()
+        CreateMap<FileCreateDto, File>()
             .ForMember(_ => _.Stream, options => options.Ignore())
             .ForMember(_ => _.Metadata, options => options.Ignore())
             .ForMember(_ => _.Name, options => options.Ignore())
@@ -39,7 +39,7 @@ public class AutoMapperProfile : Profile
                 // options.MapFrom(__ => __.AgeRating);
             });
 
-        CreateMap<FileUpdate, File>()
+        CreateMap<FileUpdateDto, File>()
             .ForMember(_ => _.Stream, options => options.Ignore())
             .ForMember(_ => _.Metadata, options => options.Ignore())
             .ForMember(_ => _.Name, options => options.Ignore())
@@ -54,7 +54,7 @@ public class AutoMapperProfile : Profile
                 // options.MapFrom(__ => __.AgeRating);
             });
 
-        CreateMap<PermissionValueUpdate, PermissionValue>()
+        CreateMap<PermissionValueUpdateDto, PermissionValue>()
             .ForMember(_ => _.Id, options => options.Ignore())
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
 
@@ -62,29 +62,29 @@ public class AutoMapperProfile : Profile
 
         #region From DOMAIN to DTO
 
-        CreateMap<PermissionValue, PermissionValueReadResult>()
+        CreateMap<PermissionValue, PermissionValueReadResultDto>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
             .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
 
-        CreateMap<Permission, PermissionReadFSPCollectionItemResult>()
+        CreateMap<Permission, PermissionReadFSPCollectionItemResultDto>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
             .ForMember(_ => _.CompareMode, options => options.MapFrom(__ => __.CompareMode))
             .ForMember(_ => _.Type, options => options.MapFrom(__ => __.Type));
 
-        CreateMap<PermissionValue, PermissionValueReadFSPCollectionItemResult>()
+        CreateMap<PermissionValue, PermissionValueReadFSPCollectionItemResultDto>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
             .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
         
-        CreateMap<File, FileCreateResult>()
+        CreateMap<File, FileCreateResultDto>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.AgeRating, options => options.MapFrom(__ => __.AgeRating));
 
-        CreateMap<File, FileUpdateResult>()
+        CreateMap<File, FileUpdateResultDto>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.AgeRating, options => options.MapFrom(__ => __.AgeRating));
 

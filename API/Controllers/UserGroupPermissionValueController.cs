@@ -50,7 +50,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Create(
-        [Required] [FromBody] PermissionValueCreate data,
+        [Required] [FromBody] PermissionValueCreateDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -64,7 +64,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Read(
-        [Required] [FromQuery] PermissionValueRead data,
+        [Required] [FromQuery] PermissionValueReadDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -79,7 +79,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ReadFSPCollection(
-        [Required] [FromQuery] PermissionValueReadFSPCollection data,
+        [Required] [FromQuery] PermissionValueReadFSPCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -93,7 +93,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(
-        [Required] [FromBody] PermissionValueUpdate data,
+        [Required] [FromBody] PermissionValueUpdateDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -107,7 +107,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(
-        [Required] [FromQuery] PermissionValueDelete data,
+        [Required] [FromQuery] PermissionValueDeleteDto data,
         CancellationToken cancellationToken = default
     )
     {
