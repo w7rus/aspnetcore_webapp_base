@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
 using Common.Models;
 using DAL.Data;
+using DAL.Extensions;
 using DAL.Repository;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
@@ -15,6 +19,11 @@ namespace BLL.Services.Entity;
 /// </summary>
 public interface IUserToUserGroupMappingEntityService : IEntityToEntityMappingServiceBase<UserToUserGroupMapping>
 {
+    Task<IReadOnlyCollection<UserToUserGroupMapping>> GetByUserGroupIdAsync(
+        Guid userGroupId,
+        PageModel pageModel,
+        CancellationToken cancellationToken = default
+    );
 }
 
 public class UserToUserGroupMappingEntityService : IUserToUserGroupMappingEntityService
@@ -59,6 +68,9 @@ public class UserToUserGroupMappingEntityService : IUserToUserGroupMappingEntity
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
+        
+        if (entity == null)
+            throw new ArgumentNullException(nameof(entity));
 
         _userToUserGroupMappingRepository.Delete(entity);
         await _appDbContextAction.CommitAsync(cancellationToken);
@@ -74,5 +86,20 @@ public class UserToUserGroupMappingEntityService : IUserToUserGroupMappingEntity
         return entity;
     }
 
+    public async Task<IReadOnlyCollection<UserToUserGroupMapping>> GetByUserGroupIdAsync(Guid userGroupId, PageModel pageModel, CancellationToken cancellationToken = default)
+    {
+        var result = await _userToUserGroupMappingRepository
+            .QueryMany(_ => _.EntityRightId == userGroupId)
+            .OrderBy(_ => _.CreatedAt)
+            .GetPage(pageModel)
+            .ToArrayAsync(cancellationToken);
+        
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByUserGroupIdAsync),
+                $"{result.GetType().Name} {result.Length}"));
+
+        return result;
+    }
+    
     #endregion
 }

@@ -13,6 +13,7 @@ namespace API.Controllers.Base;
 
 [ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status401Unauthorized)]
 [ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status400BadRequest)]
+[ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status500InternalServerError)]
 public class CustomControllerBase : ControllerBase
 {
     #region Fields

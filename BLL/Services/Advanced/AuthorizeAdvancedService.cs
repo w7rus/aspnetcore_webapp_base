@@ -48,11 +48,7 @@ public class AuthorizeAdvancedService : IAuthorizeAdvancedService
         var authorizeModelResult = _appDbContext.Set<AuthorizeResult>()
             .FromSqlRaw(sql).ToList().SingleOrDefault();
             
-        var result = authorizeModelResult?.Result != null && authorizeModelResult.Result;
-        
-        //TODO: Remove authorize cache when updating permissionValues
-
-        return result;
+        return authorizeModelResult?.Result != null && authorizeModelResult.Result;
     }
 
     #endregion

@@ -46,8 +46,7 @@ public class DomainInfoController : CustomControllerBase
     [SwaggerOperation(Summary = "Reads Domain Info (Assembly properties with value types)",
         Description = "Reads Domain Info (Assembly properties with value types)")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType( typeof(DomainInfoReadResultDto), StatusCodes.Status200OK)]
     public IActionResult Read(
         [Required] [FromQuery] DomainInfoReadDto data
     )
@@ -60,8 +59,7 @@ public class DomainInfoController : CustomControllerBase
     [SwaggerOperation(Summary = "Reads Domain Info (Available assembly qualified names under Domain.Entities)",
         Description = "Reads Domain Info (Available assembly qualified names under Domain.Entities)")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType( typeof(DomainInfoReadAssemblyQualifiedNamesResultDto), StatusCodes.Status200OK)]
     public IActionResult ReadAssemblyQualifiedNames()
     {
         return ResponseWith(_domainInfoHandler.ReadAssemblyQualifiedNames());

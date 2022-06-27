@@ -65,6 +65,9 @@ public class UserGroupEntityService : IUserGroupEntityService
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
 
+        if (entity == null)
+            throw new ArgumentNullException(nameof(entity));
+
         if (entity.IsSystem)
             throw new CustomException(Localize.Error.UserGroupIsSystemManagementNotAllowed);
 

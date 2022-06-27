@@ -17,6 +17,7 @@ public static class Localize
 
         public static string UserIdRetrievalFailed => "UserIdRetrievalFailed";
         public static string UserNotFound => "UserNotFound";
+        public static string UserAlreadyClaimed => "UserAlreadyClaimed";
 
         #endregion
 

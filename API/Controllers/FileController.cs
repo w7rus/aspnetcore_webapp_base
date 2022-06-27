@@ -15,6 +15,7 @@ using Common.Exceptions;
 using Common.Helpers;
 using Common.Models;
 using DTO.Models.File;
+using DTO.Models.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -61,8 +62,7 @@ public class FileController : CustomControllerBase
     [SwaggerOperation(Summary = "Creates file",
         Description = "Creates file")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(FileCreateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Create(CancellationToken cancellationToken = default)
     {
         if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
@@ -70,58 +70,57 @@ public class FileController : CustomControllerBase
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
                 Localize.Error.RequestMultipartExpected);
         }
-        
+
         var boundary = MultipartRequestHelper.GetBoundary(MediaTypeHeaderValue.Parse(Request.ContentType));
         var reader = new MultipartReader(boundary, HttpContext.Request.Body);
-        
+
         var multipartSection = await reader.ReadNextSectionAsync(cancellationToken);
-        
-        FileCreateDto data = null;
-        
+
         if (multipartSection == null)
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
                 Localize.Error.RequestMultipartSectionNotFound);
-    
+
         if (!ContentDispositionHeaderValue.TryParse(
                 multipartSection.ContentDisposition, out var contentDispositionForm))
             throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Request,
                 Localize.Error.RequestMultipartSectionContentDispositionParseFailed);
-    
+
         if (!MultipartRequestHelper.HasFormDataContentDisposition(contentDispositionForm))
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
                 Localize.Error.RequestMultipartSectionContentDispositionFormExpected);
-        
+
         var encoding = multipartSection.GetEncoding();
-        
+
         if (encoding == null)
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
                 Localize.Error.RequestMultipartSectionEncodingNotSupported);
-        
+
         using var streamReader = new StreamReader(multipartSection.Body, encoding,
             detectEncodingFromByteOrderMarks: true, bufferSize: 1024);
-        
-        data = await JsonSerializer.DeserializeAsync<FileCreateDto>(streamReader.BaseStream,
-                   cancellationToken: cancellationToken) ??
-               throw new CustomException(Localize.Error.ObjectDeserializationFailed);
+
+        var data = await JsonSerializer.DeserializeAsync<FileCreateDto>(streamReader.BaseStream,
+                       cancellationToken: cancellationToken) ??
+                   throw new CustomException(Localize.Error.ObjectDeserializationFailed);
 
         multipartSection = await reader.ReadNextSectionAsync(cancellationToken);
 
         if (multipartSection == null)
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
                 Localize.Error.RequestMultipartSectionNotFound);
-        
+
         if (!ContentDispositionHeaderValue.TryParse(
                 multipartSection.ContentDisposition, out var contentDispositionFile))
             throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Request,
                 Localize.Error.RequestMultipartSectionContentDispositionParseFailed);
-        
+
         if (!MultipartRequestHelper.HasFileContentDisposition(contentDispositionFile))
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
                 Localize.Error.RequestMultipartSectionContentDispositionFormExpected);
-            
+
         await using var fileStream = multipartSection.Body;
-        
-        return ResponseWith(await _fileHandler.Create(data, WebUtility.HtmlEncode(contentDispositionFile.FileName.Value), fileStream, cancellationToken));
+
+        return ResponseWith(await _fileHandler.Create(data,
+            WebUtility.HtmlEncode(contentDispositionFile.FileName.Value), fileStream, cancellationToken));
     }
 
     [HttpGet]
@@ -129,7 +128,6 @@ public class FileController : CustomControllerBase
         Description = "Reads file")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Read(
         [Required] [FromQuery] FileReadDto data,
         CancellationToken cancellationToken = default
@@ -137,13 +135,12 @@ public class FileController : CustomControllerBase
     {
         return ResponseWith(await _fileHandler.Read(data, cancellationToken));
     }
-    
+
     [HttpPut]
     [SwaggerOperation(Summary = "Updates file",
         Description = "Updates file")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(FileUpdateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(
         [Required] [FromBody] FileUpdateDto data,
         CancellationToken cancellationToken = default
@@ -156,8 +153,7 @@ public class FileController : CustomControllerBase
     [SwaggerOperation(Summary = "Deletes file",
         Description = "Deletes file")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(
         [Required] [FromQuery] FileDeleteDto data,
         CancellationToken cancellationToken = default

@@ -9,6 +9,7 @@ using BLL.Services.Advanced;
 using Common.Attributes;
 using Common.Models;
 using DTO.Models.Auth;
+using DTO.Models.Generic;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,8 +21,6 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status400BadRequest)]
     public class AuthController : CustomControllerBase
     {
         #region Fields
@@ -109,7 +108,7 @@ namespace API.Controllers
         [Route("signout")]
         [SwaggerOperation(Summary = "Sign Out from an existing User account",
             Description = "Sign Out from an existing User account")]
-        [ProducesResponseType(typeof(AuthSignOutResultDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> SignOut(
             [Required] [FromBody] AuthSignOutDto data,
             CancellationToken cancellationToken = default

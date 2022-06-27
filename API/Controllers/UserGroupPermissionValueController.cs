@@ -6,6 +6,7 @@ using BLL.Handlers;
 using BLL.Services;
 using BLL.Services.Advanced;
 using Common.Models;
+using DTO.Models.Generic;
 using DTO.Models.PermissionValue;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -47,8 +48,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [SwaggerOperation(Summary = "Creates PermissionValue",
         Description = "Creates PermissionValue")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(PermissionValueCreateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Create(
         [Required] [FromBody] PermissionValueCreateDto data,
         CancellationToken cancellationToken = default
@@ -61,8 +61,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [SwaggerOperation(Summary = "Reads PermissionValue",
         Description = "Reads PermissionValue")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(PermissionValueReadResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Read(
         [Required] [FromQuery] PermissionValueReadDto data,
         CancellationToken cancellationToken = default
@@ -76,8 +75,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [SwaggerOperation(Summary = "Reads PermissionValues",
         Description = "Reads PermissionValues")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(PermissionValueReadFSPCollectionResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> ReadFSPCollection(
         [Required] [FromQuery] PermissionValueReadFSPCollectionDto data,
         CancellationToken cancellationToken = default
@@ -90,8 +88,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [SwaggerOperation(Summary = "Updates PermissionValue",
         Description = "Updates PermissionValue")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(PermissionValueUpdateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(
         [Required] [FromBody] PermissionValueUpdateDto data,
         CancellationToken cancellationToken = default
@@ -104,8 +101,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     [SwaggerOperation(Summary = "Deletes PermissionValue",
         Description = "Deletes PermissionValue")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(
         [Required] [FromQuery] PermissionValueDeleteDto data,
         CancellationToken cancellationToken = default

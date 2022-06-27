@@ -12,6 +12,7 @@ using Common.Models;
 using Common.Models.Base;
 using DAL.Data;
 using DTO.Models.Application;
+using DTO.Models.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -68,6 +69,10 @@ public class ApplicationHandler : HandlerBase, IApplicationHandler
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
                     Localize.Error.UserNotFound);
             
+            if (!string.IsNullOrEmpty(user.Password))
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                    Localize.Error.UserAlreadyClaimed);
+            
             var customPasswordHasher = new CustomPasswordHasher();
 
             var passwordHashed = customPasswordHasher.HashPassword(data.Password);
@@ -78,8 +83,10 @@ public class ApplicationHandler : HandlerBase, IApplicationHandler
             await _userEntityService.Save(user, cancellationToken);
             
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Setup)));
+            
+            await _appDbContextAction.CommitTransactionAsync();
 
-            return new ApplicationSetupResultDto();
+            return new OkResultDto();
         }
         catch (Exception)
         {

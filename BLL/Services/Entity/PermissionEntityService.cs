@@ -14,10 +14,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
 
-/// <summary>
-/// Service to work with Permission entity
-/// Permissions are managed in AppDbContext.Seed
-/// </summary>
 public interface IPermissionEntityService : IEntityServiceBase<Permission>
 {
     Task<(int total, IReadOnlyCollection<Permission> entities)> GetFilteredSortedPaged(
@@ -77,7 +73,7 @@ public class PermissionEntityService : IPermissionEntityService
     )
     {
         var result = _permissionRepository.GetFilteredSorted(filterExpressionModel, filterSortModel, null);
-        
+
         var total = result.Count();
 
         result = result.GetPage(pageModel);

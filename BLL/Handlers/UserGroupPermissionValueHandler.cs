@@ -16,6 +16,7 @@ using DAL.Data;
 using DAL.Repository;
 using Domain.Entities;
 using Domain.Enums;
+using DTO.Models.Generic;
 using DTO.Models.PermissionValue;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +54,8 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
     private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
     private readonly AppDbContext _appDbContext;
     private readonly IAuthorizeAdvancedService _authorizeAdvancedService;
+    private readonly IAuthorizeEntityService _authorizeEntityService;
+    private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
 
     #endregion
 
@@ -70,7 +73,9 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         IUserGroupRepository userGroupRepository,
         IUserToUserGroupMappingRepository userToUserGroupMappingRepository,
         AppDbContext appDbContext,
-        IAuthorizeAdvancedService authorizeAdvancedService
+        IAuthorizeAdvancedService authorizeAdvancedService,
+        IAuthorizeEntityService authorizeEntityService,
+        IUserToUserGroupMappingEntityService userToUserGroupMappingEntityService
     )
     {
         _logger = logger;
@@ -85,6 +90,8 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         _userToUserGroupMappingRepository = userToUserGroupMappingRepository;
         _appDbContext = appDbContext;
         _authorizeAdvancedService = authorizeAdvancedService;
+        _authorizeEntityService = authorizeEntityService;
+        _userToUserGroupMappingEntityService = userToUserGroupMappingEntityService;
     }
 
     #endregion
@@ -143,6 +150,27 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     $"{data.GetType().Name} mapped to {permissionValue.GetType().Name}"));
 
             permissionValue = await _permissionValueEntityService.Save(permissionValue, cancellationToken);
+
+            await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
+            
+            for (var page = 1;;page += 1)
+            {
+                var entities = await _userToUserGroupMappingEntityService.GetByUserGroupIdAsync(userGroup.Id, new PageModel()
+                {
+                    Page = page,
+                    PageSize = 512
+                }, cancellationToken);
+
+                foreach (var userToUserGroupMapping in entities)
+                {
+                    await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.EntityLeftId, cancellationToken);
+                }
+                
+                await _appDbContextAction.CommitAsync(cancellationToken);
+
+                if (entities.Count < 512)
+                    break;
+            }
             
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -321,6 +349,27 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     $"{data.GetType().Name} mapped to {permissionValue.GetType().Name}"));
 
             await _permissionValueEntityService.Save(permissionValue, cancellationToken);
+
+            await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
+            
+            for (var page = 1;;page += 1)
+            {
+                var entities = await _userToUserGroupMappingEntityService.GetByUserGroupIdAsync(userGroup.Id, new PageModel()
+                {
+                    Page = page,
+                    PageSize = 512
+                }, cancellationToken);
+
+                foreach (var userToUserGroupMapping in entities)
+                {
+                    await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.EntityLeftId, cancellationToken);
+                }
+                
+                await _appDbContextAction.CommitAsync(cancellationToken);
+
+                if (entities.Count < 512)
+                    break;
+            }
             
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -382,12 +431,33 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     Localize.Error.PermissionInsufficientPermissions);
 
             await _permissionValueEntityService.Delete(permissionValue, cancellationToken);
+
+            await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
+            
+            for (var page = 1;;page += 1)
+            {
+                var entities = await _userToUserGroupMappingEntityService.GetByUserGroupIdAsync(userGroup.Id, new PageModel()
+                {
+                    Page = page,
+                    PageSize = 512
+                }, cancellationToken);
+
+                foreach (var userToUserGroupMapping in entities)
+                {
+                    await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.EntityLeftId, cancellationToken);
+                }
+                
+                await _appDbContextAction.CommitAsync(cancellationToken);
+
+                if (entities.Count < 512)
+                    break;
+            }
             
             await _appDbContextAction.CommitTransactionAsync();
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Delete)));
 
-            return new PermissionValueDeleteResultDto();
+            return new OkResultDto();
         }
         catch (Exception)
         {

@@ -7,6 +7,7 @@ using BLL.Services.Advanced;
 using Common.Models;
 using DTO.Models.Application;
 using DTO.Models.Auth;
+using DTO.Models.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,6 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[ProducesResponseType(typeof(ErrorModelResult), StatusCodes.Status400BadRequest)]
 public class ApplicationController : CustomControllerBase
 {
     #region Fields
@@ -49,7 +49,7 @@ public class ApplicationController : CustomControllerBase
     [AllowAnonymous]
     [Route("setup")]
     [SwaggerOperation(Summary = "Setup", Description = "Setup")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Setup(
         [Required] [FromBody] ApplicationSetupDto data,
         CancellationToken cancellationToken = default

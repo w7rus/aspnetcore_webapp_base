@@ -19,6 +19,7 @@ using DAL.Repository;
 using Domain.Entities;
 using Domain.Enums;
 using DTO.Models.File;
+using DTO.Models.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -419,7 +420,7 @@ public class FileHandler : HandlerBase, IFileHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Delete)));
 
-            return new FileDeleteResultDto();
+            return new OkResultDto();
         }
         catch (Exception)
         {

@@ -48,8 +48,7 @@ public class PermissionController : CustomControllerBase
     [SwaggerOperation(Summary = "Reads Permission",
         Description = "Reads Permission")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(PermissionReadResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Read(
         [Required] [FromQuery] PermissionReadDto data,
         CancellationToken cancellationToken = default
@@ -57,14 +56,13 @@ public class PermissionController : CustomControllerBase
     {
         return ResponseWith(await _permissionHandler.Read(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [Route("FSPCollection")]
     [SwaggerOperation(Summary = "Reads Permission[]",
         Description = "Reads Permission[]")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(PermissionReadFSPCollectionResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> ReadFSPCollection(
         [Required] [FromQuery] PermissionReadFSPCollectionDto data,
         CancellationToken cancellationToken = default

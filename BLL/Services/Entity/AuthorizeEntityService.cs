@@ -16,6 +16,7 @@ namespace BLL.Services.Entity;
 
 public interface IAuthorizeEntityService : IEntityServiceBase<Authorize>
 {
+    Task PurgeByEntityIdAsync(Guid entityIdLeftOrRight, CancellationToken cancellationToken = default);
     Task PurgeAsync(CancellationToken cancellationToken = default);
 }
 
@@ -76,11 +77,36 @@ public class AuthorizeEntityService : IAuthorizeEntityService
         return entity;
     }
 
+    public async Task PurgeByEntityIdAsync(Guid entityIdLeftOrRight, CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(PurgeByEntityIdAsync), null));
+        
+        var query = _authorizeRepository
+            .QueryMany(_ => _.EntityLeftId == entityIdLeftOrRight || _.EntityRightId == entityIdLeftOrRight)
+            .OrderBy(_ => _.CreatedAt);
+        
+        for (var page = 1;;page += 1)
+        {
+            var entities = await query.GetPage(new PageModel()
+            {
+                Page = page,
+                PageSize = 512
+            }).ToArrayAsync(cancellationToken);
+
+            _authorizeRepository.Delete(entities);
+            await _appDbContextAction.CommitAsync(cancellationToken);
+            
+            if (entities.Length < 512)
+                break;
+        }
+    }
+
     public async Task PurgeAsync(CancellationToken cancellationToken = default)
     {
         
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
+            Localize.Log.Method(GetType(), nameof(PurgeByEntityIdAsync), null));
         
         var query = _authorizeRepository
             .QueryMany(_ => _.CreatedAt < DateTimeOffset.UtcNow.AddHours(1))

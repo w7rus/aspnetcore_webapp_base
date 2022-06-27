@@ -14,9 +14,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
 
-/// <summary>
-/// Service to work with PermissionValue entity
-/// </summary>
 public interface IPermissionValueEntityService : IEntityServiceBase<PermissionValue>
 {
     Task<(int total, IReadOnlyCollection<PermissionValue> entities)> GetFilteredSortedPaged(

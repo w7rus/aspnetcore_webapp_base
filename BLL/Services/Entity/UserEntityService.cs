@@ -107,6 +107,7 @@ public class UserEntityService : IUserEntityService
     {
         var result = await _userRepository
             .QueryMany(_ => _.PhoneNumber == phoneNumber)
+            .OrderBy(_ => _.CreatedAt)
             .GetPage(pageModel)
             .ToArrayAsync(cancellationToken);
 

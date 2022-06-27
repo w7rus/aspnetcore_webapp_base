@@ -57,7 +57,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
 
         _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
 
-        return new DomainInfoReadResultDto()
+        return new DomainInfoReadResultDto
         {
             PropertiesValueTypes = properties
                 ?.Where(_ =>
@@ -73,7 +73,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
 
         _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ReadAssemblyQualifiedNames)));
 
-        return new DomainInfoReadAssemblyQualifiedNamesResultDto()
+        return new DomainInfoReadAssemblyQualifiedNamesResultDto
         {
             AssemblyQualifiedNames = typeof(EntityBase<Guid>).Assembly.GetTypes()
                 .Where(_ => _.Namespace != null && _.Namespace.StartsWith(Consts.DomainNamespace))

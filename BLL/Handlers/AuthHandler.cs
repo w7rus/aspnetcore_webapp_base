@@ -19,6 +19,7 @@ using Common.Options;
 using DAL.Data;
 using Domain.Entities;
 using DTO.Models.Auth;
+using DTO.Models.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -551,7 +552,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(SignOut)));
 
-            return new AuthSignOutResultDto();
+            return new OkResultDto();
         }
         catch (Exception)
         {

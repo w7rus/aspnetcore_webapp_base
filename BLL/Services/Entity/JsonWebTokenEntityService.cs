@@ -18,17 +18,12 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BLL.Services.Entity
 {
-    /// <summary>
-    /// Service to work with JsonWebToken entity
-    /// </summary>
     public interface IJsonWebTokenEntityService : IEntityServiceBase<JsonWebToken>
     {
         Task<JsonWebToken> GetByTokenAsync(string token);
-        
-        Task PurgeAsync(
-            CancellationToken cancellationToken = default
-        );
-        
+
+        Task PurgeAsync(CancellationToken cancellationToken = default);
+
         string CreateWithClaims(
             string issuerSigningKey,
             string issuer,
@@ -109,12 +104,12 @@ namespace BLL.Services.Entity
         {
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
-            
+
             var query = _jsonWebTokenRepository
                 .QueryMany(_ => _.DeleteAfter < DateTimeOffset.UtcNow)
                 .OrderBy(_ => _.CreatedAt);
 
-            for (var page = 1;;page += 1)
+            for (var page = 1;; page += 1)
             {
                 var entities = await query.GetPage(new PageModel()
                 {
@@ -124,7 +119,7 @@ namespace BLL.Services.Entity
 
                 _jsonWebTokenRepository.Delete(entities);
                 await _appDbContextAction.CommitAsync(cancellationToken);
-            
+
                 if (entities.Length < 512)
                     break;
             }
