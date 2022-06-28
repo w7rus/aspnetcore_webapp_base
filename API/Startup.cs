@@ -213,15 +213,15 @@ public class Startup
         Log.Logger.Information("Add/Update Recurring Jobs for Hangfire");
 
         recurringJobManager.AddOrUpdate<IJsonWebTokenJobs>(RecurringJobId.JsonWebTokenPurge,
-            _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Hourly);
+            _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Daily, TimeZoneInfo.Local);
 
         recurringJobManager.AddOrUpdate<IRefreshTokenJobs>(RecurringJobId.RefreshTokenPurge,
-            _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Daily);
+            _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Daily, TimeZoneInfo.Local);
 
         recurringJobManager.AddOrUpdate<IAuthorizeJobs>(RecurringJobId.AuthorizePurge,
-            _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Minutely);
+            _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Minutely, TimeZoneInfo.Local);
 
         recurringJobManager.AddOrUpdate<IUserJobs>(RecurringJobId.UsersPurge,
-            _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Daily);
+            _ => _.PurgeAsync(hostApplicationLifetime.ApplicationStopping), Cron.Daily, TimeZoneInfo.Local);
     }
 }

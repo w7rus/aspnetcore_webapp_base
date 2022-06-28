@@ -23,7 +23,7 @@ public class AuthorizeModel
     public string EntityRightPermissionAlias { get; set; }
 
     /// <summary>
-    ///     T1 is EntityLeft, T2 is EntityRight ex. $"T1.\"Id\" = T2.\"OwnerUserId\""
+    ///     T1 is EntityLeft, T2 is EntityRight ex. $"T1.\"Id\" = T2.\"UserId\""
     /// </summary>
     public string SqlExpressionPermissionTypeValueNeededOwner { get; set; }
 

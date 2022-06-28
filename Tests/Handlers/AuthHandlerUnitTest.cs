@@ -21,16 +21,12 @@ public class AuthHandlerTests
             {
                 Email = "test123@email.com",
                 IsEmailVerified = false,
-                PhoneNumber = null,
-                IsPhoneNumberVerified = false,
                 Password = "test123",
                 FailedSignInAttempts = 0,
                 DisableSignInUntil = null,
                 LastSignIn = default,
                 LastActivity = default,
                 LastIpAddress = null,
-                UserToUserGroupMappings = null,
-                UserProfile = null
             }
         };
 

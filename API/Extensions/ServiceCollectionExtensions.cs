@@ -191,6 +191,7 @@ public static class ServiceCollectionExtensions
             configuration.GetSection(nameof(BackgroundServicesOptions)));
         serviceCollection.Configure<MiscOptions>(configuration.GetSection(nameof(MiscOptions)));
         serviceCollection.Configure<RedisOptions>(configuration.GetSection(nameof(RedisOptions)));
+        serviceCollection.Configure<SeqOptions>(configuration.GetSection(nameof(SeqOptions)));
 
         return serviceCollection;
     }

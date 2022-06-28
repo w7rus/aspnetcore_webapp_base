@@ -21,12 +21,6 @@ public interface IUserEntityService : IEntityServiceBase<User>
 {
     Task<User> GetByEmailAsync(string email);
 
-    Task<IReadOnlyCollection<User>> GetByPhoneNumberAsync(
-        string phoneNumber,
-        PageModel pageModel,
-        CancellationToken cancellationToken = default
-    );
-
     Task PurgeAsync(
         CancellationToken cancellationToken = default
     );
@@ -97,25 +91,6 @@ public class UserEntityService : IUserEntityService
             Localize.Log.Method(GetType(), nameof(GetByEmailAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
-    }
-
-    public async Task<IReadOnlyCollection<User>> GetByPhoneNumberAsync(
-        string phoneNumber,
-        PageModel pageModel,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var result = await _userRepository
-            .QueryMany(_ => _.PhoneNumber == phoneNumber)
-            .OrderBy(_ => _.CreatedAt)
-            .GetPage(pageModel)
-            .ToArrayAsync(cancellationToken);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByPhoneNumberAsync),
-                $"{result.GetType().Name} {result.Length}"));
-
-        return result;
     }
 
     public async Task PurgeAsync(CancellationToken cancellationToken = default)

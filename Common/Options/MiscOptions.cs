@@ -7,5 +7,6 @@ public class MiscOptions
 {
     public bool SecureCookies { get; set; }
     public UriData FileServer { get; set; }
-    public ICollection<UriData> CDNServers { get; set; }
+    public ICollection<UriData> CdnServers { get; set; }
+    public int MaxFailedSignInAttempts { get; set; }
 }

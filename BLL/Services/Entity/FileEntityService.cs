@@ -125,7 +125,7 @@ public class FileEntityService : IFileEntityService
 
         var random = new Random();
 
-        var cdnServer = _miscOptions.CDNServers.ElementAt(random.Next(0, _miscOptions.CDNServers.Count)) ??
+        var cdnServer = _miscOptions.CdnServers.ElementAt(random.Next(0, _miscOptions.CdnServers.Count)) ??
                         throw new CustomException();
 
         var httpClient = _httpClientFactory.CreateClient();

@@ -2,10 +2,12 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using Common.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 namespace API;
@@ -79,19 +81,24 @@ public static class Program
                 }
             })
             .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
-            .UseSerilog((context, services, configuration) => configuration
-                .ReadFrom.Configuration(context.Configuration)
-                .ReadFrom.Services(services)
-                .Enrich.FromLogContext()
-                .Enrich.WithAssemblyName()
-                .Enrich.WithEnvironmentName()
-                .Enrich.WithMachineName()
-                .Enrich.WithMemoryUsage()
-                .Enrich.WithProcessId()
-                .Enrich.WithProcessName()
-                .Enrich.WithThreadId()
-                .Enrich.WithThreadName()
-                .WriteTo.Seq("http://localhost:5341")
-                .WriteTo.Console());
+            .UseSerilog((context, services, configuration) =>
+            {
+                var seqOptions = services.GetService<IOptions<SeqOptions>>()?.Value ?? throw new ApplicationException("Dependency IOptions<SeqOptions> not found!");
+                
+                configuration
+                    .ReadFrom.Configuration(context.Configuration)
+                    .ReadFrom.Services(services)
+                    .Enrich.FromLogContext()
+                    .Enrich.WithAssemblyName()
+                    .Enrich.WithEnvironmentName()
+                    .Enrich.WithMachineName()
+                    .Enrich.WithMemoryUsage()
+                    .Enrich.WithProcessId()
+                    .Enrich.WithProcessName()
+                    .Enrich.WithThreadId()
+                    .Enrich.WithThreadName()
+                    .WriteTo.Seq( $"{seqOptions.Endpoint.Scheme}://{seqOptions.Endpoint.Host}:{seqOptions.Endpoint.Port}", apiKey: seqOptions.ApiKey)
+                    .WriteTo.Console();
+            });
     }
 }
