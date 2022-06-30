@@ -144,10 +144,6 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var permissionValue = _mapper.Map<PermissionValue>(data);
 
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Create),
-                    $"{data.GetType().Name} mapped to {permissionValue.GetType().Name}"));
-
             permissionValue = await _permissionValueEntityService.Save(permissionValue, cancellationToken);
 
             await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
@@ -348,10 +344,6 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     Localize.Error.PermissionInsufficientPermissions);
 
             _mapper.Map(data, permissionValue);
-
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Update),
-                    $"{data.GetType().Name} mapped to {permissionValue.GetType().Name}"));
 
             await _permissionValueEntityService.Save(permissionValue, cancellationToken);
 

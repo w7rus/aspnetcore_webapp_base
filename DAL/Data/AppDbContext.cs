@@ -192,6 +192,75 @@ public sealed class AppDbContext : DbContext
                 Type = PermissionType.ValueNeededOthers,
                 CompareMode = PermissionCompareMode.GreaterOrEqual
             },
+            
+            
+            #region Create->AutoMapper Permissions
+
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_create_o_usergroup_o_alias_l_automapper,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_create_o_usergroup_o_alias_l_automapper,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_create_o_usergroup_o_alias_l_automapper,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_create_o_usergroup_o_description_l_automapper,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_create_o_usergroup_o_description_l_automapper,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_create_o_usergroup_o_description_l_automapper,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_create_o_usergroup_o_priority_l_automapper,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_create_o_usergroup_o_priority_l_automapper,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_create_o_usergroup_o_priority_l_automapper,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+
+            #endregion
 
             #endregion
 
@@ -244,6 +313,74 @@ public sealed class AppDbContext : DbContext
                 Type = PermissionType.ValueNeededOthers,
                 CompareMode = PermissionCompareMode.GreaterOrEqual
             },
+            
+            #region Update->AutoMapper Permissions
+
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_update_o_usergroup_o_alias_l_automapper,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_update_o_usergroup_o_alias_l_automapper,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_update_o_usergroup_o_alias_l_automapper,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_update_o_usergroup_o_description_l_automapper,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_update_o_usergroup_o_description_l_automapper,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_update_o_usergroup_o_description_l_automapper,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_update_o_usergroup_o_priority_l_automapper,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_update_o_usergroup_o_priority_l_automapper,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid(""),
+                Alias = Consts.PermissionAlias.g_group_a_update_o_usergroup_o_priority_l_automapper,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+
+            #endregion
 
             #endregion
 
@@ -267,6 +404,58 @@ public sealed class AppDbContext : DbContext
             {
                 Id = new Guid("2995da7c-72af-437a-8b6e-b23141eb60c1"),
                 Alias = Consts.PermissionAlias.g_group_a_delete_o_usergroup,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+
+            #endregion
+
+            #region Join
+
+            new()
+            {
+                Id = new Guid("85f60eae-11f5-417f-b4af-3c0a641fc634"),
+                Alias = Consts.PermissionAlias.g_group_a_join_o_usergroup,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid("d6886b51-71d7-4e62-8d06-ef880d4a0c78"),
+                Alias = Consts.PermissionAlias.g_group_a_join_o_usergroup,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid("10d5a713-d56b-4708-8c89-9c8848560568"),
+                Alias = Consts.PermissionAlias.g_group_a_join_o_usergroup,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+
+            #endregion
+
+            #region Leave
+
+            new()
+            {
+                Id = new Guid("85f60eae-11f5-417f-b4af-3c0a641fc634"),
+                Alias = Consts.PermissionAlias.g_group_a_leave_o_usergroup,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid("d6886b51-71d7-4e62-8d06-ef880d4a0c78"),
+                Alias = Consts.PermissionAlias.g_group_a_leave_o_usergroup,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid("10d5a713-d56b-4708-8c89-9c8848560568"),
+                Alias = Consts.PermissionAlias.g_group_a_leave_o_usergroup,
                 Type = PermissionType.ValueNeededOthers,
                 CompareMode = PermissionCompareMode.GreaterOrEqual
             },
@@ -628,6 +817,7 @@ public sealed class AppDbContext : DbContext
                 Description =
                     "User group with root like permission set. Also used to store system wise permission values",
                 IsSystem = true,
+                UserId = userRoot.Id,
                 Priority = Consts.RootUserGroupPriority
             },
             new()
@@ -636,6 +826,7 @@ public sealed class AppDbContext : DbContext
                 Alias = "Banned",
                 Description = "User group with banned like permission set",
                 IsSystem = true,
+                UserId = userRoot.Id,
                 Priority = Consts.BannedUserGroupPriority
             },
             new()
@@ -644,6 +835,7 @@ public sealed class AppDbContext : DbContext
                 Alias = "Member",
                 Description = "User group with member like permission set",
                 IsSystem = true,
+                UserId = userRoot.Id,
                 Priority = Consts.MemberUserGroupPriority
             },
             new()
@@ -652,6 +844,7 @@ public sealed class AppDbContext : DbContext
                 Alias = "Guest",
                 Description = "User group with guest like permission set",
                 IsSystem = true,
+                UserId = userRoot.Id,
                 Priority = Consts.GuestUserGroupPriority
             }
         };
@@ -924,6 +1117,68 @@ public sealed class AppDbContext : DbContext
                 Value = BitConverter.GetBytes(rootUserGroupPower),
                 PermissionId = permissions.Single(_ =>
                     _.Alias == Consts.PermissionAlias.g_group_a_delete_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = rootUserGroup.Id
+            },
+
+            #endregion
+
+            #region Join
+
+            new()
+            {
+                Id = new Guid("da457017-b6c4-4a80-8ddc-b9fa3ac1dd79"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("91a9a01a-d06b-48fd-8d76-f2e50d815f4b"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("2ec49c43-7683-4749-b5ac-9a6c58b3fc9d"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = rootUserGroup.Id
+            },
+
+            #endregion
+
+            #region Leave
+
+            new()
+            {
+                Id = new Guid("b332415f-ab96-403e-8384-cacbfdefb010"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("de1c362b-400e-4034-abf9-7bc07a24fcb4"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("f92bc25e-5f5f-4c33-a123-4e6eb44a3ad4"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup &&
                     _.Type == PermissionType.ValueNeededOthers).Id,
                 EntityId = rootUserGroup.Id
             },
@@ -1550,6 +1805,68 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
+            
+            #region Join
+
+            new()
+            {
+                Id = new Guid("c121a701-01bc-4f6a-aaa2-d927e4fb5f6b"),
+                Value = BitConverter.GetBytes(bannedUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("e38abf8b-bdd2-41e4-95e0-e6238f3dbc20"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("f90367ab-56e8-4427-bb1e-9906067fc09e"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = rootUserGroup.Id
+            },
+
+            #endregion
+
+            #region Leave
+
+            new()
+            {
+                Id = new Guid("5148d6e7-5f02-4958-8df5-682898b467d0"),
+                Value = BitConverter.GetBytes(bannedUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("5d95e0ec-6d4e-4e7c-b66b-a17736b9ba1e"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("9704f580-f650-4074-bce7-8b447769c9f4"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = rootUserGroup.Id
+            },
+
+            #endregion
 
             #endregion
 
@@ -2144,6 +2461,68 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
+            
+            #region Join
+
+            new()
+            {
+                Id = new Guid("1a0a5708-f55e-4519-8753-53d8f12672a7"),
+                Value = BitConverter.GetBytes(memberUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("53929c5d-dfe7-4d20-9baf-7d955882a8a1"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("4fc5053b-e1f3-427d-b366-636868e3b39c"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = rootUserGroup.Id
+            },
+
+            #endregion
+
+            #region Leave
+
+            new()
+            {
+                Id = new Guid("57faf44b-4f33-4ea2-8ae6-e93cfefb2dee"),
+                Value = BitConverter.GetBytes(memberUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("9a1a7412-c08e-4787-b293-21b0e6654d1e"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("6d88b9b8-5bd4-460a-b55e-0ea6af0f56be"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = rootUserGroup.Id
+            },
+
+            #endregion
 
             #endregion
 
@@ -2690,6 +3069,68 @@ public sealed class AppDbContext : DbContext
                     _.Alias == Consts.PermissionAlias.g_group_a_delete_o_usergroup &&
                     _.Type == PermissionType.ValueNeededOthers).Id,
                 EntityId = guestUserGroup.Id
+            },
+
+            #endregion
+            
+            #region Join
+
+            new()
+            {
+                Id = new Guid("f78582ba-ea19-45fe-881c-d3063f62fe31"),
+                Value = BitConverter.GetBytes(guestUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("16804948-2819-4c2a-af0b-79d62e43c0de"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("0311df9e-0f5a-4dc4-bc09-13d01944ce62"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_join_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = rootUserGroup.Id
+            },
+
+            #endregion
+
+            #region Leave
+
+            new()
+            {
+                Id = new Guid("ab914527-c7f7-4b6f-b2d2-62f76db90891"),
+                Value = BitConverter.GetBytes(guestUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("49089258-e0f4-48b2-be45-50854874cf62"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("337a5089-7b2b-4c56-a61e-34a1de72909e"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_leave_o_usergroup &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = rootUserGroup.Id
             },
 
             #endregion

@@ -5,6 +5,7 @@ using Domain.Entities;
 using DTO.Models.File;
 using DTO.Models.Permission;
 using DTO.Models.PermissionValue;
+using DTO.Models.UserGroup;
 
 namespace BLL.Maps;
 
@@ -28,8 +29,8 @@ public class AutoMapperProfile : Profile
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
                     AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
-                // options.MapFrom(__ => __.AgeRating);
-            });
+            })
+            .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
 
         CreateMap<FileUpdateDto, File>()
             .ForMember(_ => _.Stream, options => options.Ignore())
@@ -43,12 +44,30 @@ public class AutoMapperProfile : Profile
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
                     AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
-                // options.MapFrom(__ => __.AgeRating);
             });
 
         CreateMap<PermissionValueUpdateDto, PermissionValue>()
             .ForMember(_ => _.Id, options => options.Ignore())
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
+        
+        CreateMap<UserGroupCreateDto, UserGroup>()
+            .ForMember(_ => _.IsSystem, options => options.Ignore())
+            .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId))
+            .ForMember(_ => _.Alias, options =>
+            {
+                options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
+                    AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
+            })
+            .ForMember(_ => _.Description, options =>
+            {
+                options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
+                    AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
+            })
+            .ForMember(_ => _.Priority, options =>
+            {
+                options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
+                    AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
+            });
 
         #endregion
 
@@ -83,6 +102,25 @@ public class AutoMapperProfile : Profile
         CreateMap<File, FileUpdateResultDto>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.AgeRating, options => options.MapFrom(__ => __.AgeRating));
+        
+        CreateMap<UserGroup, UserGroupCreateResultDto>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id));
+
+        CreateMap<UserGroup, UserGroupReadResultDto>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
+            .ForMember(_ => _.Description, options => options.MapFrom(__ => __.Description))
+            .ForMember(_ => _.IsSystem, options => options.MapFrom(__ => __.IsSystem))
+            .ForMember(_ => _.Priority, options => options.MapFrom(__ => __.Priority))
+            .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
+        
+        CreateMap<UserGroup, UserGroupUpdateResultDto>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
+            .ForMember(_ => _.Description, options => options.MapFrom(__ => __.Description))
+            .ForMember(_ => _.IsSystem, options => options.MapFrom(__ => __.IsSystem))
+            .ForMember(_ => _.Priority, options => options.MapFrom(__ => __.Priority))
+            .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
 
         #endregion
     }

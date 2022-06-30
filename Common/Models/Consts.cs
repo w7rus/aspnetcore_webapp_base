@@ -19,36 +19,56 @@ public static class Consts
 
     public class PermissionAlias
     {
+        //User PermissionValue
+        
+        //UserGroup PermissionValue
         public const string g_any_a_create_o_permissionvalue = "g_any_a_create_o_permissionvalue";
+        //TODO: g_any_a_create_o_permissionvalue_t_value
+        //TODO: g_any_a_create_o_permissionvalue_t_valueneededowner
+        //TODO: g_any_a_create_o_permissionvalue_t_valueneededothers
         public const string g_any_a_read_o_permissionvalue = "g_any_a_read_o_permissionvalue";
         public const string g_any_a_update_o_permissionvalue = "g_any_a_update_o_permissionvalue";
+        //TODO: g_any_a_update_o_permissionvalue_t_value
+        //TODO: g_any_a_update_o_permissionvalue_t_valueneededowner
+        //TODO: g_any_a_update_o_permissionvalue_t_valueneededothers
         public const string g_any_a_delete_o_permissionvalue = "g_any_a_delete_o_permissionvalue";
+        //TODO: g_any_a_delete_o_permissionvalue_t_value
+        //TODO: g_any_a_delete_o_permissionvalue_t_valueneededowner
+        //TODO: g_any_a_delete_o_permissionvalue_t_valueneededothers
+        
+        //UserGroup
         public const string g_group_a_create_o_usergroup = "g_group_a_create_o_usergroup";
+        public const string g_group_a_create_o_usergroup_o_alias_l_automapper = "g_group_a_create_o_usergroup_o_alias_l_automapper";
+        public const string g_group_a_create_o_usergroup_o_description_l_automapper = "g_group_a_create_o_usergroup_o_description_l_automapper";
+        public const string g_group_a_create_o_usergroup_o_priority_l_automapper = "g_group_a_create_o_usergroup_o_priority_l_automapper";
         public const string g_group_a_read_o_usergroup = "g_group_a_read_o_usergroup";
         public const string g_group_a_update_o_usergroup = "g_group_a_update_o_usergroup";
+        public const string g_group_a_update_o_usergroup_o_alias_l_automapper = "g_group_a_update_o_usergroup_o_alias_l_automapper";
+        public const string g_group_a_update_o_usergroup_o_description_l_automapper = "g_group_a_update_o_usergroup_o_description_l_automapper";
+        public const string g_group_a_update_o_usergroup_o_priority_l_automapper = "g_group_a_update_o_usergroup_o_priority_l_automapper";
+        //TODO: g_group_a_transferownership_o_usergroup_l_automapper
         public const string g_group_a_delete_o_usergroup = "g_group_a_delete_o_usergroup";
+        public const string g_group_a_join_o_usergroup = "g_group_a_join_o_usergroup";
+        public const string g_group_a_leave_o_usergroup = "g_group_a_leave_o_usergroup";
 
+        //User
         public const string g_user_a_read_o_user = "g_user_a_read_o_user";
         public const string g_user_a_update_o_user = "g_user_a_update_o_user";
         public const string g_user_a_delete_o_user = "g_user_a_delete_o_user";
+        
+        //User Profile
         public const string g_userprofile_a_read_o_userprofile = "g_userprofile_a_read_o_userprofile";
         public const string g_userprofile_a_update_o_userprofile = "g_userprofile_a_update_o_userprofile";
-
-        public const string g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize =
-            "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize";
-
+        public const string g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize = "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize";
+        
+        //File
         public const string g_file_a_create_o_file = "g_file_a_create_o_file";
-
-        public const string g_file_a_create_o_file_o_agerating_l_automapper =
-            "g_file_a_create_o_file.o_agerating_l_automapper";
-
+        public const string g_file_a_create_o_file_o_agerating_l_automapper = "g_file_a_create_o_file.o_agerating_l_automapper";
         public const string g_file_a_read_o_file = "g_file_a_read_o_file";
         public const string g_file_a_update_o_file = "g_file_a_update_o_file";
-
-        public const string g_file_a_update_o_file_o_agerating_l_automapper =
-            "g_file_a_update_o_file.o_agerating_l_automapper";
-
+        public const string g_file_a_update_o_file_o_agerating_l_automapper = "g_file_a_update_o_file.o_agerating_l_automapper";
         public const string g_file_a_delete_o_file = "g_file_a_delete_o_file";
+        //TODO: g_file_a_transferownership_o_file_l_automapper
     }
 
     public class MigrationBuilderRawSql

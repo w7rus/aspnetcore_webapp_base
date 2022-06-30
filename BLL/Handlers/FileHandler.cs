@@ -120,6 +120,11 @@ public class FileHandler : HandlerBase, IFileHandler
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
+            
+            var userOwner = await _userEntityService.GetByIdAsync(data.UserId, cancellationToken);
+            if (userOwner == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
             var fileInfo = new FileInfo(fileNameOriginal);
             var fileName = Guid.NewGuid() + fileInfo.Extension;
@@ -136,7 +141,7 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityRightEntityToEntityMappingsTableName =
                     _userToUserGroupMappingRepository.GetTableName(),
-                EntityRightId = user.Id,
+                EntityRightId = userOwner.Id,
                 EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_create_o_file,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
@@ -164,7 +169,7 @@ public class FileHandler : HandlerBase, IFileHandler
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
-                            EntityRightId = user.Id,
+                            EntityRightId = userOwner.Id,
                             EntityRightPermissionAlias =
                                 Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
@@ -177,19 +182,15 @@ public class FileHandler : HandlerBase, IFileHandler
             var file = _mapper.Map<File>(data,
                 opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
 
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Create),
-                    $"{data.GetType().Name} mapped to {file.GetType().Name}"));
-
             file.Name = fileName;
             file.Stream = stream;
             file.Size = file.Stream.Length;
             file.Metadata = new Dictionary<string, string>();
-            file.UserId = user.Id;
 
             _logger.Log(LogLevel.Information,
                 Localize.Log.Method(GetType(), nameof(Create), $"Set additional data to {file.GetType().Name}"));
 
+            //TODO: Retrieve file stream size as an answer from FileServer
             file = await _fileEntityService.Save(file, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
@@ -243,6 +244,8 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_read_o_file,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
+            
+            //TODO: Authorize for File individually
 
             if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
@@ -311,6 +314,8 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_update_o_file,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
+            
+            //TODO: Authorize for File individually
 
             if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
@@ -341,16 +346,14 @@ public class FileHandler : HandlerBase, IFileHandler
                             SqlExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                         })
                     }
+                                
+                    //TODO: g_file_a_transferownership_l_automapper
                 }
             };
 
             //Map with conditional authorization. Mapping configuration profile is located at BLL.Maps.AutoMapperProfile
             _mapper.Map(data, file,
                 opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
-
-            _logger.Log(LogLevel.Information,
-                Localize.Log.Method(GetType(), nameof(Create),
-                    $"{data.GetType().Name} mapped to {file.GetType().Name}"));
 
             await _fileEntityService.Save(file, cancellationToken);
 
@@ -405,6 +408,8 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_delete_o_file,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
+            
+            //TODO: Authorize for File individually
 
             if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
