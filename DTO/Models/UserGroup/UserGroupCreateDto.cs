@@ -1,14 +1,18 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace DTO.Models.UserGroup;
 
 public class UserGroupCreateDto
 {
-    //TODO: authorize max length
+    [Required]
+    [MaxLength(32)]
     public string Alias { get; set; }
-    //TODO: authorize max length
+
+    [Required]
+    [MaxLength(1024)]
     public string Description { get; set; }
-    //TODO: l_automapper authorization (otherwise find available in range)
+    
     public long Priority { get; set; }
     public Guid UserId { get; set; }
 }

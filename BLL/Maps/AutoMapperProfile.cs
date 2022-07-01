@@ -28,7 +28,7 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.AgeRating, options =>
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
-                    AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
+                    AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             })
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
 
@@ -43,7 +43,7 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.AgeRating, options =>
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
-                    AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
+                    AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             });
 
         CreateMap<PermissionValueUpdateDto, PermissionValue>()
@@ -52,21 +52,42 @@ public class AutoMapperProfile : Profile
         
         CreateMap<UserGroupCreateDto, UserGroup>()
             .ForMember(_ => _.IsSystem, options => options.Ignore())
+            .ForMember(_ => _.Id, options => options.Ignore())
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId))
             .ForMember(_ => _.Alias, options =>
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
-                    AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
+                    AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             })
             .ForMember(_ => _.Description, options =>
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
-                    AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
+                    AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             })
             .ForMember(_ => _.Priority, options =>
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
-                    AutoMapperAuthorizeUserPermission(context, objMemberTo.GetType().Name));
+                    AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
+            });
+        
+        CreateMap<UserGroupUpdateDto, UserGroup>()
+            .ForMember(_ => _.IsSystem, options => options.Ignore())
+            .ForMember(_ => _.Id, options => options.Ignore())
+            .ForMember(_ => _.UserId, options => options.Ignore())
+            .ForMember(_ => _.Alias, options =>
+            {
+                options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
+                    AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
+            })
+            .ForMember(_ => _.Description, options =>
+            {
+                options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
+                    AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
+            })
+            .ForMember(_ => _.Priority, options =>
+            {
+                options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
+                    AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             });
 
         #endregion

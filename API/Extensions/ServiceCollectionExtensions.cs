@@ -76,6 +76,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IPermissionHandler, PermissionHandler>();
         serviceCollection.AddScoped<IDomainInfoHandler, DomainInfoHandler>();
         serviceCollection.AddScoped<IApplicationHandler, ApplicationHandler>();
+        serviceCollection.AddScoped<IUserGroupHandler, UserGroupHandler>();
 
         return serviceCollection;
     }
@@ -100,7 +101,8 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddCustomDbContext(
         this IServiceCollection serviceCollection,
-        IConfiguration configuration
+        IConfiguration configuration,
+        IHostEnvironment env
     )
     {
         serviceCollection.AddScoped<AppDbContext>();
@@ -109,9 +111,14 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddDbContext<AppDbContext>(options =>
         {
             options
-                .UseNpgsql(configuration.GetConnectionString("Default"),
+                .UseNpgsql(configuration.GetConnectionString("Default") + (env.IsDevelopment() ? ";Include Error Detail=true" : ""),
                     _ => _.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery))
                 .UseLazyLoadingProxies();
+
+            if (env.IsDevelopment())
+            {
+                options.EnableSensitiveDataLogging().EnableDetailedErrors();
+            }
         });
 
         return serviceCollection;

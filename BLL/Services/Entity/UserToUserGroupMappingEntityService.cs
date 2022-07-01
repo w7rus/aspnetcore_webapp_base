@@ -19,6 +19,7 @@ namespace BLL.Services.Entity;
 /// </summary>
 public interface IUserToUserGroupMappingEntityService : IEntityToEntityMappingServiceBase<UserToUserGroupMapping>
 {
+    Task<UserToUserGroupMapping> GetByUserIdUserGroupIdAsync(Guid userId, Guid userGroupId);
     Task<IReadOnlyCollection<UserToUserGroupMapping>> GetByUserGroupIdAsync(
         Guid userGroupId,
         PageModel pageModel,
@@ -84,7 +85,17 @@ public class UserToUserGroupMappingEntityService : IUserToUserGroupMappingEntity
         var entity = await _userToUserGroupMappingRepository.SingleOrDefaultAsync(_ => _.Id == id);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Delete), $"{entity?.GetType().Name} {entity?.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
+
+        return entity;
+    }
+
+    public async Task<UserToUserGroupMapping> GetByUserIdUserGroupIdAsync(Guid userId, Guid userGroupId)
+    {
+        var entity = await _userToUserGroupMappingRepository.SingleOrDefaultAsync(_ => _.EntityLeftId == userId && _.EntityRightId == userGroupId);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByUserIdUserGroupIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }

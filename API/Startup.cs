@@ -120,7 +120,7 @@ public class Startup
         services.AddAutoMapper(typeof(AutoMapperProfile));
         services.AddSignalR();
 
-        services.AddCustomDbContext(Configuration);
+        services.AddCustomDbContext(Configuration, _env);
         services.AddRepositories();
         services.AddServices();
         services.AddAdvancedServices();

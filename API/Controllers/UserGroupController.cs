@@ -63,7 +63,7 @@ public class UserGroupController : CustomControllerBase
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(UserGroupReadResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Read(
-        [Required] [FromBody] UserGroupReadDto data,
+        [Required] [FromQuery] UserGroupReadDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -89,7 +89,7 @@ public class UserGroupController : CustomControllerBase
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(
-        [Required] [FromBody] UserGroupDeleteDto data,
+        [Required] [FromQuery] UserGroupDeleteDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -97,6 +97,7 @@ public class UserGroupController : CustomControllerBase
     }
 
     [HttpPost]
+    [Route("join")]
     [SwaggerOperation(Summary = "Join UserGroup",
         Description = "Join UserGroup")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
@@ -110,6 +111,7 @@ public class UserGroupController : CustomControllerBase
     }
 
     [HttpPost]
+    [Route("leave")]
     [SwaggerOperation(Summary = "Leave UserGroup",
         Description = "Leave UserGroup")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]

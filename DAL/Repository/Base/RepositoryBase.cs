@@ -50,6 +50,9 @@ public interface IRepositoryBase<TEntity, in TKey> where TEntity : EntityBase<TK
         FilterSortModel filterSortModel,
         AuthorizeModel authorizeModel
     );
+
+    public TResult Min<TResult>(Expression<Func<TEntity, TResult>> predicate);
+    public TResult Max<TResult>(Expression<Func<TEntity, TResult>> predicate);
 }
 
 public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey>
@@ -314,10 +317,9 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
 
         //Match
 
-        if (filterExpressionModel != null)
+        if (filterExpressionModel != null && filterExpressionModel.Items.Any())
         {
-            if (filterExpressionModel.Items.Any())
-                rawSql += " WHERE ";
+            rawSql += " WHERE ";
 
             var stack = new Stack<FilterExpressionModelItemStackItem>();
             stack.Push(new FilterExpressionModelItemStackItem
@@ -524,11 +526,11 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
 
         //Sort
 
-        if (filterSortModel != null)
+        if (filterSortModel != null && filterSortModel.SortRules.Any())
         {
             var rawSqlSortParameters = new List<string>();
-            if (filterSortModel.SortRules.Any())
-                rawSql += " ORDER BY ";
+
+            rawSql += " ORDER BY ";
 
             foreach (var sortRule in filterSortModel.SortRules)
             {
@@ -557,5 +559,15 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
         var query = FromSql(rawSql, rawSqlParameters.ToArray());
 
         return query;
+    }
+    
+    public TResult Min<TResult>(Expression<Func<TEntity, TResult>> predicate)
+    {
+        return DbSet.Min(predicate);
+    }
+    
+    public TResult Max<TResult>(Expression<Func<TEntity, TResult>> predicate)
+    {
+        return DbSet.Max(predicate);
     }
 }

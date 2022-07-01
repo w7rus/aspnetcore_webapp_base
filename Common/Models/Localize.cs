@@ -98,6 +98,12 @@ public static class Localize
 
         #endregion
 
+        #region UserToUserGroupMapping
+
+        public static string UserToUserGroupMappingNotFound => "UserToUserGroupMappingDoesNotExist";
+
+        #endregion
+
         #region FilterMatchModel
 
         public static string FilterMatchModelItemExpressionValueTypeNotSupported =>

@@ -17,6 +17,7 @@ namespace BLL.Services.Entity;
 public interface IUserGroupEntityService : IEntityServiceBase<UserGroup>
 {
     Task<UserGroup> GetByAliasAsync(string alias);
+    Task<bool> GetIsPriorityClaimed(long priority);
 }
 
 public class UserGroupEntityService : IUserGroupEntityService
@@ -93,6 +94,16 @@ public class UserGroupEntityService : IUserGroupEntityService
             Localize.Log.Method(GetType(), nameof(GetByAliasAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
+    }
+
+    public async Task<bool> GetIsPriorityClaimed(long priority)
+    {
+        var result = await _userGroupRepository.SingleOrDefaultAsync(_ => _.Priority == priority);
+        
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetIsPriorityClaimed), $"{result?.GetType().Name} {result}"));
+
+        return result != null;
     }
 
     #endregion

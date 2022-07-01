@@ -39,7 +39,7 @@ public static class Program
             .ConfigureServices((_, services) =>
             {
                 services.AddCustomOptions(_.Configuration);
-                services.AddCustomDbContext(_.Configuration);
+                services.AddCustomDbContext(_.Configuration, _.HostingEnvironment);
                 services.AddRepositories();
                 services.AddServices();
                 services.AddJobs();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities.Base;
@@ -34,12 +35,4 @@ public interface IEntityServiceBase<TEntity> where TEntity : EntityBase<Guid>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<TEntity> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-
-    // /// <summary>
-    // /// Creates entity and saves it
-    // /// </summary>
-    // /// <param name="entity"></param>
-    // /// <param name="cancellationToken"></param>
-    // /// <returns></returns>
-    // Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default);
 }

@@ -8,6 +8,7 @@ using Common.Models;
 using DAL.Extensions;
 using DAL.Repository;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -15,6 +16,7 @@ namespace BLL.Services.Entity;
 
 public interface IPermissionEntityService : IEntityServiceBase<Permission>
 {
+    Task<Permission> GetByAliasTypeAsync(string alias, PermissionType permissionType);
     Task<(int total, IReadOnlyCollection<Permission> entities)> GetFilteredSortedPaged(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
@@ -60,6 +62,16 @@ public class PermissionEntityService : IPermissionEntityService
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
+
+        return entity;
+    }
+
+    public async Task<Permission> GetByAliasTypeAsync(string alias, PermissionType permissionType)
+    {
+        var entity = await _permissionRepository.SingleOrDefaultAsync(_ => _.Alias == alias && _.Type == permissionType);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByAliasTypeAsync), $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }

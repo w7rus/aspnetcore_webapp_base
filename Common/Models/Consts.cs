@@ -46,7 +46,7 @@ public static class Consts
         public const string g_group_a_update_o_usergroup_o_alias_l_automapper = "g_group_a_update_o_usergroup_o_alias_l_automapper";
         public const string g_group_a_update_o_usergroup_o_description_l_automapper = "g_group_a_update_o_usergroup_o_description_l_automapper";
         public const string g_group_a_update_o_usergroup_o_priority_l_automapper = "g_group_a_update_o_usergroup_o_priority_l_automapper";
-        //TODO: g_group_a_transferownership_o_usergroup_l_automapper
+        //TODO: g_group_a_transferownership_o_usergroup
         public const string g_group_a_delete_o_usergroup = "g_group_a_delete_o_usergroup";
         public const string g_group_a_join_o_usergroup = "g_group_a_join_o_usergroup";
         public const string g_group_a_leave_o_usergroup = "g_group_a_leave_o_usergroup";
@@ -68,7 +68,7 @@ public static class Consts
         public const string g_file_a_update_o_file = "g_file_a_update_o_file";
         public const string g_file_a_update_o_file_o_agerating_l_automapper = "g_file_a_update_o_file.o_agerating_l_automapper";
         public const string g_file_a_delete_o_file = "g_file_a_delete_o_file";
-        //TODO: g_file_a_transferownership_o_file_l_automapper
+        //TODO: g_file_a_transferownership_o_file
     }
 
     public class MigrationBuilderRawSql
@@ -78,25 +78,33 @@ public static class Consts
 
         public const string CreateOrReplaceFunctionAuthorizeEntityPermissionValueToEntityPermissionValue = @"
 CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionValueToEntityPermissionValue""(
-    EntityLeftPermission record default null,
-    EntityLeftPermissionValue record  default null,
-    EntityRightPermission record default null,
-    EntityRightPermissionValue record default null
-  )
+    IN entityleftpermission record DEFAULT NULL::record,
+    IN entityleftpermissionvalue record DEFAULT  NULL::record,
+    IN entityrightpermission record DEFAULT  NULL::record,
+    IN entityrightpermissionvalue record DEFAULT  NULL::record
+)
     RETURNS boolean
     LANGUAGE 'plpgsql'
-    AS $$
-      DECLARE
+    VOLATILE
+    PARALLEL UNSAFE
+    COST 100
+    
+AS $BODY$
+    DECLARE
         FResult boolean := false;
         ValueLeft bigint := 0;
         ValueRight bigint := 0;
-      BEGIN
+    BEGIN
+        RAISE DEBUG '  └┐AuthorizeEntityPermissionValueToEntityPermissionValue()';
+        
         IF EntityLeftPermissionValue IS NULL OR EntityRightPermissionValue IS NULL THEN
-          RETURN FResult;
+            RAISE DEBUG '   ├EntityLeftPermissionValue IS NULL OR EntityRightPermissionValue IS NULL';
+            
+            RETURN FResult;
         END IF;
 
         IF EntityLeftPermission.""CompareMode"" != EntityRightPermission.""CompareMode"" THEN
-          RAISE EXCEPTION '[AuthorizeEntityPermissionValueToEntityPermissionValue]: EntityLeftPermission.CompareMode != EntityRightPermission.CompareMode';
+            RAISE EXCEPTION '   ├[AuthorizeEntityPermissionValueToEntityPermissionValue]: EntityLeftPermission.CompareMode != EntityRightPermission.CompareMode';
         END IF;
 
         ValueLeft := get_byte(EntityLeftPermissionValue.""Value"", 7)::bigint << 8
@@ -115,113 +123,138 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionValueToEntityPermis
             | get_byte(EntityRightPermissionValue.""Value"", 2) << 8
             | get_byte(EntityRightPermissionValue.""Value"", 1) << 8
             | get_byte(EntityRightPermissionValue.""Value"", 0);
+        
+        RAISE DEBUG '   ├<TryUseCompareMode>';
 
         CASE EntityLeftPermission.""CompareMode""
-          WHEN 0 THEN
-            FResult := true;
-          WHEN 1 THEN
-            FResult := ValueLeft = ValueRight;
-          WHEN 2 THEN
-            FResult := ValueLeft != ValueRight;
-          WHEN 3 THEN
-            FResult := ValueLeft < ValueRight;
-          WHEN 4 THEN
-            FResult := ValueLeft <= ValueRight;
-          WHEN 5 THEN
-            FResult := ValueLeft > ValueRight;
-          WHEN 6 THEN
-            FResult := ValueLeft >= ValueRight;
-          ELSE
-            RAISE EXCEPTION '[AuthorizeEntityPermissionValueToEntityPermissionValue]: ArgumentOutOfRangeException(EntityLeftPermission.CompareMode)';
+            WHEN 0 THEN
+                FResult := true;
+            WHEN 1 THEN
+                FResult := ValueLeft = ValueRight;
+            WHEN 2 THEN
+                FResult := ValueLeft != ValueRight;
+            WHEN 3 THEN
+                FResult := ValueLeft < ValueRight;
+            WHEN 4 THEN
+                FResult := ValueLeft <= ValueRight;
+            WHEN 5 THEN
+                FResult := ValueLeft > ValueRight;
+            WHEN 6 THEN
+                FResult := ValueLeft >= ValueRight;
+            ELSE
+                RAISE EXCEPTION '   ├[AuthorizeEntityPermissionValueToEntityPermissionValue]: ArgumentOutOfRangeException(EntityLeftPermission.CompareMode)';
         END CASE;
+        
+        RAISE DEBUG '  ┌┘';
 
         RETURN FResult;
-      END;
-    $$;
+    END;
+$BODY$;
 ";
 
         public const string CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermissionValue = @"
 CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermissionValue""(
-    EntityLeft record default null,
-    EntityLeftGroupsTableName text default null,
-    EntityLeftGroupMappingsTableName text default null,
-    EntityLeftPermission record default null,
-    EntityRightPermission record default null,
-    EntityRightPermissionValue record default null
-  )
+    IN entityleft record DEFAULT NULL::record,
+    IN entityleftgroupstablename text DEFAULT  NULL::text,
+    IN entityleftgroupmappingstablename text DEFAULT  NULL::text,
+    IN entityleftpermission record DEFAULT  NULL::record,
+    IN entityrightpermission record DEFAULT  NULL::record,
+    IN entityrightpermissionvalue record DEFAULT  NULL::record
+)
     RETURNS boolean
     LANGUAGE 'plpgsql'
-    AS $$
-      DECLARE
+    VOLATILE
+    PARALLEL UNSAFE
+    COST 100
+    
+AS $BODY$
+    DECLARE
         FResult boolean := false;
         EntityLeftGroup record := null;
         EntityLeftPermissionValue record := null;
-      BEGIN
-        --IF EntityLeftGroupsTableName IS NOT NULL AND EntityLeftGroupMappingsTableName IS NOT NULL THEN
-        --  FOR EntityLeftGroup IN EXECUTE format('SELECT * FROM public.""%s"" AS T1 WHERE EXISTS (SELECT * FROM public.""%s"" AS T2 WHERE T1.""Id"" = T2.""EntityRightId"" AND T2.""EntityLeftId"" = cast($1 as uuid)) AND EXISTS (SELECT * FROM public.""PermissionValues"" AS T3 WHERE T3.""PermissionId"" = $2 AND T3.""EntityId"" = T1.""Id"") ORDER BY T1.""Priority"" ASC', EntityLeftGroupsTableName, EntityLeftGroupMappingsTableName) USING EntityLeft.""Id"", EntityLeftPermission.""Id""
-        --  LOOP
-        --    EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2' INTO EntityLeftPermissionValue USING EntityLeftPermission.""Id"", EntityLeftGroup.""Id"";
-        --    CONTINUE WHEN EntityLeftPermissionValue IS NULL;
-        --    FResult := public.""AuthorizeEntityPermissionValueToEntityPermissionValue""(EntityLeftPermission, EntityLeftPermissionValue, EntityRightPermission, EntityRightPermissionValue);
-        --    EntityLeftPermissionValue := row(null);
-        --  END LOOP;
-        --END IF;
+    BEGIN
+        RAISE DEBUG ' └┐AuthorizeEntityPermissionToEntityPermissionValue()';
         
         IF EntityLeftGroupsTableName IS NOT NULL AND EntityLeftGroupMappingsTableName IS NOT NULL THEN
+            RAISE DEBUG ' ├<TryUseEntityLeftGroupPermissionValue>';
+            RAISE DEBUG ' └┐';
+            
             EXECUTE format('SELECT * FROM public.""%s"" AS T1 WHERE EXISTS (SELECT * FROM public.""%s"" AS T2 WHERE T1.""Id"" = T2.""EntityRightId"" AND T2.""EntityLeftId"" = cast($1 as uuid)) AND EXISTS (SELECT * FROM public.""PermissionValues"" AS T3 WHERE T3.""PermissionId"" = $2 AND T3.""EntityId"" = T1.""Id"") ORDER BY T1.""Priority"" DESC LIMIT 1', EntityLeftGroupsTableName, EntityLeftGroupMappingsTableName)
                 INTO EntityLeftGroup
                 USING EntityLeft.""Id"",
                     EntityLeftPermission.""Id"";
             
             IF NOT(EntityLeftGroup IS NULL) THEN
+                RAISE DEBUG '  ├EntityLeftGroup = % %', EntityLeftGroup.""Id"", EntityLeftGroup.""Alias"";
+                
                 EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2'
                     INTO EntityLeftPermissionValue
                     USING EntityLeftPermission.""Id"",
                         EntityLeftGroup.""Id"";
                 
+                RAISE DEBUG '  ├EntityLeftPermissionValue = % %', EntityLeftPermissionValue.""Id"", EntityLeftPermissionValue.""Value"";
+                RAISE DEBUG '  └┐';
+                
                 FResult := public.""AuthorizeEntityPermissionValueToEntityPermissionValue""(EntityLeftPermission, EntityLeftPermissionValue, EntityRightPermission, EntityRightPermissionValue);
+                
+                RAISE DEBUG '  ├FResult = %', FResult;
+                
                 EntityLeftPermissionValue := row(null);
+            ELSE
+                RAISE DEBUG '  ├EntityRightGroup IS NULL';
             END IF;
+            
+            RAISE DEBUG ' ┌┘';
         END IF;
+        
+        RAISE DEBUG ' ├<TryUseEntityLeftPermissionValue>';
+        RAISE DEBUG ' └┐';
 
         EntityLeftPermissionValue := row(null);
-
         EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2'
             INTO EntityLeftPermissionValue
             USING EntityLeftPermission.""Id"",
                 EntityLeft.""Id"";
         
         IF NOT(EntityLeftPermissionValue IS NULL) THEN
-          FResult := public.""AuthorizeEntityPermissionValueToEntityPermissionValue""(EntityLeftPermission, EntityLeftPermissionValue, EntityRightPermission, EntityRightPermissionValue);
+            RAISE DEBUG '  ├EntityLeftPermissionValue = % %', EntityLeftPermissionValue.""Id"", EntityLeftPermissionValue.""Value"";
+            FResult := public.""AuthorizeEntityPermissionValueToEntityPermissionValue""(EntityLeftPermission, EntityLeftPermissionValue, EntityRightPermission, EntityRightPermissionValue);
+            
+            RAISE DEBUG '  ├FResult = %', FResult;
+        ELSE
+            RAISE DEBUG '  ├EntityLeftPermissionValue IS NULL';
         END IF;
+        
+        RAISE DEBUG ' ┌┘';
 
         RETURN FResult;
-      END;
-    $$;
+    END;
+$BODY$;
 ";
 
         public const string CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermission = @"
 CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission""(
-    EntityLeftTableName text default null,
-    EntityLeftGroupsTableName text default null,
-    EntityLeftGroupMappingsTableName text default null,
-    EntityLeftUuid uuid default null,
-    EntityLeftPermissionAlias text default null,
-    EntityRightTableName text default null,
-    EntityRightGroupsTableName text default null,
-    EntityRightGroupMappingsTableName text default null,
-    EntityRightUuid uuid default null,
-    EntityRightPermissionAlias text default null,
-
-    --Defines whether PermissionType.ValueNeededOwner or PermissionType.ValueNeededOthers is used
-    --It may be injection unsafe, but those statements are only defined by programmer
-    SQLExpressionPermissionTypeValueNeededOwner text default null,
-    UseCache bool default false
-  )
+    IN entitylefttablename text DEFAULT NULL::text,
+    IN entityleftgroupstablename text DEFAULT  NULL::text,
+    IN entityleftgroupmappingstablename text DEFAULT  NULL::text,
+    IN entityleftuuid uuid DEFAULT  NULL::uuid,
+    IN entityleftpermissionalias text DEFAULT  NULL::text,
+    IN entityrighttablename text DEFAULT  NULL::text,
+    IN entityrightgroupstablename text DEFAULT  NULL::text,
+    IN entityrightgroupmappingstablename text DEFAULT  NULL::text,
+    IN entityrightuuid uuid DEFAULT  NULL::uuid,
+    IN entityrightpermissionalias text DEFAULT  NULL::text,
+    IN sqlexpressionpermissiontypevalueneededowner text DEFAULT  NULL::text,
+    IN usecache boolean DEFAULT  false
+)
     RETURNS boolean
     LANGUAGE 'plpgsql'
-    AS $$
-      DECLARE
+    VOLATILE
+    PARALLEL UNSAFE
+    COST 100
+    
+AS $BODY$
+    DECLARE
         FResult boolean := false;
         PermissionTypeValueNeededOwner boolean := false;
         EntityLeft record := null;
@@ -231,43 +264,56 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission"
         EntityRightPermission record := null;
         EntityRightPermissionValue record := null;
         Authorize record := null;
-      BEGIN
+    BEGIN
+        RAISE DEBUG '┌AuthorizeEntityPermissionToEntityPermission()';
+      
         EXECUTE format('SELECT * FROM public.""%s"" WHERE ""Id"" = cast($1 as uuid)', EntityLeftTableName) INTO EntityLeft USING EntityLeftUuid;
         EXECUTE format('SELECT * FROM public.""%s"" WHERE ""Id"" = cast($1 as uuid)', EntityRightTableName) INTO EntityRight USING EntityRightUuid;
 
         IF EntityLeft IS NULL  THEN
-          RAISE EXCEPTION '[AuthorizeEntityPermissionToEntityPermission]: EntityLeft IS NULL!';
+            RAISE EXCEPTION '├[AuthorizeEntityPermissionToEntityPermission]: EntityLeft IS NULL!';
         END IF;
         IF EntityRight IS NULL THEN
-          RAISE EXCEPTION '[AuthorizeEntityPermissionToEntityPermission]: EntityRight IS NULL!';
+            RAISE EXCEPTION '├[AuthorizeEntityPermissionToEntityPermission]: EntityRight IS NULL!';
         END IF;
         
         IF UseCache THEN
-          EXECUTE 'SELECT * FROM public.""Authorizes"" WHERE ""EntityLeftTableName"" = $1 AND ""EntityLeftGroupsTableName"" = $2 AND ""EntityLeftEntityToEntityMappingsTableName"" = $3 AND ""EntityLeftId"" = $4 AND ""EntityLeftPermissionAlias"" = $5 AND ""EntityRightTableName"" = $6 AND ""EntityRightGroupsTableName"" = $7 AND ""EntityRightEntityToEntityMappingsTableName"" = $8 AND ""EntityRightId"" = $9 AND ""EntityRightPermissionAlias"" = $10 AND ""SQLExpressionPermissionTypeValueNeededOwner"" = $11'
-              INTO Authorize 
-              USING EntityLeftTableName,
-                  EntityLeftGroupsTableName,
-                  EntityLeftGroupMappingsTableName,
-                  cast(EntityLeft.""Id"" as uuid),
-                  EntityLeftPermissionAlias,
-                  EntityRightTableName,
-                  EntityRightGroupsTableName,
-                  EntityRightGroupMappingsTableName,
-                  cast(EntityRight.""Id"" as uuid),
-                  EntityRightPermissionAlias,
-                  SQLExpressionPermissionTypeValueNeededOwner;
-          
-          IF NOT(Authorize IS NULL) THEN
-              RETURN Authorize.Result;
-          END IF;
+            RAISE DEBUG '├<TryUseCache>';
+            RAISE DEBUG '└┐';
+        
+            EXECUTE 'SELECT * FROM public.""Authorizes"" WHERE ""EntityLeftTableName"" = $1 AND ""EntityLeftGroupsTableName"" = $2 AND ""EntityLeftEntityToEntityMappingsTableName"" = $3 AND ""EntityLeftId"" = $4 AND ""EntityLeftPermissionAlias"" = $5 AND ""EntityRightTableName"" = $6 AND ""EntityRightGroupsTableName"" = $7 AND ""EntityRightEntityToEntityMappingsTableName"" = $8 AND ""EntityRightId"" = $9 AND ""EntityRightPermissionAlias"" = $10 AND ""SQLExpressionPermissionTypeValueNeededOwner"" = $11'
+                INTO Authorize 
+                USING EntityLeftTableName,
+                    EntityLeftGroupsTableName,
+                    EntityLeftGroupMappingsTableName,
+                    cast(EntityLeft.""Id"" as uuid),
+                    EntityLeftPermissionAlias,
+                    EntityRightTableName,
+                    EntityRightGroupsTableName,
+                    EntityRightGroupMappingsTableName,
+                    cast(EntityRight.""Id"" as uuid),
+                    EntityRightPermissionAlias,
+                    SQLExpressionPermissionTypeValueNeededOwner;
+            
+            IF NOT(Authorize IS NULL) THEN
+                RAISE DEBUG ' └Authorize = % %', Authorize.""Id"", Authorize.""Value"";
+            
+                RETURN Authorize.Result;
+            END IF;
+            
+            RAISE DEBUG '┌┘';
         END IF;
 
         EXECUTE format('SELECT count(*) > 0 FROM public.""%s"" AS T1 WHERE T1.""Id"" = cast($1 as uuid) AND EXISTS (SELECT * FROM public.""%s"" AS T2 WHERE T2.""Id"" = cast($2 as uuid) AND %s)', EntityLeftTableName, EntityRightTableName, SQLExpressionPermissionTypeValueNeededOwner) INTO PermissionTypeValueNeededOwner USING EntityLeftUuid, EntityRightUuid;
 
+        RAISE DEBUG '├PermissionTypeValueNeededOwner = %', PermissionTypeValueNeededOwner;
+
         EXECUTE 'SELECT * FROM public.""Permissions"" WHERE ""Alias"" = $1 AND ""Type"" = $2' INTO EntityLeftPermission USING EntityLeftPermissionAlias, 2;
         IF EntityLeftPermission IS NULL THEN
-          RAISE EXCEPTION '[AuthorizeEntityPermissionToEntityPermission]: EntityLeftPermission IS NULL!';
+            RAISE EXCEPTION '├[AuthorizeEntityPermissionToEntityPermission]: EntityLeftPermission IS NULL!';
         END IF;
+        
+        RAISE DEBUG '├EntityLeftPermission = % %', EntityLeftPermission.""Id"", EntityLeftPermission.""Alias"";
 
         IF PermissionTypeValueNeededOwner = true THEN
             EXECUTE 'SELECT * FROM public.""Permissions"" WHERE ""Alias"" = $1 AND ""Type"" = $2' INTO EntityRightPermission USING EntityRightPermissionAlias, 3;
@@ -275,39 +321,44 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission"
             EXECUTE 'SELECT * FROM public.""Permissions"" WHERE ""Alias"" = $1 AND ""Type"" = $2' INTO EntityRightPermission USING EntityRightPermissionAlias, 4;
         END IF;
         IF EntityRightPermission IS NULL THEN
-          RAISE EXCEPTION '[AuthorizeEntityPermissionToEntityPermission]: EntityRightPermission IS NULL!';
+            RAISE EXCEPTION '├[AuthorizeEntityPermissionToEntityPermission]: EntityRightPermission IS NULL!';
         END IF;
-
-        --IF EntityRightGroupsTableName IS NOT NULL AND EntityRightGroupMappingsTableName IS NOT NULL THEN
-        --  FOR EntityRightGroup IN EXECUTE format('SELECT * FROM public.""%s"" AS T1 WHERE EXISTS (SELECT * FROM public.""%s"" AS T2 WHERE T1.""Id"" = T2.""EntityRightId"" AND T2.""EntityLeftId"" = cast($1 as uuid)) AND EXISTS (SELECT * FROM public.""PermissionValues"" AS T3 WHERE T3.""PermissionId"" = $2 AND T3.""EntityId"" = T1.""Id"") ORDER BY T1.""Priority"" ASC', EntityRightGroupsTableName, EntityRightGroupMappingsTableName) USING EntityRight.""Id"", EntityRightPermission.""Id""
-        --  LOOP
-        --    EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2'
-        --        INTO EntityRightPermissionValue USING
-        --            EntityRightPermission.""Id"",
-        --            EntityRightGroup.""Id"";
-        --    
-        --    CONTINUE WHEN EntityRightPermissionValue IS NULL;
-        --    FResult := public.""AuthorizeEntityPermissionToEntityPermissionValue""(EntityLeft, EntityLeftGroupsTableName, EntityLeftGroupMappingsTableName, EntityLeftPermission, EntityRightPermission, EntityRightPermissionValue);
-        --    EntityRightPermissionValue := row(null);
-        --  END LOOP;
-        --END IF;
+        
+        RAISE DEBUG '├EntityRightPermission = % %', EntityRightPermission.""Id"", EntityRightPermission.""Alias"";
         
         IF EntityRightGroupsTableName IS NOT NULL AND EntityRightGroupMappingsTableName IS NOT NULL THEN
+            RAISE DEBUG '├<TryUseEntityRightGroupPermissionValue>';
+            RAISE DEBUG '└┐';
+            
             EXECUTE format('SELECT * FROM public.""%s"" AS T1 WHERE EXISTS (SELECT * FROM public.""%s"" AS T2 WHERE T1.""Id"" = T2.""EntityRightId"" AND T2.""EntityLeftId"" = cast($1 as uuid)) AND EXISTS (SELECT * FROM public.""PermissionValues"" AS T3 WHERE T3.""PermissionId"" = $2 AND T3.""EntityId"" = T1.""Id"") ORDER BY T1.""Priority"" DESC LIMIT 1', EntityRightGroupsTableName, EntityRightGroupMappingsTableName)
                 INTO EntityRightGroup
                 USING EntityRight.""Id"",
                     EntityRightPermission.""Id"";
             
             IF NOT(EntityRightGroup IS NULL) THEN
+                RAISE DEBUG ' ├EntityRightGroup = % %', EntityRightGroup.""Id"", EntityRightGroup.""Alias"";
+            
                 EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2'
                 INTO EntityRightPermissionValue USING
                     EntityRightPermission.""Id"",
                     EntityRightGroup.""Id"";
+
+                RAISE DEBUG ' ├EntityRightPermissionValue = % %', EntityRightPermissionValue.""Id"", EntityRightPermissionValue.""Value"";
                 
                 FResult := public.""AuthorizeEntityPermissionToEntityPermissionValue""(EntityLeft, EntityLeftGroupsTableName, EntityLeftGroupMappingsTableName, EntityLeftPermission, EntityRightPermission, EntityRightPermissionValue);
+                
+                RAISE DEBUG ' ├FResult = %', FResult;
+                
                 EntityRightPermissionValue := row(null);
+            ELSE
+                RAISE DEBUG ' ├EntityRightGroup IS NULL';
             END IF;
+            
+            RAISE DEBUG '┌┘';
         END IF;
+        
+        RAISE DEBUG '├<TryUseEntityRightPermissionValue>';
+        RAISE DEBUG '└┐';
 
         EntityRightPermissionValue := row(null);
         EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2'
@@ -316,10 +367,20 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission"
                 EntityRight.""Id"";
         
         IF NOT(EntityRightPermissionValue IS NULL) THEN
-          FResult := public.""AuthorizeEntityPermissionToEntityPermissionValue""(EntityLeft, EntityLeftGroupsTableName, EntityLeftGroupMappingsTableName, EntityLeftPermission, EntityRightPermission, EntityRightPermissionValue);
+            RAISE DEBUG ' ├EntityRightPermissionValue = % %', EntityRightPermissionValue.""Id"", EntityRightPermissionValue.""Value"";
+        
+            FResult := public.""AuthorizeEntityPermissionToEntityPermissionValue""(EntityLeft, EntityLeftGroupsTableName, EntityLeftGroupMappingsTableName, EntityLeftPermission, EntityRightPermission, EntityRightPermissionValue);
+            
+            RAISE DEBUG ' ├FResult = %', FResult;
+        ELSE
+            RAISE DEBUG ' ├EntityRightPermissionValue IS NULL';
         END IF;
         
+        RAISE DEBUG '┌┘';
+        
         IF UseCache THEN
+          RAISE DEBUG '├<SaveCache>';
+        
           EXECUTE 'INSERT INTO public.""Authorizes"" (""Id"", ""CreatedAt"", ""UpdatedAt"", ""EntityLeftTableName"", ""EntityLeftGroupsTableName"", ""EntityLeftEntityToEntityMappingsTableName"", ""EntityLeftId"", ""EntityLeftPermissionAlias"", ""EntityRightTableName"", ""EntityRightGroupsTableName"", ""EntityRightEntityToEntityMappingsTableName"", ""EntityRightId"", ""EntityRightPermissionAlias"", ""SQLExpressionPermissionTypeValueNeededOwner"", ""Result"") VALUES ((SELECT uuid_generate_v4()), (SELECT CURRENT_TIMESTAMP), (SELECT CURRENT_TIMESTAMP), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)'
               USING EntityLeftTableName,
                   EntityLeftGroupsTableName,
@@ -334,10 +395,12 @@ CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission"
                   SQLExpressionPermissionTypeValueNeededOwner,
                   FResult;
         END IF;
+        
+        RAISE DEBUG '└FResult = %', FResult;
             
         RETURN FResult;
-      END;
-    $$;
+    END;
+$BODY$;
 ";
     }
 }
