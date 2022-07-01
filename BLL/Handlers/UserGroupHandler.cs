@@ -552,6 +552,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 }
 
                 data.Priority = priority;
+                autoMapperModelAuthorizeData.FieldAuthorizeResultDictionary[nameof(UserGroup.Priority)] = true;
             }
 
             _mapper.Map(data, userGroup,
