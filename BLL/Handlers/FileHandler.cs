@@ -49,7 +49,7 @@ public class FileHandler : HandlerBase, IFileHandler
         IUserEntityService userEntityService,
         IMapper mapper,
         IPermissionEntityService permissionEntityService,
-        IPermissionValueEntityService permissionValueEntityService,
+        IPermissionValueEntityCollectionService permissionValueEntityCollectionService,
         IUserGroupEntityService userGroupEntityService,
         IUserAdvancedService userAdvancedService,
         IUserRepository userRepository,
@@ -65,7 +65,7 @@ public class FileHandler : HandlerBase, IFileHandler
         _userEntityService = userEntityService;
         _mapper = mapper;
         _permissionEntityService = permissionEntityService;
-        _permissionValueEntityService = permissionValueEntityService;
+        _permissionValueEntityCollectionService = permissionValueEntityCollectionService;
         _userGroupEntityService = userGroupEntityService;
         _userAdvancedService = userAdvancedService;
         _userRepository = userRepository;
@@ -87,7 +87,7 @@ public class FileHandler : HandlerBase, IFileHandler
     private readonly IUserEntityService _userEntityService;
     private readonly IMapper _mapper;
     private readonly IPermissionEntityService _permissionEntityService;
-    private readonly IPermissionValueEntityService _permissionValueEntityService;
+    private readonly IPermissionValueEntityCollectionService _permissionValueEntityCollectionService;
     private readonly IUserGroupEntityService _userGroupEntityService;
     private readonly IUserAdvancedService _userAdvancedService;
     private readonly IUserRepository _userRepository;

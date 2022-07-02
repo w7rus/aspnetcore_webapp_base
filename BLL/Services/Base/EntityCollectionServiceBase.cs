@@ -6,7 +6,7 @@ using Domain.Entities.Base;
 
 namespace BLL.Services.Base;
 
-public interface IEntityServiceBaseAdditional<TEntity> where TEntity : EntityBase<Guid>
+public interface IEntityCollectionServiceBase<TEntity> where TEntity : EntityBase<Guid>
 {
     /// <summary>
     ///     Saves entity

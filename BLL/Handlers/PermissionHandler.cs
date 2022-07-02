@@ -101,7 +101,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
             await _appDbContextAction.BeginTransactionAsync();
 
             var permissions = await _permissionEntityService.GetFilteredSortedPaged(data.FilterExpressionModel,
-                data.FilterSortModel, data.PageModel, cancellationToken);
+                data.FilterSortModel, data.PageModel, null, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 

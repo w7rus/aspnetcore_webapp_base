@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
 using Common.Exceptions;
 using Common.Models;
 using DAL.Data;
+using DAL.Extensions;
 using DAL.Repository;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
@@ -14,7 +18,7 @@ namespace BLL.Services.Entity;
 /// <summary>
 ///     Service to work with UserGroup entity
 /// </summary>
-public interface IUserGroupEntityService : IEntityServiceBase<UserGroup>
+public interface IUserGroupEntityService : IEntityServiceBase<UserGroup>, IEntityFSPServiceBase<UserGroup>
 {
     Task<UserGroup> GetByAliasAsync(string alias);
     Task<bool> GetIsPriorityClaimed(long priority);
@@ -99,11 +103,33 @@ public class UserGroupEntityService : IUserGroupEntityService
     public async Task<bool> GetIsPriorityClaimed(long priority)
     {
         var result = await _userGroupRepository.SingleOrDefaultAsync(_ => _.Priority == priority);
-        
+
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetIsPriorityClaimed), $"{result?.GetType().Name} {result}"));
 
         return result != null;
+    }
+
+    public async Task<(int total, IReadOnlyCollection<UserGroup> entities)> GetFilteredSortedPaged(
+        FilterExpressionModel filterExpressionModel,
+        FilterSortModel filterSortModel,
+        PageModel pageModel,
+        AuthorizeModel authorizeModel,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var result =
+            _userGroupRepository.GetFilteredSorted(filterExpressionModel, filterSortModel, authorizeModel);
+
+        var total = result.Count();
+
+        result = result.GetPage(pageModel);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),
+                $"{result?.GetType().Name} {result?.Count()}"));
+
+        return (total, await result?.ToArrayAsync(cancellationToken)!);
     }
 
     #endregion

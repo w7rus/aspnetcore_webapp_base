@@ -1,7 +1,10 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Common.Exceptions;
 using Common.Models;
 using Domain.Entities;
+using Domain.Entities.Base;
+using DTO.Models.Base;
 using DTO.Models.File;
 using DTO.Models.Permission;
 using DTO.Models.PermissionValue;
@@ -142,6 +145,19 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.IsSystem, options => options.MapFrom(__ => __.IsSystem))
             .ForMember(_ => _.Priority, options => options.MapFrom(__ => __.Priority))
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
+        
+        CreateMap<UserGroup, UserGroupReadDtoReadFSPCollectionItemResultDto>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
+            .ForMember(_ => _.Description, options => options.MapFrom(__ => __.Description))
+            .ForMember(_ => _.IsSystem, options => options.MapFrom(__ => __.IsSystem))
+            .ForMember(_ => _.Priority, options => options.MapFrom(__ => __.Priority))
+            .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
+
+        CreateMap<EntityBase<Guid>, EntityBaseResultDto<Guid>>()
+            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.CreatedAt, options => options.MapFrom(__ => __.CreatedAt))
+            .ForMember(_ => _.UpdatedAt, options => options.MapFrom(__ => __.UpdatedAt));
 
         #endregion
     }

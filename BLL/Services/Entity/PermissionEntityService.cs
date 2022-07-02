@@ -14,15 +14,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
 
-public interface IPermissionEntityService : IEntityServiceBase<Permission>
+public interface IPermissionEntityService : IEntityServiceBase<Permission>, IEntityFSPServiceBase<Permission>
 {
     Task<Permission> GetByAliasTypeAsync(string alias, PermissionType permissionType);
-    Task<(int total, IReadOnlyCollection<Permission> entities)> GetFilteredSortedPaged(
-        FilterExpressionModel filterExpressionModel,
-        FilterSortModel filterSortModel,
-        PageModel pageModel,
-        CancellationToken cancellationToken = default
-    );
 }
 
 public class PermissionEntityService : IPermissionEntityService
@@ -80,6 +74,7 @@ public class PermissionEntityService : IPermissionEntityService
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
+        AuthorizeModel authorizeModel,
         CancellationToken cancellationToken = default
     )
     {

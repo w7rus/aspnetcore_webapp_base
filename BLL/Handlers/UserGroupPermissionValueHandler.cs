@@ -41,7 +41,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
     public UserGroupPermissionValueHandler(
         ILogger<HandlerBase> logger,
         IAppDbContextAction appDbContextAction,
-        IPermissionValueEntityService permissionValueEntityService,
+        IPermissionValueEntityCollectionService permissionValueEntityCollectionService,
         IMapper mapper,
         IPermissionEntityService permissionEntityService,
         IUserGroupEntityService userGroupEntityService,
@@ -57,7 +57,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
     {
         _logger = logger;
         _appDbContextAction = appDbContextAction;
-        _permissionValueEntityService = permissionValueEntityService;
+        _permissionValueEntityCollectionService = permissionValueEntityCollectionService;
         _mapper = mapper;
         _permissionEntityService = permissionEntityService;
         _userGroupEntityService = userGroupEntityService;
@@ -77,7 +77,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
     private readonly ILogger<HandlerBase> _logger;
     private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IPermissionValueEntityService _permissionValueEntityService;
+    private readonly IPermissionValueEntityCollectionService _permissionValueEntityCollectionService;
     private readonly IMapper _mapper;
     private readonly IPermissionEntityService _permissionEntityService;
     private readonly IUserGroupEntityService _userGroupEntityService;
@@ -144,7 +144,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var permissionValue = _mapper.Map<PermissionValue>(data);
 
-            permissionValue = await _permissionValueEntityService.Save(permissionValue, cancellationToken);
+            permissionValue = await _permissionValueEntityCollectionService.Save(permissionValue, cancellationToken);
 
             await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
 
@@ -197,7 +197,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
-            var permissionValue = await _permissionValueEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var permissionValue = await _permissionValueEntityCollectionService.GetByIdAsync(data.Id, cancellationToken);
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
@@ -260,7 +260,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                     Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
             var permissionValues =
-                await _permissionValueEntityService.GetFilteredSortedPaged(data.FilterExpressionModel,
+                await _permissionValueEntityCollectionService.GetFilteredSortedPaged(data.FilterExpressionModel,
                     data.FilterSortModel, data.PageModel, new AuthorizeModel
                     {
                         EntityLeftTableName = _userRepository.GetTableName(),
@@ -314,7 +314,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
-            var permissionValue = await _permissionValueEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var permissionValue = await _permissionValueEntityCollectionService.GetByIdAsync(data.Id, cancellationToken);
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
@@ -345,7 +345,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             _mapper.Map(data, permissionValue);
 
-            await _permissionValueEntityService.Save(permissionValue, cancellationToken);
+            await _permissionValueEntityCollectionService.Save(permissionValue, cancellationToken);
 
             await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
 
@@ -401,7 +401,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
-            var permissionValue = await _permissionValueEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var permissionValue = await _permissionValueEntityCollectionService.GetByIdAsync(data.Id, cancellationToken);
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
@@ -430,7 +430,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            await _permissionValueEntityService.Delete(permissionValue, cancellationToken);
+            await _permissionValueEntityCollectionService.Delete(permissionValue, cancellationToken);
 
             await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
 

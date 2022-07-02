@@ -69,6 +69,20 @@ public class UserGroupController : CustomControllerBase
     {
         return ResponseWith(await _userGroupHandler.Read(data, cancellationToken));
     }
+    
+    [HttpGet]
+    [Route("FSPCollection")]
+    [SwaggerOperation(Summary = "Reads UserGroups",
+        Description = "Reads UserGroups")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(UserGroupReadResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> ReadFSPCollection(
+        [Required] [FromQuery] UserGroupReadFSPCollectionDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupHandler.ReadFSPCollection(data, cancellationToken));
+    }
 
     [HttpPut]
     [SwaggerOperation(Summary = "Updates UserGroup",

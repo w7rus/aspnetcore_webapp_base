@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +28,12 @@ public interface IUserGroupHandler
 {
     Task<DTOResultBase> Create(UserGroupCreateDto data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Read(UserGroupReadDto data, CancellationToken cancellationToken = default);
+
+    Task<DTOResultBase> ReadFSPCollection(
+        UserGroupReadFSPCollectionDto data,
+        CancellationToken cancellationToken = default
+    );
+
     Task<DTOResultBase> Update(UserGroupUpdateDto data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Delete(UserGroupDeleteDto data, CancellationToken cancellationToken = default);
     Task<DTOResultBase> Join(UserGroupJoinDto data, CancellationToken cancellationToken = default);
@@ -48,7 +55,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
     private readonly IUserEntityService _userEntityService;
     private readonly IUserGroupEntityService _userGroupEntityService;
     private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
-    private readonly IPermissionValueEntityService _permissionValueEntityService;
+    private readonly IPermissionValueEntityCollectionService _permissionValueEntityCollectionService;
     private readonly IPermissionEntityService _permissionEntityService;
 
     #endregion
@@ -67,7 +74,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         IUserEntityService userEntityService,
         IUserGroupEntityService userGroupEntityService,
         IUserToUserGroupMappingEntityService userToUserGroupMappingEntityService,
-        IPermissionValueEntityService permissionValueEntityService,
+        IPermissionValueEntityCollectionService permissionValueEntityCollectionService,
         IPermissionEntityService permissionEntityService
     )
     {
@@ -82,7 +89,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         _userEntityService = userEntityService;
         _userGroupEntityService = userGroupEntityService;
         _userToUserGroupMappingEntityService = userToUserGroupMappingEntityService;
-        _permissionValueEntityService = permissionValueEntityService;
+        _permissionValueEntityCollectionService = permissionValueEntityCollectionService;
         _permissionEntityService = permissionEntityService;
     }
 
@@ -226,38 +233,6 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
             var permissionValues = new PermissionValue[]
             {
-                #region Create
-
-                new()
-                {
-                    Value = BitConverter.GetBytes(long.MinValue),
-                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_create_o_usergroup,
-                            PermissionType.ValueNeededOwner))
-                        .Id,
-                    EntityId = userGroup.Id
-                },
-                new()
-                {
-                    Value = BitConverter.GetBytes(long.MinValue),
-                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_create_o_usergroup_o_alias_l_automapper,
-                            PermissionType.ValueNeededOwner))
-                        .Id,
-                    EntityId = userGroup.Id
-                },
-                new()
-                {
-                    Value = BitConverter.GetBytes(long.MinValue),
-                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_create_o_usergroup_o_description_l_automapper,
-                            PermissionType.ValueNeededOwner))
-                        .Id,
-                    EntityId = userGroup.Id
-                },
-
-                #endregion
-
                 #region Read
 
                 new()
@@ -266,6 +241,15 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
                             Consts.PermissionAlias.g_group_a_read_o_usergroup,
                             PermissionType.ValueNeededOwner))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.g_group_a_read_o_usergroup,
+                            PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
                 },
@@ -285,10 +269,28 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 },
                 new()
                 {
+                    Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.g_group_a_update_o_usergroup,
+                            PermissionType.ValueNeededOthers))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
                     Value = BitConverter.GetBytes(long.MinValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
                             Consts.PermissionAlias.g_group_a_update_o_usergroup_o_alias_l_automapper,
                             PermissionType.ValueNeededOwner))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.g_group_a_update_o_usergroup_o_alias_l_automapper,
+                            PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
                 },
@@ -303,10 +305,28 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 },
                 new()
                 {
+                    Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.g_group_a_update_o_usergroup_o_description_l_automapper,
+                            PermissionType.ValueNeededOthers))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
                     Value = BitConverter.GetBytes(long.MinValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
                             Consts.PermissionAlias.g_group_a_update_o_usergroup_o_priority_l_automapper,
                             PermissionType.ValueNeededOwner))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.g_group_a_update_o_usergroup_o_priority_l_automapper,
+                            PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
                 },
@@ -324,6 +344,15 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                         .Id,
                     EntityId = userGroup.Id
                 },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.g_group_a_delete_o_usergroup,
+                            PermissionType.ValueNeededOthers))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
 
                 #endregion
 
@@ -335,6 +364,15 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
                             Consts.PermissionAlias.g_group_a_join_o_usergroup,
                             PermissionType.ValueNeededOwner))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.g_group_a_join_o_usergroup,
+                            PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
                 },
@@ -351,12 +389,21 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.g_group_a_leave_o_usergroup,
+                            PermissionType.ValueNeededOthers))
+                        .Id,
+                    EntityId = userGroup.Id
                 }
 
                 #endregion
             };
 
-            await _permissionValueEntityService.Save(permissionValues, cancellationToken);
+            await _permissionValueEntityCollectionService.Save(permissionValues, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -418,6 +465,62 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
 
             return _mapper.Map<UserGroupReadResultDto>(userGroup);
+        }
+        catch (Exception)
+        {
+            await _appDbContextAction.RollbackTransactionAsync();
+
+            throw;
+        }
+    }
+
+    //TODO: If you ever want to sort groups by membercount, there needs to be a custom view created, and a separate repository for a view entity (groups do not store membercount themselves)
+    public async Task<DTOResultBase> ReadFSPCollection(
+        UserGroupReadFSPCollectionDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
+
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
+
+        try
+        {
+            await _appDbContextAction.BeginTransactionAsync();
+
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            if (user == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
+
+            var userGroups =
+                await _userGroupEntityService.GetFilteredSortedPaged(data.FilterExpressionModel, data.FilterSortModel,
+                    data.PageModel, new AuthorizeModel
+                    {
+                        EntityLeftTableName = _userRepository.GetTableName(),
+                        EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                        EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                        EntityLeftId = user.Id,
+                        EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_read_o_usergroup,
+                        EntityRightTableName = _userGroupRepository.GetTableName(),
+                        EntityRightGroupsTableName = null,
+                        EntityRightEntityToEntityMappingsTableName = null,
+                        EntityRightIdRawSql = "\"Id\"",
+                        EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_read_o_usergroup,
+                        SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
+                    }, cancellationToken);
+
+            await _appDbContextAction.CommitTransactionAsync();
+
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
+
+            return new UserGroupReadDtoReadFSPCollectionResultDto
+            {
+                Total = userGroups.total,
+                Items = userGroups.entities.Select(_ =>
+                    _mapper.ProjectTo<UserGroupReadDtoReadFSPCollectionItemResultDto>(new[] {_}.AsQueryable()).Single())
+            };
         }
         catch (Exception)
         {
@@ -615,7 +718,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            await _permissionValueEntityService.PurgeAsync(userGroup.Id, cancellationToken);
+            await _permissionValueEntityCollectionService.PurgeAsync(userGroup.Id, cancellationToken);
 
             await _userGroupEntityService.Delete(userGroup, cancellationToken);
 
@@ -760,8 +863,6 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
     //TODO: Task<DTOResultBase> DeleteUser(... data, CancellationToken cancellationToken = default)
     //TODO: g_group_a_manage_o_usergroup_a_delete_o_user
-
-    //TODO: Task<DTOResultBase> ReadFSPCollection(... data, CancellationToken cancellationToken = default)
 
     //TODO: Create PermissionValues for UserToUserGroupMapping to handle per user permissions inside group (boolean), invite, kick and more, those permissions are compared against g_any_true or g_any_false
 

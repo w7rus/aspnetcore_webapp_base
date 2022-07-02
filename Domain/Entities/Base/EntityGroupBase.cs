@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.Attributes;
 
 namespace Domain.Entities.Base;
 
@@ -10,6 +11,8 @@ public abstract class EntityGroupBase<TEntity, TGroup> : EntityBase<Guid>
     /// <summary>
     ///     Alias of the EntityGroup
     /// </summary>
+    [AllowFilterExpression]
+    [AllowFilterSort]
     public string Alias { get; set; }
 
     /// <summary>

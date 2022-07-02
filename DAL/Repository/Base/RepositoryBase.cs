@@ -525,6 +525,18 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
         }
 
         //Sort
+        
+        filterSortModel ??= new FilterSortModel
+        {
+            SortRules = new[]
+            {
+                new FilterSortModelItem
+                {
+                    Key = "CreatedAt",
+                    FilterSortMode = FilterSortMode.Ascending
+                }
+            }
+        };
 
         if (filterSortModel != null && filterSortModel.SortRules.Any())
         {

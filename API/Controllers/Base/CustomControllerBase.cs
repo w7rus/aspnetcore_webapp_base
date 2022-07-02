@@ -33,7 +33,9 @@ public class CustomControllerBase : ControllerBase
     {
         response.TraceId = Activity.Current?.Id ?? _httpContext.TraceIdentifier;
 
-        response.Warnings = _warningAdvancedService.GetAll();
+        var warnings = _warningAdvancedService.GetAll();
+
+        response.Warnings = warnings.Any() ? warnings : null;
 
         if (response.Errors != null && response.Errors.Any())
             return new BadRequestObjectResult(response);

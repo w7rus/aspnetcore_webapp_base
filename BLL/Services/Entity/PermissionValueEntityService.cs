@@ -14,25 +14,17 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
 
-public interface IPermissionValueEntityService : IEntityServiceBase<PermissionValue>, IEntityServiceBaseAdditional<PermissionValue>
+public interface IPermissionValueEntityCollectionService : IEntityServiceBase<PermissionValue>, IEntityCollectionServiceBase<PermissionValue>, IEntityFSPServiceBase<PermissionValue>
 {
     Task PurgeAsync(Guid entityId, CancellationToken cancellationToken = default);
-    
-    Task<(int total, IReadOnlyCollection<PermissionValue> entities)> GetFilteredSortedPaged(
-        FilterExpressionModel filterExpressionModel,
-        FilterSortModel filterSortModel,
-        PageModel pageModel,
-        AuthorizeModel authorizeModel,
-        CancellationToken cancellationToken = default
-    );
 }
 
-public class PermissionValueEntityService : IPermissionValueEntityService
+public class PermissionValueEntityCollectionService : IPermissionValueEntityCollectionService
 {
     #region Ctor
 
-    public PermissionValueEntityService(
-        ILogger<PermissionValueEntityService> logger,
+    public PermissionValueEntityCollectionService(
+        ILogger<PermissionValueEntityCollectionService> logger,
         IPermissionValueRepository permissionValueRepository,
         IAppDbContextAction appDbContextAction
     )
@@ -46,7 +38,7 @@ public class PermissionValueEntityService : IPermissionValueEntityService
 
     #region Fields
 
-    private readonly ILogger<PermissionValueEntityService> _logger;
+    private readonly ILogger<PermissionValueEntityCollectionService> _logger;
     private readonly IPermissionValueRepository _permissionValueRepository;
     private readonly IAppDbContextAction _appDbContextAction;
 
