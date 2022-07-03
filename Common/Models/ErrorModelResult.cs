@@ -27,10 +27,15 @@ public interface IErrorModelResult
     public List<ErrorModelResultEntry> Errors { get; set; }
 }
 
-public class ErrorModelResult : DTOResultBase
+public class ErrorModelResult : IDtoResultBase
 {
     public ErrorModelResult()
     {
         Errors = new List<ErrorModelResultEntry>();
+        Warnings = new List<WarningModelResultEntry>();
     }
+
+    public List<WarningModelResultEntry> Warnings { get; set; }
+    public List<ErrorModelResultEntry> Errors { get; set; }
+    public string TraceId { get; set; }
 }

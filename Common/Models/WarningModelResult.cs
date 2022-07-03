@@ -26,11 +26,3 @@ public interface IWarningModelResult
 {
     public List<WarningModelResultEntry> Warnings { get; set; }
 }
-
-public class WarningModelResult : DTOResultBase
-{
-    public WarningModelResult()
-    {
-        Warnings = new List<WarningModelResultEntry>();
-    }
-}

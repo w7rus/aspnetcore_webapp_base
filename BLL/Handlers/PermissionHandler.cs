@@ -18,10 +18,10 @@ namespace BLL.Handlers;
 
 public interface IPermissionHandler
 {
-    Task<DTOResultBase> Read(PermissionReadDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Read(PermissionReadDto data, CancellationToken cancellationToken = default);
 
-    Task<DTOResultBase> ReadFSPCollection(
-        PermissionReadFSPCollectionDto data,
+    Task<IDtoResultBase> ReadFSPCollection(
+        PermissionReadEntityCollectionDto data,
         CancellationToken cancellationToken = default
     );
 }
@@ -56,7 +56,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
 
     #region Methods
 
-    public async Task<DTOResultBase> Read(PermissionReadDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Read(PermissionReadDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
 
@@ -86,8 +86,8 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
         }
     }
 
-    public async Task<DTOResultBase> ReadFSPCollection(
-        PermissionReadFSPCollectionDto data,
+    public async Task<IDtoResultBase> ReadFSPCollection(
+        PermissionReadEntityCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {

@@ -15,8 +15,8 @@ namespace BLL.Handlers;
 
 public interface IDomainInfoHandler
 {
-    DTOResultBase Read(DomainInfoReadDto data);
-    DTOResultBase ReadAssemblyQualifiedNames();
+    IDtoResultBase Read(DomainInfoReadDto data);
+    IDtoResultBase ReadAssemblyQualifiedNames();
 }
 
 public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
@@ -38,7 +38,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
 
     #region Methods
 
-    public DTOResultBase Read(DomainInfoReadDto data)
+    public IDtoResultBase Read(DomainInfoReadDto data)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
 
@@ -63,7 +63,7 @@ public class DomainInfoHandler : HandlerBase, IDomainInfoHandler
         };
     }
 
-    public DTOResultBase ReadAssemblyQualifiedNames()
+    public IDtoResultBase ReadAssemblyQualifiedNames()
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadAssemblyQualifiedNames)));
 

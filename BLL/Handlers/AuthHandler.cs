@@ -25,11 +25,11 @@ namespace BLL.Handlers;
 
 public interface IAuthHandler
 {
-    Task<DTOResultBase> SignInAsGuest(AuthSignUpInAsGuestDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> SignUp(AuthSignUpDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> SignIn(AuthSignInDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Refresh(AuthRefreshDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> SignOut(AuthSignOutDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> SignInAsGuest(AuthSignUpInAsGuestDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> SignUp(AuthSignUpDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> SignIn(AuthSignInDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Refresh(AuthRefreshDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> SignOut(AuthSignOutDto data, CancellationToken cancellationToken = default);
 }
 
 public class AuthHandler : HandlerBase, IAuthHandler
@@ -92,7 +92,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
     #region Methods
 
-    public async Task<DTOResultBase> SignInAsGuest(
+    public async Task<IDtoResultBase> SignInAsGuest(
         AuthSignUpInAsGuestDto data,
         CancellationToken cancellationToken = default
     )
@@ -203,7 +203,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> SignUp(AuthSignUpDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> SignUp(AuthSignUpDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignUp)));
 
@@ -254,7 +254,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> SignIn(AuthSignInDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> SignIn(AuthSignInDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignIn)));
 
@@ -354,7 +354,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> Refresh(AuthRefreshDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Refresh(AuthRefreshDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Refresh)));
 
@@ -489,7 +489,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
         }
     }
 
-    public async Task<DTOResultBase> SignOut(AuthSignOutDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> SignOut(AuthSignOutDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(SignOut)));
 

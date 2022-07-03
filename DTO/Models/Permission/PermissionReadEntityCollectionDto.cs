@@ -1,16 +1,12 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Common.Enums;
+﻿using System.ComponentModel.DataAnnotations;
 using Common.Models;
+using DTO.Models.Base;
 
-namespace DTO.Models.Base;
+namespace DTO.Models.Permission;
 
-public class FSPCollectionBase
+public class PermissionReadEntityCollectionDto : IEntityCollectionBaseDto
 {
-    [Required]
     public PageModel PageModel { get; set; }
-
     public FilterExpressionModel FilterExpressionModel { get; set; }
-    
     public FilterSortModel FilterSortModel { get; set; }
 }

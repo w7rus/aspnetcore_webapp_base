@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupUpdateDto
+public class UserGroupUpdateDto : IEntityBaseDto
 {
     public Guid Id { get; set; }
 

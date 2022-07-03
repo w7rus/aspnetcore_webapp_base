@@ -22,16 +22,16 @@ namespace BLL.Handlers;
 
 public interface IUserGroupPermissionValueHandler
 {
-    Task<DTOResultBase> Create(PermissionValueCreateDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Read(PermissionValueReadDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Create(PermissionValueCreateDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Read(PermissionValueReadDto data, CancellationToken cancellationToken = default);
 
-    Task<DTOResultBase> ReadFSPCollection(
-        PermissionValueReadFSPCollectionDto data,
+    Task<IDtoResultBase> ReadFSPCollection(
+        PermissionValueReadEntityCollectionDto data,
         CancellationToken cancellationToken = default
     );
 
-    Task<DTOResultBase> Update(PermissionValueUpdateDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Delete(PermissionValueDeleteDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Update(PermissionValueUpdateDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Delete(PermissionValueDeleteDto data, CancellationToken cancellationToken = default);
 }
 
 public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermissionValueHandler
@@ -94,7 +94,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
     #region Methods
 
-    public async Task<DTOResultBase> Create(
+    public async Task<IDtoResultBase> Create(
         PermissionValueCreateDto data,
         CancellationToken cancellationToken = default
     )
@@ -181,7 +181,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         }
     }
 
-    public async Task<DTOResultBase> Read(PermissionValueReadDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Read(PermissionValueReadDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
 
@@ -240,8 +240,8 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         }
     }
 
-    public async Task<DTOResultBase> ReadFSPCollection(
-        PermissionValueReadFSPCollectionDto data,
+    public async Task<IDtoResultBase> ReadFSPCollection(
+        PermissionValueReadEntityCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -295,7 +295,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         }
     }
 
-    public async Task<DTOResultBase> Update(
+    public async Task<IDtoResultBase> Update(
         PermissionValueUpdateDto data,
         CancellationToken cancellationToken = default
     )
@@ -382,7 +382,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
         }
     }
 
-    public async Task<DTOResultBase> Delete(
+    public async Task<IDtoResultBase> Delete(
         PermissionValueDeleteDto data,
         CancellationToken cancellationToken = default
     )

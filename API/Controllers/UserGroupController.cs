@@ -77,7 +77,7 @@ public class UserGroupController : CustomControllerBase
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(UserGroupReadResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> ReadFSPCollection(
-        [Required] [FromQuery] UserGroupReadFSPCollectionDto data,
+        [Required] [FromQuery] UserGroupReadEntityCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {

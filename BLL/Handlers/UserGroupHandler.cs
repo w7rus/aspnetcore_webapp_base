@@ -26,18 +26,18 @@ namespace BLL.Handlers;
 
 public interface IUserGroupHandler
 {
-    Task<DTOResultBase> Create(UserGroupCreateDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Read(UserGroupReadDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Create(UserGroupCreateDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Read(UserGroupReadDto data, CancellationToken cancellationToken = default);
 
-    Task<DTOResultBase> ReadFSPCollection(
-        UserGroupReadFSPCollectionDto data,
+    Task<IDtoResultBase> ReadFSPCollection(
+        UserGroupReadEntityCollectionDto data,
         CancellationToken cancellationToken = default
     );
 
-    Task<DTOResultBase> Update(UserGroupUpdateDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Delete(UserGroupDeleteDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Join(UserGroupJoinDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Leave(UserGroupLeaveDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Update(UserGroupUpdateDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Delete(UserGroupDeleteDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Join(UserGroupJoinDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Leave(UserGroupLeaveDto data, CancellationToken cancellationToken = default);
 }
 
 public class UserGroupHandler : HandlerBase, IUserGroupHandler
@@ -97,7 +97,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
     #region Methods
 
-    public async Task<DTOResultBase> Create(UserGroupCreateDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Create(UserGroupCreateDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Create)));
 
@@ -419,7 +419,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         }
     }
 
-    public async Task<DTOResultBase> Read(UserGroupReadDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Read(UserGroupReadDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
 
@@ -475,8 +475,8 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
     }
 
     //TODO: If you ever want to sort groups by membercount, there needs to be a custom view created, and a separate repository for a view entity (groups do not store membercount themselves)
-    public async Task<DTOResultBase> ReadFSPCollection(
-        UserGroupReadFSPCollectionDto data,
+    public async Task<IDtoResultBase> ReadFSPCollection(
+        UserGroupReadEntityCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -530,7 +530,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         }
     }
 
-    public async Task<DTOResultBase> Update(UserGroupUpdateDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Update(UserGroupUpdateDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Update)));
 
@@ -677,7 +677,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         }
     }
 
-    public async Task<DTOResultBase> Delete(UserGroupDeleteDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Delete(UserGroupDeleteDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Delete)));
 
@@ -736,7 +736,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         }
     }
 
-    public async Task<DTOResultBase> Join(UserGroupJoinDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Join(UserGroupJoinDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Join)));
 
@@ -793,7 +793,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         }
     }
 
-    public async Task<DTOResultBase> Leave(UserGroupLeaveDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Leave(UserGroupLeaveDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Leave)));
 

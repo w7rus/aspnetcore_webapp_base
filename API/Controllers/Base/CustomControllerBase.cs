@@ -29,7 +29,7 @@ public class CustomControllerBase : ControllerBase
 
     #region Methods
 
-    internal IActionResult ResponseWith(DTOResultBase response)
+    internal IActionResult ResponseWith(IDtoResultBase response)
     {
         response.TraceId = Activity.Current?.Id ?? _httpContext.TraceIdentifier;
 

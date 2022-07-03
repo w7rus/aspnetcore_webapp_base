@@ -2,7 +2,7 @@
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupReadDtoReadFSPCollectionResultDto : PageModelResult<UserGroupReadDtoReadFSPCollectionItemResultDto>
+public class
+    UserGroupReadDtoReadFSPCollectionResultDto : PageModelResult<UserGroupReadDtoReadFSPCollectionItemResultDto>
 {
-    
 }

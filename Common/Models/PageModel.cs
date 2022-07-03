@@ -6,6 +6,7 @@ namespace Common.Models;
 
 public class PageModel
 {
+    [Range(1, int.MaxValue)]
     public int Page { get; set; } = 1;
 
     [Range(1, 100)]
@@ -21,8 +22,11 @@ public class PageModel
         {Page = 1, PageSize = 10};
 }
 
-public class PageModelResult<T> : DTOResultBase
+public class PageModelResult<T> : IDtoResultBase
 {
     public int Total { get; set; }
     public IEnumerable<T> Items { get; set; }
+    public List<WarningModelResultEntry> Warnings { get; set; }
+    public List<ErrorModelResultEntry> Errors { get; set; }
+    public string TraceId { get; set; }
 }

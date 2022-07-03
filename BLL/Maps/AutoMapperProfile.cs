@@ -154,7 +154,7 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.Priority, options => options.MapFrom(__ => __.Priority))
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
 
-        CreateMap<EntityBase<Guid>, EntityBaseResultDto<Guid>>()
+        CreateMap<EntityBase<Guid>, IEntityBaseResultDto<Guid>>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.CreatedAt, options => options.MapFrom(__ => __.CreatedAt))
             .ForMember(_ => _.UpdatedAt, options => options.MapFrom(__ => __.UpdatedAt));

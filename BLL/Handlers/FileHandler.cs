@@ -25,16 +25,16 @@ namespace BLL.Handlers;
 
 public interface IFileHandler
 {
-    Task<DTOResultBase> Create(
+    Task<IDtoResultBase> Create(
         FileCreateDto data,
         string fileNameOriginal,
         Stream stream,
         CancellationToken cancellationToken = default
     );
 
-    Task<DTOResultBase> Read(FileReadDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Update(FileUpdateDto data, CancellationToken cancellationToken = default);
-    Task<DTOResultBase> Delete(FileDeleteDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Read(FileReadDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Update(FileUpdateDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> Delete(FileDeleteDto data, CancellationToken cancellationToken = default);
 }
 
 public class FileHandler : HandlerBase, IFileHandler
@@ -100,7 +100,7 @@ public class FileHandler : HandlerBase, IFileHandler
 
     #region Methods
 
-    public async Task<DTOResultBase> Create(
+    public async Task<IDtoResultBase> Create(
         FileCreateDto data,
         string fileNameOriginal,
         Stream stream,
@@ -207,7 +207,7 @@ public class FileHandler : HandlerBase, IFileHandler
         }
     }
 
-    public async Task<DTOResultBase> Read(FileReadDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Read(FileReadDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
 
@@ -277,7 +277,7 @@ public class FileHandler : HandlerBase, IFileHandler
         }
     }
 
-    public async Task<DTOResultBase> Update(FileUpdateDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Update(FileUpdateDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Update)));
 
@@ -371,7 +371,7 @@ public class FileHandler : HandlerBase, IFileHandler
         }
     }
 
-    public async Task<DTOResultBase> Delete(FileDeleteDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> Delete(FileDeleteDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Delete)));
 
