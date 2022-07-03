@@ -18,7 +18,7 @@ namespace BLL.Services.Entity;
 /// <summary>
 ///     Service to work with UserGroup entity
 /// </summary>
-public interface IUserGroupEntityService : IEntityServiceBase<UserGroup>, IEntityFSPServiceBase<UserGroup>
+public interface IUserGroupEntityService : IEntityServiceBase<UserGroup>, IEntityCollectionServiceBase<UserGroup>
 {
     Task<UserGroup> GetByAliasAsync(string alias);
     Task<bool> GetIsPriorityClaimed(long priority);
@@ -110,11 +110,34 @@ public class UserGroupEntityService : IUserGroupEntityService
         return result != null;
     }
 
+    public async Task<IReadOnlyCollection<UserGroup>> Save(ICollection<UserGroup> entities, CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{entities?.GetType().Name}"));
+
+        _userGroupRepository.Save(entities);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+
+        return entities as IReadOnlyCollection<UserGroup>;
+    }
+
+    public async Task Delete(ICollection<UserGroup> entities, CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entities?.GetType().Name}"));
+
+        var entitiesEnumerated = entities as UserGroup[] ?? entities?.ToArray();
+        
+        _userGroupRepository.Delete(entitiesEnumerated);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+    }
+
     public async Task<(int total, IReadOnlyCollection<UserGroup> entities)> GetFilteredSortedPaged(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
         AuthorizeModel authorizeModel,
+        FilterExpressionModel systemFilterExpressionModel = null,
         CancellationToken cancellationToken = default
     )
     {

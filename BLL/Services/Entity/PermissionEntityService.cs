@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
 
-public interface IPermissionEntityService : IEntityServiceBase<Permission>, IEntityFSPServiceBase<Permission>
+public interface IPermissionEntityService : IEntityServiceBase<Permission>, IEntityCollectionServiceBase<Permission>
 {
     Task<Permission> GetByAliasTypeAsync(string alias, PermissionType permissionType);
 }
@@ -70,11 +70,22 @@ public class PermissionEntityService : IPermissionEntityService
         return entity;
     }
 
+    public Task<IReadOnlyCollection<Permission>> Save(ICollection<Permission> entities, CancellationToken cancellationToken = default)
+    {
+        throw new ApplicationException(Localize.Error.PermissionDynamicManagementNotAllowed);
+    }
+
+    public Task Delete(ICollection<Permission> entities, CancellationToken cancellationToken = default)
+    {
+        throw new ApplicationException(Localize.Error.PermissionDynamicManagementNotAllowed);
+    }
+
     public async Task<(int total, IReadOnlyCollection<Permission> entities)> GetFilteredSortedPaged(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
         AuthorizeModel authorizeModel,
+        FilterExpressionModel systemFilterExpressionModel = null,
         CancellationToken cancellationToken = default
     )
     {

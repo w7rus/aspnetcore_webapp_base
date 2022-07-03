@@ -2,25 +2,21 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Models;
 using Domain.Entities.Base;
 
 namespace BLL.Services.Base;
 
 public interface IEntityCollectionServiceBase<TEntity> where TEntity : EntityBase<Guid>
 {
-    /// <summary>
-    ///     Saves entity
-    /// </summary>
-    /// <param name="entities"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
     Task<IReadOnlyCollection<TEntity>> Save(ICollection<TEntity> entities, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Deletes entity
-    /// </summary>
-    /// <param name="entities"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
     Task Delete(ICollection<TEntity> entities, CancellationToken cancellationToken = default);
+    Task<(int total, IReadOnlyCollection<TEntity> entities)> GetFilteredSortedPaged(
+        FilterExpressionModel filterExpressionModel,
+        FilterSortModel filterSortModel,
+        PageModel pageModel,
+        AuthorizeModel authorizeModel,
+        FilterExpressionModel systemFilterExpressionModel = null,
+        CancellationToken cancellationToken = default
+    );
 }

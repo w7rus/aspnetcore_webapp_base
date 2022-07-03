@@ -48,7 +48,8 @@ public interface IRepositoryBase<TEntity, in TKey> where TEntity : EntityBase<TK
     public IQueryable<TEntity> GetFilteredSorted(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
-        AuthorizeModel authorizeModel
+        AuthorizeModel authorizeModel,
+        FilterExpressionModel systemFilterExpressionModel = null
     );
 
     public TResult Min<TResult>(Expression<Func<TEntity, TResult>> predicate);
@@ -167,7 +168,8 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
     public IQueryable<TEntity> GetFilteredSorted(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
-        AuthorizeModel authorizeModel
+        AuthorizeModel authorizeModel,
+        FilterExpressionModel systemFilterExpressionModel = null
     )
     {
         var providerName = AppDbContext.Database.ProviderName;
@@ -314,12 +316,211 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
         }
 
         var sqlParameterCounter = 0;
+        
+        //System Match
+        
+        if (systemFilterExpressionModel != null && systemFilterExpressionModel.Items.Any())
+        {
+            rawSql += " WHERE ";
+
+            var stack = new Stack<FilterExpressionModelItemStackItem>();
+            stack.Push(new FilterExpressionModelItemStackItem
+            {
+                Items = systemFilterExpressionModel.Items,
+                Index = 0
+            });
+            if (systemFilterExpressionModel.ExpressionLogicalOperation > ExpressionLogicalOperation.Not)
+                throw new CustomException(Localize.Error
+                    .FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly);
+            rawSql += '(';
+
+            while (stack.Any())
+            {
+                var current = stack.Peek();
+
+                for (; current.Index < current.Items.Count; current.Index++)
+                {
+                    var scopeItem = current.Items[current.Index];
+
+                    switch (current.Index)
+                    {
+                        case 0 when scopeItem.ExpressionLogicalOperation > ExpressionLogicalOperation.Not:
+                            throw new CustomException(Localize.Error
+                                .FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly);
+                        case > 0 when scopeItem.ExpressionLogicalOperation <= ExpressionLogicalOperation.Not:
+                            throw new CustomException(Localize.Error
+                                .FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly);
+                    }
+
+                    switch (scopeItem.ExpressionLogicalOperation)
+                    {
+                        case ExpressionLogicalOperation.None:
+                            break;
+                        case ExpressionLogicalOperation.Not:
+                            rawSql += "NOT ";
+                            break;
+                        case ExpressionLogicalOperation.And:
+                            rawSql += " AND ";
+                            break;
+                        case ExpressionLogicalOperation.Or:
+                            rawSql += " OR ";
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    if (scopeItem is FilterExpressionModelItemScope itemScope)
+                    {
+                        current.Index++;
+                        stack.Push(new FilterExpressionModelItemStackItem
+                        {
+                            Items = itemScope.Items,
+                            Index = 0
+                        });
+                        rawSql += '(';
+                        break;
+                    }
+
+                    if (scopeItem is FilterExpressionModelItemExpression itemExpression)
+                    {
+                        var property = entityType.GetProperty(itemExpression.Key);
+
+                        if (property == null)
+                            throw new CustomException(Localize.Error.FilterMatchModelPropertyNotFoundOrUnavailable);
+
+                        var sqlParameterCounterAsString = sqlParameterCounter.ToString();
+
+                        switch (property.GetValueType())
+                        {
+                            case ValueType.None:
+                            case ValueType.Unknown:
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                            case ValueType.Boolean:
+                            {
+                                var value = BitConverter.ToBoolean(itemExpression.Value);
+                                AddMatchParameterEquatable(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Int8:
+                            {
+                                var value = (sbyte) itemExpression.Value[0];
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Int16:
+                            {
+                                var value = BitConverter.ToInt16(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Int32:
+                            {
+                                var value = BitConverter.ToInt32(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Int64:
+                            {
+                                var value = BitConverter.ToInt64(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.UInt8:
+                            {
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                            }
+                            case ValueType.UInt16:
+                            {
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                            }
+                            case ValueType.UInt32:
+                            {
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                            }
+                            case ValueType.UInt64:
+                            {
+                                throw new CustomException(Localize.Error
+                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                            }
+                            case ValueType.Float:
+                            {
+                                var value = BitConverter.ToSingle(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Double:
+                            {
+                                var value = BitConverter.ToDouble(itemExpression.Value);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Decimal:
+                            {
+                                var value = new decimal(BitConverter.ToInt32(itemExpression.Value),
+                                    BitConverter.ToInt32(itemExpression.Value, sizeof(int)),
+                                    BitConverter.ToInt32(itemExpression.Value, sizeof(int) * 2),
+                                    itemExpression.Value[15] == 0x80,
+                                    itemExpression.Value[14]);
+                                AddMatchParameter(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.String:
+                            {
+                                var value = Encoding.UTF8.GetString(itemExpression.Value);
+                                AddMatchParameterString(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.DateTime:
+                            {
+                                var value = DateTime.FromBinary(BitConverter.ToInt64(itemExpression.Value));
+                                AddMatchParameterDateTime(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            case ValueType.Guid:
+                            {
+                                if (!Guid.TryParse(Encoding.UTF8.GetString(itemExpression.Value), out var value))
+                                    throw new CustomException(Localize.Error
+                                        .FilterMatchModelItemExpressionValueFailedToParseGuid);
+                                AddMatchParameterEquatable(property, itemExpression.FilterMatchOperation,
+                                    sqlParameterCounterAsString, value);
+                                break;
+                            }
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+
+                        sqlParameterCounter++;
+                    }
+                }
+
+                current = stack.Peek();
+
+                if (current.Index < current.Items.Count) continue;
+
+                stack.Pop();
+                rawSql += ')';
+            }
+        }
 
         //Match
 
         if (filterExpressionModel != null && filterExpressionModel.Items.Any())
         {
-            rawSql += " WHERE ";
+            rawSql += systemFilterExpressionModel != null && systemFilterExpressionModel.Items.Any() ? " AND " : " WHERE ";
 
             var stack = new Stack<FilterExpressionModelItemStackItem>();
             stack.Push(new FilterExpressionModelItemStackItem
@@ -519,9 +720,9 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
 
         if (authorizeModel != null)
         {
-            rawSql += filterExpressionModel != null && filterExpressionModel.Items.Any() ? " AND" : " WHERE";
+            rawSql += (filterExpressionModel != null && filterExpressionModel.Items.Any() || systemFilterExpressionModel != null && systemFilterExpressionModel.Items.Any()) ? " AND " : " WHERE ";
 
-            rawSql += $" {authorizeModel.GetRawSqlExpression()} ";
+            rawSql += authorizeModel.GetRawSqlExpression();
         }
 
         //Sort

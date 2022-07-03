@@ -17,4 +17,6 @@ public class PermissionValue : EntityBase<Guid>
     [AllowFilterExpression]
     [AllowFilterSort]
     public Guid EntityId { get; set; }
+    
+    public string EntityDiscriminator { get; set; }
 }

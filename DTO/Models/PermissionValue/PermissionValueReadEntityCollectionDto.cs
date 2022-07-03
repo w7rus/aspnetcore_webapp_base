@@ -1,4 +1,5 @@
-﻿using Common.Models;
+﻿using System;
+using Common.Models;
 using DTO.Models.Base;
 
 namespace DTO.Models.PermissionValue;

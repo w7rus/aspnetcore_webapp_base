@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Common.Enums;
 using Common.Exceptions;
 using Common.Models;
@@ -37,6 +38,17 @@ public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
             case CustomException customException:
                 errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.Generic,
                     customException.Message));
+
+                context.Result = new ObjectResult(errorModelResult)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+
+                context.ExceptionHandled = true;
+                break;
+            case { } exception:
+                errorModelResult.Errors.Add(new ErrorModelResultEntry(ErrorType.Unhandled,
+                    exception.Message));
 
                 context.Result = new ObjectResult(errorModelResult)
                 {

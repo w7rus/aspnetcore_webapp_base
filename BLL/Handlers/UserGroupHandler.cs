@@ -509,7 +509,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                         EntityRightIdRawSql = "\"Id\"",
                         EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_read_o_usergroup,
                         SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
-                    }, cancellationToken);
+                    }, cancellationToken: cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 

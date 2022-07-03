@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Models;
@@ -799,6 +801,14 @@ public sealed class AppDbContext : DbContext
         };
 
         users.Add(userRoot);
+        
+        var userPublic = new User
+        {
+            Id = new Guid(Consts.PublicUserId.ToString()),
+            IsTemporary = false
+        };
+        
+        users.Add(userPublic);
 
         appDbContextSeedLists.Users.AddRange(users);
 
@@ -3990,6 +4000,30 @@ public sealed class AppDbContext : DbContext
 
             #endregion
         };
+
+        var userGroupEntityDiscriminatorHash = SHA256.Create()
+            .ComputeHash(Encoding.UTF8.GetBytes(typeof(UserGroup).AssemblyQualifiedName!)).Select(_ => _.ToString("x2"))
+            .Aggregate((a, b) => a + b);
+
+        foreach (var permissionValue in rootUserGroupPermissionValues)
+        {
+            permissionValue.EntityDiscriminator = userGroupEntityDiscriminatorHash;
+        }
+        
+        foreach (var permissionValue in bannedUserGroupPermissionValues)
+        {
+            permissionValue.EntityDiscriminator = userGroupEntityDiscriminatorHash;
+        }
+        
+        foreach (var permissionValue in memberUserGroupPermissionValues)
+        {
+            permissionValue.EntityDiscriminator = userGroupEntityDiscriminatorHash;
+        }
+        
+        foreach (var permissionValue in guestUserGroupPermissionValues)
+        {
+            permissionValue.EntityDiscriminator = userGroupEntityDiscriminatorHash;
+        }
 
         appDbContextSeedLists.PermissionValues.AddRange(rootUserGroupPermissionValues);
         appDbContextSeedLists.PermissionValues.AddRange(bannedUserGroupPermissionValues);

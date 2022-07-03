@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
+using Common.Enums;
 using Common.Models;
 using DAL.Data;
 using DAL.Extensions;
@@ -14,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
 
-public interface IPermissionValueEntityCollectionService : IEntityServiceBase<PermissionValue>, IEntityCollectionServiceBase<PermissionValue>, IEntityFSPServiceBase<PermissionValue>
+public interface IPermissionValueEntityCollectionService : IEntityServiceBase<PermissionValue>, IEntityCollectionServiceBase<PermissionValue>
 {
     Task PurgeAsync(Guid entityId, CancellationToken cancellationToken = default);
 }
@@ -106,11 +108,13 @@ public class PermissionValueEntityCollectionService : IPermissionValueEntityColl
         FilterSortModel filterSortModel,
         PageModel pageModel,
         AuthorizeModel authorizeModel,
+        FilterExpressionModel systemFilterExpressionModel = null,
         CancellationToken cancellationToken = default
     )
     {
         var result =
-            _permissionValueRepository.GetFilteredSorted(filterExpressionModel, filterSortModel, authorizeModel);
+            _permissionValueRepository.GetFilteredSorted(filterExpressionModel, filterSortModel, authorizeModel,
+                systemFilterExpressionModel);
 
         var total = result.Count();
 
@@ -122,9 +126,7 @@ public class PermissionValueEntityCollectionService : IPermissionValueEntityColl
 
         return (total, await result?.ToArrayAsync(cancellationToken)!);
     }
-
-    #endregion
-
+    
     public async Task<IReadOnlyCollection<PermissionValue>> Save(ICollection<PermissionValue> entities, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
@@ -146,4 +148,6 @@ public class PermissionValueEntityCollectionService : IPermissionValueEntityColl
         _permissionValueRepository.Delete(entitiesEnumerated);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
+
+    #endregion
 }

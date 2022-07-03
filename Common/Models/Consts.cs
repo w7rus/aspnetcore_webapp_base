@@ -17,6 +17,7 @@ public static class Consts
     public const string NpgSqlEntityFrameworkCorePostgreSQLProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
     public const string DomainNamespace = "Domain.Entities";
     public static readonly Guid RootUserId = new("ce374862-f799-4519-9fa8-a8dcf1b9e8ab");
+    public static readonly Guid PublicUserId = new("8a278c1c-f27d-46ae-b9cd-99ac2e6ab141");
 
     public class PermissionAlias
     {

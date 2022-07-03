@@ -48,9 +48,17 @@ public class AutoMapperProfile : Profile
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
                     AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             });
+        
+        CreateMap<PermissionValueCreateDto, PermissionValue>()
+            .ForMember(_ => _.Id, options => options.Ignore())
+            .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
+            .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId))
+            .ForMember(_ => _.EntityDiscriminator, options => options.Ignore())
+            .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
 
         CreateMap<PermissionValueUpdateDto, PermissionValue>()
             .ForMember(_ => _.Id, options => options.Ignore())
+            .ForMember(_ => _.EntityDiscriminator, options => options.Ignore())
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
         
         CreateMap<UserGroupCreateDto, UserGroup>()
