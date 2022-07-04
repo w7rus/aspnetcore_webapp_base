@@ -34,8 +34,8 @@ public static class Localize
 
         #region Auth
 
-        public static string UserDoesNotFoundOrWrongCredentials => "UserDoesNotFoundOrWrongCredentials";
-        public static string UserDoesNotFoundOrHttpContextMissingClaims => "UserDoesNotFoundOrHttpContextMissingClaims";
+        public static string UserNotFoundOrWrongCredentials => "UserNotFoundOrWrongCredentials";
+        public static string UserNotFoundOrHttpContextMissingClaims => "UserNotFoundOrHttpContextMissingClaims";
 
         #endregion
 
@@ -85,8 +85,8 @@ public static class Localize
             "PermissionComparedOrCustomValueComparedRequired";
 
         public static string PermissionInsufficientPermissions => "PermissionInsufficientPermissions";
-        public static string PermissionNotFound => "PermissionDoesNotExist";
-        public static string PermissionValueNotFound => "PermissionValueDoesNotExist";
+        public static string PermissionNotFound => "PermissionNotFound";
+        public static string PermissionValueNotFound => "PermissionValueNotFound";
         public static string PermissionValueTypeUnknown => "PermissionValueTypeUnknown";
 
         #endregion
@@ -94,7 +94,13 @@ public static class Localize
         #region UserGroup
 
         public static string UserGroupIsSystemManagementNotAllowed => "UserGroupIsSystemManagementNotAllowed";
-        public static string UserGroupNotFound => "UserGroupDoesNotExist";
+        public static string UserGroupNotFound => "UserGroupNotFound";
+
+        #endregion
+        
+        #region UserToUserGroupMapping
+        
+        public static string UserToUserGroupMappingNotFound => "UserToUserGroupMappingNotFound";
 
         #endregion
 
@@ -104,10 +110,11 @@ public static class Localize
         public static string UserGroupTransferRequestChoiceNotAllowed => "UserGroupTransferRequestChoiceNotAllowed";
 
         #endregion
+        
+        #region UserGroupInviteRequest
 
-        #region UserToUserGroupMapping
-
-        public static string UserToUserGroupMappingNotFound => "UserToUserGroupMappingDoesNotExist";
+        public static string UserGroupInviteRequestNotFound => "UserGroupInviteRequestNotFound";
+        public static string UserGroupInviteRequestChoiceNotAllowed => "UserGroupInviteRequestChoiceNotAllowed";
 
         #endregion
 

@@ -124,6 +124,8 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
 
         CreateMap<UserGroupTransferRequest, UserGroupTransferInitResultDto>();
+
+        CreateMap<UserGroupInviteRequest, UserGroupInitInviteUserResultDto>();
         
         CreateMap<EntityBase<Guid>, IEntityBaseResultDto<Guid>>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))

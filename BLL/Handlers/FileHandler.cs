@@ -119,12 +119,12 @@ public class FileHandler : HandlerBase, IFileHandler
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
+                    Localize.Error.UserNotFoundOrHttpContextMissingClaims);
             
             var userOwner = await _userEntityService.GetByIdAsync(data.UserId, cancellationToken);
             if (userOwner == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
+                    Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var fileInfo = new FileInfo(fileNameOriginal);
             var fileName = Guid.NewGuid() + fileInfo.Extension;
@@ -221,7 +221,7 @@ public class FileHandler : HandlerBase, IFileHandler
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
+                    Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var file = await _fileEntityService.GetByIdAsync(data.Id, cancellationToken);
             if (file is not {UserId: { }})
@@ -291,7 +291,7 @@ public class FileHandler : HandlerBase, IFileHandler
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
+                    Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var file = await _fileEntityService.GetByIdAsync(data.Id, cancellationToken);
             if (file is not {UserId: { }})
@@ -385,7 +385,7 @@ public class FileHandler : HandlerBase, IFileHandler
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
-                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
+                    Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var file = await _fileEntityService.GetByIdAsync(data.Id, cancellationToken);
             if (file is not {UserId: { }})

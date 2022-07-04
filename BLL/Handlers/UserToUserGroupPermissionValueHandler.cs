@@ -24,7 +24,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Handlers;
 
-public interface IUserGroupPermissionValueHandler
+public interface IUserToUserGroupPermissionValueHandler
 {
     Task<IDtoResultBase> Create(PermissionValueCreateDto data, CancellationToken cancellationToken = default);
     Task<IDtoResultBase> Read(PermissionValueReadDto data, CancellationToken cancellationToken = default);
@@ -38,11 +38,11 @@ public interface IUserGroupPermissionValueHandler
     Task<IDtoResultBase> Delete(PermissionValueDeleteDto data, CancellationToken cancellationToken = default);
 }
 
-public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermissionValueHandler
+public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGroupPermissionValueHandler
 {
     #region Ctor
 
-    public UserGroupPermissionValueHandler(
+    public UserToUserGroupPermissionValueHandler(
         ILogger<HandlerBase> logger,
         IAppDbContextAction appDbContextAction,
         IPermissionValueEntityCollectionService permissionValueEntityCollectionService,
@@ -91,7 +91,8 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
     private readonly IAuthorizeEntityService _authorizeEntityService;
     private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
 
-    private static readonly string UserGroupEntityDiscriminatorHash = typeof(UserGroup).EntityAqnHash();
+    private static readonly string UserToUserGroupMappingEntityDiscriminatorHash =
+        typeof(UserToUserGroupMapping).EntityAqnHash();
 
     #endregion
 
@@ -116,7 +117,13 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(data.EntityId, cancellationToken);
+            var userToUserGroupMapping =
+                await _userToUserGroupMappingEntityService.GetByIdAsync(data.EntityId, cancellationToken);
+            if (userToUserGroupMapping == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                    Localize.Error.UserToUserGroupMappingNotFound);
+
+            var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -147,30 +154,11 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var permissionValue = _mapper.Map<PermissionValue>(data);
 
-            permissionValue.EntityDiscriminator = UserGroupEntityDiscriminatorHash;
+            permissionValue.EntityDiscriminator = UserToUserGroupMappingEntityDiscriminatorHash;
 
             permissionValue = await _permissionValueEntityCollectionService.Save(permissionValue, cancellationToken);
 
-            await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
-
-            for (var page = 1;; page += 1)
-            {
-                var entities = await _userToUserGroupMappingEntityService.GetByUserGroupIdAsync(userGroup.Id,
-                    new PageModel
-                    {
-                        Page = page,
-                        PageSize = 512
-                    }, cancellationToken);
-
-                foreach (var userToUserGroupMapping in entities)
-                    await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.EntityLeftId,
-                        cancellationToken);
-
-                await _appDbContextAction.CommitAsync(cancellationToken);
-
-                if (entities.Count < 512)
-                    break;
-            }
+            await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.Id, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -185,7 +173,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             throw;
         }
     }
-
+    
     public async Task<IDtoResultBase> Read(PermissionValueReadDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
@@ -207,8 +195,14 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
+            
+            var userToUserGroupMapping =
+                await _userToUserGroupMappingEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
+            if (userToUserGroupMapping == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                    Localize.Error.UserToUserGroupMappingNotFound);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -245,7 +239,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             throw;
         }
     }
-
+    
     public async Task<IDtoResultBase> ReadFSPCollection(
         PermissionValueReadEntityCollectionDto data,
         CancellationToken cancellationToken = default
@@ -277,7 +271,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                         EntityRightTableName = _userGroupRepository.GetTableName(),
                         EntityRightGroupsTableName = null,
                         EntityRightEntityToEntityMappingsTableName = null,
-                        EntityRightIdRawSql = "\"EntityId\"",
+                        EntityRightIdRawSql = $"(SELECT \"EntityRightId\" FROM {_userToUserGroupMappingRepository.GetTableName()}) WHERE \"Id\" = \"EntityId\" LIMIT 1)", // EntityId = UserToUserGroupMappingId
                         EntityRightPermissionAlias = Consts.PermissionAlias.g_any_a_read_o_permissionvalue,
                         SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                     }, new FilterExpressionModel
@@ -289,7 +283,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                             {
                                 ExpressionLogicalOperation = ExpressionLogicalOperation.None,
                                 Key = "EntityDiscriminator",
-                                Value = Encoding.UTF8.GetBytes(UserGroupEntityDiscriminatorHash),
+                                Value = Encoding.UTF8.GetBytes(UserToUserGroupMappingEntityDiscriminatorHash),
                                 FilterMatchOperation = FilterMatchOperation.Equal
                             }
                         }
@@ -313,7 +307,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             throw;
         }
     }
-
+    
     public async Task<IDtoResultBase> Update(
         PermissionValueUpdateDto data,
         CancellationToken cancellationToken = default
@@ -338,8 +332,14 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
+            
+            var userToUserGroupMapping =
+                await _userToUserGroupMappingEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
+            if (userToUserGroupMapping == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                    Localize.Error.UserToUserGroupMappingNotFound);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -367,26 +367,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             await _permissionValueEntityCollectionService.Save(permissionValue, cancellationToken);
 
-            await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
-
-            for (var page = 1;; page += 1)
-            {
-                var entities = await _userToUserGroupMappingEntityService.GetByUserGroupIdAsync(userGroup.Id,
-                    new PageModel
-                    {
-                        Page = page,
-                        PageSize = 512
-                    }, cancellationToken);
-
-                foreach (var userToUserGroupMapping in entities)
-                    await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.EntityLeftId,
-                        cancellationToken);
-
-                await _appDbContextAction.CommitAsync(cancellationToken);
-
-                if (entities.Count < 512)
-                    break;
-            }
+            await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.Id, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -401,7 +382,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             throw;
         }
     }
-
+    
     public async Task<IDtoResultBase> Delete(
         PermissionValueDeleteDto data,
         CancellationToken cancellationToken = default
@@ -426,8 +407,14 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
+            
+            var userToUserGroupMapping =
+                await _userToUserGroupMappingEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
+            if (userToUserGroupMapping == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                    Localize.Error.UserToUserGroupMappingNotFound);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -453,26 +440,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             await _permissionValueEntityCollectionService.Delete(permissionValue, cancellationToken);
 
-            await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.Id, cancellationToken);
-
-            for (var page = 1;; page += 1)
-            {
-                var entities = await _userToUserGroupMappingEntityService.GetByUserGroupIdAsync(userGroup.Id,
-                    new PageModel
-                    {
-                        Page = page,
-                        PageSize = 512
-                    }, cancellationToken);
-
-                foreach (var userToUserGroupMapping in entities)
-                    await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.EntityLeftId,
-                        cancellationToken);
-
-                await _appDbContextAction.CommitAsync(cancellationToken);
-
-                if (entities.Count < 512)
-                    break;
-            }
+            await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.Id, cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();
 

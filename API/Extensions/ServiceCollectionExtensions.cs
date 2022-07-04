@@ -35,6 +35,8 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
         serviceCollection.AddScoped<IUserToUserGroupMappingRepository, UserToUserGroupMappingRepository>();
         serviceCollection.AddScoped<IAuthorizeRepository, AuthorizeRepository>();
+        serviceCollection.AddScoped<IUserGroupInviteRequestRepository, UserGroupInviteRequestRepository>();
+        serviceCollection.AddScoped<IUserGroupTransferRequestRepository, UserGroupTransferRequestRepository>();
 
         return serviceCollection;
     }
@@ -52,6 +54,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserToUserGroupMappingEntityService, UserToUserGroupMappingEntityService>();
         serviceCollection.AddScoped<IAuthorizeEntityService, AuthorizeEntityService>();
         serviceCollection.AddScoped<IUserGroupTransferRequestEntityService, UserGroupTransferRequestEntityService>();
+        serviceCollection.AddScoped<IUserGroupInviteRequestEntityService, UserGroupInviteRequestEntityService>();
 
 
         return serviceCollection;

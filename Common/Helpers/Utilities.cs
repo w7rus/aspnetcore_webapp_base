@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
@@ -46,5 +47,14 @@ public static class Utilities
                 HttpUtility.UrlEncode(_.Key) + "=" + HttpUtility.UrlEncode(_.Value)));
 
         return result;
+    }
+    
+    private static readonly SHA256 Sha256 = SHA256.Create();
+    
+    public static string EntityAqnHash(this object obj)
+    {
+        return Sha256
+            .ComputeHash(Encoding.UTF8.GetBytes(obj.GetType().AssemblyQualifiedName!)).Select(_ => _.ToString("x2"))
+            .Aggregate((a, b) => a + b);
     }
 }

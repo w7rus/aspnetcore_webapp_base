@@ -5,8 +5,8 @@ public enum PermissionCompareMode
     None,
     Equal,
     NotEqual,
-    Less,
-    LessOrEqual,
+    Less, //TODO: Remove
+    LessOrEqual, //TODO: Remove
     Greater,
     GreaterOrEqual
 }

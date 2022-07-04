@@ -835,6 +835,14 @@ public sealed class AppDbContext : DbContext
         };
         
         users.Add(userPublic);
+        
+        var userGroupMember = new User
+        {
+            Id = new Guid(Consts.GroupMemberUserId.ToString()),
+            IsTemporary = false
+        };
+        
+        users.Add(userGroupMember);
 
         appDbContextSeedLists.Users.AddRange(users);
 
@@ -2730,6 +2738,8 @@ public sealed class AppDbContext : DbContext
         var memberUserGroupPermissionValues = new List<PermissionValue>
         {
             #region Any
+            
+            //TODO: Update. allow edit permission values of themselves (in ranges allowed by Min-Max Grant)
 
             #region Create
 

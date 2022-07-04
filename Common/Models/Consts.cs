@@ -13,31 +13,26 @@ public static class Consts
     public const long GuestUserGroupPriority = 25L;
     public const long BannedUserGroupValue = 0L;
     public const long BannedUserGroupPriority = long.MaxValue - 1;
+    public const long TrueValue = 1;
+    public const long FalseValue = 1;
     public const string AutoMapperModelAuthorizeDataKey = "AutoMapperModelAuthorizeData";
     public const string NpgSqlEntityFrameworkCorePostgreSQLProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
     public const string DomainNamespace = "Domain.Entities";
     public static readonly Guid RootUserId = new("ce374862-f799-4519-9fa8-a8dcf1b9e8ab");
     public static readonly Guid PublicUserId = new("8a278c1c-f27d-46ae-b9cd-99ac2e6ab141");
+    public static readonly Guid GroupMemberUserId = new("85f276b1-07b9-4a61-945e-4598241bd47f");
 
     public class PermissionAlias
     {
-        //User PermissionValue
-        
-        //UserGroup PermissionValue
+        //User,UserGroup PermissionValue
         public const string g_any_a_create_o_permissionvalue = "g_any_a_create_o_permissionvalue";
-        //TODO: g_any_a_create_o_permissionvalue_t_value
-        //TODO: g_any_a_create_o_permissionvalue_t_valueneededowner
-        //TODO: g_any_a_create_o_permissionvalue_t_valueneededothers
         public const string g_any_a_read_o_permissionvalue = "g_any_a_read_o_permissionvalue";
         public const string g_any_a_update_o_permissionvalue = "g_any_a_update_o_permissionvalue";
-        //TODO: g_any_a_update_o_permissionvalue_t_value
-        //TODO: g_any_a_update_o_permissionvalue_t_valueneededowner
-        //TODO: g_any_a_update_o_permissionvalue_t_valueneededothers
+        //TODO: g_any_a_update_o_permissionvalue_o_mingrant_l_automapper
+        //TODO: g_any_a_update_o_permissionvalue_o_maxgrant_l_automapper
+        //TODO: g_any_a_update_o_permissionvalue_a_skipgrant
         public const string g_any_a_delete_o_permissionvalue = "g_any_a_delete_o_permissionvalue";
-        //TODO: g_any_a_delete_o_permissionvalue_t_value
-        //TODO: g_any_a_delete_o_permissionvalue_t_valueneededowner
-        //TODO: g_any_a_delete_o_permissionvalue_t_valueneededothers
-        
+
         //UserGroup
         public const string g_group_a_create_o_usergroup = "g_group_a_create_o_usergroup";
         public const string g_group_a_create_o_usergroup_o_alias_l_automapper = "g_group_a_create_o_usergroup_o_alias_l_automapper";
@@ -52,6 +47,11 @@ public static class Consts
         public const string g_group_a_join_o_usergroup = "g_group_a_join_o_usergroup";
         public const string g_group_a_leave_o_usergroup = "g_group_a_leave_o_usergroup";
         public const string g_group_a_transfer_o_usergroup = "g_group_a_transfer_o_usergroup";
+        //TODO: g_group_a_adduser_o_usergroup
+        
+        //PermissionValues of the following Permissions with type PermissionType.Value must not be set in User, UserGroup (except Root UserGroup) in order to achieve authorization via UserToUserGroupMappingPermissionValues (Owner, Public, GroupMember, Specific User)
+        public const string g_group_a_inviteuser_o_usergroup = "g_group_a_inviteuser_o_usergroup";
+        public const string g_group_a_kickuser_o_usergroup = "g_group_a_kickuser_o_usergroup";
 
         //User
         public const string g_user_a_read_o_user = "g_user_a_read_o_user";
