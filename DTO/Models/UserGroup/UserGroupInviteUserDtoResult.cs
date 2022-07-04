@@ -4,9 +4,9 @@ using Common.Models;
 using Common.Models.Base;
 using DTO.Models.Base;
 
-namespace DTO.Models.PermissionValue;
+namespace DTO.Models.UserGroup;
 
-public class PermissionValueCreateResultDto : IEntityBaseResultDto<Guid>, IDtoResultBase
+public class UserGroupInviteUserDtoResult : IEntityBaseResultDto<Guid>, IDtoResultBase
 {
     public Guid Id { get; set; }
     public DateTimeOffset CreatedAt { get; set; }

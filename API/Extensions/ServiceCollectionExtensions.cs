@@ -51,6 +51,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IUserEntityService, UserEntityService>();
         serviceCollection.AddScoped<IUserToUserGroupMappingEntityService, UserToUserGroupMappingEntityService>();
         serviceCollection.AddScoped<IAuthorizeEntityService, AuthorizeEntityService>();
+        serviceCollection.AddScoped<IUserGroupTransferRequestEntityService, UserGroupTransferRequestEntityService>();
 
 
         return serviceCollection;

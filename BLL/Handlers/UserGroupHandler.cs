@@ -38,6 +38,11 @@ public interface IUserGroupHandler
     Task<IDtoResultBase> Delete(UserGroupDeleteDto data, CancellationToken cancellationToken = default);
     Task<IDtoResultBase> Join(UserGroupJoinDto data, CancellationToken cancellationToken = default);
     Task<IDtoResultBase> Leave(UserGroupLeaveDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> InitTransfer(UserGroupTransferInitDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> ManageTransfer(UserGroupTransferManageDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> InviteUser(UserGroupInviteUserDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> AddUser(UserGroupAddUserDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> DeleteUser(UserGroupDeleteUserDto data, CancellationToken cancellationToken = default);
 }
 
 public class UserGroupHandler : HandlerBase, IUserGroupHandler
@@ -57,6 +62,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
     private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
     private readonly IPermissionValueEntityCollectionService _permissionValueEntityCollectionService;
     private readonly IPermissionEntityService _permissionEntityService;
+    private readonly IUserGroupTransferRequestEntityService _userGroupTransferRequestEntityService;
 
     #endregion
 
@@ -75,7 +81,8 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         IUserGroupEntityService userGroupEntityService,
         IUserToUserGroupMappingEntityService userToUserGroupMappingEntityService,
         IPermissionValueEntityCollectionService permissionValueEntityCollectionService,
-        IPermissionEntityService permissionEntityService
+        IPermissionEntityService permissionEntityService,
+        IUserGroupTransferRequestEntityService userGroupTransferRequestEntityService
     )
     {
         _logger = logger;
@@ -91,6 +98,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         _userToUserGroupMappingEntityService = userToUserGroupMappingEntityService;
         _permissionValueEntityCollectionService = permissionValueEntityCollectionService;
         _permissionEntityService = permissionEntityService;
+        _userGroupTransferRequestEntityService = userGroupTransferRequestEntityService;
     }
 
     #endregion
@@ -404,6 +412,8 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             };
 
             await _permissionValueEntityCollectionService.Save(permissionValues, cancellationToken);
+            
+            //TODO: Create PermissionValues for UserToUserGroupMapping (Owner, Public, Member)
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -719,6 +729,8 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                     Localize.Error.PermissionInsufficientPermissions);
 
             await _permissionValueEntityCollectionService.PurgeAsync(userGroup.Id, cancellationToken);
+            
+            //TODO: Delete PermissionValues for UserToUserGroupMapping (Owner, Public, Member, Users)
 
             await _userGroupEntityService.Delete(userGroup, cancellationToken);
 
@@ -756,6 +768,8 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
+            
+            //TODO: via UserGroupInviteRequest
 
             //Authorize group join
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
@@ -829,6 +843,8 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_leave_o_usergroup,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
+            
+            //TODO: Delete PermissionValues for UserToUserGroupMapping (Specific User)
 
             await _appDbContextAction.CommitTransactionAsync();
 
@@ -851,20 +867,212 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             throw;
         }
     }
+    
+    public async Task<IDtoResultBase> InitTransfer(UserGroupTransferInitDto data, CancellationToken cancellationToken = default)
+    {
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Update)));
 
-    //TODO: Task<DTOResultBase> TransferOwnership(... data, CancellationToken cancellationToken = default)
-    //TODO: g_group_a_transferownership_o_usergroup
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
+        
+        try
+        {
+            await _appDbContextAction.BeginTransactionAsync();
 
-    //TODO: Task<DTOResultBase> InviteUser(... data, CancellationToken cancellationToken = default)
-    //TODO: g_group_a_manage_o_usergroup_a_invite_o_user
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            if (user == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
 
-    //TODO: Task<DTOResultBase> AddUser(... data, CancellationToken cancellationToken = default)
-    //TODO: g_group_a_manage_o_usergroup_a_add_o_user
+            var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
+            if (userGroup == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                    Localize.Error.UserGroupNotFound);
 
-    //TODO: Task<DTOResultBase> DeleteUser(... data, CancellationToken cancellationToken = default)
-    //TODO: g_group_a_manage_o_usergroup_a_delete_o_user
+            var userTarget = await _userEntityService.GetByIdAsync(data.UserId, cancellationToken);
+            if (userTarget == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.UserNotFound);
+
+            //Authorize group transfer
+            var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
+            {
+                EntityLeftTableName = _userRepository.GetTableName(),
+                EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                EntityLeftId = user.Id,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                EntityRightTableName = _userGroupRepository.GetTableName(),
+                EntityRightGroupsTableName = null,
+                EntityRightEntityToEntityMappingsTableName = null,
+                EntityRightId = userGroup.Id,
+                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
+            });
+            
+            authorizeResult &= _authorizeAdvancedService.Authorize(new AuthorizeModel
+            {
+                EntityLeftTableName = _userRepository.GetTableName(),
+                EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                EntityLeftId = user.Id,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                EntityRightTableName = _userRepository.GetTableName(),
+                EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
+                EntityRightEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                EntityRightId = userTarget.Id,
+                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
+            });
+
+            if (!authorizeResult)
+                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                    Localize.Error.PermissionInsufficientPermissions);
+
+            var userGroupTransferRequest = _mapper.Map<UserGroupTransferRequest>(data);
+
+            userGroupTransferRequest.SrcUserId = user.Id;
+
+            await _userGroupTransferRequestEntityService.Save(userGroupTransferRequest, cancellationToken);
+
+            await _appDbContextAction.CommitTransactionAsync();
+
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Update)));
+
+            return _mapper.Map<UserGroupUpdateResultDto>(userGroup);
+        }
+        catch (Exception)
+        {
+            await _appDbContextAction.RollbackTransactionAsync();
+
+            throw;
+        }
+    }
+
+    public async Task<IDtoResultBase> ManageTransfer(UserGroupTransferManageDto data, CancellationToken cancellationToken = default)
+    {
+         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Update)));
+
+        if (ValidateModel(data) is { } validationResult)
+            return validationResult;
+        
+        try
+        {
+            await _appDbContextAction.BeginTransactionAsync();
+
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            if (user == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                    Localize.Error.UserDoesNotFoundOrHttpContextMissingClaims);
+            
+            var userGroupTransferRequest = await _userGroupTransferRequestEntityService.GetByIdAsync(data.Id, cancellationToken);
+            if (userGroupTransferRequest == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                    Localize.Error.UserGroupTransferRequestNotFound);
+                    
+            var userGroup = await _userGroupEntityService.GetByIdAsync(userGroupTransferRequest.UserGroupId, cancellationToken);
+            if (userGroup == null)
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                    Localize.Error.UserGroupNotFound);
+
+            if (user.Id == userGroupTransferRequest.SrcUserId)
+            {
+                switch (data.Choice)
+                {
+                    case Choice.None:
+                        break;
+                    case Choice.Accept:
+                        throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                            Localize.Error.UserGroupTransferRequestChoiceNotAllowed);
+                        break;
+                    case Choice.Reject:
+                        await _userGroupTransferRequestEntityService.Delete(userGroupTransferRequest, cancellationToken);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            if (user.Id == userGroupTransferRequest.DestUserId)
+            {
+                //Authorize group transfer
+                var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
+                {
+                    EntityLeftTableName = _userRepository.GetTableName(),
+                    EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                    EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                    EntityLeftId = user.Id,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                    EntityRightTableName = _userRepository.GetTableName(),
+                    EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
+                    EntityRightEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                    EntityRightId = user.Id,
+                    EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                    SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
+                });
+
+                if (!authorizeResult)
+                    throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                        Localize.Error.PermissionInsufficientPermissions);
+
+                switch (data.Choice)
+                {
+                    case Choice.None:
+                        break;
+                    case Choice.Accept:
+                        userGroup.UserId = userGroupTransferRequest.DestUserId;
+                        await _userGroupEntityService.Save(userGroup, cancellationToken);
+                        await _userGroupTransferRequestEntityService.Delete(userGroupTransferRequest, cancellationToken);
+                        break;
+                    case Choice.Reject:
+                        await _userGroupTransferRequestEntityService.Delete(userGroupTransferRequest, cancellationToken);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            else
+            {
+                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                    Localize.Error.UserGroupTransferRequestNotFound);
+            }
+
+            await _appDbContextAction.CommitTransactionAsync();
+
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Update)));
+
+            return new OkResultDto();
+        }
+        catch (Exception)
+        {
+            await _appDbContextAction.RollbackTransactionAsync();
+
+            throw;
+        }
+    }
+
+    public async Task<IDtoResultBase> InviteUser(UserGroupInviteUserDto data, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IDtoResultBase> AddUser(UserGroupAddUserDto data, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IDtoResultBase> DeleteUser(UserGroupDeleteUserDto data, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    //TODO: Task<DTOResultBase> InviteUser(... data, CancellationToken cancellationToken = default) g_group_a_manage_o_usergroup_a_invite_o_user + via PermissionValues for UserToUserGroupMapping
+
+    //TODO: Task<DTOResultBase> AddUser(... data, CancellationToken cancellationToken = default) g_group_a_manage_o_usergroup_a_add_o_user
+
+    //TODO: Task<DTOResultBase> DeleteUser(... data, CancellationToken cancellationToken = default) g_group_a_manage_o_usergroup_a_delete_o_user + via PermissionValues for UserToUserGroupMapping
 
     //TODO: Create PermissionValues for UserToUserGroupMapping to handle per user permissions inside group (boolean), invite, kick and more, those permissions are compared against g_any_true or g_any_false
+    //TODO: UserToUserGroupMappingPermissionValueHandler
 
     #endregion
 }

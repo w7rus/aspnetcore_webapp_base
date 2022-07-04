@@ -9,7 +9,6 @@ namespace DTO.Models.File;
 
 public class FileCreateResultDto : IEntityBaseResultDto<Guid>, IDtoResultBase
 {
-    public AgeRating AgeRating { get; set; }
     public Guid Id { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }

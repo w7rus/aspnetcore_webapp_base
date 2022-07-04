@@ -20,50 +20,28 @@ public class AutoMapperProfile : Profile
     {
         #region From DTO to DOMAIN
 
-        CreateMap<FileCreateDto, File>()
-            .ForMember(_ => _.Stream, options => options.Ignore())
-            .ForMember(_ => _.Metadata, options => options.Ignore())
-            .ForMember(_ => _.Name, options => options.Ignore())
-            .ForMember(_ => _.Size, options => options.Ignore())
-            .ForMember(_ => _.User, options => options.Ignore())
-            .ForMember(_ => _.ContentType, options => options.Ignore())
-            .ForMember(_ => _.UserId, options => options.Ignore())
+        CreateMap<FileCreateDto, File>(MemberList.None)
             .ForMember(_ => _.AgeRating, options =>
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
                     AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             })
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
-
-        CreateMap<FileUpdateDto, File>()
-            .ForMember(_ => _.Stream, options => options.Ignore())
-            .ForMember(_ => _.Metadata, options => options.Ignore())
-            .ForMember(_ => _.Name, options => options.Ignore())
-            .ForMember(_ => _.Size, options => options.Ignore())
-            .ForMember(_ => _.User, options => options.Ignore())
-            .ForMember(_ => _.ContentType, options => options.Ignore())
-            .ForMember(_ => _.UserId, options => options.Ignore())
+        CreateMap<FileUpdateDto, File>(MemberList.None)
             .ForMember(_ => _.AgeRating, options =>
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
                     AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             });
-        
-        CreateMap<PermissionValueCreateDto, PermissionValue>()
-            .ForMember(_ => _.Id, options => options.Ignore())
+
+        CreateMap<PermissionValueCreateDto, PermissionValue>(MemberList.None)
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
             .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId))
-            .ForMember(_ => _.EntityDiscriminator, options => options.Ignore())
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
-
-        CreateMap<PermissionValueUpdateDto, PermissionValue>()
-            .ForMember(_ => _.Id, options => options.Ignore())
-            .ForMember(_ => _.EntityDiscriminator, options => options.Ignore())
+        CreateMap<PermissionValueUpdateDto, PermissionValue>(MemberList.None)
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
         
-        CreateMap<UserGroupCreateDto, UserGroup>()
-            .ForMember(_ => _.IsSystem, options => options.Ignore())
-            .ForMember(_ => _.Id, options => options.Ignore())
+        CreateMap<UserGroupCreateDto, UserGroup>(MemberList.None)
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId))
             .ForMember(_ => _.Alias, options =>
             {
@@ -80,11 +58,7 @@ public class AutoMapperProfile : Profile
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
                     AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             });
-        
-        CreateMap<UserGroupUpdateDto, UserGroup>()
-            .ForMember(_ => _.IsSystem, options => options.Ignore())
-            .ForMember(_ => _.Id, options => options.Ignore())
-            .ForMember(_ => _.UserId, options => options.Ignore())
+        CreateMap<UserGroupUpdateDto, UserGroup>(MemberList.None)
             .ForMember(_ => _.Alias, options =>
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
@@ -100,68 +74,57 @@ public class AutoMapperProfile : Profile
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
                     AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             });
+        CreateMap<UserGroupTransferInitDto, UserGroupTransferRequest>(MemberList.None)
+            .ForMember(_ => _.UserGroupId, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.DestUserId, options => options.MapFrom(__ => __.UserId));
 
         #endregion
 
         #region From DOMAIN to DTO
 
-        CreateMap<PermissionValue, PermissionValueReadResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
-            .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
-            .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
-            .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
-
-        CreateMap<PermissionValue, PermissionValueUpdateResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
-            .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
-
         CreateMap<Permission, PermissionReadFSPCollectionItemResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
             .ForMember(_ => _.CompareMode, options => options.MapFrom(__ => __.CompareMode))
             .ForMember(_ => _.Type, options => options.MapFrom(__ => __.Type));
-
+        
+        CreateMap<PermissionValue, PermissionValueCreateResultDto>();
+        CreateMap<PermissionValue, PermissionValueReadResultDto>()
+            .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
+            .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
+            .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
+        CreateMap<PermissionValue, PermissionValueUpdateResultDto>()
+            .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
         CreateMap<PermissionValue, PermissionValueReadFSPCollectionItemResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value))
             .ForMember(_ => _.PermissionId, options => options.MapFrom(__ => __.PermissionId))
             .ForMember(_ => _.EntityId, options => options.MapFrom(__ => __.EntityId));
 
-        CreateMap<File, FileCreateResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
-            .ForMember(_ => _.AgeRating, options => options.MapFrom(__ => __.AgeRating));
-
+        CreateMap<File, FileCreateResultDto>();
         CreateMap<File, FileUpdateResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.AgeRating, options => options.MapFrom(__ => __.AgeRating));
-        
-        CreateMap<UserGroup, UserGroupCreateResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id));
 
+        CreateMap<UserGroup, UserGroupCreateResultDto>();
         CreateMap<UserGroup, UserGroupReadResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
             .ForMember(_ => _.Description, options => options.MapFrom(__ => __.Description))
             .ForMember(_ => _.IsSystem, options => options.MapFrom(__ => __.IsSystem))
             .ForMember(_ => _.Priority, options => options.MapFrom(__ => __.Priority))
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
-        
         CreateMap<UserGroup, UserGroupUpdateResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
             .ForMember(_ => _.Description, options => options.MapFrom(__ => __.Description))
             .ForMember(_ => _.IsSystem, options => options.MapFrom(__ => __.IsSystem))
             .ForMember(_ => _.Priority, options => options.MapFrom(__ => __.Priority))
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
-        
         CreateMap<UserGroup, UserGroupReadDtoReadFSPCollectionItemResultDto>()
-            .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.Alias, options => options.MapFrom(__ => __.Alias))
             .ForMember(_ => _.Description, options => options.MapFrom(__ => __.Description))
             .ForMember(_ => _.IsSystem, options => options.MapFrom(__ => __.IsSystem))
             .ForMember(_ => _.Priority, options => options.MapFrom(__ => __.Priority))
             .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
 
+        CreateMap<UserGroupTransferRequest, UserGroupTransferInitResultDto>();
+        
         CreateMap<EntityBase<Guid>, IEntityBaseResultDto<Guid>>()
             .ForMember(_ => _.Id, options => options.MapFrom(__ => __.Id))
             .ForMember(_ => _.CreatedAt, options => options.MapFrom(__ => __.CreatedAt))

@@ -98,6 +98,13 @@ public static class Localize
 
         #endregion
 
+        #region UserGroupTransferRequest
+
+        public static string UserGroupTransferRequestNotFound => "UserGroupTransferRequestNotFound";
+        public static string UserGroupTransferRequestChoiceNotAllowed => "UserGroupTransferRequestChoiceNotAllowed";
+
+        #endregion
+
         #region UserToUserGroupMapping
 
         public static string UserToUserGroupMappingNotFound => "UserToUserGroupMappingDoesNotExist";
