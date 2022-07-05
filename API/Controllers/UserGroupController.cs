@@ -26,11 +26,13 @@ public class UserGroupController : CustomControllerBase
         IHttpContextAccessor httpContextAccessor,
         ILogger<UserGroupController> logger,
         IUserGroupHandler userGroupHandler,
-        IWarningAdvancedService warningAdvancedService
+        IWarningAdvancedService warningAdvancedService,
+        IUserGroupActionsHandler userGroupActionsHandler
     ) : base(httpContextAccessor, warningAdvancedService)
     {
         _logger = logger;
         _userGroupHandler = userGroupHandler;
+        _userGroupActionsHandler = userGroupActionsHandler;
     }
 
     #endregion
@@ -39,6 +41,7 @@ public class UserGroupController : CustomControllerBase
 
     private readonly ILogger<UserGroupController> _logger;
     private readonly IUserGroupHandler _userGroupHandler;
+    private readonly IUserGroupActionsHandler _userGroupActionsHandler;
 
     #endregion
 
@@ -121,7 +124,7 @@ public class UserGroupController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _userGroupHandler.Join(data, cancellationToken));
+        return ResponseWith(await _userGroupActionsHandler.Join(data, cancellationToken));
     }
 
     [HttpPost]
@@ -135,7 +138,91 @@ public class UserGroupController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _userGroupHandler.Leave(data, cancellationToken));
+        return ResponseWith(await _userGroupActionsHandler.Leave(data, cancellationToken));
+    }
+    
+    [HttpPost]
+    [Route("initTransfer")]
+    [SwaggerOperation(Summary = "InitTransfer UserGroup",
+        Description = "InitTransfer UserGroup")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> InitTransfer(
+        [Required] [FromBody] UserGroupTransferInitDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupActionsHandler.InitTransfer(data, cancellationToken));
+    }
+
+    [HttpPut]
+    [Route("manageTransfer")]
+    [SwaggerOperation(Summary = "ManageTransfer UserGroup",
+        Description = "ManageTransfer UserGroup")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> ManageTransfer(
+        [Required] [FromBody] UserGroupTransferManageDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupActionsHandler.ManageTransfer(data, cancellationToken));
+    }
+
+    [HttpPost]
+    [Route("initInviteUser")]
+    [SwaggerOperation(Summary = "InitInviteUser UserGroup",
+        Description = "InitInviteUser UserGroup")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> InitInviteUser(
+        [Required] [FromBody] UserGroupInitInviteUserDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupActionsHandler.InitInviteUser(data, cancellationToken));
+    }
+
+    [HttpPut]
+    [Route("manageInviteUser")]
+    [SwaggerOperation(Summary = "ManageInviteUser UserGroup",
+        Description = "ManageInviteUser UserGroup")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> ManageInviteUser(
+        [Required] [FromBody] UserGroupManageInviteUserDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupActionsHandler.ManageInviteUser(data, cancellationToken));
+    }
+    
+    [HttpPost]
+    [Route("addUser")]
+    [SwaggerOperation(Summary = "AddUser UserGroup",
+        Description = "AddUser UserGroup")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> AddUser(
+        [Required] [FromBody] UserGroupAddUserDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupActionsHandler.AddUser(data, cancellationToken));
+    }
+    
+    [HttpPost]
+    [Route("kickUser")]
+    [SwaggerOperation(Summary = "KickUser UserGroup",
+        Description = "KickUser UserGroup")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> KickUser(
+        [Required] [FromBody] UserGroupKickUserDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupActionsHandler.KickUser(data, cancellationToken));
     }
 
     #endregion

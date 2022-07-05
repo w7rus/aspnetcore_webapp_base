@@ -82,6 +82,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IApplicationHandler, ApplicationHandler>();
         serviceCollection.AddScoped<IUserGroupHandler, UserGroupHandler>();
         serviceCollection.AddScoped<IUserPermissionValueHandler, UserPermissionValueHandler>();
+        serviceCollection.AddScoped<IUserGroupActionsHandler, UserGroupActionsHandler>();
 
         return serviceCollection;
     }

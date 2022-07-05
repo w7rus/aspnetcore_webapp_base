@@ -129,7 +129,7 @@ public class FileHandler : HandlerBase, IFileHandler
             var fileInfo = new FileInfo(fileNameOriginal);
             var fileName = Guid.NewGuid() + fileInfo.Extension;
 
-            //Authorize file create
+            //Authorize g_file_a_create_o_file against User
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -228,7 +228,7 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.FileNotFound);
 
-            //Authorize file read
+            //Authorize g_file_a_read_o_file against User TODO: + against File
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -244,8 +244,6 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_read_o_file,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
-            
-            //TODO: Authorize for File individually
 
             if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
@@ -298,7 +296,7 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.FileNotFound);
 
-            //Authorize file update
+            //Authorize g_file_a_update_o_file against User TODO: + against File
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -314,13 +312,12 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_update_o_file,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
-            
-            //TODO: Authorize for File individually
 
             if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
+            //Authorize g_file_a_update_o_file_* against User: Automapper TODO: + against File
             var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData
             {
                 FieldAuthorizeResultDictionary = new Dictionary<string, bool>
@@ -346,8 +343,6 @@ public class FileHandler : HandlerBase, IFileHandler
                             SqlExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                         })
                     }
-                                
-                    //TODO: g_file_a_transferownership_l_automapper
                 }
             };
 
@@ -392,7 +387,7 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
                     Localize.Error.FileNotFound);
 
-            //Authorize file delete
+            //Authorize g_file_a_delete_o_file against User TODO: + against File
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -408,8 +403,6 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_delete_o_file,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
-            
-            //TODO: Authorize for File individually
 
             if (!authorizeResult)
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
@@ -430,6 +423,8 @@ public class FileHandler : HandlerBase, IFileHandler
             throw;
         }
     }
+    
+    //TODO: Transfer & ManageTransfer
 
     #endregion
 }
