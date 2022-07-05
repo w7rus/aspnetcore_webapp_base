@@ -75,7 +75,10 @@ public class AutoMapperProfile : Profile
                     AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             });
         CreateMap<UserGroupTransferInitDto, UserGroupTransferRequest>(MemberList.None)
-            .ForMember(_ => _.UserGroupId, options => options.MapFrom(__ => __.Id))
+            .ForMember(_ => _.UserGroupId, options => options.MapFrom(__ => __.UserGroupId))
+            .ForMember(_ => _.DestUserId, options => options.MapFrom(__ => __.UserId));
+        CreateMap<UserGroupInitInviteUserDto, UserGroupInviteRequest>(MemberList.None)
+            .ForMember(_ => _.UserGroupId, options => options.MapFrom(__ => __.UserGroupId))
             .ForMember(_ => _.DestUserId, options => options.MapFrom(__ => __.UserId));
 
         #endregion

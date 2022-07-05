@@ -16,7 +16,7 @@ public class AuthorizeModel
     public Guid? EntityRightId { get; set; }
 
     /// <summary>
-    ///     Define field of PermissionValues to be used instead of EntityRightId ex. $"\"EntityId\""
+    ///     Define field of this Table to be used ex. $"\"EntityId\"" or $"\"Id\""
     /// </summary>
     public string EntityRightIdRawSql { get; set; }
 

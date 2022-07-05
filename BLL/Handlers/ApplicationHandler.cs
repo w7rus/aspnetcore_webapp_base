@@ -56,11 +56,11 @@ public class ApplicationHandler : HandlerBase, IApplicationHandler
 
             var user = await _userEntityService.GetByIdAsync(Consts.RootUserId, cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserNotFound);
 
             if (!string.IsNullOrEmpty(user.Password))
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
                     Localize.Error.UserAlreadyClaimed);
 
             var customPasswordHasher = new CustomPasswordHasher();

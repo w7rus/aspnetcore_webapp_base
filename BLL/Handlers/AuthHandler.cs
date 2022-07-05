@@ -216,7 +216,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var customPasswordHasher = new CustomPasswordHasher();
@@ -269,7 +269,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var user = await _userEntityService.GetByEmailAsync(data.Email);
             if (user == null || user.IsTemporary || !customPasswordHasher.VerifyPassword(user.Password, data.Password))
-                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
                     Localize.Error.UserNotFoundOrWrongCredentials);
 
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);
@@ -398,7 +398,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _refreshTokenEntityService.Delete(refreshToken, cancellationToken);
 
-            var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken);
+            var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (jsonWebToken == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Auth,
                     Localize.Error.JsonWebTokenNotFound);
@@ -407,7 +407,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var refreshTokenString = Utilities.GenerateRandomBase64String(256);
@@ -527,7 +527,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _refreshTokenEntityService.Delete(refreshToken, cancellationToken);
 
-            var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken);
+            var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (jsonWebToken == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Auth,
                     Localize.Error.JsonWebTokenNotFound);
@@ -540,7 +540,7 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             if (useCookies)

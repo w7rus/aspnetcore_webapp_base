@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Entity;
+using Common.Enums;
+using Common.Exceptions;
 using Common.Models;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -15,9 +17,10 @@ public interface IJsonWebTokenAdvancedService
     /// <summary>
     ///     Gets entity by HttpContext authorization data
     /// </summary>
+    /// <param name="throwIfNotProvided"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<JsonWebToken> GetFromHttpContext(CancellationToken cancellationToken = default);
+    Task<JsonWebToken> GetFromHttpContext(bool throwIfNotProvided = true, CancellationToken cancellationToken = default);
 }
 
 public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
@@ -39,11 +42,14 @@ public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
 
     #region Methods
 
-    public async Task<JsonWebToken> GetFromHttpContext(CancellationToken cancellationToken = default)
+    public async Task<JsonWebToken> GetFromHttpContext(bool throwIfNotProvided = true, CancellationToken cancellationToken = default)
     {
         if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.JsonWebTokenId)?.Value,
                 out var jsonWebTokenId))
-            return null;
+            return throwIfNotProvided
+                ? throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Auth,
+                    Localize.Error.JsonWebTokenNotProvided)
+                : null;
 
         var entity = await _jsonWebTokenEntityService.GetByIdAsync(jsonWebTokenId, cancellationToken);
 

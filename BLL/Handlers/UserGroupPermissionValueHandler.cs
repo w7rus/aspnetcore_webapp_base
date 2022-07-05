@@ -113,12 +113,12 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userGroup = await _userGroupEntityService.GetByIdAsync(data.EntityId, cancellationToken);
             if (userGroup == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
@@ -142,7 +142,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var permission = await _permissionEntityService.GetByIdAsync(data.PermissionId, cancellationToken);
             if (permission == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Permission,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionNotFound);
 
             var permissionValue = _mapper.Map<PermissionValue>(data);
@@ -199,7 +199,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValue =
@@ -262,7 +262,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValues =
@@ -330,7 +330,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValue =
@@ -418,7 +418,7 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValue =

@@ -185,8 +185,8 @@ AS $BODY$
         RAISE DEBUG ' └┐AuthorizeEntityPermissionToEntityPermissionValue()';
         
         IF EntityLeftGroupsTableName IS NOT NULL AND EntityLeftGroupMappingsTableName IS NOT NULL THEN
-            RAISE DEBUG ' ├<TryUseEntityLeftGroupPermissionValue>';
-            RAISE DEBUG ' └┐';
+            RAISE DEBUG '  ├<TryUseEntityLeftGroupPermissionValue>';
+            RAISE DEBUG '  └┐';
             
             EXECUTE format('SELECT * FROM public.""%s"" AS T1 WHERE EXISTS (SELECT * FROM public.""%s"" AS T2 WHERE T1.""Id"" = T2.""EntityRightId"" AND T2.""EntityLeftId"" = cast($1 as uuid)) AND EXISTS (SELECT * FROM public.""PermissionValues"" AS T3 WHERE T3.""PermissionId"" = $2 AND T3.""EntityId"" = T1.""Id"") ORDER BY T1.""Priority"" DESC LIMIT 1', EntityLeftGroupsTableName, EntityLeftGroupMappingsTableName)
                 INTO EntityLeftGroup
@@ -194,30 +194,30 @@ AS $BODY$
                     EntityLeftPermission.""Id"";
             
             IF NOT(EntityLeftGroup IS NULL) THEN
-                RAISE DEBUG '  ├EntityLeftGroup = % %', EntityLeftGroup.""Id"", EntityLeftGroup.""Alias"";
+                RAISE DEBUG '   ├EntityLeftGroup = % %', EntityLeftGroup.""Id"", EntityLeftGroup.""Alias"";
                 
                 EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2'
                     INTO EntityLeftPermissionValue
                     USING EntityLeftPermission.""Id"",
                         EntityLeftGroup.""Id"";
                 
-                RAISE DEBUG '  ├EntityLeftPermissionValue = % %', EntityLeftPermissionValue.""Id"", EntityLeftPermissionValue.""Value"";
-                RAISE DEBUG '  └┐';
+                RAISE DEBUG '   ├EntityLeftPermissionValue = % %', EntityLeftPermissionValue.""Id"", EntityLeftPermissionValue.""Value"";
+                RAISE DEBUG '   └┐';
                 
                 FResult := public.""AuthorizeEntityPermissionValueToEntityPermissionValue""(EntityLeftPermission, EntityLeftPermissionValue, EntityRightPermission, EntityRightPermissionValue);
                 
-                RAISE DEBUG '  ├FResult = %', FResult;
+                RAISE DEBUG '   ├FResult = %', FResult;
                 
                 EntityLeftPermissionValue := row(null);
             ELSE
-                RAISE DEBUG '  ├EntityRightGroup IS NULL';
+                RAISE DEBUG '   ├EntityLeftGroup IS NULL';
             END IF;
             
-            RAISE DEBUG ' ┌┘';
+            RAISE DEBUG '  ┌┘';
         END IF;
         
-        RAISE DEBUG ' ├<TryUseEntityLeftPermissionValue>';
-        RAISE DEBUG ' └┐';
+        RAISE DEBUG '  ├<TryUseEntityLeftPermissionValue>';
+        RAISE DEBUG '  └┐';
 
         EntityLeftPermissionValue := row(null);
         EXECUTE 'SELECT * FROM public.""PermissionValues"" WHERE ""PermissionId"" = $1 AND ""EntityId"" = $2'
@@ -226,15 +226,15 @@ AS $BODY$
                 EntityLeft.""Id"";
         
         IF NOT(EntityLeftPermissionValue IS NULL) THEN
-            RAISE DEBUG '  ├EntityLeftPermissionValue = % %', EntityLeftPermissionValue.""Id"", EntityLeftPermissionValue.""Value"";
+            RAISE DEBUG '   ├EntityLeftPermissionValue = % %', EntityLeftPermissionValue.""Id"", EntityLeftPermissionValue.""Value"";
             FResult := public.""AuthorizeEntityPermissionValueToEntityPermissionValue""(EntityLeftPermission, EntityLeftPermissionValue, EntityRightPermission, EntityRightPermissionValue);
             
-            RAISE DEBUG '  ├FResult = %', FResult;
+            RAISE DEBUG '   ├FResult = %', FResult;
         ELSE
-            RAISE DEBUG '  ├EntityLeftPermissionValue IS NULL';
+            RAISE DEBUG '   ├EntityLeftPermissionValue IS NULL';
         END IF;
         
-        RAISE DEBUG ' ┌┘';
+        RAISE DEBUG ' ┌─┘';
 
         RETURN FResult;
     END;

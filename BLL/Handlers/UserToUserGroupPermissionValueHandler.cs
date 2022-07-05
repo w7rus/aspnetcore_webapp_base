@@ -114,18 +114,18 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userToUserGroupMapping =
                 await _userToUserGroupMappingEntityService.GetByIdAsync(data.EntityId, cancellationToken);
             if (userToUserGroupMapping == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserToUserGroupMappingNotFound);
 
             var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
             if (userGroup == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
@@ -187,7 +187,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValue =
@@ -199,7 +199,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
             var userToUserGroupMapping =
                 await _userToUserGroupMappingEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
             if (userToUserGroupMapping == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserToUserGroupMappingNotFound);
 
             var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
@@ -256,7 +256,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValues =
@@ -324,7 +324,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValue =
@@ -336,7 +336,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
             var userToUserGroupMapping =
                 await _userToUserGroupMappingEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
             if (userToUserGroupMapping == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserToUserGroupMappingNotFound);
 
             var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
@@ -399,7 +399,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValue =
@@ -411,7 +411,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
             var userToUserGroupMapping =
                 await _userToUserGroupMappingEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
             if (userToUserGroupMapping == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserToUserGroupMappingNotFound);
 
             var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);

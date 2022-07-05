@@ -117,12 +117,12 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userOwner = await _userEntityService.GetByIdAsync(data.UserId, cancellationToken);
             if (userOwner == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserNotFound);
 
             //Authorize g_group_a_create_o_usergroup against User
@@ -737,7 +737,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_kickuser_o_usergroup,
+                            Consts.PermissionAlias.g_group_a_adduser_o_usergroup,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -753,7 +753,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             //Create UserToUserGroupMappings for (Owner, Public, GroupMember) and save them
             var userToUserGroupMappingOwner = await _userToUserGroupMappingEntityService.Save(new UserToUserGroupMapping
             {
-                EntityLeftId = user.Id,
+                EntityLeftId = userGroup.UserId,
                 EntityRightId = userGroup.Id
             }, cancellationToken);
             
@@ -772,38 +772,6 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             //Create UserToUserGroupMappings PermissionValues and save them
             var userToUserGroupMappingPermissionValues = new PermissionValue[]
             {
-                #region Owner
-
-                new()
-                {
-                    Value = BitConverter.GetBytes(Consts.TrueValue),
-                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup,
-                            PermissionType.Value))
-                        .Id,
-                    EntityId = userToUserGroupMappingOwner.Id
-                },
-                new()
-                {
-                    Value = BitConverter.GetBytes(Consts.TrueValue),
-                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_kickuser_o_usergroup,
-                            PermissionType.Value))
-                        .Id,
-                    EntityId = userToUserGroupMappingOwner.Id
-                },
-                new()
-                {
-                    Value = BitConverter.GetBytes(Consts.TrueValue),
-                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup_a_manage,
-                            PermissionType.Value))
-                        .Id,
-                    EntityId = userToUserGroupMappingOwner.Id
-                },
-
-                #endregion
-                
                 #region Public
 
                 new()
@@ -871,8 +839,8 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             
             await _permissionValueEntityCollectionService.Save(userToUserGroupMappingPermissionValues, cancellationToken);
             
-            //Delete Authorize cache when joining group (for the user that joined)
-            await _authorizeEntityService.PurgeByEntityIdAsync(user.Id, cancellationToken);
+            //Delete Authorize cache when joining group (for Public, GroupMember users that joined)
+            await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.UserId, cancellationToken);
             await _authorizeEntityService.PurgeByEntityIdAsync(Consts.PublicUserId, cancellationToken);
             await _authorizeEntityService.PurgeByEntityIdAsync(Consts.GroupMemberUserId, cancellationToken);
 
@@ -903,12 +871,12 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
             if (userGroup == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
             //Authorize g_group_a_read_o_usergroup against UserGroup TODO: + against User (user that initiates action)
@@ -962,7 +930,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userGroups =
@@ -977,7 +945,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                         EntityRightTableName = _userGroupRepository.GetTableName(),
                         EntityRightGroupsTableName = null,
                         EntityRightEntityToEntityMappingsTableName = null,
-                        EntityRightIdRawSql = "\"EntityId\"", //TODO: Id?
+                        EntityRightIdRawSql = "\"Id\"",
                         EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_read_o_usergroup,
                         SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                     }, cancellationToken: cancellationToken);
@@ -1014,12 +982,12 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
             if (userGroup == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
             //Authorize g_group_a_update_o_usergroup against UserGroup TODO: + against User (user that initiates action)
@@ -1161,12 +1129,12 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
             var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
             if (user == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.HttpContext,
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
             if (userGroup == null)
-                throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Generic,
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
             //Authorize g_group_a_delete_o_usergroup against UserGroup TODO: + against User (user that initiates action)

@@ -102,6 +102,8 @@ public static class Localize
         
         public static string UserToUserGroupMappingNotFound => "UserToUserGroupMappingNotFound";
         public static string UserToUserGroupMappingAlreadyExists => "UserToUserGroupMappingAlreadyExists";
+        public static string UserToUserGroupMappingPublicGroupMemberDeleteNotAllowed => "UserToUserGroupMappingPublicGroupMemberDeleteNotAllowed";
+        public static string UserToUserGroupMappingPublicGroupMemberAddNotAllowed => "UserToUserGroupMappingPublicGroupMemberAddNotAllowed";
 
         #endregion
 

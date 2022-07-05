@@ -663,6 +663,32 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
+            
+            #region AddUser
+
+            new()
+            {
+                Id = new Guid("a42ef46e-9e30-48d8-9dbf-c4c5225625dc"),
+                Alias = Consts.PermissionAlias.g_group_a_adduser_o_usergroup,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid("c829232c-5ea8-42e3-a378-c05c519339aa"),
+                Alias = Consts.PermissionAlias.g_group_a_adduser_o_usergroup,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid("a56d0ee1-4a8c-4bf3-a081-e7d2dffa266e"),
+                Alias = Consts.PermissionAlias.g_group_a_adduser_o_usergroup,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+
+            #endregion
 
             #endregion
 
@@ -3869,14 +3895,14 @@ public sealed class AppDbContext : DbContext
 
             #region InviteUser
 
-            // new()
-            // {
-            //     Id = new Guid("aabebbbb-7349-4d07-bb72-995c81713136"),
-            //     Value = BitConverter.GetBytes(memberUserGroupPower),
-            //     PermissionId = permissions.Single(_ =>
-            //         _.Alias == Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup && _.Type == PermissionType.Value).Id,
-            //     EntityId = memberUserGroup.Id
-            // },
+            new()
+            {
+                Id = new Guid("aabebbbb-7349-4d07-bb72-995c81713136"),
+                Value = BitConverter.GetBytes(memberUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = memberUserGroup.Id
+            },
             new()
             {
                 Id = new Guid("89db9101-d728-433b-aa95-767eba9eb8f0"),
@@ -3918,14 +3944,14 @@ public sealed class AppDbContext : DbContext
 
             #region InviteUserManage
 
-            // new()
-            // {
-            //     Id = new Guid("239b39b2-fa63-4588-b89d-473375f0413b"),
-            //     Value = BitConverter.GetBytes(memberUserGroupPower),
-            //     PermissionId = permissions.Single(_ =>
-            //         _.Alias == Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup_a_manage && _.Type == PermissionType.Value).Id,
-            //     EntityId = memberUserGroup.Id
-            // },
+            new()
+            {
+                Id = new Guid("239b39b2-fa63-4588-b89d-473375f0413b"),
+                Value = BitConverter.GetBytes(memberUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup_a_manage && _.Type == PermissionType.Value).Id,
+                EntityId = memberUserGroup.Id
+            },
             new()
             {
                 Id = new Guid("140da4f4-ad73-4727-8abf-3b31ec814943"),
@@ -3967,14 +3993,14 @@ public sealed class AppDbContext : DbContext
 
             #region KickUser
 
-            // new()
-            // {
-            //     Id = new Guid("a02a4706-64fb-4a1d-ae0d-96ebaeb7deb7"),
-            //     Value = BitConverter.GetBytes(memberUserGroupPower),
-            //     PermissionId = permissions.Single(_ =>
-            //         _.Alias == Consts.PermissionAlias.g_group_a_kickuser_o_usergroup && _.Type == PermissionType.Value).Id,
-            //     EntityId = memberUserGroup.Id
-            // },
+            new()
+            {
+                Id = new Guid("a02a4706-64fb-4a1d-ae0d-96ebaeb7deb7"),
+                Value = BitConverter.GetBytes(memberUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.g_group_a_kickuser_o_usergroup && _.Type == PermissionType.Value).Id,
+                EntityId = memberUserGroup.Id
+            },
             new()
             {
                 Id = new Guid("cc27d77a-9f71-405e-9b77-ffe66d9d612c"),
