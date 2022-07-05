@@ -21,14 +21,18 @@ namespace BLL.Handlers;
 
 public interface IUserGroupActionsHandler
 {
-    Task<IDtoResultBase> Join(UserGroupJoinDto data, CancellationToken cancellationToken = default);
-    Task<IDtoResultBase> Leave(UserGroupLeaveDto data, CancellationToken cancellationToken = default);
-    Task<IDtoResultBase> InitTransfer(UserGroupTransferInitDto data, CancellationToken cancellationToken = default);
-    Task<IDtoResultBase> ManageTransfer(UserGroupTransferManageDto data, CancellationToken cancellationToken = default);
-    Task<IDtoResultBase> InitInviteUser(UserGroupInitInviteUserDto data, CancellationToken cancellationToken = default);
-    Task<IDtoResultBase> ManageInviteUser(UserGroupManageInviteUserDto data, CancellationToken cancellationToken = default);
-    Task<IDtoResultBase> AddUser(UserGroupAddUserDto data, CancellationToken cancellationToken = default);
-    Task<IDtoResultBase> KickUser(UserGroupKickUserDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> UserGroupJoinUser(UserGroupJoinUserDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> UserGroupLeaveUser(UserGroupLeaveUserDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> UserGroupCreateTransfer(UserGroupCreateTransferDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> UserGroupUpdateTransfer(UserGroupUpdateTransferDto data, CancellationToken cancellationToken = default);
+    //TODO: UserGroupReadTransfer
+    //TODO: UserGroupReadFSPCollectionTransfer
+    Task<IDtoResultBase> UserGroupCreateInvite(UserGroupCreateInviteDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> UserGroupUpdateInvite(UserGroupUpdateInviteDto data, CancellationToken cancellationToken = default);
+    //TODO: UserGroupReadInvite
+    //TODO: UserGroupReadFSPCollectionInvite
+    Task<IDtoResultBase> UserGroupAddUser(UserGroupAddUserDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> UserGroupDeleteUser(UserGroupDeleteUserDto data, CancellationToken cancellationToken = default);
 }
 
 public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
@@ -97,9 +101,9 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
 
     #region Methods
     
-    public async Task<IDtoResultBase> Join(UserGroupJoinDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> UserGroupJoinUser(UserGroupJoinUserDto data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Join)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(UserGroupJoinUser)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -125,12 +129,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_join_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupJoin,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_join_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupJoin,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
             
@@ -154,7 +158,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Join)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(UserGroupJoinUser)));
 
             return new OkResultDto();
         }
@@ -166,9 +170,9 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
         }
     }
 
-    public async Task<IDtoResultBase> Leave(UserGroupLeaveDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> UserGroupLeaveUser(UserGroupLeaveUserDto data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Leave)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(UserGroupLeaveUser)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -194,12 +198,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_leave_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupLeave,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_leave_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupLeave,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
             
@@ -223,7 +227,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Leave)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(UserGroupLeaveUser)));
 
             return new OkResultDto();
         }
@@ -235,9 +239,9 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
         }
     }
     
-    public async Task<IDtoResultBase> InitTransfer(UserGroupTransferInitDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> UserGroupCreateTransfer(UserGroupCreateTransferDto data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(InitTransfer)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(UserGroupCreateTransfer)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -268,12 +272,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestCreate,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestCreate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
 
@@ -293,7 +297,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(InitTransfer)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(UserGroupCreateTransfer)));
 
             return _mapper.Map<UserGroupTransferInitResultDto>(userGroupTransferRequest);
         }
@@ -305,9 +309,9 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
         }
     }
 
-    public async Task<IDtoResultBase> ManageTransfer(UserGroupTransferManageDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> UserGroupUpdateTransfer(UserGroupUpdateTransferDto data, CancellationToken cancellationToken = default)
     {
-         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ManageTransfer)));
+         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(UserGroupUpdateTransfer)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -341,12 +345,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                     EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                     EntityLeftId = user.Id,
-                    EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup_a_manage,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestUpdate,
                     EntityRightTableName = _userGroupRepository.GetTableName(),
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightId = userGroup.Id,
-                    EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup_a_manage,
+                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestUpdate,
                     SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                 });
 
@@ -423,12 +427,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                     EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                     EntityLeftId = user.Id,
-                    EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup_a_manage,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestUpdate,
                     EntityRightTableName = _userGroupRepository.GetTableName(),
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightId = userGroup.Id,
-                    EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_transfer_o_usergroup_a_manage,
+                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestUpdate,
                     SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                 });
 
@@ -479,7 +483,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ManageTransfer)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(UserGroupUpdateTransfer)));
 
             return new OkResultDto();
         }
@@ -491,9 +495,9 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
         }
     }
     
-    public async Task<IDtoResultBase> InitInviteUser(UserGroupInitInviteUserDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> UserGroupCreateInvite(UserGroupCreateInviteDto data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(InitInviteUser)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(UserGroupCreateInvite)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -524,12 +528,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestCreate,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestCreate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
             
@@ -546,12 +550,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     EntityLeftGroupsTableName = null,
                     EntityLeftEntityToEntityMappingsTableName = null,
                     EntityLeftId = userToUserGroupMappingUserSpecificGroupMemberPublic.Id,
-                    EntityLeftPermissionAlias = Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
                     EntityRightTableName = _userGroupRepository.GetTableName(),
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightId = userGroup.Id,
-                    EntityRightPermissionAlias = Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup,
+                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
                     SqlExpressionPermissionTypeValueNeededOwner = "T1.\"EntityLeftId\" = T2.\"UserId\""
                 });
             }
@@ -583,7 +587,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(InitInviteUser)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(UserGroupCreateInvite)));
             
             return _mapper.Map<UserGroupInitInviteUserResultDto>(userGroupInviteRequest);
         }
@@ -595,9 +599,9 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
         }
     }
 
-    public async Task<IDtoResultBase> ManageInviteUser(UserGroupManageInviteUserDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> UserGroupUpdateInvite(UserGroupUpdateInviteDto data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ManageInviteUser)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(UserGroupUpdateInvite)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -631,12 +635,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                     EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                     EntityLeftId = user.Id,
-                    EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup_a_manage,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestUpdate,
                     EntityRightTableName = _userGroupRepository.GetTableName(),
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightId = userGroup.Id,
-                    EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup_a_manage,
+                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestUpdate,
                     SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                 });
 
@@ -700,12 +704,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                     EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                     EntityLeftId = user.Id,
-                    EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup_a_manage,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestUpdate,
                     EntityRightTableName = _userGroupRepository.GetTableName(),
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightId = userGroup.Id,
-                    EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup_a_manage,
+                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestUpdate,
                     SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                 });
 
@@ -746,12 +750,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                                 EntityLeftGroupsTableName = null,
                                 EntityLeftEntityToEntityMappingsTableName = null,
                                 EntityLeftId = userToUserGroupMappingUserSpecificGroupMemberPublic.Id,
-                                EntityLeftPermissionAlias = Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup_a_manage,
+                                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
                                 EntityRightTableName = _userGroupRepository.GetTableName(),
                                 EntityRightGroupsTableName = null,
                                 EntityRightEntityToEntityMappingsTableName = null,
                                 EntityRightId = userGroup.Id,
-                                EntityRightPermissionAlias = Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup_a_manage,
+                                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
                                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"EntityLeftId\" = T2.\"UserId\""
                             });
                         }
@@ -770,7 +774,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ManageInviteUser)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(UserGroupUpdateInvite)));
 
             return new OkResultDto();
         }
@@ -782,9 +786,9 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
         }
     }
     
-    public async Task<IDtoResultBase> AddUser(UserGroupAddUserDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> UserGroupAddUser(UserGroupAddUserDto data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(AddUser)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(UserGroupAddUser)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -815,12 +819,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_adduser_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupAddUser,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_adduser_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupAddUser,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
             
@@ -848,7 +852,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
 
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(AddUser)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(UserGroupAddUser)));
 
             return new OkResultDto();
         }
@@ -860,9 +864,9 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
         }
     }
     
-    public async Task<IDtoResultBase> KickUser(UserGroupKickUserDto data, CancellationToken cancellationToken = default)
+    public async Task<IDtoResultBase> UserGroupDeleteUser(UserGroupDeleteUserDto data, CancellationToken cancellationToken = default)
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(KickUser)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(UserGroupDeleteUser)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -893,12 +897,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_kickuser_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupKickUser,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_kickuser_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupKickUser,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
             
@@ -915,12 +919,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     EntityLeftGroupsTableName = null,
                     EntityLeftEntityToEntityMappingsTableName = null,
                     EntityLeftId = userToUserGroupMappingUserSpecificGroupMemberPublic.Id,
-                    EntityLeftPermissionAlias = Consts.PermissionAlias.g_ingroup_a_kickuser_o_usergroup,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupMemberKickUser,
                     EntityRightTableName = _userGroupRepository.GetTableName(),
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightId = userGroup.Id,
-                    EntityRightPermissionAlias = Consts.PermissionAlias.g_ingroup_a_kickuser_o_usergroup,
+                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupMemberKickUser,
                     SqlExpressionPermissionTypeValueNeededOwner = "T1.\"EntityIdLeft\" = T2.\"UserId\""
                 });
             }
@@ -949,7 +953,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             
             await _appDbContextAction.CommitTransactionAsync();
 
-            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(KickUser)));
+            _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(UserGroupDeleteUser)));
 
             return new OkResultDto();
         }

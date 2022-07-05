@@ -25,57 +25,48 @@ public static class Consts
     public class PermissionAlias
     {
         //User,UserGroup PermissionValue
-        public const string g_any_a_create_o_permissionvalue = "g_any_a_create_o_permissionvalue";
-        public const string g_any_a_read_o_permissionvalue = "g_any_a_read_o_permissionvalue";
-        public const string g_any_a_update_o_permissionvalue = "g_any_a_update_o_permissionvalue";
+        public const string PermissionValueCreate = "PermissionValueCreate";
+        public const string PermissionValueRead = "PermissionValueRead";
+        public const string PermissionValueUpdate = "PermissionValueUpdate";
         //TODO: g_any_a_update_o_permissionvalue_o_mingrant_l_automapper
         //TODO: g_any_a_update_o_permissionvalue_o_maxgrant_l_automapper
         //TODO: g_any_a_update_o_permissionvalue_a_skipgrant
-        public const string g_any_a_delete_o_permissionvalue = "g_any_a_delete_o_permissionvalue";
+        public const string PermissionValueDelete = "PermissionValueDelete";
 
         //UserGroup
-        public const string g_group_a_create_o_usergroup = "g_group_a_create_o_usergroup";
-        public const string g_group_a_create_o_usergroup_o_alias_l_automapper = "g_group_a_create_o_usergroup_o_alias_l_automapper";
-        public const string g_group_a_create_o_usergroup_o_description_l_automapper = "g_group_a_create_o_usergroup_o_description_l_automapper";
-        public const string g_group_a_create_o_usergroup_o_priority_l_automapper = "g_group_a_create_o_usergroup_o_priority_l_automapper";
-        public const string g_group_a_read_o_usergroup = "g_group_a_read_o_usergroup";
-        public const string g_group_a_update_o_usergroup = "g_group_a_update_o_usergroup";
-        public const string g_group_a_update_o_usergroup_o_alias_l_automapper = "g_group_a_update_o_usergroup_o_alias_l_automapper";
-        public const string g_group_a_update_o_usergroup_o_description_l_automapper = "g_group_a_update_o_usergroup_o_description_l_automapper";
-        public const string g_group_a_update_o_usergroup_o_priority_l_automapper = "g_group_a_update_o_usergroup_o_priority_l_automapper";
-        public const string g_group_a_delete_o_usergroup = "g_group_a_delete_o_usergroup";
-        public const string g_group_a_join_o_usergroup = "g_group_a_join_o_usergroup";
-        public const string g_group_a_leave_o_usergroup = "g_group_a_leave_o_usergroup";
-        
-        //UserGroup Actions
-        public const string g_group_a_transfer_o_usergroup = "g_group_a_transfer_o_usergroup";
-        public const string g_group_a_transfer_o_usergroup_a_manage = "g_group_a_transfer_o_usergroup_a_manage";
-        public const string g_group_a_inviteuser_o_usergroup = "g_group_a_inviteuser_o_usergroup";
-        public const string g_group_a_inviteuser_o_usergroup_a_manage = "g_group_a_inviteuser_o_usergroup_a_manage";
-        public const string g_group_a_kickuser_o_usergroup = "g_group_a_kickuser_o_usergroup";
-        public const string g_group_a_adduser_o_usergroup = "g_group_a_adduser_o_usergroup";
-        
-        public const string g_ingroup_a_inviteuser_o_usergroup = "g_ingroup_a_inviteuser_o_usergroup";
-        public const string g_ingroup_a_inviteuser_o_usergroup_a_manage = "g_ingroup_a_inviteuser_o_usergroup_a_manage";
-        public const string g_ingroup_a_kickuser_o_usergroup = "g_ingroup_a_kickuser_o_usergroup";
-
-        //User
-        public const string g_user_a_read_o_user = "g_user_a_read_o_user";
-        public const string g_user_a_update_o_user = "g_user_a_update_o_user";
-        public const string g_user_a_delete_o_user = "g_user_a_delete_o_user";
-        
-        //User Profile
-        public const string g_userprofile_a_read_o_userprofile = "g_userprofile_a_read_o_userprofile";
-        public const string g_userprofile_a_update_o_userprofile = "g_userprofile_a_update_o_userprofile";
-        public const string g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize = "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize";
-        
-        //File
-        public const string g_file_a_create_o_file = "g_file_a_create_o_file";
-        public const string g_file_a_create_o_file_o_agerating_l_automapper = "g_file_a_create_o_file.o_agerating_l_automapper";
-        public const string g_file_a_read_o_file = "g_file_a_read_o_file";
-        public const string g_file_a_update_o_file = "g_file_a_update_o_file";
-        public const string g_file_a_update_o_file_o_agerating_l_automapper = "g_file_a_update_o_file.o_agerating_l_automapper";
-        public const string g_file_a_delete_o_file = "g_file_a_delete_o_file";
+        public const string UserGroupCreate = "UserGroupCreate";
+        public const string UserGroupCreate_Alias = "UserGroupCreate_Alias";
+        public const string UserGroupCreate_Description = "UserGroupCreate_Description";
+        public const string UserGroupCreate_Priority = "UserGroupCreate_Priority";
+        public const string UserGroupRead = "UserGroupRead";
+        public const string UserGroupUpdate = "UserGroupUpdate";
+        public const string UserGroupUpdate_Alias = "UserGroupUpdate_Alias";
+        public const string UserGroupUpdate_Description = "UserGroupUpdate_Description";
+        public const string UserGroupUpdate_Priority = "UserGroupUpdate_Priority";
+        public const string UserGroupDelete = "UserGroupDelete";
+        public const string UserGroupJoin = "UserGroupJoin";
+        public const string UserGroupLeave = "UserGroupLeave";
+        public const string UserGroupTransferRequestCreate = "UserGroupTransferRequestCreate";
+        public const string UserGroupTransferRequestUpdate = "UserGroupTransferRequestUpdate";
+        public const string UserGroupInviteRequestCreate = "UserGroupInviteRequestCreate";
+        public const string UserGroupInviteRequestUpdate = "UserGroupInviteRequestUpdate";
+        public const string UserGroupKickUser = "UserGroupKickUser";
+        public const string UserGroupAddUser = "UserGroupAddUser";
+        public const string UserGroupMemberInviteRequestCreate = "UserGroupMemberInviteRequestCreate";
+        public const string UserGroupMemberInviteRequestUpdate = "UserGroupMemberInviteRequestUpdate";
+        public const string UserGroupMemberKickUser = "UserGroupMemberKickUser";
+        public const string UserRead = "UserRead";
+        public const string UserUpdate = "UserUpdate";
+        public const string UserDelete = "UserDelete";
+        public const string UserProfileRead = "UserProfileRead";
+        public const string UserProfileUpdate = "UserProfileUpdate";
+        // public const string g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize = "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize";
+        public const string FileCreate = "FileCreate";
+        public const string FileCreate_Agerating = "FileCreate_Agerating";
+        public const string FileRead = "FileRead";
+        public const string FileUpdate = "FileUpdate";
+        public const string FileUpdate_Agerating = "FileUpdate_Agerating";
+        public const string FileDelete = "FileDelete";
         //TODO: g_file_a_transferownership_o_file
     }
 

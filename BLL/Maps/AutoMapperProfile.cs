@@ -74,10 +74,10 @@ public class AutoMapperProfile : Profile
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
                     AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             });
-        CreateMap<UserGroupTransferInitDto, UserGroupTransferRequest>(MemberList.None)
+        CreateMap<UserGroupCreateTransferDto, UserGroupTransferRequest>(MemberList.None)
             .ForMember(_ => _.UserGroupId, options => options.MapFrom(__ => __.UserGroupId))
             .ForMember(_ => _.DestUserId, options => options.MapFrom(__ => __.UserId));
-        CreateMap<UserGroupInitInviteUserDto, UserGroupInviteRequest>(MemberList.None)
+        CreateMap<UserGroupCreateInviteDto, UserGroupInviteRequest>(MemberList.None)
             .ForMember(_ => _.UserGroupId, options => options.MapFrom(__ => __.UserGroupId))
             .ForMember(_ => _.DestUserId, options => options.MapFrom(__ => __.UserId));
 

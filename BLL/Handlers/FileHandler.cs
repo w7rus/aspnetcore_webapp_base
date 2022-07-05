@@ -136,13 +136,13 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_file_a_create_o_file,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.FileCreate,
                 EntityRightTableName = _userRepository.GetTableName(),
                 EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityRightEntityToEntityMappingsTableName =
                     _userToUserGroupMappingRepository.GetTableName(),
                 EntityRightId = userOwner.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_create_o_file,
+                EntityRightPermissionAlias = Consts.PermissionAlias.FileCreate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
 
@@ -164,14 +164,14 @@ public class FileHandler : HandlerBase, IFileHandler
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityLeftId = user.Id,
                             EntityLeftPermissionAlias =
-                                Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper,
+                                Consts.PermissionAlias.FileCreate_Agerating,
                             EntityRightTableName = _userRepository.GetTableName(),
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityRightId = userOwner.Id,
                             EntityRightPermissionAlias =
-                                Consts.PermissionAlias.g_file_a_create_o_file_o_agerating_l_automapper,
+                                Consts.PermissionAlias.FileCreate_Agerating,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
                         })
                     }
@@ -235,13 +235,13 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_file_a_read_o_file,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.FileRead,
                 EntityRightTableName = _userRepository.GetTableName(),
                 EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityRightEntityToEntityMappingsTableName =
                     _userToUserGroupMappingRepository.GetTableName(),
                 EntityRightId = file.UserId.Value,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_read_o_file,
+                EntityRightPermissionAlias = Consts.PermissionAlias.FileRead,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
 
@@ -303,13 +303,13 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_file_a_update_o_file,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.FileUpdate,
                 EntityRightTableName = _userRepository.GetTableName(),
                 EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityRightEntityToEntityMappingsTableName =
                     _userToUserGroupMappingRepository.GetTableName(),
                 EntityRightId = file.UserId.Value,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_update_o_file,
+                EntityRightPermissionAlias = Consts.PermissionAlias.FileUpdate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
 
@@ -332,14 +332,14 @@ public class FileHandler : HandlerBase, IFileHandler
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityLeftId = user.Id,
                             EntityLeftPermissionAlias =
-                                Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper,
+                                Consts.PermissionAlias.FileUpdate_Agerating,
                             EntityRightTableName = _userRepository.GetTableName(),
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityRightId = file.UserId.Value,
                             EntityRightPermissionAlias =
-                                Consts.PermissionAlias.g_file_a_update_o_file_o_agerating_l_automapper,
+                                Consts.PermissionAlias.FileUpdate_Agerating,
                             SqlExpressionPermissionTypeValueNeededOwner = "'T1.\"Id\" = T2.\"Id\"'"
                         })
                     }
@@ -394,13 +394,13 @@ public class FileHandler : HandlerBase, IFileHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_file_a_delete_o_file,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.FileDelete,
                 EntityRightTableName = _userRepository.GetTableName(),
                 EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityRightEntityToEntityMappingsTableName =
                     _userToUserGroupMappingRepository.GetTableName(),
                 EntityRightId = file.UserId.Value,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_file_a_delete_o_file,
+                EntityRightPermissionAlias = Consts.PermissionAlias.FileDelete,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
 

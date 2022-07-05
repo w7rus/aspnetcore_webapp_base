@@ -127,12 +127,12 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_any_a_create_o_permissionvalue,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.PermissionValueCreate,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_any_a_create_o_permissionvalue,
+                EntityRightPermissionAlias = Consts.PermissionAlias.PermissionValueCreate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
 
@@ -219,12 +219,12 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_any_a_read_o_permissionvalue,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.PermissionValueRead,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_any_a_read_o_permissionvalue,
+                EntityRightPermissionAlias = Consts.PermissionAlias.PermissionValueRead,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
 
@@ -273,12 +273,12 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                         EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                         EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                         EntityLeftId = user.Id,
-                        EntityLeftPermissionAlias = Consts.PermissionAlias.g_any_a_read_o_permissionvalue,
+                        EntityLeftPermissionAlias = Consts.PermissionAlias.PermissionValueRead,
                         EntityRightTableName = _userGroupRepository.GetTableName(),
                         EntityRightGroupsTableName = null,
                         EntityRightEntityToEntityMappingsTableName = null,
                         EntityRightIdRawSql = "\"EntityId\"",
-                        EntityRightPermissionAlias = Consts.PermissionAlias.g_any_a_read_o_permissionvalue,
+                        EntityRightPermissionAlias = Consts.PermissionAlias.PermissionValueRead,
                         SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                     }, new FilterExpressionModel
                     {
@@ -350,12 +350,12 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_any_a_update_o_permissionvalue,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.PermissionValueUpdate,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_any_a_update_o_permissionvalue,
+                EntityRightPermissionAlias = Consts.PermissionAlias.PermissionValueUpdate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
 
@@ -438,12 +438,12 @@ public class UserGroupPermissionValueHandler : HandlerBase, IUserGroupPermission
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_any_a_delete_o_permissionvalue,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.PermissionValueDelete,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_any_a_delete_o_permissionvalue,
+                EntityRightPermissionAlias = Consts.PermissionAlias.PermissionValueDelete,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
 

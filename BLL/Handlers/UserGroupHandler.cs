@@ -132,13 +132,13 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_create_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupCreate,
                 EntityRightTableName = _userRepository.GetTableName(),
                 EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityRightEntityToEntityMappingsTableName =
                     _userToUserGroupMappingRepository.GetTableName(),
                 EntityRightId = userOwner.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_create_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupCreate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
 
@@ -161,14 +161,14 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityLeftId = user.Id,
                             EntityLeftPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_alias_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Alias,
                             EntityRightTableName = _userRepository.GetTableName(),
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityRightId = userOwner.Id,
                             EntityRightPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_alias_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Alias,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
                         })
                     },
@@ -182,14 +182,14 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityLeftId = user.Id,
                             EntityLeftPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_description_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Description,
                             EntityRightTableName = _userRepository.GetTableName(),
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityRightId = userOwner.Id,
                             EntityRightPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_description_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Description,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
                         })
                     },
@@ -203,14 +203,14 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityLeftId = user.Id,
                             EntityLeftPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_priority_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Priority,
                             EntityRightTableName = _userRepository.GetTableName(),
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityRightId = userOwner.Id,
                             EntityRightPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_priority_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Priority,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
                         })
                     }
@@ -249,7 +249,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_any_a_create_o_permissionvalue,
+                            Consts.PermissionAlias.PermissionValueCreate,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -258,7 +258,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_any_a_create_o_permissionvalue,
+                            Consts.PermissionAlias.PermissionValueCreate,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -272,7 +272,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_any_a_read_o_permissionvalue,
+                            Consts.PermissionAlias.PermissionValueRead,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -281,7 +281,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_any_a_read_o_permissionvalue,
+                            Consts.PermissionAlias.PermissionValueRead,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -295,7 +295,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_any_a_update_o_permissionvalue,
+                            Consts.PermissionAlias.PermissionValueUpdate,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -304,7 +304,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_any_a_update_o_permissionvalue,
+                            Consts.PermissionAlias.PermissionValueUpdate,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -318,7 +318,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_any_a_delete_o_permissionvalue,
+                            Consts.PermissionAlias.PermissionValueDelete,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -327,7 +327,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_any_a_delete_o_permissionvalue,
+                            Consts.PermissionAlias.PermissionValueDelete,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -345,7 +345,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_read_o_usergroup,
+                            Consts.PermissionAlias.UserGroupRead,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -354,7 +354,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_read_o_usergroup,
+                            Consts.PermissionAlias.UserGroupRead,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -368,7 +368,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_update_o_usergroup,
+                            Consts.PermissionAlias.UserGroupUpdate,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -377,7 +377,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_update_o_usergroup,
+                            Consts.PermissionAlias.UserGroupUpdate,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -386,7 +386,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_update_o_usergroup_o_alias_l_automapper,
+                            Consts.PermissionAlias.UserGroupUpdate_Alias,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -395,7 +395,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_update_o_usergroup_o_alias_l_automapper,
+                            Consts.PermissionAlias.UserGroupUpdate_Alias,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -404,7 +404,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_update_o_usergroup_o_description_l_automapper,
+                            Consts.PermissionAlias.UserGroupUpdate_Description,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -413,7 +413,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_update_o_usergroup_o_description_l_automapper,
+                            Consts.PermissionAlias.UserGroupUpdate_Description,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -422,7 +422,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_update_o_usergroup_o_priority_l_automapper,
+                            Consts.PermissionAlias.UserGroupUpdate_Priority,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -431,7 +431,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_update_o_usergroup_o_priority_l_automapper,
+                            Consts.PermissionAlias.UserGroupUpdate_Priority,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -445,7 +445,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_delete_o_usergroup,
+                            Consts.PermissionAlias.UserGroupDelete,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -454,7 +454,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_delete_o_usergroup,
+                            Consts.PermissionAlias.UserGroupDelete,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -468,7 +468,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_join_o_usergroup,
+                            Consts.PermissionAlias.UserGroupJoin,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -477,7 +477,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_join_o_usergroup,
+                            Consts.PermissionAlias.UserGroupJoin,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -491,7 +491,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_leave_o_usergroup,
+                            Consts.PermissionAlias.UserGroupLeave,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -500,7 +500,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_leave_o_usergroup,
+                            Consts.PermissionAlias.UserGroupLeave,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -514,7 +514,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                            Consts.PermissionAlias.UserGroupTransferRequestCreate,
                             PermissionType.Value))
                         .Id,
                     EntityId = userGroup.Id
@@ -523,7 +523,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                            Consts.PermissionAlias.UserGroupTransferRequestCreate,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -532,7 +532,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_transfer_o_usergroup,
+                            Consts.PermissionAlias.UserGroupTransferRequestCreate,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -546,7 +546,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_transfer_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupTransferRequestUpdate,
                             PermissionType.Value))
                         .Id,
                     EntityId = userGroup.Id
@@ -555,7 +555,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_transfer_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupTransferRequestUpdate,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -564,7 +564,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_transfer_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupTransferRequestUpdate,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -578,7 +578,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupInviteRequestCreate,
                             PermissionType.Value))
                         .Id,
                     EntityId = userGroup.Id
@@ -587,7 +587,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupInviteRequestCreate,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -596,7 +596,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupInviteRequestCreate,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -605,7 +605,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -614,7 +614,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -628,7 +628,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupInviteRequestUpdate,
                             PermissionType.Value))
                         .Id,
                     EntityId = userGroup.Id
@@ -637,7 +637,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupInviteRequestUpdate,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -646,7 +646,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_inviteuser_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupInviteRequestUpdate,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -655,7 +655,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -664,7 +664,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -678,7 +678,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_kickuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupKickUser,
                             PermissionType.Value))
                         .Id,
                     EntityId = userGroup.Id
@@ -687,7 +687,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_kickuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupKickUser,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -696,7 +696,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_kickuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupKickUser,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -705,7 +705,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_kickuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupMemberKickUser,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -714,7 +714,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_kickuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupMemberKickUser,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -728,7 +728,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_adduser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupAddUser,
                             PermissionType.ValueNeededOwner))
                         .Id,
                     EntityId = userGroup.Id
@@ -737,7 +737,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_group_a_adduser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupAddUser,
                             PermissionType.ValueNeededOthers))
                         .Id,
                     EntityId = userGroup.Id
@@ -778,7 +778,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingPublic.Id
@@ -787,7 +787,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_kickuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupMemberKickUser,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingPublic.Id
@@ -796,7 +796,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingPublic.Id
@@ -810,7 +810,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingGroupMember.Id
@@ -819,7 +819,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_kickuser_o_usergroup,
+                            Consts.PermissionAlias.UserGroupMemberKickUser,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingGroupMember.Id
@@ -828,7 +828,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.g_ingroup_a_inviteuser_o_usergroup_a_manage,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingGroupMember.Id
@@ -886,12 +886,12 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_read_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupRead,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_read_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupRead,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
 
@@ -941,12 +941,12 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                         EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                         EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                         EntityLeftId = user.Id,
-                        EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_read_o_usergroup,
+                        EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupRead,
                         EntityRightTableName = _userGroupRepository.GetTableName(),
                         EntityRightGroupsTableName = null,
                         EntityRightEntityToEntityMappingsTableName = null,
                         EntityRightIdRawSql = "\"Id\"",
-                        EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_read_o_usergroup,
+                        EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupRead,
                         SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                     }, cancellationToken: cancellationToken);
 
@@ -997,12 +997,12 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_update_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupUpdate,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_update_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupUpdate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
 
@@ -1025,14 +1025,14 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityLeftId = user.Id,
                             EntityLeftPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_alias_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Alias,
                             EntityRightTableName = _userRepository.GetTableName(),
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityRightId = userGroup.UserId,
                             EntityRightPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_alias_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Alias,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
                         })
                     },
@@ -1046,14 +1046,14 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityLeftId = user.Id,
                             EntityLeftPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_description_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Description,
                             EntityRightTableName = _userRepository.GetTableName(),
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityRightId = userGroup.UserId,
                             EntityRightPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_description_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Description,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
                         })
                     },
@@ -1067,14 +1067,14 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityLeftId = user.Id,
                             EntityLeftPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_priority_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Priority,
                             EntityRightTableName = _userRepository.GetTableName(),
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
                             EntityRightId = userGroup.UserId,
                             EntityRightPermissionAlias =
-                                Consts.PermissionAlias.g_group_a_create_o_usergroup_o_priority_l_automapper,
+                                Consts.PermissionAlias.UserGroupCreate_Priority,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
                         })
                     }
@@ -1144,12 +1144,12 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                 EntityLeftId = user.Id,
-                EntityLeftPermissionAlias = Consts.PermissionAlias.g_group_a_delete_o_usergroup,
+                EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupDelete,
                 EntityRightTableName = _userGroupRepository.GetTableName(),
                 EntityRightGroupsTableName = null,
                 EntityRightEntityToEntityMappingsTableName = null,
                 EntityRightId = userGroup.Id,
-                EntityRightPermissionAlias = Consts.PermissionAlias.g_group_a_delete_o_usergroup,
+                EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupDelete,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
 
