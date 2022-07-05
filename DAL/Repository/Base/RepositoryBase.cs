@@ -192,7 +192,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
             var filterMatchOperationAsString = filterMatchOperation switch
             {
                 FilterMatchOperation.None => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.Equal => " = ",
                 FilterMatchOperation.NotEqual => " != ",
                 FilterMatchOperation.Less => " < ",
@@ -200,11 +200,11 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                 FilterMatchOperation.Greater => " > ",
                 FilterMatchOperation.GreaterOrEqual => " >= ",
                 FilterMatchOperation.Contains => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.StartsWith => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.EndsWith => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -223,23 +223,23 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
             var filterMatchOperationAsString = filterMatchOperation switch
             {
                 FilterMatchOperation.None => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.Equal => " = ",
                 FilterMatchOperation.NotEqual => " != ",
                 FilterMatchOperation.Less => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.LessOrEqual => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.Greater => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.GreaterOrEqual => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.Contains => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.StartsWith => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.EndsWith => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -258,7 +258,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
             var filterMatchOperationAsString = filterMatchOperation switch
             {
                 FilterMatchOperation.None => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.Equal => " = ",
                 FilterMatchOperation.NotEqual => " != ",
                 FilterMatchOperation.Less => " < ",
@@ -292,7 +292,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
             var filterMatchOperationAsString = filterMatchOperation switch
             {
                 FilterMatchOperation.None => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.Equal => " = ",
                 FilterMatchOperation.NotEqual => " != ",
                 FilterMatchOperation.Less => " < ",
@@ -300,11 +300,11 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                 FilterMatchOperation.Greater => " > ",
                 FilterMatchOperation.GreaterOrEqual => " >= ",
                 FilterMatchOperation.Contains => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.StartsWith => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 FilterMatchOperation.EndsWith => throw new CustomException(Localize.Error
-                    .FilterMatchModelValueTypeNotCompatible),
+                    .FilterModelValueTypeNotCompatible),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -331,7 +331,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
             });
             if (systemFilterExpressionModel.ExpressionLogicalOperation > ExpressionLogicalOperation.Not)
                 throw new CustomException(Localize.Error
-                    .FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly);
+                    .FilterModelItemFirstExpressionLogicalOperationNoneNotOnly);
             rawSql += '(';
 
             while (stack.Any())
@@ -346,10 +346,10 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                     {
                         case 0 when scopeItem.ExpressionLogicalOperation > ExpressionLogicalOperation.Not:
                             throw new CustomException(Localize.Error
-                                .FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly);
+                                .FilterModelItemFirstExpressionLogicalOperationNoneNotOnly);
                         case > 0 when scopeItem.ExpressionLogicalOperation <= ExpressionLogicalOperation.Not:
                             throw new CustomException(Localize.Error
-                                .FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly);
+                                .FilterModelItemNotFirstExpressionLogicalOperationAndOrOnly);
                     }
 
                     switch (scopeItem.ExpressionLogicalOperation)
@@ -386,7 +386,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                         var property = entityType.GetProperty(itemExpression.Key);
 
                         if (property == null)
-                            throw new CustomException(Localize.Error.FilterMatchModelPropertyNotFoundOrUnavailable);
+                            throw new CustomException(Localize.Error.FilterModelPropertyNotFoundOrUnavailable);
 
                         var sqlParameterCounterAsString = sqlParameterCounter.ToString();
 
@@ -395,7 +395,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                             case ValueType.None:
                             case ValueType.Unknown:
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             case ValueType.Boolean:
                             {
                                 var value = BitConverter.ToBoolean(itemExpression.Value);
@@ -434,22 +434,22 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                             case ValueType.UInt8:
                             {
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             }
                             case ValueType.UInt16:
                             {
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             }
                             case ValueType.UInt32:
                             {
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             }
                             case ValueType.UInt64:
                             {
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             }
                             case ValueType.Float:
                             {
@@ -494,7 +494,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                             {
                                 if (!Guid.TryParse(Encoding.UTF8.GetString(itemExpression.Value), out var value))
                                     throw new CustomException(Localize.Error
-                                        .FilterMatchModelItemExpressionValueFailedToParseGuid);
+                                        .FilterModelItemExpressionValueFailedToParseGuid);
                                 AddMatchParameterEquatable(property, itemExpression.FilterMatchOperation,
                                     sqlParameterCounterAsString, value);
                                 break;
@@ -530,7 +530,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
             });
             if (filterExpressionModel.ExpressionLogicalOperation > ExpressionLogicalOperation.Not)
                 throw new CustomException(Localize.Error
-                    .FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly);
+                    .FilterModelItemFirstExpressionLogicalOperationNoneNotOnly);
             rawSql += '(';
 
             while (stack.Any())
@@ -545,10 +545,10 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                     {
                         case 0 when scopeItem.ExpressionLogicalOperation > ExpressionLogicalOperation.Not:
                             throw new CustomException(Localize.Error
-                                .FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly);
+                                .FilterModelItemFirstExpressionLogicalOperationNoneNotOnly);
                         case > 0 when scopeItem.ExpressionLogicalOperation <= ExpressionLogicalOperation.Not:
                             throw new CustomException(Localize.Error
-                                .FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly);
+                                .FilterModelItemNotFirstExpressionLogicalOperationAndOrOnly);
                     }
 
                     switch (scopeItem.ExpressionLogicalOperation)
@@ -586,7 +586,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
 
                         if (property == null ||
                             property.GetCustomAttribute<AllowFilterExpressionAttribute>(true) == null)
-                            throw new CustomException(Localize.Error.FilterMatchModelPropertyNotFoundOrUnavailable);
+                            throw new CustomException(Localize.Error.FilterModelPropertyNotFoundOrUnavailable);
 
                         var sqlParameterCounterAsString = sqlParameterCounter.ToString();
 
@@ -595,7 +595,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                             case ValueType.None:
                             case ValueType.Unknown:
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             case ValueType.Boolean:
                             {
                                 var value = BitConverter.ToBoolean(itemExpression.Value);
@@ -634,22 +634,22 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                             case ValueType.UInt8:
                             {
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             }
                             case ValueType.UInt16:
                             {
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             }
                             case ValueType.UInt32:
                             {
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             }
                             case ValueType.UInt64:
                             {
                                 throw new CustomException(Localize.Error
-                                    .FilterMatchModelItemExpressionValueTypeNotSupported);
+                                    .FilterModelItemExpressionValueTypeNotSupported);
                             }
                             case ValueType.Float:
                             {
@@ -694,7 +694,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                             {
                                 if (!Guid.TryParse(Encoding.UTF8.GetString(itemExpression.Value), out var value))
                                     throw new CustomException(Localize.Error
-                                        .FilterMatchModelItemExpressionValueFailedToParseGuid);
+                                        .FilterModelItemExpressionValueFailedToParseGuid);
                                 AddMatchParameterEquatable(property, itemExpression.FilterMatchOperation,
                                     sqlParameterCounterAsString, value);
                                 break;

@@ -111,7 +111,7 @@ public class FileController : CustomControllerBase
 
         if (!MultipartRequestHelper.HasFileContentDisposition(contentDispositionFile))
             throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Request,
-                Localize.Error.RequestMultipartSectionContentDispositionFormExpected);
+                Localize.Error.RequestMultipartSectionContentDispositionFileExpected);
 
         await using var fileStream = multipartSection.Body;
 

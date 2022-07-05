@@ -54,8 +54,7 @@ public static class Consts
         public const string g_group_a_inviteuser_o_usergroup_a_manage = "g_group_a_inviteuser_o_usergroup_a_manage";
         public const string g_group_a_kickuser_o_usergroup = "g_group_a_kickuser_o_usergroup";
         public const string g_group_a_adduser_o_usergroup = "g_group_a_adduser_o_usergroup";
-
-        //PermissionValues of the following Permissions with type PermissionType.Value must not be set in User, UserGroup (except Root UserGroup) in order to achieve authorization via UserToUserGroupMappingPermissionValues (Owner, Public, GroupMember, Specific User)
+        
         public const string g_ingroup_a_inviteuser_o_usergroup = "g_ingroup_a_inviteuser_o_usergroup";
         public const string g_ingroup_a_inviteuser_o_usergroup_a_manage = "g_ingroup_a_inviteuser_o_usergroup_a_manage";
         public const string g_ingroup_a_kickuser_o_usergroup = "g_ingroup_a_kickuser_o_usergroup";

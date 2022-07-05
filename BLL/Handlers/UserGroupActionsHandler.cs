@@ -281,6 +281,10 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
+            if (user.Id == data.UserId)
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
+                    Localize.Error.UserGroupTransferSameUserNotAllowed);
+
             var userGroupTransferRequest = _mapper.Map<UserGroupTransferRequest>(data);
 
             userGroupTransferRequest.SrcUserId = user.Id;
@@ -356,7 +360,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                         break;
                     case Choice.Accept:
                         throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
-                            Localize.Error.UserGroupTransferRequestChoiceNotAllowed);
+                            Localize.Error.UserGroupTransferRequestSelectedChoiceNotAllowed);
                     case Choice.Reject:
                     {
                         await _userGroupTransferRequestEntityService.Delete(userGroupTransferRequest, cancellationToken);
@@ -556,9 +560,13 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
             
+            if (user.Id == data.UserId)
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
+                    Localize.Error.UserGroupInviteRequestSameUserNotAllowed);
+            
             if (userTarget.Id == Consts.PublicUserId || userTarget.Id == Consts.GroupMemberUserId)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
-                    Localize.Error.UserToUserGroupMappingPublicGroupMemberAddNotAllowed);
+                    Localize.Error.UserToUserGroupMappingAddNotAllowed);
             
             //Do not allow to invite User associated with UserGroup
             if (await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(userTarget.Id, userGroup.Id) != null)
@@ -642,7 +650,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                         break;
                     case Choice.Accept:
                         throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
-                            Localize.Error.UserGroupTransferRequestChoiceNotAllowed);
+                            Localize.Error.UserGroupInviteRequestSelectedChoiceNotAllowed);
                     case Choice.Reject:
                     {
                         await _userGroupInviteRequestEntityService.Delete(userGroupInviteRequest, cancellationToken);
@@ -822,7 +830,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             
             if (userTarget.Id == Consts.PublicUserId || userTarget.Id == Consts.GroupMemberUserId)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
-                    Localize.Error.UserToUserGroupMappingPublicGroupMemberAddNotAllowed);
+                    Localize.Error.UserToUserGroupMappingAddNotAllowed);
             
             //Do not allow to add User associated with UserGroup
             if (await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(userTarget.Id, userGroup.Id) != null)
@@ -923,7 +931,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             
             if (userTarget.Id == Consts.PublicUserId || userTarget.Id == Consts.GroupMemberUserId)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
-                    Localize.Error.UserToUserGroupMappingPublicGroupMemberDeleteNotAllowed);
+                    Localize.Error.UserToUserGroupMappingDeleteNotAllowed);
             
             var userToUserGroupMappingUserTarget =
                 await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(userTarget.Id, userGroup.Id);

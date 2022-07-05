@@ -80,14 +80,9 @@ public static class Localize
         #region Permission
 
         public static string PermissionDynamicManagementNotAllowed => "PermissionDynamicManagementNotAllowed";
-
-        public static string PermissionComparedOrCustomValueComparedRequired =>
-            "PermissionComparedOrCustomValueComparedRequired";
-
         public static string PermissionInsufficientPermissions => "PermissionInsufficientPermissions";
         public static string PermissionNotFound => "PermissionNotFound";
         public static string PermissionValueNotFound => "PermissionValueNotFound";
-        public static string PermissionValueTypeUnknown => "PermissionValueTypeUnknown";
 
         #endregion
 
@@ -102,43 +97,45 @@ public static class Localize
         
         public static string UserToUserGroupMappingNotFound => "UserToUserGroupMappingNotFound";
         public static string UserToUserGroupMappingAlreadyExists => "UserToUserGroupMappingAlreadyExists";
-        public static string UserToUserGroupMappingPublicGroupMemberDeleteNotAllowed => "UserToUserGroupMappingPublicGroupMemberDeleteNotAllowed";
-        public static string UserToUserGroupMappingPublicGroupMemberAddNotAllowed => "UserToUserGroupMappingPublicGroupMemberAddNotAllowed";
+        public static string UserToUserGroupMappingDeleteNotAllowed => "UserToUserGroupMappingDeleteNotAllowed";
+        public static string UserToUserGroupMappingAddNotAllowed => "UserToUserGroupMappingAddNotAllowed";
 
         #endregion
 
         #region UserGroupTransferRequest
 
         public static string UserGroupTransferRequestNotFound => "UserGroupTransferRequestNotFound";
-        public static string UserGroupTransferRequestChoiceNotAllowed => "UserGroupTransferRequestChoiceNotAllowed";
+        public static string UserGroupTransferRequestSelectedChoiceNotAllowed => "UserGroupTransferRequestSelectedChoiceNotAllowed";
+        public static string UserGroupTransferSameUserNotAllowed => "UserGroupTransferSameUserNotAllowed";
 
         #endregion
         
         #region UserGroupInviteRequest
 
         public static string UserGroupInviteRequestNotFound => "UserGroupInviteRequestNotFound";
-        public static string UserGroupInviteRequestChoiceNotAllowed => "UserGroupInviteRequestChoiceNotAllowed";
+        public static string UserGroupInviteRequestSelectedChoiceNotAllowed => "UserGroupInviteRequestSelectedChoiceNotAllowed";
+        public static string UserGroupInviteRequestSameUserNotAllowed => "UserGroupInviteRequestSameUserNotAllowed";
 
         #endregion
 
-        #region FilterMatchModel
+        #region FilterModel
 
-        public static string FilterMatchModelItemExpressionValueTypeNotSupported =>
-            "FilterMatchModelItemExpressionValueTypeNotSupported";
+        public static string FilterModelItemExpressionValueTypeNotSupported =>
+            "FilterModelItemExpressionValueTypeNotSupported";
 
-        public static string FilterMatchModelItemExpressionValueFailedToParseGuid =>
-            "FilterMatchModelItemExpressionValueFailedToParseGuid";
+        public static string FilterModelItemExpressionValueFailedToParseGuid =>
+            "FilterModelItemExpressionValueFailedToParseGuid";
 
-        public static string FilterMatchModelPropertyNotFoundOrUnavailable =>
-            "FilterMatchModelPropertyNotFoundOrUnavailable";
+        public static string FilterModelPropertyNotFoundOrUnavailable =>
+            "FilterModelPropertyNotFoundOrUnavailable";
 
-        public static string FilterMatchModelValueTypeNotCompatible => "FilterMatchModelValueTypeNotCompatible";
+        public static string FilterModelValueTypeNotCompatible => "FilterModelValueTypeNotCompatible";
 
-        public static string FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly =>
-            "FilterMatchModelItemFirstExpressionLogicalOperationNoneNotOnly";
+        public static string FilterModelItemFirstExpressionLogicalOperationNoneNotOnly =>
+            "FilterModelItemFirstExpressionLogicalOperationNoneNotOnly";
 
-        public static string FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly =>
-            "FilterMatchModelItemNotFirstExpressionLogicalOperationAndOrOnly";
+        public static string FilterModelItemNotFirstExpressionLogicalOperationAndOrOnly =>
+            "FilterModelItemNotFirstExpressionLogicalOperationAndOrOnly";
 
         #endregion
 
@@ -174,7 +171,7 @@ public static class Localize
 
     public static class Warning
     {
-        public static string XssVulnerable => "XSSVulnerable";
+        public static string XssVulnerable => "XssVulnerable";
     }
 
     public static class Log
