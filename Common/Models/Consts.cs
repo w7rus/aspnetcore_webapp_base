@@ -104,16 +104,16 @@ AS $BODY$
         ValueLeft bigint := 0;
         ValueRight bigint := 0;
     BEGIN
-        RAISE DEBUG '  └┐AuthorizeEntityPermissionValueToEntityPermissionValue()';
+        RAISE DEBUG '   └┐AuthorizeEntityPermissionValueToEntityPermissionValue()';
         
         IF EntityLeftPermissionValue IS NULL OR EntityRightPermissionValue IS NULL THEN
-            RAISE DEBUG '   ├EntityLeftPermissionValue IS NULL OR EntityRightPermissionValue IS NULL';
+            RAISE DEBUG '    ├EntityLeftPermissionValue IS NULL OR EntityRightPermissionValue IS NULL';
             
             RETURN FResult;
         END IF;
 
         IF EntityLeftPermission.""CompareMode"" != EntityRightPermission.""CompareMode"" THEN
-            RAISE EXCEPTION '   ├[AuthorizeEntityPermissionValueToEntityPermissionValue]: EntityLeftPermission.CompareMode != EntityRightPermission.CompareMode';
+            RAISE EXCEPTION '    ├[AuthorizeEntityPermissionValueToEntityPermissionValue]: EntityLeftPermission.CompareMode != EntityRightPermission.CompareMode';
         END IF;
 
         ValueLeft := get_byte(EntityLeftPermissionValue.""Value"", 7)::bigint << 8
@@ -133,7 +133,7 @@ AS $BODY$
             | get_byte(EntityRightPermissionValue.""Value"", 1) << 8
             | get_byte(EntityRightPermissionValue.""Value"", 0);
         
-        RAISE DEBUG '   ├<TryUseCompareMode>';
+        RAISE DEBUG '    ├<TryUseCompareMode>';
 
         CASE EntityLeftPermission.""CompareMode""
             WHEN 0 THEN
@@ -151,10 +151,10 @@ AS $BODY$
             WHEN 6 THEN
                 FResult := ValueLeft >= ValueRight;
             ELSE
-                RAISE EXCEPTION '   ├[AuthorizeEntityPermissionValueToEntityPermissionValue]: ArgumentOutOfRangeException(EntityLeftPermission.CompareMode)';
+                RAISE EXCEPTION '    ├[AuthorizeEntityPermissionValueToEntityPermissionValue]: ArgumentOutOfRangeException(EntityLeftPermission.CompareMode)';
         END CASE;
         
-        RAISE DEBUG '  ┌┘';
+        RAISE DEBUG '   ┌┘';
 
         RETURN FResult;
     END;
@@ -202,7 +202,6 @@ AS $BODY$
                         EntityLeftGroup.""Id"";
                 
                 RAISE DEBUG '   ├EntityLeftPermissionValue = % %', EntityLeftPermissionValue.""Id"", EntityLeftPermissionValue.""Value"";
-                RAISE DEBUG '   └┐';
                 
                 FResult := public.""AuthorizeEntityPermissionValueToEntityPermissionValue""(EntityLeftPermission, EntityLeftPermissionValue, EntityRightPermission, EntityRightPermissionValue);
                 
