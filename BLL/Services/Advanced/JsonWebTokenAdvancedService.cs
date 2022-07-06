@@ -47,7 +47,7 @@ public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
         if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.JsonWebTokenId)?.Value,
                 out var jsonWebTokenId))
             return throwIfNotProvided
-                ? throw new HttpResponseException(StatusCodes.Status500InternalServerError, ErrorType.Auth,
+                ? throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Auth,
                     Localize.Error.JsonWebTokenNotProvided)
                 : null;
 

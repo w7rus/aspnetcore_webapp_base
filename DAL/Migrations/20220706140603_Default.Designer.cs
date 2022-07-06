@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220706122612_Default")]
+    [Migration("20220706140603_Default")]
     partial class Default
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2472,7 +2472,7 @@ namespace DAL.Migrations
                             EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
                             PermissionId = new Guid("28e18150-c23e-4552-be6e-67492f3d290b"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                            Value = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -2482,7 +2482,7 @@ namespace DAL.Migrations
                             EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
                             PermissionId = new Guid("505502c4-4055-4267-b631-ff869f14885d"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                            Value = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -3502,7 +3502,7 @@ namespace DAL.Migrations
                             EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
                             PermissionId = new Guid("65269b59-0612-4348-a1e1-cbef6259d9e8"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -3546,13 +3546,23 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("b404598e-e43a-4cdd-b07d-e8c37a7f3ffc"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
+                            PermissionId = new Guid("d1344244-8ea2-42f1-bf5c-5803794333b4"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
                             Id = new Guid("3edf5d5b-bd8c-423f-a2e9-3e6eab06bf13"),
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
                             EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
                             PermissionId = new Guid("aff2f6f8-b2ec-4811-b5dd-15e1b85d7da6"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -3572,7 +3582,7 @@ namespace DAL.Migrations
                             EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
                             PermissionId = new Guid("55825e7b-c355-41b7-a473-90a091237bd7"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {

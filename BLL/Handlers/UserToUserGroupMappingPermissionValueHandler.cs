@@ -24,7 +24,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Handlers;
 
-public interface IUserToUserGroupPermissionValueHandler
+public interface IUserToUserGroupMappingPermissionValueHandler
 {
     Task<IDtoResultBase> Create(PermissionValueCreateDto data, CancellationToken cancellationToken = default);
     Task<IDtoResultBase> Read(PermissionValueReadDto data, CancellationToken cancellationToken = default);
@@ -38,11 +38,11 @@ public interface IUserToUserGroupPermissionValueHandler
     Task<IDtoResultBase> Delete(PermissionValueDeleteDto data, CancellationToken cancellationToken = default);
 }
 
-public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGroupPermissionValueHandler
+public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserToUserGroupMappingPermissionValueHandler
 {
     #region Ctor
 
-    public UserToUserGroupPermissionValueHandler(
+    public UserToUserGroupMappingPermissionValueHandler(
         ILogger<HandlerBase> logger,
         IAppDbContextAction appDbContextAction,
         IPermissionValueEntityService permissionValueEntityService,
@@ -112,7 +112,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
@@ -185,7 +185,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
@@ -254,7 +254,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
@@ -322,7 +322,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
@@ -397,7 +397,7 @@ public class UserToUserGroupPermissionValueHandler : HandlerBase, IUserToUserGro
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);

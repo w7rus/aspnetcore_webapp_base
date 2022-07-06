@@ -115,7 +115,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
@@ -969,7 +969,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
@@ -1028,7 +1028,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
@@ -1080,7 +1080,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
@@ -1227,7 +1227,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
