@@ -41,8 +41,7 @@ public class DomainInfoController : CustomControllerBase
     #region Methods
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Reads Domain Info (Assembly properties with value types)",
-        Description = "Reads Domain Info (Assembly properties with value types)")]
+    [Route(nameof(Read))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(DomainInfoReadResultDto), StatusCodes.Status200OK)]
     public IActionResult Read(
@@ -53,9 +52,7 @@ public class DomainInfoController : CustomControllerBase
     }
 
     [HttpGet]
-    [Route("assemblyQualifiedNames")]
-    [SwaggerOperation(Summary = "Reads Domain Info (Available assembly qualified names under Domain.Entities)",
-        Description = "Reads Domain Info (Available assembly qualified names under Domain.Entities)")]
+    [Route(nameof(ReadAssemblyQualifiedNames))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(DomainInfoReadAssemblyQualifiedNamesResultDto), StatusCodes.Status200OK)]
     public IActionResult ReadAssemblyQualifiedNames()

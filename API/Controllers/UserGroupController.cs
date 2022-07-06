@@ -48,6 +48,7 @@ public class UserGroupController : CustomControllerBase
     #region Methods
 
     [HttpPost]
+    [Route(nameof(Create))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(UserGroupCreateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Create(
@@ -59,6 +60,7 @@ public class UserGroupController : CustomControllerBase
     }
 
     [HttpGet]
+    [Route(nameof(Read))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(UserGroupReadResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Read(
@@ -70,10 +72,10 @@ public class UserGroupController : CustomControllerBase
     }
     
     [HttpGet]
-    [Route("FSPCollection")]
+    [Route(nameof(ReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(UserGroupReadResultDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ReadFSPCollection(
+    public async Task<IActionResult> ReadCollection(
         [Required] [FromQuery] UserGroupReadCollectionDto data,
         CancellationToken cancellationToken = default
     )
@@ -82,6 +84,7 @@ public class UserGroupController : CustomControllerBase
     }
 
     [HttpPut]
+    [Route(nameof(Update))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(UserGroupUpdateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(
@@ -93,6 +96,7 @@ public class UserGroupController : CustomControllerBase
     }
 
     [HttpDelete]
+    [Route(nameof(Delete))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(
@@ -154,7 +158,7 @@ public class UserGroupController : CustomControllerBase
     [HttpGet]
     [Route(nameof(UserGroupTransferRequestRead))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserGroupTransferRequestReadResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UserGroupTransferRequestRead(
         [Required] [FromQuery] UserGroupTransferRequestReadDto data,
         CancellationToken cancellationToken = default
@@ -166,7 +170,7 @@ public class UserGroupController : CustomControllerBase
     [HttpGet]
     [Route(nameof(UserGroupTransferRequestReceiverReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserGroupTransferRequestReadCollectionResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UserGroupTransferRequestReceiverReadCollection(
         [Required] [FromQuery] UserGroupTransferRequestReadCollectionDto data,
         CancellationToken cancellationToken = default
@@ -178,7 +182,7 @@ public class UserGroupController : CustomControllerBase
     [HttpGet]
     [Route(nameof(UserGroupTransferRequestSenderReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserGroupTransferRequestReadCollectionResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UserGroupTransferRequestSenderReadCollection(
         [Required] [FromQuery] UserGroupTransferRequestReadCollectionDto data,
         CancellationToken cancellationToken = default
@@ -210,7 +214,43 @@ public class UserGroupController : CustomControllerBase
     {
         return ResponseWith(await _userGroupActionsHandler.UserGroupInviteRequestUpdate(data, cancellationToken));
     }
+
+    [HttpGet]
+    [Route(nameof(UserGroupInviteRequestRead))]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(UserGroupInviteRequestReadResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> UserGroupInviteRequestRead(
+        [Required] [FromQuery] UserGroupInviteRequestReadDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupActionsHandler.UserGroupInviteRequestRead(data, cancellationToken));
+    }
     
+    [HttpGet]
+    [Route(nameof(UserGroupInviteRequestReceiverReadCollection))]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(UserGroupTransferRequestReadCollectionResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> UserGroupInviteRequestReceiverReadCollection(
+        [Required] [FromQuery] UserGroupInviteRequestReceiverReadCollectionDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupActionsHandler.UserGroupInviteRequestReceiverReadCollection(data, cancellationToken));
+    }
+    
+    [HttpGet]
+    [Route(nameof(UserGroupInviteRequestSenderReadCollection))]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
+    [ProducesResponseType(typeof(UserGroupTransferRequestReadCollectionResultDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> UserGroupInviteRequestSenderReadCollection(
+        [Required] [FromQuery] UserGroupInviteRequestSenderReadCollectionDto data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return ResponseWith(await _userGroupActionsHandler.UserGroupInviteRequestSenderReadCollection(data, cancellationToken));
+    }
+
     [HttpPost]
     [Route(nameof(UserGroupAddUser))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]

@@ -703,6 +703,56 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 },
 
                 #endregion
+                
+                #region InviteUserRead
+
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.TrueValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.UserGroupInviteRequestRead,
+                            PermissionType.Value))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.TrueValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.UserGroupInviteRequestRead,
+                            PermissionType.ValueNeededOwner))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.RootUserGroupValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.UserGroupInviteRequestRead,
+                            PermissionType.ValueNeededOthers))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.TrueValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                            PermissionType.ValueNeededOwner))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.TrueValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                            PermissionType.ValueNeededOthers))
+                        .Id,
+                    EntityId = userGroup.Id
+                },
+
+                #endregion
 
                 #region KickUser
 
@@ -819,7 +869,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.UserGroupMemberKickUser,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingPublic.Id
@@ -829,6 +879,15 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                     Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
                             Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
+                            PermissionType.Value))
+                        .Id,
+                    EntityId = userToUserGroupMappingPublic.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.FalseValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.UserGroupMemberKickUser,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingPublic.Id
@@ -840,7 +899,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
                 new()
                 {
-                    Value = BitConverter.GetBytes(Consts.TrueValue),
+                    Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
                             Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
                             PermissionType.Value))
@@ -851,7 +910,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.UserGroupMemberKickUser,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingGroupMember.Id
@@ -860,7 +919,16 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 {
                     Value = BitConverter.GetBytes(Consts.FalseValue),
                     PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
-                            Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                            PermissionType.Value))
+                        .Id,
+                    EntityId = userToUserGroupMappingGroupMember.Id
+                },
+                new()
+                {
+                    Value = BitConverter.GetBytes(Consts.FalseValue),
+                    PermissionId = (await _permissionEntityService.GetByAliasTypeAsync(
+                            Consts.PermissionAlias.UserGroupMemberKickUser,
                             PermissionType.Value))
                         .Id,
                     EntityId = userToUserGroupMappingGroupMember.Id

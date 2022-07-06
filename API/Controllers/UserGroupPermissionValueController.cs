@@ -44,8 +44,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     #region Methods
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Creates PermissionValue",
-        Description = "Creates PermissionValue")]
+    [Route(nameof(Create))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(PermissionValueCreateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Create(
@@ -57,8 +56,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     }
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Reads PermissionValue",
-        Description = "Reads PermissionValue")]
+    [Route(nameof(Read))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(PermissionValueReadResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Read(
@@ -70,12 +68,12 @@ public class UserGroupPermissionValueController : CustomControllerBase
     }
 
     [HttpGet]
-    [Route("FSPCollection")]
+    [Route(nameof(ReadCollection))]
     [SwaggerOperation(Summary = "Reads PermissionValues",
         Description = "Reads PermissionValues")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(PermissionValueReadFSPCollectionResultDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ReadFSPCollection(
+    public async Task<IActionResult> ReadCollection(
         [Required] [FromQuery] PermissionValueReadCollectionDto data,
         CancellationToken cancellationToken = default
     )
@@ -84,8 +82,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     }
 
     [HttpPut]
-    [SwaggerOperation(Summary = "Updates PermissionValue",
-        Description = "Updates PermissionValue")]
+    [Route(nameof(Update))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(PermissionValueUpdateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(
@@ -97,8 +94,7 @@ public class UserGroupPermissionValueController : CustomControllerBase
     }
 
     [HttpDelete]
-    [SwaggerOperation(Summary = "Deletes PermissionValue",
-        Description = "Deletes PermissionValue")]
+    [Route(nameof(Delete))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(

@@ -38,7 +38,7 @@ public class ApplicationController : CustomControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    [Route("setup")]
+    [Route(nameof(Setup))]
     [SwaggerOperation(Summary = "Setup", Description = "Setup")]
     [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Setup(

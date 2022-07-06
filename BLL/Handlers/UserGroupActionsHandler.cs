@@ -70,12 +70,12 @@ public interface IUserGroupActionsHandler
     );
 
     Task<IDtoResultBase> UserGroupInviteRequestReceiverReadCollection(
-        UserGroupInviteRequestReadCollectionDto data,
+        UserGroupInviteRequestReceiverReadCollectionDto data,
         CancellationToken cancellationToken = default
     );
 
     Task<IDtoResultBase> UserGroupInviteRequestSenderReadCollection(
-        UserGroupInviteRequestReadCollectionDto data,
+        UserGroupInviteRequestSenderReadCollectionDto data,
         CancellationToken cancellationToken = default
     );
 
@@ -714,12 +714,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                         EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                         EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                         EntityLeftId = user.Id,
-                        EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupRead,
+                        EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestRead,
                         EntityRightTableName = _userGroupRepository.GetTableName(),
                         EntityRightGroupsTableName = null,
                         EntityRightEntityToEntityMappingsTableName = null,
                         EntityRightIdRawSql = "\"UserGroupId\"",
-                        EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupRead,
+                        EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestRead,
                         SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                     }, new FilterExpressionModel
                     {
@@ -790,12 +790,12 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
                     EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
                     EntityLeftId = user.Id,
-                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupRead,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestRead,
                     EntityRightTableName = _userGroupRepository.GetTableName(),
                     EntityRightGroupsTableName = null,
                     EntityRightEntityToEntityMappingsTableName = null,
                     EntityRightIdRawSql = "\"UserGroupId\"",
-                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupRead,
+                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupTransferRequestRead,
                     SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                 }, new FilterExpressionModel
                 {
@@ -862,7 +862,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.HttpContext,
                     Localize.Error.UserNotFound);
 
-            //Authorize g_group_a_inviteuser_o_usergroup against UserGroup TODO: + against User (user that initiates action, user that receives request)
+            //Authorize against UserGroup TODO: + against User (user that initiates action, user that receives request)
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -877,19 +877,42 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestCreate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
-
-            //Authorize g_ingroup_a_inviteuser_o_usergroup via UserToUserGroupMapping against UserGroup (Specific User, Public, GroupMember)
-            UserToUserGroupMapping userToUserGroupMappingUserSpecificGroupMemberPublic = null;
             
-            if (await _authorizeAdvancedService.IsPermissionValueSet(Consts.PermissionAlias.UserGroupMemberInviteRequestCreate, user.Id, PermissionType.Value, cancellationToken))
-                userToUserGroupMappingUserSpecificGroupMemberPublic = await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(user.Id, userGroup.Id);
-            else if (await _authorizeAdvancedService.IsPermissionValueSet(Consts.PermissionAlias.UserGroupMemberInviteRequestCreate, Consts.GroupMemberUserId, PermissionType.Value, cancellationToken))
-                userToUserGroupMappingUserSpecificGroupMemberPublic = await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.GroupMemberUserId, userGroup.Id);
-            else
-                await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.PublicUserId, userGroup.Id);
-                
-            if (userToUserGroupMappingUserSpecificGroupMemberPublic != null)
+            if (!authorizeResult)
             {
+                //Authorize via UserToUserGroupMapping against UserGroup (Specific User, Public, GroupMember)
+                UserToUserGroupMapping userToUserGroupMappingUserSpecificGroupMemberPublic = null;
+                    var userToUserGroupMappingUserSpecific =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(user.Id, userGroup.Id);
+                    var userToUserGroupMappingUserGroupMember =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.GroupMemberUserId,
+                            userGroup.Id);
+                    var userToUserGroupMappingUserPublic =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.PublicUserId,
+                            userGroup.Id);
+
+                    if (userToUserGroupMappingUserSpecific != null &&
+                        await _authorizeAdvancedService.IsPermissionValueSet(
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
+                            userToUserGroupMappingUserSpecific.Id,
+                            PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserSpecific;
+                    else if (userToUserGroupMappingUserGroupMember != null && userToUserGroupMappingUserSpecific != null &&
+                             await _authorizeAdvancedService.IsPermissionValueSet(
+                                 Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
+                                 userToUserGroupMappingUserGroupMember.Id,
+                                 PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserGroupMember;
+                    else if (userToUserGroupMappingUserPublic != null &&
+                             await _authorizeAdvancedService.IsPermissionValueSet(
+                                 Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
+                                 userToUserGroupMappingUserPublic.Id,
+                                 PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserPublic;
+                    else
+                        throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                            Localize.Error.PermissionInsufficientPermissions);
+                
                 authorizeResult |= _authorizeAdvancedService.Authorize(new AuthorizeModel
                 {
                     EntityLeftTableName = _userToUserGroupMappingRepository.GetTableName(),
@@ -904,11 +927,11 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestCreate,
                     SqlExpressionPermissionTypeValueNeededOwner = "T1.\"EntityLeftId\" = T2.\"UserId\""
                 });
-            }
 
-            if (!authorizeResult)
-                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                    Localize.Error.PermissionInsufficientPermissions);
+                if (!authorizeResult)
+                    throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                        Localize.Error.PermissionInsufficientPermissions);
+            }
 
             if (user.Id == data.UserId)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
@@ -1092,18 +1115,47 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     }
                     case Choice.Reject:
                     {
-                        //Authorize g_ingroup_a_inviteuser_o_usergroup_a_manage via UserToUserGroupMapping against UserGroup (Specific User, Public, GroupMember)
-                        UserToUserGroupMapping userToUserGroupMappingUserSpecificGroupMemberPublic = null;
-            
-                        if (await _authorizeAdvancedService.IsPermissionValueSet(Consts.PermissionAlias.UserGroupMemberInviteRequestCreate, user.Id, PermissionType.Value, cancellationToken))
-                            userToUserGroupMappingUserSpecificGroupMemberPublic = await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(user.Id, userGroup.Id);
-                        else if (await _authorizeAdvancedService.IsPermissionValueSet(Consts.PermissionAlias.UserGroupMemberInviteRequestCreate, Consts.GroupMemberUserId, PermissionType.Value, cancellationToken))
-                            userToUserGroupMappingUserSpecificGroupMemberPublic = await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.GroupMemberUserId, userGroup.Id);
-                        else
-                            await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.PublicUserId, userGroup.Id);
-                        
-                        if (userToUserGroupMappingUserSpecificGroupMemberPublic != null)
+                        if (!authorizeResult)
                         {
+                            //Authorize g_ingroup_a_inviteuser_o_usergroup_a_manage via UserToUserGroupMapping against UserGroup (Specific User, Public, GroupMember)
+                            UserToUserGroupMapping userToUserGroupMappingUserSpecificGroupMemberPublic = null;
+                            var userToUserGroupMappingUserSpecific =
+                                await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(user.Id,
+                                    userGroup.Id);
+                            var userToUserGroupMappingUserGroupMember =
+                                await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(
+                                    Consts.GroupMemberUserId,
+                                    userGroup.Id);
+                            var userToUserGroupMappingUserPublic =
+                                await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(
+                                    Consts.PublicUserId,
+                                    userGroup.Id);
+
+                            if (userToUserGroupMappingUserSpecific != null &&
+                                await _authorizeAdvancedService.IsPermissionValueSet(
+                                    Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
+                                    userToUserGroupMappingUserSpecific.Id,
+                                    PermissionType.Value, cancellationToken))
+                                userToUserGroupMappingUserSpecificGroupMemberPublic =
+                                    userToUserGroupMappingUserSpecific;
+                            else if (userToUserGroupMappingUserGroupMember != null &&
+                                     userToUserGroupMappingUserSpecific != null &&
+                                     await _authorizeAdvancedService.IsPermissionValueSet(
+                                         Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
+                                         userToUserGroupMappingUserGroupMember.Id,
+                                         PermissionType.Value, cancellationToken))
+                                userToUserGroupMappingUserSpecificGroupMemberPublic =
+                                    userToUserGroupMappingUserGroupMember;
+                            else if (userToUserGroupMappingUserPublic != null &&
+                                     await _authorizeAdvancedService.IsPermissionValueSet(
+                                         Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
+                                         userToUserGroupMappingUserPublic.Id,
+                                         PermissionType.Value, cancellationToken))
+                                userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserPublic;
+                            else
+                                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                                    Localize.Error.PermissionInsufficientPermissions);
+
                             authorizeResult |= _authorizeAdvancedService.Authorize(new AuthorizeModel
                             {
                                 EntityLeftTableName = _userToUserGroupMappingRepository.GetTableName(),
@@ -1118,11 +1170,11 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                                 EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestUpdate,
                                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"EntityLeftId\" = T2.\"UserId\""
                             });
-                        }
 
-                        if (!authorizeResult)
-                            throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                                Localize.Error.PermissionInsufficientPermissions);
+                            if (!authorizeResult)
+                                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                                    Localize.Error.PermissionInsufficientPermissions);
+                        }
 
                         await _userGroupInviteRequestEntityService.Delete(userGroupInviteRequest, cancellationToken);
                         break;
@@ -1161,14 +1213,109 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             await _appDbContextAction.BeginTransactionAsync();
 
             //User read invite request if (Owner - [DestUser, SrcUser] | Others [UserToUserGroupMapping])
+            
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            if (user == null)
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
+                    Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            throw new NotImplementedException();
+            var userGroupInviteRequest =
+                await _userGroupInviteRequestEntityService.GetByIdAsync(data.Id, cancellationToken);
+            if (userGroupInviteRequest == null)
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
+                    Localize.Error.UserGroupInviteRequestNotFound);
+
+            var userGroup =
+                await _userGroupEntityService.GetByIdAsync(userGroupInviteRequest.UserGroupId, cancellationToken);
+            if (userGroup == null)
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
+                    Localize.Error.UserGroupNotFound);
+            
+            //Action is taken by receiver of UserGroupTransferRequest
+            if (user.Id == userGroupInviteRequest.DestUserId)
+            {
+                //TODO: + against User (user that receives request)
+            }
+            //Action is taken by creator of UserGroupTransferRequest or by 3rd party
+            else
+            {
+                //Authorize against UserGroup TODO: + against User (user that initiates action)
+                var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
+                {
+                    EntityLeftTableName = _userRepository.GetTableName(),
+                    EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                    EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                    EntityLeftId = user.Id,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestRead,
+                    EntityRightTableName = _userGroupRepository.GetTableName(),
+                    EntityRightGroupsTableName = null,
+                    EntityRightEntityToEntityMappingsTableName = null,
+                    EntityRightId = userGroup.Id,
+                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestRead,
+                    SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
+                });
+
+                if (!authorizeResult)
+                {
+                    //Authorize via UserToUserGroupMapping against UserGroup (Specific User, Public, GroupMember)
+                    UserToUserGroupMapping userToUserGroupMappingUserSpecificGroupMemberPublic = null;
+                    var userToUserGroupMappingUserSpecific =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(user.Id, userGroup.Id);
+                    var userToUserGroupMappingUserGroupMember =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.GroupMemberUserId,
+                            userGroup.Id);
+                    var userToUserGroupMappingUserPublic =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.PublicUserId,
+                            userGroup.Id);
+
+                    if (userToUserGroupMappingUserSpecific != null &&
+                        await _authorizeAdvancedService.IsPermissionValueSet(
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                            userToUserGroupMappingUserSpecific.Id,
+                            PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserSpecific;
+                    else if (userToUserGroupMappingUserGroupMember != null && userToUserGroupMappingUserSpecific != null &&
+                             await _authorizeAdvancedService.IsPermissionValueSet(
+                                 Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                                 userToUserGroupMappingUserGroupMember.Id,
+                                 PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserGroupMember;
+                    else if (userToUserGroupMappingUserPublic != null &&
+                             await _authorizeAdvancedService.IsPermissionValueSet(
+                                 Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                                 userToUserGroupMappingUserPublic.Id,
+                                 PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserPublic;
+                    else
+                        throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                            Localize.Error.PermissionInsufficientPermissions);
+
+                    authorizeResult |= _authorizeAdvancedService.Authorize(new AuthorizeModel
+                    {
+                        EntityLeftTableName = _userToUserGroupMappingRepository.GetTableName(),
+                        EntityLeftGroupsTableName = null,
+                        EntityLeftEntityToEntityMappingsTableName = null,
+                        EntityLeftId = userToUserGroupMappingUserSpecificGroupMemberPublic.Id,
+                        EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                        EntityRightTableName = _userGroupRepository.GetTableName(),
+                        EntityRightGroupsTableName = null,
+                        EntityRightEntityToEntityMappingsTableName = null,
+                        EntityRightId = userGroup.Id,
+                        EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                        SqlExpressionPermissionTypeValueNeededOwner = "T1.\"EntityLeftId\" = T2.\"UserId\""
+                    });
+
+                    if (!authorizeResult)
+                        throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                            Localize.Error.PermissionInsufficientPermissions);
+                }
+            }
 
             await _appDbContextAction.CommitTransactionAsync();
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(UserGroupInviteRequestRead)));
 
-            // return new ;
+            return _mapper.Map<UserGroupInviteRequestReadResultDto>(userGroupInviteRequest);
         }
         catch (Exception)
         {
@@ -1179,7 +1326,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
     }
 
     public async Task<IDtoResultBase> UserGroupInviteRequestReceiverReadCollection(
-        UserGroupInviteRequestReadCollectionDto data,
+        UserGroupInviteRequestReceiverReadCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -1194,15 +1341,82 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             await _appDbContextAction.BeginTransactionAsync();
 
             //User read invite request if (Owner - [DestUser, SrcUser] | Others [UserToUserGroupMapping])
-
-            throw new NotImplementedException();
+            
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            if (user == null)
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
+                    Localize.Error.UserNotFoundOrHttpContextMissingClaims);
+            
+            (int total, IReadOnlyCollection<UserGroupInviteRequest> entities) userGroupInviteRequests;
+            
+            //Action is taken by receiver of UserGroupTransferRequest
+            if (user.Id == data.UserId)
+            {
+                //TODO: + against User (user that receives request)
+                userGroupInviteRequests = await _userGroupInviteRequestEntityService.GetFiltered(
+                    data.FilterExpressionModel, data.FilterSortModel,
+                    data.PageModel, null,new FilterExpressionModel
+                    {
+                        ExpressionLogicalOperation = ExpressionLogicalOperation.None,
+                        Items = new List<FilterExpressionModelItem>
+                        {
+                            new FilterExpressionModelItemExpression
+                            {
+                                ExpressionLogicalOperation = ExpressionLogicalOperation.None,
+                                Key = "DestUserId",
+                                Value = data.UserId.ToByteArray(),
+                                FilterMatchOperation = FilterMatchOperation.Equal
+                            }
+                        }
+                    }, cancellationToken);
+            }
+            //Action is taken by 3rd party
+            else
+            {
+                //Authorize against UserGroup TODO: + against User (user that initiates action)
+                userGroupInviteRequests = await _userGroupInviteRequestEntityService.GetFiltered(
+                    data.FilterExpressionModel, data.FilterSortModel,
+                    data.PageModel, new AuthorizeModel
+                    {
+                        EntityLeftTableName = _userRepository.GetTableName(),
+                        EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                        EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                        EntityLeftId = user.Id,
+                        EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestRead,
+                        EntityRightTableName = _userGroupRepository.GetTableName(),
+                        EntityRightGroupsTableName = null,
+                        EntityRightEntityToEntityMappingsTableName = null,
+                        EntityRightIdRawSql = "\"UserGroupId\"",
+                        EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestRead,
+                        SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
+                    }, new FilterExpressionModel
+                    {
+                        ExpressionLogicalOperation = ExpressionLogicalOperation.None,
+                        Items = new List<FilterExpressionModelItem>
+                        {
+                            new FilterExpressionModelItemExpression
+                            {
+                                ExpressionLogicalOperation = ExpressionLogicalOperation.None,
+                                Key = "DestUserId",
+                                Value = data.UserId.ToByteArray(),
+                                FilterMatchOperation = FilterMatchOperation.Equal
+                            }
+                        }
+                    }, cancellationToken);
+            }
 
             await _appDbContextAction.CommitTransactionAsync();
 
             _logger.Log(LogLevel.Information,
                 Localize.Log.MethodEnd(GetType(), nameof(UserGroupInviteRequestReceiverReadCollection)));
 
-            // return new ;
+            return new UserGroupInviteRequestReadCollectionResultDto
+            {
+                Total = userGroupInviteRequests.total,
+                Items = userGroupInviteRequests.entities.Select(
+                    _ => _mapper.ProjectTo<UserGroupInviteRequestReadCollectionItemResultDto>(new[] {_}.AsQueryable())
+                        .Single())
+            };
         }
         catch (Exception)
         {
@@ -1213,7 +1427,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
     }
 
     public async Task<IDtoResultBase> UserGroupInviteRequestSenderReadCollection(
-        UserGroupInviteRequestReadCollectionDto data,
+        UserGroupInviteRequestSenderReadCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {
@@ -1228,15 +1442,127 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             await _appDbContextAction.BeginTransactionAsync();
 
             //User read invite request if (Owner - [DestUser, SrcUser] | Others [UserToUserGroupMapping])
+            
+            var user = await _userAdvancedService.GetFromHttpContext(cancellationToken);
+            if (user == null)
+                throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
+                    Localize.Error.UserNotFoundOrHttpContextMissingClaims);
+            
+            var userGroup = await _userGroupEntityService.GetByIdAsync(data.UserGroupId, cancellationToken);
+            if (userGroup == null)
+                throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
+                    Localize.Error.UserGroupNotFound);
+            
+            //Action is taken by creator of UserGroupTransferRequest or by 3rd party
+            //Authorize against UserGroup TODO: + against User (user that initiates action)
+            var userGroupInviteRequests = await _userGroupInviteRequestEntityService.GetFiltered(
+                data.FilterExpressionModel, data.FilterSortModel,
+                data.PageModel, new AuthorizeModel
+                {
+                    EntityLeftTableName = _userRepository.GetTableName(),
+                    EntityLeftGroupsTableName = _userGroupRepository.GetTableName(),
+                    EntityLeftEntityToEntityMappingsTableName = _userToUserGroupMappingRepository.GetTableName(),
+                    EntityLeftId = user.Id,
+                    EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestRead,
+                    EntityRightTableName = _userGroupRepository.GetTableName(),
+                    EntityRightGroupsTableName = null,
+                    EntityRightEntityToEntityMappingsTableName = null,
+                    EntityRightIdRawSql = "\"UserGroupId\"",
+                    EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupInviteRequestRead,
+                    SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
+                }, new FilterExpressionModel
+                {
+                    ExpressionLogicalOperation = ExpressionLogicalOperation.None,
+                    Items = new List<FilterExpressionModelItem>
+                    {
+                        new FilterExpressionModelItemExpression
+                        {
+                            ExpressionLogicalOperation = ExpressionLogicalOperation.None,
+                            Key = "UserGroupId",
+                            Value = data.UserGroupId.ToByteArray(),
+                            FilterMatchOperation = FilterMatchOperation.Equal
+                        }
+                    }
+                }, cancellationToken);
 
-            throw new NotImplementedException();
+            if (userGroupInviteRequests.total == 0)
+            {
+                //Authorize via UserToUserGroupMapping against UserGroup (Specific User, Public, GroupMember)
+                UserToUserGroupMapping userToUserGroupMappingUserSpecificGroupMemberPublic = null;
+                    var userToUserGroupMappingUserSpecific =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(user.Id, userGroup.Id);
+                    var userToUserGroupMappingUserGroupMember =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.GroupMemberUserId,
+                            userGroup.Id);
+                    var userToUserGroupMappingUserPublic =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.PublicUserId,
+                            userGroup.Id);
+
+                    if (userToUserGroupMappingUserSpecific != null &&
+                        await _authorizeAdvancedService.IsPermissionValueSet(
+                            Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                            userToUserGroupMappingUserSpecific.Id,
+                            PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserSpecific;
+                    else if (userToUserGroupMappingUserGroupMember != null && userToUserGroupMappingUserSpecific != null &&
+                             await _authorizeAdvancedService.IsPermissionValueSet(
+                                 Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                                 userToUserGroupMappingUserGroupMember.Id,
+                                 PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserGroupMember;
+                    else if (userToUserGroupMappingUserPublic != null &&
+                             await _authorizeAdvancedService.IsPermissionValueSet(
+                                 Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                                 userToUserGroupMappingUserPublic.Id,
+                                 PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserPublic;
+                    else
+                        throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                            Localize.Error.PermissionInsufficientPermissions);
+                
+                userGroupInviteRequests = await _userGroupInviteRequestEntityService.GetFiltered(
+                    data.FilterExpressionModel, data.FilterSortModel,
+                    data.PageModel, new AuthorizeModel
+                    {
+                        EntityLeftTableName = _userToUserGroupMappingRepository.GetTableName(),
+                        EntityLeftGroupsTableName = null,
+                        EntityLeftEntityToEntityMappingsTableName = null,
+                        EntityLeftId = userToUserGroupMappingUserSpecificGroupMemberPublic.Id,
+                        EntityLeftPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                        EntityRightTableName = _userGroupRepository.GetTableName(),
+                        EntityRightGroupsTableName = null,
+                        EntityRightEntityToEntityMappingsTableName = null,
+                        EntityRightIdRawSql = "\"UserGroupId\"",
+                        EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupMemberInviteRequestRead,
+                        SqlExpressionPermissionTypeValueNeededOwner = "T1.\"EntityLeftId\" = T2.\"UserId\""
+                    }, new FilterExpressionModel
+                    {
+                        ExpressionLogicalOperation = ExpressionLogicalOperation.None,
+                        Items = new List<FilterExpressionModelItem>
+                        {
+                            new FilterExpressionModelItemExpression
+                            {
+                                ExpressionLogicalOperation = ExpressionLogicalOperation.None,
+                                Key = "UserGroupId",
+                                Value = data.UserGroupId.ToByteArray(),
+                                FilterMatchOperation = FilterMatchOperation.Equal
+                            }
+                        }
+                    }, cancellationToken);
+            }
 
             await _appDbContextAction.CommitTransactionAsync();
 
             _logger.Log(LogLevel.Information,
                 Localize.Log.MethodEnd(GetType(), nameof(UserGroupInviteRequestSenderReadCollection)));
 
-            // return new ;
+            return new UserGroupInviteRequestReadCollectionResultDto
+            {
+                Total = userGroupInviteRequests.total,
+                Items = userGroupInviteRequests.entities.Select(
+                    _ => _mapper.ProjectTo<UserGroupInviteRequestReadCollectionItemResultDto>(new[] {_}.AsQueryable())
+                        .Single())
+            };
         }
         catch (Exception)
         {
@@ -1373,19 +1699,41 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
             });
 
-            //Authorize g_ingroup_a_kickuser_o_usergroup via UserToUserGroupMapping against UserGroup (Specific User, Public, GroupMember)
-            
-            UserToUserGroupMapping userToUserGroupMappingUserSpecificGroupMemberPublic = null;
-            
-            if (await _authorizeAdvancedService.IsPermissionValueSet(Consts.PermissionAlias.UserGroupMemberInviteRequestCreate, user.Id, PermissionType.Value, cancellationToken))
-                userToUserGroupMappingUserSpecificGroupMemberPublic = await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(user.Id, userGroup.Id);
-            else if (await _authorizeAdvancedService.IsPermissionValueSet(Consts.PermissionAlias.UserGroupMemberInviteRequestCreate, Consts.GroupMemberUserId, PermissionType.Value, cancellationToken))
-                userToUserGroupMappingUserSpecificGroupMemberPublic = await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.GroupMemberUserId, userGroup.Id);
-            else
-                await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.PublicUserId, userGroup.Id);
-            
-            if (userToUserGroupMappingUserSpecificGroupMemberPublic != null)
+            if (!authorizeResult)
             {
+                //Authorize g_ingroup_a_kickuser_o_usergroup via UserToUserGroupMapping against UserGroup (Specific User, Public, GroupMember)
+                UserToUserGroupMapping userToUserGroupMappingUserSpecificGroupMemberPublic = null;
+                    var userToUserGroupMappingUserSpecific =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(user.Id, userGroup.Id);
+                    var userToUserGroupMappingUserGroupMember =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.GroupMemberUserId,
+                            userGroup.Id);
+                    var userToUserGroupMappingUserPublic =
+                        await _userToUserGroupMappingEntityService.GetByUserIdUserGroupIdAsync(Consts.PublicUserId,
+                            userGroup.Id);
+
+                    if (userToUserGroupMappingUserSpecific != null &&
+                        await _authorizeAdvancedService.IsPermissionValueSet(
+                            Consts.PermissionAlias.UserGroupMemberKickUser,
+                            userToUserGroupMappingUserSpecific.Id,
+                            PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserSpecific;
+                    else if (userToUserGroupMappingUserGroupMember != null && userToUserGroupMappingUserSpecific != null &&
+                             await _authorizeAdvancedService.IsPermissionValueSet(
+                                 Consts.PermissionAlias.UserGroupMemberKickUser,
+                                 userToUserGroupMappingUserGroupMember.Id,
+                                 PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserGroupMember;
+                    else if (userToUserGroupMappingUserPublic != null &&
+                             await _authorizeAdvancedService.IsPermissionValueSet(
+                                 Consts.PermissionAlias.UserGroupMemberKickUser,
+                                 userToUserGroupMappingUserPublic.Id,
+                                 PermissionType.Value, cancellationToken))
+                        userToUserGroupMappingUserSpecificGroupMemberPublic = userToUserGroupMappingUserPublic;
+                    else
+                        throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                            Localize.Error.PermissionInsufficientPermissions);
+                
                 authorizeResult |= _authorizeAdvancedService.Authorize(new AuthorizeModel
                 {
                     EntityLeftTableName = _userToUserGroupMappingRepository.GetTableName(),
@@ -1400,11 +1748,11 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupMemberKickUser,
                     SqlExpressionPermissionTypeValueNeededOwner = "T1.\"EntityIdLeft\" = T2.\"UserId\""
                 });
-            }
 
-            if (!authorizeResult)
-                throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
-                    Localize.Error.PermissionInsufficientPermissions);
+                if (!authorizeResult)
+                    throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
+                        Localize.Error.PermissionInsufficientPermissions);
+            }
 
             if (userTarget.Id == Consts.PublicUserId || userTarget.Id == Consts.GroupMemberUserId)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,

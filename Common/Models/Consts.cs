@@ -14,7 +14,7 @@ public static class Consts
     public const long BannedUserGroupValue = 0L;
     public const long BannedUserGroupPriority = long.MaxValue - 1;
     public const long TrueValue = 1;
-    public const long FalseValue = 1;
+    public const long FalseValue = 0;
     public const string AutoMapperModelAuthorizeDataKey = "AutoMapperModelAuthorizeData";
     public const string NpgSqlEntityFrameworkCorePostgreSQLProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
     public const string DomainNamespace = "Domain.Entities";
@@ -47,7 +47,7 @@ public static class Consts
         public const string UserGroupJoin = "UserGroupJoin";
         public const string UserGroupLeave = "UserGroupLeave";
         public const string UserGroupTransferRequestCreate = "UserGroupTransferRequestCreate";
-        public const string UserGroupTransferRequestRead = "UserGroupTransferRequestRead"; //TODO:
+        public const string UserGroupTransferRequestRead = "UserGroupTransferRequestRead";
         public const string UserGroupTransferRequestUpdate = "UserGroupTransferRequestUpdate";
         public const string UserGroupInviteRequestCreate = "UserGroupInviteRequestCreate";
         public const string UserGroupInviteRequestRead = "UserGroupInviteRequestRead"; //TODO:

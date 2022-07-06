@@ -44,8 +44,7 @@ public class PermissionController : CustomControllerBase
     #region Methods
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Reads Permission",
-        Description = "Reads Permission")]
+    [Route(nameof(Read))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(PermissionReadResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Read(
@@ -57,12 +56,10 @@ public class PermissionController : CustomControllerBase
     }
 
     [HttpGet]
-    [Route("FSPCollection")]
-    [SwaggerOperation(Summary = "Reads Permission[]",
-        Description = "Reads Permission[]")]
+    [Route(nameof(ReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(PermissionReadFSPCollectionResultDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ReadFSPCollection(
+    public async Task<IActionResult> ReadCollection(
         [Required] [FromQuery] PermissionReadCollectionDto data,
         CancellationToken cancellationToken = default
     )

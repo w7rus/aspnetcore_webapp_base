@@ -45,7 +45,7 @@ public class AuthController : CustomControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    [Route("signinasguest")]
+    [Route(nameof(SignInAsGuest))]
     [SwaggerOperation(Summary = "Sign In as Guest",
         Description = "Sign In as Guest")]
     [ProducesResponseType(typeof(AuthSignUpResultDto), StatusCodes.Status200OK)]
@@ -58,7 +58,7 @@ public class AuthController : CustomControllerBase
     }
 
     [HttpPost]
-    [Route("signup")]
+    [Route(nameof(SignUp))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [SwaggerOperation(Summary = "Sign Up for creating a new User account",
         Description = "Sign Up for creating a new User account")]
@@ -72,7 +72,7 @@ public class AuthController : CustomControllerBase
     }
 
     [HttpPost]
-    [Route("signin")]
+    [Route(nameof(SignIn))]
     [AllowAnonymous]
     [SwaggerOperation(Summary = "Sign In to an existing User account",
         Description = "Sign In to an existing User account")]
@@ -87,7 +87,7 @@ public class AuthController : CustomControllerBase
 
     [HttpPost]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebTokenExpired)]
-    [Route("refresh")]
+    [Route(nameof(Refresh))]
     [SwaggerOperation(Summary = "Refresh Authorization using Refresh Token",
         Description = "Refresh Authorization using Refresh Token")]
     [ProducesResponseType(typeof(AuthRefreshResultDto), StatusCodes.Status200OK)]
@@ -101,7 +101,7 @@ public class AuthController : CustomControllerBase
 
     [HttpPost]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [Route("signout")]
+    [Route(nameof(SignOut))]
     [SwaggerOperation(Summary = "Sign Out from an existing User account",
         Description = "Sign Out from an existing User account")]
     [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]

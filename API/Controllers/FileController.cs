@@ -57,8 +57,7 @@ public class FileController : CustomControllerBase
     [RequestSizeLimit(134217728L)] //128MB
     [RequestFormLimits(MultipartBodyLengthLimit = 134217728L)] //128MB
     [HttpPost]
-    [SwaggerOperation(Summary = "Creates file",
-        Description = "Creates file")]
+    [Route(nameof(Create))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(FileCreateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Create(CancellationToken cancellationToken = default)
@@ -120,8 +119,7 @@ public class FileController : CustomControllerBase
     }
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Reads file",
-        Description = "Reads file")]
+    [Route(nameof(Read))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Read(
@@ -133,8 +131,7 @@ public class FileController : CustomControllerBase
     }
 
     [HttpPut]
-    [SwaggerOperation(Summary = "Updates file",
-        Description = "Updates file")]
+    [Route(nameof(Update))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(FileUpdateResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(
@@ -146,8 +143,7 @@ public class FileController : CustomControllerBase
     }
 
     [HttpDelete]
-    [SwaggerOperation(Summary = "Deletes file",
-        Description = "Deletes file")]
+    [Route(nameof(Delete))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(OkResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(
