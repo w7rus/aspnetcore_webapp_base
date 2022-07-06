@@ -179,7 +179,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
-            //Authorize g_group_a_join_o_usergroup against UserGroup TODO: + against User (user that initiates action)
+            //Authorize against UserGroup TODO: + against User (user that initiates action)
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -251,7 +251,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
-            //Authorize g_group_a_leave_o_usergroup against UserGroup TODO: + against User (user that initiates action)
+            //Authorize against UserGroup TODO: + against User (user that initiates action)
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -328,7 +328,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.HttpContext,
                     Localize.Error.UserNotFound);
 
-            //Authorize g_group_a_transfer_o_usergroup against UserGroup TODO: + against User (user that initiates action, user that receives request)
+            //Authorize against UserGroup TODO: + against User (user that initiates action, user that receives request)
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -407,7 +407,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             //Action is taken by creator of UserGroupTransferRequest
             if (user.Id == userGroupTransferRequest.SrcUserId)
             {
-                //Authorize g_group_a_transfer_o_usergroup_a_manage against UserGroup TODO: + against User (user that initiates action)
+                //Authorize against UserGroup TODO: + against User (user that initiates action)
                 var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
                 {
                     EntityLeftTableName = _userRepository.GetTableName(),
@@ -498,7 +498,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             //Action is taken by 3rd party
             else
             {
-                //Authorize g_group_a_transfer_o_usergroup_a_manage against UserGroup TODO: + against User (user that initiates action)
+                //Authorize against UserGroup TODO: + against User (user that initiates action)
                 var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
                 {
                     EntityLeftTableName = _userRepository.GetTableName(),
@@ -1003,7 +1003,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             //Action is taken by creator of UserGroupInviteRequest
             if (user.Id == userGroupInviteRequest.SrcUserId)
             {
-                //Authorize g_group_a_inviteuser_o_usergroup_a_manage against UserGroup TODO: + against User (user that initiates action)
+                //Authorize against UserGroup TODO: + against User (user that initiates action)
                 var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
                 {
                     EntityLeftTableName = _userRepository.GetTableName(),
@@ -1074,7 +1074,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             //Action is taken by 3rd party
             else
             {
-                //Authorize g_group_a_inviteuser_o_usergroup_a_manage against UserGroup TODO: + against User (user that initiates action)
+                //Authorize against UserGroup TODO: + against User (user that initiates action)
                 var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
                 {
                     EntityLeftTableName = _userRepository.GetTableName(),
@@ -1601,7 +1601,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserNotFound);
 
-            //Authorize g_group_a_adduser_o_usergroup to UserGroup TODO: + against User (user that initiates action, user that is being targeted)
+            //Authorize to UserGroup TODO: + against User (user that initiates action, user that is being targeted)
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -1683,7 +1683,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserNotFound);
 
-            //Authorize g_group_a_kickuser_o_usergroup against UserGroup TODO: + against User (user that initiates action, user that is being targeted)
+            //Authorize against UserGroup TODO: + against User (user that initiates action, user that is being targeted)
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),

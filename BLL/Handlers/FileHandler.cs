@@ -228,7 +228,7 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.HttpContext,
                     Localize.Error.FileNotFound);
 
-            //Authorize g_file_a_read_o_file against User TODO: + against File
+            //Authorize against User TODO: + against File
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -296,7 +296,7 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.HttpContext,
                     Localize.Error.FileNotFound);
 
-            //Authorize g_file_a_update_o_file against User TODO: + against File
+            //Authorize against User TODO: + against File
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -317,7 +317,7 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            //Authorize g_file_a_update_o_file_* against User: Automapper TODO: + against File
+            //Authorize against User: Automapper TODO: + against File
             var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData
             {
                 FieldAuthorizeResultDictionary = new Dictionary<string, bool>
@@ -387,7 +387,7 @@ public class FileHandler : HandlerBase, IFileHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.HttpContext,
                     Localize.Error.FileNotFound);
 
-            //Authorize g_file_a_delete_o_file against User TODO: + against File
+            //Authorize against User TODO: + against File
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),

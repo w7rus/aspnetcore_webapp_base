@@ -979,7 +979,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
-            //Authorize g_group_a_read_o_usergroup against UserGroup TODO: + against User (user that initiates action)
+            //Authorize against UserGroup TODO: + against User (user that initiates action)
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -1090,7 +1090,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
-            //Authorize g_group_a_update_o_usergroup against UserGroup TODO: + against User (user that initiates action)
+            //Authorize against UserGroup TODO: + against User (user that initiates action)
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
@@ -1110,7 +1110,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            //Authorize g_group_a_update_o_usergroup_* against UserGroup: Automapper TODO: + against User (user that initiates action)
+            //Authorize against UserGroup: Automapper TODO: + against User (user that initiates action)
             var autoMapperModelAuthorizeData = new AutoMapperModelAuthorizeData
             {
                 FieldAuthorizeResultDictionary = new Dictionary<string, bool>
@@ -1237,7 +1237,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
-            //Authorize g_group_a_delete_o_usergroup against UserGroup TODO: + against User (user that initiates action)
+            //Authorize against UserGroup TODO: + against User (user that initiates action)
             var authorizeResult = _authorizeAdvancedService.Authorize(new AuthorizeModel
             {
                 EntityLeftTableName = _userRepository.GetTableName(),
