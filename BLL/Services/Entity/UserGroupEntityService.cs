@@ -132,7 +132,7 @@ public class UserGroupEntityService : IUserGroupEntityService
         await _appDbContextAction.CommitAsync(cancellationToken);
     }
 
-    public async Task<(int total, IReadOnlyCollection<UserGroup> entities)> GetFilteredSortedPaged(
+    public async Task<(int total, IReadOnlyCollection<UserGroup> entities)> GetFiltered(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
@@ -142,14 +142,15 @@ public class UserGroupEntityService : IUserGroupEntityService
     )
     {
         var result =
-            _userGroupRepository.GetFilteredSorted(filterExpressionModel, filterSortModel, authorizeModel);
+            _userGroupRepository.GetFilteredSorted(filterExpressionModel, filterSortModel, authorizeModel,
+                systemFilterExpressionModel);
 
         var total = result.Count();
 
         result = result.GetPage(pageModel);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),
+            Localize.Log.Method(GetType(), nameof(GetFiltered),
                 $"{result?.GetType().Name} {result?.Count()}"));
 
         return (total, await result?.ToArrayAsync(cancellationToken)!);

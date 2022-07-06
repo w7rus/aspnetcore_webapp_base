@@ -16,17 +16,23 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
 
-public interface IPermissionValueEntityCollectionService : IEntityServiceBase<PermissionValue>, IEntityCollectionServiceBase<PermissionValue>
+public interface IPermissionValueEntityService : IEntityServiceBase<PermissionValue>, IEntityCollectionServiceBase<PermissionValue>
 {
     Task PurgeAsync(Guid entityId, CancellationToken cancellationToken = default);
+
+    Task<PermissionValue> GetByPermissionIdEntityIdAsync(
+        Guid permissionId,
+        Guid entityId,
+        CancellationToken cancellationToken = default
+    );
 }
 
-public class PermissionValueEntityCollectionService : IPermissionValueEntityCollectionService
+public class PermissionValueEntityService : IPermissionValueEntityService
 {
     #region Ctor
 
-    public PermissionValueEntityCollectionService(
-        ILogger<PermissionValueEntityCollectionService> logger,
+    public PermissionValueEntityService(
+        ILogger<PermissionValueEntityService> logger,
         IPermissionValueRepository permissionValueRepository,
         IAppDbContextAction appDbContextAction
     )
@@ -40,7 +46,7 @@ public class PermissionValueEntityCollectionService : IPermissionValueEntityColl
 
     #region Fields
 
-    private readonly ILogger<PermissionValueEntityCollectionService> _logger;
+    private readonly ILogger<PermissionValueEntityService> _logger;
     private readonly IPermissionValueRepository _permissionValueRepository;
     private readonly IAppDbContextAction _appDbContextAction;
 
@@ -103,7 +109,21 @@ public class PermissionValueEntityCollectionService : IPermissionValueEntityColl
         }
     }
 
-    public async Task<(int total, IReadOnlyCollection<PermissionValue> entities)> GetFilteredSortedPaged(
+    public async Task<PermissionValue> GetByPermissionIdEntityIdAsync(
+        Guid permissionId,
+        Guid entityId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var entity = await _permissionValueRepository.SingleOrDefaultAsync(_ => _.PermissionId == permissionId && _.EntityId == entityId);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetByPermissionIdEntityIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
+
+        return entity;
+    }
+
+    public async Task<(int total, IReadOnlyCollection<PermissionValue> entities)> GetFiltered(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
@@ -121,7 +141,7 @@ public class PermissionValueEntityCollectionService : IPermissionValueEntityColl
         result = result.GetPage(pageModel);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),
+            Localize.Log.Method(GetType(), nameof(GetFiltered),
                 $"{result?.GetType().Name} {result?.Count()}"));
 
         return (total, await result?.ToArrayAsync(cancellationToken)!);

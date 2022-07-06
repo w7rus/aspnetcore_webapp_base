@@ -20,8 +20,8 @@ public interface IPermissionHandler
 {
     Task<IDtoResultBase> Read(PermissionReadDto data, CancellationToken cancellationToken = default);
 
-    Task<IDtoResultBase> ReadFSPCollection(
-        PermissionReadEntityCollectionDto data,
+    Task<IDtoResultBase> ReadCollection(
+        PermissionReadCollectionDto data,
         CancellationToken cancellationToken = default
     );
 }
@@ -86,12 +86,12 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
         }
     }
 
-    public async Task<IDtoResultBase> ReadFSPCollection(
-        PermissionReadEntityCollectionDto data,
+    public async Task<IDtoResultBase> ReadCollection(
+        PermissionReadCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {
-        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadFSPCollection)));
+        _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(ReadCollection)));
 
         if (ValidateModel(data) is { } validationResult)
             return validationResult;
@@ -100,7 +100,7 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
         {
             await _appDbContextAction.BeginTransactionAsync();
 
-            var permissions = await _permissionEntityService.GetFilteredSortedPaged(data.FilterExpressionModel,
+            var permissions = await _permissionEntityService.GetFiltered(data.FilterExpressionModel,
                 data.FilterSortModel, data.PageModel, null, cancellationToken: cancellationToken);
 
             await _appDbContextAction.CommitTransactionAsync();

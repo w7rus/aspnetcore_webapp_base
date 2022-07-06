@@ -3,7 +3,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupReadDtoReadFSPCollectionItemResultDto : IEntityBaseResultDto<Guid>
+public class UserGroupReadCollectionItemResultDto : IEntityBaseResultDto<Guid>
 {
     public string Alias { get; set; }
     public string Description { get; set; }

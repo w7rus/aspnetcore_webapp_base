@@ -314,6 +314,41 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                 "to_timestamp(" + value.ToString("yyyy-MM-dd HH:mm:ss zzz") +
                 "\'YYYY-MM-DD HH24:MI:SS TZH:TZM\')"));
         }
+        
+        void AddMatchParameterGuid(
+            MemberInfo property,
+            FilterMatchOperation filterMatchOperation,
+            string sqlParameterName,
+            Guid value
+        )
+        {
+            var filterMatchOperationAsString = filterMatchOperation switch
+            {
+                FilterMatchOperation.None => throw new CustomException(Localize.Error
+                    .FilterModelValueTypeNotCompatible),
+                FilterMatchOperation.Equal => " = ",
+                FilterMatchOperation.NotEqual => " != ",
+                FilterMatchOperation.Less => throw new CustomException(Localize.Error
+                    .FilterModelValueTypeNotCompatible),
+                FilterMatchOperation.LessOrEqual => throw new CustomException(Localize.Error
+                    .FilterModelValueTypeNotCompatible),
+                FilterMatchOperation.Greater => throw new CustomException(Localize.Error
+                    .FilterModelValueTypeNotCompatible),
+                FilterMatchOperation.GreaterOrEqual => throw new CustomException(Localize.Error
+                    .FilterModelValueTypeNotCompatible),
+                FilterMatchOperation.Contains => throw new CustomException(Localize.Error
+                    .FilterModelValueTypeNotCompatible),
+                FilterMatchOperation.StartsWith => throw new CustomException(Localize.Error
+                    .FilterModelValueTypeNotCompatible),
+                FilterMatchOperation.EndsWith => throw new CustomException(Localize.Error
+                    .FilterModelValueTypeNotCompatible),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            rawSql += '"' + property.Name + '"' + filterMatchOperationAsString + '@' + sqlParameterName;
+
+            rawSqlParameters.Add(new NpgsqlParameter<Guid>(sqlParameterName, value));
+        }
 
         var sqlParameterCounter = 0;
         
@@ -492,10 +527,11 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                             }
                             case ValueType.Guid:
                             {
-                                if (!Guid.TryParse(Encoding.UTF8.GetString(itemExpression.Value), out var value))
+                                var value = new Guid(itemExpression.Value);
+                                if (value == Guid.Empty)
                                     throw new CustomException(Localize.Error
                                         .FilterModelItemExpressionValueFailedToParseGuid);
-                                AddMatchParameterEquatable(property, itemExpression.FilterMatchOperation,
+                                AddMatchParameterGuid(property, itemExpression.FilterMatchOperation,
                                     sqlParameterCounterAsString, value);
                                 break;
                             }

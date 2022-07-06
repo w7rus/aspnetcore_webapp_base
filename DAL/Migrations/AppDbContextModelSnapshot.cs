@@ -223,7 +223,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("b6c6ebb6-3ef3-4b40-8593-b53603c4097e"),
-                            Alias = "g_any_a_create_o_permissionvalue",
+                            Alias = "PermissionValueCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -232,7 +232,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("65269b59-0612-4348-a1e1-cbef6259d9e8"),
-                            Alias = "g_any_a_create_o_permissionvalue",
+                            Alias = "PermissionValueCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -241,7 +241,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("2fbc4227-7992-4742-a200-8df76ded3cb5"),
-                            Alias = "g_any_a_create_o_permissionvalue",
+                            Alias = "PermissionValueCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -250,7 +250,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("d69efce7-c9a0-4c46-9dae-a7e42d947372"),
-                            Alias = "g_any_a_read_o_permissionvalue",
+                            Alias = "PermissionValueRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -259,7 +259,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("28e18150-c23e-4552-be6e-67492f3d290b"),
-                            Alias = "g_any_a_read_o_permissionvalue",
+                            Alias = "PermissionValueRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -268,7 +268,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("505502c4-4055-4267-b631-ff869f14885d"),
-                            Alias = "g_any_a_read_o_permissionvalue",
+                            Alias = "PermissionValueRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -277,7 +277,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("d1344244-8ea2-42f1-bf5c-5803794333b4"),
-                            Alias = "g_any_a_update_o_permissionvalue",
+                            Alias = "PermissionValueUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -286,7 +286,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("aff2f6f8-b2ec-4811-b5dd-15e1b85d7da6"),
-                            Alias = "g_any_a_update_o_permissionvalue",
+                            Alias = "PermissionValueUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -295,7 +295,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("196ddfa6-4791-48ef-afcd-9cb9183a840b"),
-                            Alias = "g_any_a_update_o_permissionvalue",
+                            Alias = "PermissionValueUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -304,7 +304,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("2715f18b-5f30-40fa-baaa-76693cc31b35"),
-                            Alias = "g_any_a_delete_o_permissionvalue",
+                            Alias = "PermissionValueDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -313,7 +313,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("55825e7b-c355-41b7-a473-90a091237bd7"),
-                            Alias = "g_any_a_delete_o_permissionvalue",
+                            Alias = "PermissionValueDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -322,7 +322,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("64700a31-b2bc-4c6d-bd7e-25e2c62443dc"),
-                            Alias = "g_any_a_delete_o_permissionvalue",
+                            Alias = "PermissionValueDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -331,7 +331,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("fa8071de-d010-43c4-ae7e-bae0f47cb6bd"),
-                            Alias = "g_group_a_create_o_usergroup",
+                            Alias = "UserGroupCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -340,7 +340,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("75c30158-3993-4473-9e79-98e0bbd9fb16"),
-                            Alias = "g_group_a_create_o_usergroup",
+                            Alias = "UserGroupCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -349,7 +349,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("874e3654-8445-4e10-b2b5-c07e96ebfa3c"),
-                            Alias = "g_group_a_create_o_usergroup",
+                            Alias = "UserGroupCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -358,7 +358,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("ff09b3ca-b332-42ba-864e-969d8c217cf7"),
-                            Alias = "g_group_a_create_o_usergroup_o_alias_l_automapper",
+                            Alias = "UserGroupCreate_Alias",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -367,7 +367,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("7bb69195-bd3a-4573-892a-86158715ac5c"),
-                            Alias = "g_group_a_create_o_usergroup_o_alias_l_automapper",
+                            Alias = "UserGroupCreate_Alias",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -376,7 +376,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("19b3492a-8889-40fa-9100-bf8db3b7dfde"),
-                            Alias = "g_group_a_create_o_usergroup_o_alias_l_automapper",
+                            Alias = "UserGroupCreate_Alias",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -385,7 +385,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("0d0bf1cf-9eff-454a-a8d8-5935f69bdef2"),
-                            Alias = "g_group_a_create_o_usergroup_o_description_l_automapper",
+                            Alias = "UserGroupCreate_Description",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -394,7 +394,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("ffbcbd7b-60dd-4369-81a8-8d4330b0166c"),
-                            Alias = "g_group_a_create_o_usergroup_o_description_l_automapper",
+                            Alias = "UserGroupCreate_Description",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -403,7 +403,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("e9fe33e6-bbe3-497f-9432-77abfb0e9691"),
-                            Alias = "g_group_a_create_o_usergroup_o_description_l_automapper",
+                            Alias = "UserGroupCreate_Description",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -412,7 +412,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("802ec403-dc2d-4201-afab-40c47edfcb58"),
-                            Alias = "g_group_a_create_o_usergroup_o_priority_l_automapper",
+                            Alias = "UserGroupCreate_Priority",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -421,7 +421,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("7338a71f-7ff9-4a14-97c1-250d0b2be67b"),
-                            Alias = "g_group_a_create_o_usergroup_o_priority_l_automapper",
+                            Alias = "UserGroupCreate_Priority",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -430,7 +430,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("9cc80948-8a5f-402f-9600-326b94f1da40"),
-                            Alias = "g_group_a_create_o_usergroup_o_priority_l_automapper",
+                            Alias = "UserGroupCreate_Priority",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -439,7 +439,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("f7462ca7-43e6-415e-817e-c942f5471e25"),
-                            Alias = "g_group_a_read_o_usergroup",
+                            Alias = "UserGroupRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -448,7 +448,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("5deb5229-4488-4c2c-974a-a16279b29794"),
-                            Alias = "g_group_a_read_o_usergroup",
+                            Alias = "UserGroupRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -457,7 +457,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("b316b212-6b69-48ea-982b-f986bc478a7a"),
-                            Alias = "g_group_a_read_o_usergroup",
+                            Alias = "UserGroupRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -466,7 +466,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("bf308070-53a1-4893-b348-e6267659573e"),
-                            Alias = "g_group_a_update_o_usergroup",
+                            Alias = "UserGroupUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -475,7 +475,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("634b0339-1e37-4510-b32e-4b549e37fb7e"),
-                            Alias = "g_group_a_update_o_usergroup",
+                            Alias = "UserGroupUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -484,7 +484,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("082f33f0-b2c9-4930-9d5b-358299b75514"),
-                            Alias = "g_group_a_update_o_usergroup",
+                            Alias = "UserGroupUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -493,7 +493,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("c6cdc3f8-5c78-46cf-a3d7-442148360d5c"),
-                            Alias = "g_group_a_update_o_usergroup_o_alias_l_automapper",
+                            Alias = "UserGroupUpdate_Alias",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -502,7 +502,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("03fa77db-bb4a-4b3f-9ae0-6883b046ef5e"),
-                            Alias = "g_group_a_update_o_usergroup_o_alias_l_automapper",
+                            Alias = "UserGroupUpdate_Alias",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -511,7 +511,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("5a797b63-266a-4e68-89a3-9a476b84042e"),
-                            Alias = "g_group_a_update_o_usergroup_o_alias_l_automapper",
+                            Alias = "UserGroupUpdate_Alias",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -520,7 +520,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("3eb7fdf0-bb21-4997-8748-25aaf14916b5"),
-                            Alias = "g_group_a_update_o_usergroup_o_description_l_automapper",
+                            Alias = "UserGroupUpdate_Description",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -529,7 +529,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("08b4b605-8297-44a9-b47a-1b285d98219c"),
-                            Alias = "g_group_a_update_o_usergroup_o_description_l_automapper",
+                            Alias = "UserGroupUpdate_Description",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -538,7 +538,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("73e04e4d-4d96-4a1b-9e26-ba8ceb0562cc"),
-                            Alias = "g_group_a_update_o_usergroup_o_description_l_automapper",
+                            Alias = "UserGroupUpdate_Description",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -547,7 +547,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("d2403939-6662-4472-b933-ed3605a47059"),
-                            Alias = "g_group_a_update_o_usergroup_o_priority_l_automapper",
+                            Alias = "UserGroupUpdate_Priority",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -556,7 +556,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("ba27392f-ae6a-4c16-8041-e6f1af43f498"),
-                            Alias = "g_group_a_update_o_usergroup_o_priority_l_automapper",
+                            Alias = "UserGroupUpdate_Priority",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -565,7 +565,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("f581ad76-dbcf-49ab-ab56-eed2f05e8dff"),
-                            Alias = "g_group_a_update_o_usergroup_o_priority_l_automapper",
+                            Alias = "UserGroupUpdate_Priority",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -574,7 +574,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("a14c1e1c-3761-476d-8037-edaf7e4840c7"),
-                            Alias = "g_group_a_delete_o_usergroup",
+                            Alias = "UserGroupDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -583,7 +583,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("91cd8f02-88e5-4807-b30c-3d2166aa6880"),
-                            Alias = "g_group_a_delete_o_usergroup",
+                            Alias = "UserGroupDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -592,7 +592,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("2995da7c-72af-437a-8b6e-b23141eb60c1"),
-                            Alias = "g_group_a_delete_o_usergroup",
+                            Alias = "UserGroupDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -601,7 +601,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("85f60eae-11f5-417f-b4af-3c0a641fc634"),
-                            Alias = "g_group_a_join_o_usergroup",
+                            Alias = "UserGroupJoin",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -610,7 +610,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("d6886b51-71d7-4e62-8d06-ef880d4a0c78"),
-                            Alias = "g_group_a_join_o_usergroup",
+                            Alias = "UserGroupJoin",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -619,7 +619,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("10d5a713-d56b-4708-8c89-9c8848560568"),
-                            Alias = "g_group_a_join_o_usergroup",
+                            Alias = "UserGroupJoin",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -628,7 +628,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("57295dc3-ee76-44cc-9359-e9be29e56a4e"),
-                            Alias = "g_group_a_leave_o_usergroup",
+                            Alias = "UserGroupLeave",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -637,7 +637,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("fe734d7d-a84e-409d-bacc-ac7ba28bdedc"),
-                            Alias = "g_group_a_leave_o_usergroup",
+                            Alias = "UserGroupLeave",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -646,7 +646,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("9b3fa7ef-3045-4499-bb70-c3c29971b458"),
-                            Alias = "g_group_a_leave_o_usergroup",
+                            Alias = "UserGroupLeave",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -655,7 +655,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("2ab008f0-3df9-4a55-b60e-b8c893e3d91e"),
-                            Alias = "g_group_a_transfer_o_usergroup",
+                            Alias = "UserGroupTransferRequestCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -664,7 +664,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("800a3f14-5f9f-4f4c-8e72-60030699464e"),
-                            Alias = "g_group_a_transfer_o_usergroup",
+                            Alias = "UserGroupTransferRequestCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -673,7 +673,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("ee866899-80b0-4e1a-bf2b-78170a4d8aba"),
-                            Alias = "g_group_a_transfer_o_usergroup",
+                            Alias = "UserGroupTransferRequestCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -682,7 +682,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("97939214-5ee9-4597-ae68-8642bc5adb76"),
-                            Alias = "g_group_a_transfer_o_usergroup_a_manage",
+                            Alias = "UserGroupTransferRequestUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -691,7 +691,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("4bc829f4-269c-4531-b4ae-9c74ad645bb5"),
-                            Alias = "g_group_a_transfer_o_usergroup_a_manage",
+                            Alias = "UserGroupTransferRequestUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -700,7 +700,34 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("78e1b738-1603-4055-9b08-63a682e6cb54"),
-                            Alias = "g_group_a_transfer_o_usergroup_a_manage",
+                            Alias = "UserGroupTransferRequestUpdate",
+                            CompareMode = 6,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 4,
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("c943654b-68ba-441c-a092-22e9a350ac46"),
+                            Alias = "UserGroupTransferRequestRead",
+                            CompareMode = 6,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 2,
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("700786f0-0220-4408-a924-1d96fab773c8"),
+                            Alias = "UserGroupTransferRequestRead",
+                            CompareMode = 6,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Type = 3,
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("467c56f1-98bf-4ee5-9c58-1329872ecf59"),
+                            Alias = "UserGroupTransferRequestRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -709,7 +736,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("65c1904e-daad-4db4-809f-9e4ced15c5cf"),
-                            Alias = "g_group_a_inviteuser_o_usergroup",
+                            Alias = "UserGroupInviteRequestCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -718,7 +745,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("c6d79000-567c-4a98-bc9d-2de6e3202c45"),
-                            Alias = "g_group_a_inviteuser_o_usergroup",
+                            Alias = "UserGroupInviteRequestCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -727,7 +754,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("7debb867-9ecb-4e70-ab02-69a5cc502750"),
-                            Alias = "g_group_a_inviteuser_o_usergroup",
+                            Alias = "UserGroupInviteRequestCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -736,7 +763,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("e9158d05-748d-4471-a2fb-e2555cb721de"),
-                            Alias = "g_ingroup_a_inviteuser_o_usergroup",
+                            Alias = "UserGroupMemberInviteRequestCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -745,7 +772,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("7c1d9263-6a89-4e41-876f-194a8fea0b44"),
-                            Alias = "g_ingroup_a_inviteuser_o_usergroup",
+                            Alias = "UserGroupMemberInviteRequestCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -754,7 +781,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("760c701d-cd53-4183-aaca-eff3bcdf3ebb"),
-                            Alias = "g_ingroup_a_inviteuser_o_usergroup",
+                            Alias = "UserGroupMemberInviteRequestCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -763,7 +790,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("eadd8275-73e5-4490-b836-55b6eee67861"),
-                            Alias = "g_group_a_inviteuser_o_usergroup_a_manage",
+                            Alias = "UserGroupInviteRequestUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -772,7 +799,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("37fccadd-6ad6-4e48-9768-2c93f114ba07"),
-                            Alias = "g_group_a_inviteuser_o_usergroup_a_manage",
+                            Alias = "UserGroupInviteRequestUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -781,7 +808,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("b4e47a2e-5bca-4b13-a16b-4a815c29ea25"),
-                            Alias = "g_group_a_inviteuser_o_usergroup_a_manage",
+                            Alias = "UserGroupInviteRequestUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -790,7 +817,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("59a2b2da-bb31-495d-834d-6809b82413ae"),
-                            Alias = "g_ingroup_a_inviteuser_o_usergroup_a_manage",
+                            Alias = "UserGroupMemberInviteRequestUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -799,7 +826,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("cf3d62c7-d5cc-4c13-bf0e-08ef629b0b6e"),
-                            Alias = "g_ingroup_a_inviteuser_o_usergroup_a_manage",
+                            Alias = "UserGroupMemberInviteRequestUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -808,7 +835,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("5ee78285-9cd5-4969-9864-5d5aa21e21cd"),
-                            Alias = "g_ingroup_a_inviteuser_o_usergroup_a_manage",
+                            Alias = "UserGroupMemberInviteRequestUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -817,7 +844,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("3378f52b-0a1f-45de-b555-7d824910ed45"),
-                            Alias = "g_group_a_kickuser_o_usergroup",
+                            Alias = "UserGroupKickUser",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -826,7 +853,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("1c90b4c5-680e-47a5-8646-6c967e6c7477"),
-                            Alias = "g_group_a_kickuser_o_usergroup",
+                            Alias = "UserGroupKickUser",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -835,7 +862,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("274aa271-8fae-4845-9da8-cf506dded688"),
-                            Alias = "g_group_a_kickuser_o_usergroup",
+                            Alias = "UserGroupKickUser",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -844,7 +871,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("a44b3c60-9ded-4644-a060-690139ecc449"),
-                            Alias = "g_ingroup_a_kickuser_o_usergroup",
+                            Alias = "UserGroupMemberKickUser",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -853,7 +880,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("95142377-e94a-4005-ba7a-dfb448bbfc18"),
-                            Alias = "g_ingroup_a_kickuser_o_usergroup",
+                            Alias = "UserGroupMemberKickUser",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -862,7 +889,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("0368e718-f5a1-4c1a-b236-3849fa071553"),
-                            Alias = "g_ingroup_a_kickuser_o_usergroup",
+                            Alias = "UserGroupMemberKickUser",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -871,7 +898,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("a42ef46e-9e30-48d8-9dbf-c4c5225625dc"),
-                            Alias = "g_group_a_adduser_o_usergroup",
+                            Alias = "UserGroupAddUser",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -880,7 +907,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("c829232c-5ea8-42e3-a378-c05c519339aa"),
-                            Alias = "g_group_a_adduser_o_usergroup",
+                            Alias = "UserGroupAddUser",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -889,7 +916,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("a56d0ee1-4a8c-4bf3-a081-e7d2dffa266e"),
-                            Alias = "g_group_a_adduser_o_usergroup",
+                            Alias = "UserGroupAddUser",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -898,7 +925,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("fe3271d0-acd0-45d0-82e1-f99af8ea2988"),
-                            Alias = "g_user_a_read_o_user",
+                            Alias = "UserRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -907,7 +934,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("7be23488-ba3f-41d9-98dd-0386bb7aa6e4"),
-                            Alias = "g_user_a_read_o_user",
+                            Alias = "UserRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -916,7 +943,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("81970fd1-592a-4248-bed5-fb77e1b13477"),
-                            Alias = "g_user_a_read_o_user",
+                            Alias = "UserRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -925,7 +952,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("9ac1bb65-f9b8-4aab-9a0c-0c3b2d7838b1"),
-                            Alias = "g_user_a_update_o_user",
+                            Alias = "UserUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -934,7 +961,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("952cea7f-6d88-43c8-982d-4e7bf212d6db"),
-                            Alias = "g_user_a_update_o_user",
+                            Alias = "UserUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -943,7 +970,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("343f5600-0233-4d33-a734-39aab148eed6"),
-                            Alias = "g_user_a_update_o_user",
+                            Alias = "UserUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -952,7 +979,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("0d5ed48d-91a5-49fe-b27c-b288de79a7c3"),
-                            Alias = "g_user_a_delete_o_user",
+                            Alias = "UserDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -961,7 +988,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("830e69e1-dfe4-445d-a60b-a9e6f8444463"),
-                            Alias = "g_user_a_delete_o_user",
+                            Alias = "UserDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -970,7 +997,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("f5bd5b91-4ce6-4686-8521-0ebfbed21fff"),
-                            Alias = "g_user_a_delete_o_user",
+                            Alias = "UserDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -979,7 +1006,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("1eb9b46c-99c6-41ca-9a4e-06b4de8f6d55"),
-                            Alias = "g_userprofile_a_read_o_userprofile",
+                            Alias = "UserProfileRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -988,7 +1015,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("242a70b6-d66a-4cc4-945f-76a36db71e25"),
-                            Alias = "g_userprofile_a_read_o_userprofile",
+                            Alias = "UserProfileRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -997,7 +1024,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("4ed3b03a-4e42-4311-8baf-bda5651770ee"),
-                            Alias = "g_userprofile_a_read_o_userprofile",
+                            Alias = "UserProfileRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -1006,7 +1033,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("86ce307c-f9db-4a5a-9347-8a3ea7ef2442"),
-                            Alias = "g_userprofile_a_update_o_userprofile",
+                            Alias = "UserProfileUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -1015,7 +1042,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("fd8bb6bc-5dc7-4cfd-be3c-7ff4dff6ae9b"),
-                            Alias = "g_userprofile_a_update_o_userprofile",
+                            Alias = "UserProfileUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -1024,7 +1051,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"),
-                            Alias = "g_userprofile_a_update_o_userprofile",
+                            Alias = "UserProfileUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -1032,26 +1059,8 @@ namespace DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"),
-                            Alias = "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize",
-                            CompareMode = 4,
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Type = 3,
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("1b672176-169c-4efb-8ff2-c66b9640ccd5"),
-                            Alias = "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize",
-                            CompareMode = 4,
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Type = 4,
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
                             Id = new Guid("22501ebc-5ebc-42a1-b07e-967b0fbed171"),
-                            Alias = "g_file_a_create_o_file",
+                            Alias = "FileCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -1060,7 +1069,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("1c6379e2-8bb9-48a2-9314-8b45db7e42ec"),
-                            Alias = "g_file_a_create_o_file",
+                            Alias = "FileCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -1069,7 +1078,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("e609217b-01be-4e28-85cc-001ee5a211ca"),
-                            Alias = "g_file_a_create_o_file",
+                            Alias = "FileCreate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -1078,7 +1087,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("6fc92a20-2405-45e3-95e5-234642d49221"),
-                            Alias = "g_file_a_create_o_file.o_agerating_l_automapper",
+                            Alias = "FileCreate_Agerating",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -1087,7 +1096,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("9c8576df-c7d7-4761-9b40-3e4a7e83f988"),
-                            Alias = "g_file_a_create_o_file.o_agerating_l_automapper",
+                            Alias = "FileCreate_Agerating",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -1096,7 +1105,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("b7ca31fc-6062-43dd-bf25-2526daeca769"),
-                            Alias = "g_file_a_create_o_file.o_agerating_l_automapper",
+                            Alias = "FileCreate_Agerating",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -1105,7 +1114,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("49ef7d3b-3d35-45e5-9995-6d4920413a8b"),
-                            Alias = "g_file_a_read_o_file",
+                            Alias = "FileRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -1114,7 +1123,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("b89b5856-18dd-49c7-9295-26927214276c"),
-                            Alias = "g_file_a_read_o_file",
+                            Alias = "FileRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -1123,7 +1132,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("2f59c415-94bb-435b-837f-9b61f33a8723"),
-                            Alias = "g_file_a_read_o_file",
+                            Alias = "FileRead",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -1132,7 +1141,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("dbf7a44d-03ff-45ad-8b3c-9ba2e05ca4b3"),
-                            Alias = "g_file_a_update_o_file",
+                            Alias = "FileUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -1141,7 +1150,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("88625409-fa6a-47d3-9dd2-bd90d89a4930"),
-                            Alias = "g_file_a_update_o_file",
+                            Alias = "FileUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -1150,7 +1159,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("2c67f167-0a16-434c-afb6-1b274d21e8c0"),
-                            Alias = "g_file_a_update_o_file",
+                            Alias = "FileUpdate",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -1159,7 +1168,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("f77d8f8a-9fc1-4ae7-b5a4-49633595fb8a"),
-                            Alias = "g_file_a_update_o_file.o_agerating_l_automapper",
+                            Alias = "FileUpdate_Agerating",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -1168,7 +1177,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("91360170-bf30-45dc-9c3c-a984c504f0fd"),
-                            Alias = "g_file_a_update_o_file.o_agerating_l_automapper",
+                            Alias = "FileUpdate_Agerating",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -1177,7 +1186,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("b599c5a5-de3c-41a7-af74-4829ace6e3fe"),
-                            Alias = "g_file_a_update_o_file.o_agerating_l_automapper",
+                            Alias = "FileUpdate_Agerating",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -1186,7 +1195,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("0ba51d69-ce7a-4969-b072-d5000229b8fb"),
-                            Alias = "g_file_a_delete_o_file",
+                            Alias = "FileDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 2,
@@ -1195,7 +1204,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("cf05b493-8bb2-4a3f-a467-a073720c5d46"),
-                            Alias = "g_file_a_delete_o_file",
+                            Alias = "FileDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 4,
@@ -1204,7 +1213,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = new Guid("5ee1fd85-4a95-4409-a0d8-96da8ccf855b"),
-                            Alias = "g_file_a_delete_o_file",
+                            Alias = "FileDelete",
                             CompareMode = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = 3,
@@ -1791,6 +1800,36 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("6b821470-08b4-4fd3-8455-20f8c73a8b7c"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            PermissionId = new Guid("c943654b-68ba-441c-a092-22e9a350ac46"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("5e779bee-a40d-4c1f-bd01-b45bea8c251c"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            PermissionId = new Guid("700786f0-0220-4408-a924-1d96fab773c8"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("f4cec6cf-e9be-4077-ab58-249d1c5d9d8b"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
+                            PermissionId = new Guid("467c56f1-98bf-4ee5-9c58-1329872ecf59"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
                             Id = new Guid("916cbb4f-fd8d-46ee-be1b-424f4611d2a1"),
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
@@ -2098,16 +2137,6 @@ namespace DAL.Migrations
                             PermissionId = new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
-                        },
-                        new
-                        {
-                            Id = new Guid("a4b5ffe5-a137-4ad3-aa80-9b5f5f288362"),
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
-                            EntityId = new Guid("55119e40-f094-4560-877f-42d18ff197db"),
-                            PermissionId = new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"),
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 0, 16, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -2831,6 +2860,36 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("700e733f-f9a5-44e3-9c18-59936b671a35"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
+                            PermissionId = new Guid("c943654b-68ba-441c-a092-22e9a350ac46"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
+                            Id = new Guid("766a2ff9-0269-475e-a80a-7124d1aa7274"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
+                            PermissionId = new Guid("700786f0-0220-4408-a924-1d96fab773c8"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("efd18f55-1ae1-4e6d-b56a-121bf94fe68e"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
+                            PermissionId = new Guid("467c56f1-98bf-4ee5-9c58-1329872ecf59"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
                             Id = new Guid("53d12d63-bba6-4945-b2f6-4e2570a95ba4"),
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
@@ -3108,16 +3167,6 @@ namespace DAL.Migrations
                             PermissionId = new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
-                        },
-                        new
-                        {
-                            Id = new Guid("9a5741c3-3034-4f71-b1da-91a2f769a909"),
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
-                            EntityId = new Guid("3a95ab80-ac54-4e23-a35b-aaa6ca726523"),
-                            PermissionId = new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"),
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -3811,6 +3860,36 @@ namespace DAL.Migrations
                         },
                         new
                         {
+                            Id = new Guid("22d966ae-cad7-481c-ad0b-6a7ec119ef1a"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
+                            PermissionId = new Guid("c943654b-68ba-441c-a092-22e9a350ac46"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
+                            Id = new Guid("a8f66731-c299-47bf-84ea-1849dd288f10"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
+                            PermissionId = new Guid("700786f0-0220-4408-a924-1d96fab773c8"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 50, 0, 0, 0, 0, 0, 0, 0 }
+                        },
+                        new
+                        {
+                            Id = new Guid("de3b1262-ddb1-477c-835c-be9ed998c146"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
+                            PermissionId = new Guid("467c56f1-98bf-4ee5-9c58-1329872ecf59"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
                             Id = new Guid("aabebbbb-7349-4d07-bb72-995c81713136"),
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
@@ -4078,16 +4157,6 @@ namespace DAL.Migrations
                             PermissionId = new Guid("0a23f40b-a3d5-4f40-a6df-42d9070c00a6"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
-                        },
-                        new
-                        {
-                            Id = new Guid("b2d23951-c9f9-4997-bc4d-d96a42f606eb"),
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
-                            EntityId = new Guid("93998585-5a67-4a4e-ad2d-f29a4d080e98"),
-                            PermissionId = new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"),
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Value = new byte[] { 0, 8, 0, 0, 0, 0, 0, 0 }
                         },
                         new
                         {
@@ -4576,6 +4645,26 @@ namespace DAL.Migrations
                             EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
                             EntityId = new Guid("b26a9112-211b-462f-bd41-8f38a3568106"),
                             PermissionId = new Guid("78e1b738-1603-4055-9b08-63a682e6cb54"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("73e95b87-7189-4154-931c-d883ae4629d4"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("b26a9112-211b-462f-bd41-8f38a3568106"),
+                            PermissionId = new Guid("700786f0-0220-4408-a924-1d96fab773c8"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
+                        },
+                        new
+                        {
+                            Id = new Guid("41106b47-970a-4778-9726-51c7ee79b590"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EntityDiscriminator = "20bd2d85186cff7899c7b6876e222faac75f545f2ff59084c86b979eaf8203a0",
+                            EntityId = new Guid("b26a9112-211b-462f-bd41-8f38a3568106"),
+                            PermissionId = new Guid("467c56f1-98bf-4ee5-9c58-1329872ecf59"),
                             UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Value = new byte[] { 255, 255, 255, 255, 255, 255, 255, 127 }
                         },

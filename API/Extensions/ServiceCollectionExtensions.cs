@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IJsonWebTokenEntityService, JsonWebTokenEntityService>();
         serviceCollection.AddScoped<IPermissionEntityService, PermissionEntityService>();
         serviceCollection.AddScoped<IRefreshTokenEntityService, RefreshTokenEntityService>();
-        serviceCollection.AddScoped<IPermissionValueEntityCollectionService, PermissionValueEntityCollectionService>();
+        serviceCollection.AddScoped<IPermissionValueEntityService, PermissionValueEntityService>();
         serviceCollection.AddScoped<IUserGroupEntityService, UserGroupEntityService>();
         serviceCollection.AddScoped<IUserProfileEntityService, UserProfileEntityService>();
         serviceCollection.AddScoped<IUserEntityService, UserEntityService>();

@@ -11,7 +11,7 @@ public interface IEntityCollectionServiceBase<TEntity> where TEntity : EntityBas
 {
     Task<IReadOnlyCollection<TEntity>> Save(ICollection<TEntity> entities, CancellationToken cancellationToken = default);
     Task Delete(ICollection<TEntity> entities, CancellationToken cancellationToken = default);
-    Task<(int total, IReadOnlyCollection<TEntity> entities)> GetFilteredSortedPaged(
+    Task<(int total, IReadOnlyCollection<TEntity> entities)> GetFiltered(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,

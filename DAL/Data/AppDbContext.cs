@@ -522,6 +522,32 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
+            
+            #region TransferUserGroupRead
+
+            new()
+            {
+                Id = new Guid("c943654b-68ba-441c-a092-22e9a350ac46"),
+                Alias = Consts.PermissionAlias.UserGroupTransferRequestRead,
+                Type = PermissionType.Value,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid("700786f0-0220-4408-a924-1d96fab773c8"),
+                Alias = Consts.PermissionAlias.UserGroupTransferRequestRead,
+                Type = PermissionType.ValueNeededOwner,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+            new()
+            {
+                Id = new Guid("467c56f1-98bf-4ee5-9c58-1329872ecf59"),
+                Alias = Consts.PermissionAlias.UserGroupTransferRequestRead,
+                Type = PermissionType.ValueNeededOthers,
+                CompareMode = PermissionCompareMode.GreaterOrEqual
+            },
+
+            #endregion
 
             #region InviteUser
 
@@ -828,20 +854,20 @@ public sealed class AppDbContext : DbContext
 
             #endregion
 
-            new()
-            {
-                Id = new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"),
-                Alias = Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize,
-                Type = PermissionType.ValueNeededOwner,
-                CompareMode = PermissionCompareMode.LessOrEqual
-            },
-            new()
-            {
-                Id = new Guid("1b672176-169c-4efb-8ff2-c66b9640ccd5"),
-                Alias = Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize,
-                Type = PermissionType.ValueNeededOthers,
-                CompareMode = PermissionCompareMode.LessOrEqual
-            },
+            // new()
+            // {
+            //     Id = new Guid("8c49fb84-818b-42bf-8a0d-05d827e97db2"),
+            //     Alias = Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize,
+            //     Type = PermissionType.ValueNeededOwner,
+            //     CompareMode = PermissionCompareMode.LessOrEqual
+            // },
+            // new()
+            // {
+            //     Id = new Guid("1b672176-169c-4efb-8ff2-c66b9640ccd5"),
+            //     Alias = Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize,
+            //     Type = PermissionType.ValueNeededOthers,
+            //     CompareMode = PermissionCompareMode.LessOrEqual
+            // },
 
             #endregion
 
@@ -1677,6 +1703,37 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
+            
+            #region TransferUserGroupRead
+
+            new()
+            {
+                Id = new Guid("6b821470-08b4-4fd3-8455-20f8c73a8b7c"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead && _.Type == PermissionType.Value).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("5e779bee-a40d-4c1f-bd01-b45bea8c251c"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = rootUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("f4cec6cf-e9be-4077-ab58-249d1c5d9d8b"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = rootUserGroup.Id
+            },
+
+            #endregion
 
             #region InviteUser
 
@@ -2023,15 +2080,15 @@ public sealed class AppDbContext : DbContext
 
             #endregion
 
-            new()
-            {
-                Id = new Guid("a4b5ffe5-a137-4ad3-aa80-9b5f5f288362"),
-                Value = BitConverter.GetBytes(4096ul),
-                PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize &&
-                    _.Type == PermissionType.ValueNeededOwner).Id,
-                EntityId = rootUserGroup.Id
-            },
+            // new()
+            // {
+            //     Id = new Guid("a4b5ffe5-a137-4ad3-aa80-9b5f5f288362"),
+            //     Value = BitConverter.GetBytes(4096ul),
+            //     PermissionId = permissions.Single(_ =>
+            //         _.Alias == Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize &&
+            //         _.Type == PermissionType.ValueNeededOwner).Id,
+            //     EntityId = rootUserGroup.Id
+            // },
 
             #endregion
 
@@ -2797,6 +2854,37 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
+            
+            #region TransferUserGroupRead
+
+            new()
+            {
+                Id = new Guid("700e733f-f9a5-44e3-9c18-59936b671a35"),
+                Value = BitConverter.GetBytes(bannedUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead && _.Type == PermissionType.Value).Id,
+                EntityId = bannedUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("766a2ff9-0269-475e-a80a-7124d1aa7274"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = bannedUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("efd18f55-1ae1-4e6d-b56a-121bf94fe68e"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = bannedUserGroup.Id
+            },
+
+            #endregion
 
             #region InviteUser
 
@@ -3143,15 +3231,15 @@ public sealed class AppDbContext : DbContext
 
             #endregion
 
-            new()
-            {
-                Id = new Guid("9a5741c3-3034-4f71-b1da-91a2f769a909"),
-                Value = BitConverter.GetBytes(0ul),
-                PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize &&
-                    _.Type == PermissionType.ValueNeededOwner).Id,
-                EntityId = bannedUserGroup.Id
-            },
+            // new()
+            // {
+            //     Id = new Guid("9a5741c3-3034-4f71-b1da-91a2f769a909"),
+            //     Value = BitConverter.GetBytes(0ul),
+            //     PermissionId = permissions.Single(_ =>
+            //         _.Alias == Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize &&
+            //         _.Type == PermissionType.ValueNeededOwner).Id,
+            //     EntityId = bannedUserGroup.Id
+            // },
 
             #endregion
 
@@ -3892,6 +3980,37 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
+            
+            #region TransferUserGroupRead
+
+            new()
+            {
+                Id = new Guid("22d966ae-cad7-481c-ad0b-6a7ec119ef1a"),
+                Value = BitConverter.GetBytes(memberUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead && _.Type == PermissionType.Value).Id,
+                EntityId = memberUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("a8f66731-c299-47bf-84ea-1849dd288f10"),
+                Value = BitConverter.GetBytes(memberUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = memberUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("de3b1262-ddb1-477c-835c-be9ed998c146"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = memberUserGroup.Id
+            },
+
+            #endregion
 
             #region InviteUser
 
@@ -4208,15 +4327,15 @@ public sealed class AppDbContext : DbContext
 
             #endregion
 
-            new()
-            {
-                Id = new Guid("b2d23951-c9f9-4997-bc4d-d96a42f606eb"),
-                Value = BitConverter.GetBytes(2048ul),
-                PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize &&
-                    _.Type == PermissionType.ValueNeededOwner).Id,
-                EntityId = memberUserGroup.Id
-            },
+            // new()
+            // {
+            //     Id = new Guid("b2d23951-c9f9-4997-bc4d-d96a42f606eb"),
+            //     Value = BitConverter.GetBytes(2048ul),
+            //     PermissionId = permissions.Single(_ =>
+            //         _.Alias == Consts.PermissionAlias.g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize &&
+            //         _.Type == PermissionType.ValueNeededOwner).Id,
+            //     EntityId = memberUserGroup.Id
+            // },
 
             #endregion
 
@@ -4752,6 +4871,29 @@ public sealed class AppDbContext : DbContext
                 Value = BitConverter.GetBytes(rootUserGroupPower),
                 PermissionId = permissions.Single(_ =>
                     _.Alias == Consts.PermissionAlias.UserGroupTransferRequestUpdate &&
+                    _.Type == PermissionType.ValueNeededOthers).Id,
+                EntityId = guestUserGroup.Id
+            },
+
+            #endregion
+            
+            #region TransferUserGroupRead
+            
+            new()
+            {
+                Id = new Guid("73e95b87-7189-4154-931c-d883ae4629d4"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                    _.Type == PermissionType.ValueNeededOwner).Id,
+                EntityId = guestUserGroup.Id
+            },
+            new()
+            {
+                Id = new Guid("41106b47-970a-4778-9726-51c7ee79b590"),
+                Value = BitConverter.GetBytes(rootUserGroupPower),
+                PermissionId = permissions.Single(_ =>
+                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
                     _.Type == PermissionType.ValueNeededOthers).Id,
                 EntityId = guestUserGroup.Id
             },

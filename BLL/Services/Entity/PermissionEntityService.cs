@@ -80,7 +80,7 @@ public class PermissionEntityService : IPermissionEntityService
         throw new ApplicationException(Localize.Error.PermissionDynamicManagementNotAllowed);
     }
 
-    public async Task<(int total, IReadOnlyCollection<Permission> entities)> GetFilteredSortedPaged(
+    public async Task<(int total, IReadOnlyCollection<Permission> entities)> GetFiltered(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,
         PageModel pageModel,
@@ -96,7 +96,7 @@ public class PermissionEntityService : IPermissionEntityService
         result = result.GetPage(pageModel);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetFilteredSortedPaged),
+            Localize.Log.Method(GetType(), nameof(GetFiltered),
                 $"{result?.GetType().Name} {result?.Count()}"));
 
         return (total, await result?.ToArrayAsync(cancellationToken)!);

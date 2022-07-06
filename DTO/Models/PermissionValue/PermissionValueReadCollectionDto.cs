@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 using Common.Models;
 using DTO.Models.Base;
 
-namespace DTO.Models.Permission;
+namespace DTO.Models.PermissionValue;
 
-public class PermissionReadEntityCollectionDto : IEntityCollectionBaseDto
+public class PermissionValueReadCollectionDto : IEntityCollectionBaseDto
 {
     public PageModel PageModel { get; set; }
     public FilterExpressionModel FilterExpressionModel { get; set; }

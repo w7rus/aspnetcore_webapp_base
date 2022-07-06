@@ -76,11 +76,11 @@ public class UserPermissionValueController : CustomControllerBase
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
     [ProducesResponseType(typeof(PermissionValueReadFSPCollectionResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> ReadFSPCollection(
-        [Required] [FromQuery] PermissionValueReadEntityCollectionDto data,
+        [Required] [FromQuery] PermissionValueReadCollectionDto data,
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _userPermissionValueHandler.ReadFSPCollection(data, cancellationToken));
+        return ResponseWith(await _userPermissionValueHandler.ReadCollection(data, cancellationToken));
     }
 
     [HttpPut]

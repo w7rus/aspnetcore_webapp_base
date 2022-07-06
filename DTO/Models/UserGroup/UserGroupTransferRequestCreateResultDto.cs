@@ -6,7 +6,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupInitInviteUserResultDto : IEntityBaseResultDto<Guid>, IDtoResultBase
+public class UserGroupTransferRequestCreateResultDto : IEntityBaseResultDto<Guid>, IDtoResultBase
 {
     public Guid Id { get; set; }
     public DateTimeOffset CreatedAt { get; set; }

@@ -47,12 +47,15 @@ public static class Consts
         public const string UserGroupJoin = "UserGroupJoin";
         public const string UserGroupLeave = "UserGroupLeave";
         public const string UserGroupTransferRequestCreate = "UserGroupTransferRequestCreate";
+        public const string UserGroupTransferRequestRead = "UserGroupTransferRequestRead"; //TODO:
         public const string UserGroupTransferRequestUpdate = "UserGroupTransferRequestUpdate";
         public const string UserGroupInviteRequestCreate = "UserGroupInviteRequestCreate";
+        public const string UserGroupInviteRequestRead = "UserGroupInviteRequestRead"; //TODO:
         public const string UserGroupInviteRequestUpdate = "UserGroupInviteRequestUpdate";
         public const string UserGroupKickUser = "UserGroupKickUser";
         public const string UserGroupAddUser = "UserGroupAddUser";
         public const string UserGroupMemberInviteRequestCreate = "UserGroupMemberInviteRequestCreate";
+        public const string UserGroupMemberInviteRequestRead = "UserGroupMemberInviteRequestRead"; //TODO:
         public const string UserGroupMemberInviteRequestUpdate = "UserGroupMemberInviteRequestUpdate";
         public const string UserGroupMemberKickUser = "UserGroupMemberKickUser";
         public const string UserRead = "UserRead";

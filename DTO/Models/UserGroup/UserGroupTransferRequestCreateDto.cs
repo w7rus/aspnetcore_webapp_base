@@ -3,7 +3,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupCreateInviteDto
+public class UserGroupTransferRequestCreateDto
 {
     public Guid UserGroupId { get; set; }
     public Guid UserId { get; set; }
