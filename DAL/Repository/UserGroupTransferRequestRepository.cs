@@ -9,7 +9,8 @@ public interface IUserGroupTransferRequestRepository : IRepositoryBase<UserGroup
 {
 }
 
-public class UserGroupTransferRequestRepository : RepositoryBase<UserGroupTransferRequest, Guid>, IUserGroupTransferRequestRepository
+public class UserGroupTransferRequestRepository : RepositoryBase<UserGroupTransferRequest, Guid>,
+    IUserGroupTransferRequestRepository
 {
     public UserGroupTransferRequestRepository(AppDbContext appDbContext) : base(appDbContext)
     {

@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Entities.Base;
 
 namespace DTO.Models.Base;
 

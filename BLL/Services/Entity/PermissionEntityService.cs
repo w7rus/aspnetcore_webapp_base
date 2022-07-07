@@ -62,7 +62,8 @@ public class PermissionEntityService : IPermissionEntityService
 
     public async Task<Permission> GetByAliasTypeAsync(string alias, PermissionType permissionType)
     {
-        var entity = await _permissionRepository.SingleOrDefaultAsync(_ => _.Alias == alias && _.Type == permissionType);
+        var entity =
+            await _permissionRepository.SingleOrDefaultAsync(_ => _.Alias == alias && _.Type == permissionType);
 
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(GetByAliasTypeAsync), $"{entity?.GetType().Name} {entity?.Id}"));
@@ -70,7 +71,10 @@ public class PermissionEntityService : IPermissionEntityService
         return entity;
     }
 
-    public Task<IReadOnlyCollection<Permission>> Save(ICollection<Permission> entities, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyCollection<Permission>> Save(
+        ICollection<Permission> entities,
+        CancellationToken cancellationToken = default
+    )
     {
         throw new ApplicationException(Localize.Error.PermissionDynamicManagementNotAllowed);
     }

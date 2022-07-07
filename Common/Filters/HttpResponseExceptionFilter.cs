@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Common.Enums;
 using Common.Exceptions;
 using Common.Models;

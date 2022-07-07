@@ -43,7 +43,7 @@ public class UserPermissionValueController : CustomControllerBase
     #endregion
 
     #region Methods
-    
+
     [HttpPost]
     [Route(nameof(Create))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]

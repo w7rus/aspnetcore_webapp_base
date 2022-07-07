@@ -15,6 +15,8 @@ namespace Common.Helpers;
 
 public static class Utilities
 {
+    private static readonly SHA256 Sha256 = SHA256.Create();
+
     public static byte[] GenerateRandomBytes(int byteCount)
     {
         var csp = RandomNumberGenerator.Create();
@@ -48,9 +50,7 @@ public static class Utilities
 
         return result;
     }
-    
-    private static readonly SHA256 Sha256 = SHA256.Create();
-    
+
     public static string EntityAqnHash(this object obj)
     {
         return Sha256

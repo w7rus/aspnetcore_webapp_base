@@ -4,13 +4,9 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using API.Controllers;
 using API.Controllers.Auth;
 using API.Extensions;
-using API.Middleware;
 using Common.Enums;
 using Common.Models;
 using DAL.Data;
@@ -18,7 +14,6 @@ using DTO.Models.Auth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -42,8 +37,8 @@ public class AuthIntegrationTest
                 {
                     var env = hostingContext.HostingEnvironment;
 
-                    config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
-                    config.AddJsonFile($"appsettings.Local.json", optional: true, reloadOnChange: true);
+                    config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+                    config.AddJsonFile("appsettings.Local.json", true, true);
 
                     var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
                     config.AddUserSecrets(appAssembly, true);
@@ -61,7 +56,8 @@ public class AuthIntegrationTest
                         {
                             options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
                             options.JsonSerializerOptions.PropertyNamingPolicy = null;
-                        });;
+                        });
+                        ;
                         services.AddMvc().AddApplicationPart(typeof(AuthController).Assembly);
 
                         services.AddHttpContextAccessor();
@@ -119,13 +115,13 @@ public class AuthIntegrationTest
         var model = new AuthSignUpDto
         {
             Email = "test123@email.com",
-            Password = "12345678",
+            Password = "12345678"
         };
 
         var model2 = new AuthSignUpDto
         {
             Email = "test123@email.com",
-            Password = "12345678",
+            Password = "12345678"
         };
 
         var json = JsonContent.Create(model);

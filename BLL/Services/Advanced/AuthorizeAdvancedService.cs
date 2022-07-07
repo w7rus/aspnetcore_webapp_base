@@ -28,7 +28,12 @@ public class AuthorizeAdvancedService : IAuthorizeAdvancedService
 {
     #region Ctor
 
-    public AuthorizeAdvancedService(AppDbContext appDbContext, IAuthorizeEntityService authorizeEntityService, IPermissionValueEntityService permissionValueEntityService, IPermissionEntityService permissionEntityService)
+    public AuthorizeAdvancedService(
+        AppDbContext appDbContext,
+        IAuthorizeEntityService authorizeEntityService,
+        IPermissionValueEntityService permissionValueEntityService,
+        IPermissionEntityService permissionEntityService
+    )
     {
         _appDbContext = appDbContext;
         _authorizeEntityService = authorizeEntityService;
@@ -62,7 +67,8 @@ public class AuthorizeAdvancedService : IAuthorizeAdvancedService
             throw new CustomException(Localize.Error.PermissionNotFound);
 
         var permissionValue =
-            await _permissionValueEntityService.GetByPermissionIdEntityIdAsync(permission.Id, entityId, cancellationToken);
+            await _permissionValueEntityService.GetByPermissionIdEntityIdAsync(permission.Id, entityId,
+                cancellationToken);
 
         return permissionValue != null;
     }

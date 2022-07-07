@@ -34,7 +34,7 @@ public class UserProfileController : CustomControllerBase
     #endregion
 
     #region Methods
-    
+
     //TODO: Endpoints
 
     #endregion

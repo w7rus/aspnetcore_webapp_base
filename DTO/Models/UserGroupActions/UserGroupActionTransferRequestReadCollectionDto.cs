@@ -6,8 +6,8 @@ namespace DTO.Models.UserGroupActions;
 
 public class UserGroupActionTransferRequestReadCollectionDto : IEntityCollectionBaseDto
 {
+    public Guid TargetUserId { get; set; }
     public PageModel PageModel { get; set; }
     public FilterExpressionModel FilterExpressionModel { get; set; }
     public FilterSortModel FilterSortModel { get; set; }
-    public Guid TargetUserId { get; set; }
 }

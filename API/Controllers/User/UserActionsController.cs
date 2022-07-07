@@ -41,7 +41,7 @@ public class UserActionsController : CustomControllerBase
     #endregion
 
     #region Methods
-    
+
     [HttpPost]
     [Route(nameof(UserActionJoinUserGroup))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]

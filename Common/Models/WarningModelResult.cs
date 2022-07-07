@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Common.Enums;
-using Common.Models.Base;
 
 namespace Common.Models;
 

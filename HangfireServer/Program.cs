@@ -1,9 +1,6 @@
 ﻿using System.Reflection;
-using API;
 using API.Extensions;
 using Hangfire;
-using Hangfire.PostgreSql;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -43,7 +40,7 @@ public static class Program
                 services.AddRepositories();
                 services.AddServices();
                 services.AddJobs();
-                
+
                 services.AddHttpClient();
 
                 services.AddCustomHangfire(_.Configuration);
@@ -58,10 +55,7 @@ public static class Program
         {
             var config = app.Services.GetRequiredService<IConfiguration>();
 
-            foreach (var c in config.AsEnumerable())
-            {
-                Console.WriteLine(c.Key + " = " + c.Value);
-            }
+            foreach (var c in config.AsEnumerable()) Console.WriteLine(c.Key + " = " + c.Value);
         }
 
         try
@@ -92,11 +86,11 @@ public static class Program
                 Log.Information("Add JSON configurations...");
                 config.AddJsonFile(
                     Path.Combine(hostingContext.HostingEnvironment.ContentRootPath,
-                        $"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json"), optional: true,
-                    reloadOnChange: true);
+                        $"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json"), true,
+                    true);
                 config.AddJsonFile(
-                    Path.Combine(hostingContext.HostingEnvironment.ContentRootPath, $"appsettings.Local.json"),
-                    optional: true, reloadOnChange: true);
+                    Path.Combine(hostingContext.HostingEnvironment.ContentRootPath, "appsettings.Local.json"),
+                    true, true);
 
                 if (hostingContext.HostingEnvironment.IsDevelopment())
                 {

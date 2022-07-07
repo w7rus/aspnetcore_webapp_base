@@ -42,7 +42,10 @@ public class UserAdvancedService : IUserAdvancedService
 
     #region Methods
 
-    public async Task<User> GetFromHttpContext(bool throwIfNotProvided = true, CancellationToken cancellationToken = default)
+    public async Task<User> GetFromHttpContext(
+        bool throwIfNotProvided = true,
+        CancellationToken cancellationToken = default
+    )
     {
         if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.UserId)?.Value,
                 out var userId))

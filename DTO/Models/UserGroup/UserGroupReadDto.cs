@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Common.Models;
-using Common.Models.Base;
-using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 

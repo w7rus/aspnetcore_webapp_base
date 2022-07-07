@@ -21,28 +21,19 @@ namespace BLL.Handlers.User;
 
 public interface IUserActionsHandler
 {
-    Task<IDtoResultBase> UserActionJoinUserGroup(UserActionJoinUserGroupDto data, CancellationToken cancellationToken = default);
-    Task<IDtoResultBase> UserActionLeaveUserGroup(UserActionLeaveUserGroupDto data, CancellationToken cancellationToken = default);
+    Task<IDtoResultBase> UserActionJoinUserGroup(
+        UserActionJoinUserGroupDto data,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<IDtoResultBase> UserActionLeaveUserGroup(
+        UserActionLeaveUserGroupDto data,
+        CancellationToken cancellationToken = default
+    );
 }
 
 public class UserActionsHandler : HandlerBase, IUserActionsHandler
 {
-    #region Fields
-
-    private readonly ILogger<HandlerBase> _logger;
-    private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IUserAdvancedService _userAdvancedService;
-    private readonly IAuthorizeAdvancedService _authorizeAdvancedService;
-    private readonly IUserRepository _userRepository;
-    private readonly IUserGroupRepository _userGroupRepository;
-    private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
-    private readonly IUserGroupEntityService _userGroupEntityService;
-    private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
-    private readonly IPermissionValueEntityService _permissionValueEntityService;
-    private readonly IAuthorizeEntityService _authorizeEntityService;
-
-    #endregion
-
     #region Ctor
 
     public UserActionsHandler(
@@ -72,6 +63,22 @@ public class UserActionsHandler : HandlerBase, IUserActionsHandler
         _permissionValueEntityService = permissionValueEntityService;
         _authorizeEntityService = authorizeEntityService;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<HandlerBase> _logger;
+    private readonly IAppDbContextAction _appDbContextAction;
+    private readonly IUserAdvancedService _userAdvancedService;
+    private readonly IAuthorizeAdvancedService _authorizeAdvancedService;
+    private readonly IUserRepository _userRepository;
+    private readonly IUserGroupRepository _userGroupRepository;
+    private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
+    private readonly IUserGroupEntityService _userGroupEntityService;
+    private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
+    private readonly IPermissionValueEntityService _permissionValueEntityService;
+    private readonly IAuthorizeEntityService _authorizeEntityService;
 
     #endregion
 

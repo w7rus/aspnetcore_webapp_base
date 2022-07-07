@@ -39,27 +39,6 @@ public interface IUserGroupHandler
 
 public class UserGroupHandler : HandlerBase, IUserGroupHandler
 {
-    #region Fields
-
-    private readonly ILogger<HandlerBase> _logger;
-    private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IMapper _mapper;
-    private readonly IUserAdvancedService _userAdvancedService;
-    private readonly IAuthorizeAdvancedService _authorizeAdvancedService;
-    private readonly IUserRepository _userRepository;
-    private readonly IUserGroupRepository _userGroupRepository;
-    private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
-    private readonly IUserEntityService _userEntityService;
-    private readonly IUserGroupEntityService _userGroupEntityService;
-    private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
-    private readonly IPermissionValueEntityService _permissionValueEntityService;
-    private readonly IPermissionEntityService _permissionEntityService;
-    private readonly IUserGroupTransferRequestEntityService _userGroupTransferRequestEntityService;
-    private readonly IUserGroupInviteRequestEntityService _userGroupInviteRequestEntityService;
-    private readonly IAuthorizeEntityService _authorizeEntityService;
-
-    #endregion
-
     #region Ctor
 
     public UserGroupHandler(
@@ -98,6 +77,27 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
         _userGroupInviteRequestEntityService = userGroupInviteRequestEntityService;
         _authorizeEntityService = authorizeEntityService;
     }
+
+    #endregion
+
+    #region Fields
+
+    private readonly ILogger<HandlerBase> _logger;
+    private readonly IAppDbContextAction _appDbContextAction;
+    private readonly IMapper _mapper;
+    private readonly IUserAdvancedService _userAdvancedService;
+    private readonly IAuthorizeAdvancedService _authorizeAdvancedService;
+    private readonly IUserRepository _userRepository;
+    private readonly IUserGroupRepository _userGroupRepository;
+    private readonly IUserToUserGroupMappingRepository _userToUserGroupMappingRepository;
+    private readonly IUserEntityService _userEntityService;
+    private readonly IUserGroupEntityService _userGroupEntityService;
+    private readonly IUserToUserGroupMappingEntityService _userToUserGroupMappingEntityService;
+    private readonly IPermissionValueEntityService _permissionValueEntityService;
+    private readonly IPermissionEntityService _permissionEntityService;
+    private readonly IUserGroupTransferRequestEntityService _userGroupTransferRequestEntityService;
+    private readonly IUserGroupInviteRequestEntityService _userGroupInviteRequestEntityService;
+    private readonly IAuthorizeEntityService _authorizeEntityService;
 
     #endregion
 
@@ -217,24 +217,23 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             };
 
             //If user is not permitted to customize UserGroup.Priority, select next available
-            if (!autoMapperModelAuthorizeData.FieldAuthorizeResultDictionary.TryGetValue(nameof(Domain.Entities.UserGroup.Priority),
+            if (!autoMapperModelAuthorizeData.FieldAuthorizeResultDictionary.TryGetValue(
+                    nameof(Domain.Entities.UserGroup.Priority),
                     out var userGroupPriorityAuthorizeResult) || !userGroupPriorityAuthorizeResult)
             {
                 long priority = 0;
 
-                while (priority >= 0 || await _userGroupEntityService.GetIsPriorityClaimed(priority))
-                {
-                    priority -= 1;
-                }
+                while (priority >= 0 || await _userGroupEntityService.GetIsPriorityClaimed(priority)) priority -= 1;
 
                 data.Priority = priority;
-                autoMapperModelAuthorizeData.FieldAuthorizeResultDictionary[nameof(Domain.Entities.UserGroup.Priority)] = true;
+                autoMapperModelAuthorizeData.FieldAuthorizeResultDictionary
+                    [nameof(Domain.Entities.UserGroup.Priority)] = true;
             }
 
             //Create UserGroup entity and save it
             var userGroup = _mapper.Map<Domain.Entities.UserGroup>(data,
                 opts => { opts.Items[Consts.AutoMapperModelAuthorizeDataKey] = autoMapperModelAuthorizeData; });
-            
+
             await _userGroupEntityService.Save(userGroup, cancellationToken);
 
             //Create UserGroup PermissionValues and save them
@@ -243,7 +242,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 #region Any
 
                 #region Create
-                
+
                 new()
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
@@ -264,9 +263,9 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 },
 
                 #endregion
-                
+
                 #region Read
-                
+
                 new()
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
@@ -287,9 +286,9 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 },
 
                 #endregion
-                
+
                 #region Update
-                
+
                 new()
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
@@ -310,9 +309,9 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 },
 
                 #endregion
-                
+
                 #region Delete
-                
+
                 new()
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
@@ -335,7 +334,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 #endregion
 
                 #endregion
-                
+
                 #region Group
 
                 #region Read
@@ -570,7 +569,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 },
 
                 #endregion
-                
+
                 #region TransferUserGroupRead
 
                 new()
@@ -604,7 +603,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 #endregion
 
                 #region InviteUser
-                
+
                 new()
                 {
                     Value = BitConverter.GetBytes(Consts.TrueValue),
@@ -702,7 +701,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 },
 
                 #endregion
-                
+
                 #region InviteUserRead
 
                 new()
@@ -837,18 +836,20 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 EntityLeftId = userGroup.UserId,
                 EntityRightId = userGroup.Id
             }, cancellationToken);
-            
-            var userToUserGroupMappingPublic = await _userToUserGroupMappingEntityService.Save(new UserToUserGroupMapping
-            {
-                EntityLeftId = Consts.PublicUserId,
-                EntityRightId = userGroup.Id
-            }, cancellationToken);
-            
-            var userToUserGroupMappingGroupMember = await _userToUserGroupMappingEntityService.Save(new UserToUserGroupMapping
-            {
-                EntityLeftId = Consts.GroupMemberUserId,
-                EntityRightId = userGroup.Id
-            }, cancellationToken);
+
+            var userToUserGroupMappingPublic = await _userToUserGroupMappingEntityService.Save(
+                new UserToUserGroupMapping
+                {
+                    EntityLeftId = Consts.PublicUserId,
+                    EntityRightId = userGroup.Id
+                }, cancellationToken);
+
+            var userToUserGroupMappingGroupMember = await _userToUserGroupMappingEntityService.Save(
+                new UserToUserGroupMapping
+                {
+                    EntityLeftId = Consts.GroupMemberUserId,
+                    EntityRightId = userGroup.Id
+                }, cancellationToken);
 
             //Create UserToUserGroupMappings PermissionValues and save them
             var userToUserGroupMappingPermissionValues = new PermissionValue[]
@@ -935,9 +936,9 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
                 #endregion
             };
-            
+
             await _permissionValueEntityService.Save(userToUserGroupMappingPermissionValues, cancellationToken);
-            
+
             //Delete Authorize cache when joining group (for Public, GroupMember users that joined)
             await _authorizeEntityService.PurgeByEntityIdAsync(userGroup.UserId, cancellationToken);
             await _authorizeEntityService.PurgeByEntityIdAsync(Consts.PublicUserId, cancellationToken);
@@ -1181,18 +1182,17 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             };
 
             //If user is not permitted to customize UserGroup.Priority, select next available
-            if (!autoMapperModelAuthorizeData.FieldAuthorizeResultDictionary.TryGetValue(nameof(Domain.Entities.UserGroup.Priority),
+            if (!autoMapperModelAuthorizeData.FieldAuthorizeResultDictionary.TryGetValue(
+                    nameof(Domain.Entities.UserGroup.Priority),
                     out var userGroupPriorityAuthorizeResult) || !userGroupPriorityAuthorizeResult)
             {
                 long priority = 0;
 
-                while (priority >= 0 || await _userGroupEntityService.GetIsPriorityClaimed(priority))
-                {
-                    priority -= 1;
-                }
+                while (priority >= 0 || await _userGroupEntityService.GetIsPriorityClaimed(priority)) priority -= 1;
 
                 data.Priority = priority;
-                autoMapperModelAuthorizeData.FieldAuthorizeResultDictionary[nameof(Domain.Entities.UserGroup.Priority)] = true;
+                autoMapperModelAuthorizeData.FieldAuthorizeResultDictionary
+                    [nameof(Domain.Entities.UserGroup.Priority)] = true;
             }
 
             //Update UserGroup entity and save it
@@ -1258,7 +1258,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
 
             //Delete UserGroup PermissionValues associated with this group
             await _permissionValueEntityService.PurgeAsync(userGroup.Id, cancellationToken);
-            
+
             //Delete Authorize cache when deleting group (for all Users and all UserToUserGroupMappings associated with this group)
             for (var page = 1;; page += 1)
             {
@@ -1272,15 +1272,16 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 foreach (var userToUserGroupMapping in entities)
                 {
                     await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.Id, cancellationToken);
-                    await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.EntityLeftId, cancellationToken);
+                    await _authorizeEntityService.PurgeByEntityIdAsync(userToUserGroupMapping.EntityLeftId,
+                        cancellationToken);
                 }
-                
+
                 await _appDbContextAction.CommitAsync(cancellationToken);
 
                 if (entities.Count < 512)
                     break;
             }
-            
+
             //Delete UserToUserGroupMappings PermissionValues associated with this group
             for (var page = 1;; page += 1)
             {
@@ -1315,6 +1316,6 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
             throw;
         }
     }
-    
+
     #endregion
 }

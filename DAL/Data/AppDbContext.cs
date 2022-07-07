@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Helpers;
@@ -323,7 +321,7 @@ public sealed class AppDbContext : DbContext
                 Type = PermissionType.ValueNeededOthers,
                 CompareMode = PermissionCompareMode.GreaterOrEqual
             },
-            
+
             #region Update->AutoMapper Permissions
 
             new()
@@ -471,7 +469,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroup
 
             new()
@@ -523,7 +521,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroupRead
 
             new()
@@ -643,7 +641,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region InviteUserRead
 
             new()
@@ -737,7 +735,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region AddUser
 
             new()
@@ -1095,21 +1093,21 @@ public sealed class AppDbContext : DbContext
         };
 
         users.Add(userRoot);
-        
+
         var userPublic = new User
         {
             Id = new Guid(Consts.PublicUserId.ToString()),
             IsTemporary = false
         };
-        
+
         users.Add(userPublic);
-        
+
         var userGroupMember = new User
         {
             Id = new Guid(Consts.GroupMemberUserId.ToString()),
             IsTemporary = false
         };
-        
+
         users.Add(userGroupMember);
 
         appDbContextSeedLists.Users.AddRange(users);
@@ -1437,7 +1435,7 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOwner).Id,
                 EntityId = rootUserGroup.Id
             },
-            
+
             #endregion
 
             #endregion
@@ -1503,9 +1501,9 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOthers).Id,
                 EntityId = rootUserGroup.Id
             },
-            
+
             #region Update->AutoMapper Permissions
-            
+
             new()
             {
                 Id = new Guid("ba07c118-2fd6-4702-b8c6-e98417a44061"),
@@ -1590,7 +1588,7 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOwner).Id,
                 EntityId = rootUserGroup.Id
             },
-            
+
             #endregion
 
             #endregion
@@ -1689,7 +1687,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroup
 
             new()
@@ -1697,7 +1695,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("a5910ec7-f347-45bc-b3fe-d35e0275b160"),
                 Value = BitConverter.GetBytes(rootUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestCreate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupTransferRequestCreate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = rootUserGroup.Id
             },
             new()
@@ -1728,7 +1728,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("60463c67-796a-4a16-9d01-6c0f1c714be7"),
                 Value = BitConverter.GetBytes(rootUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestUpdate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupTransferRequestUpdate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = rootUserGroup.Id
             },
             new()
@@ -1751,7 +1753,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroupRead
 
             new()
@@ -1759,7 +1761,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("6b821470-08b4-4fd3-8455-20f8c73a8b7c"),
                 Value = BitConverter.GetBytes(rootUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = rootUserGroup.Id
             },
             new()
@@ -1790,7 +1794,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("916cbb4f-fd8d-46ee-be1b-424f4611d2a1"),
                 Value = BitConverter.GetBytes(rootUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupInviteRequestCreate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupInviteRequestCreate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = rootUserGroup.Id
             },
             new()
@@ -1839,7 +1845,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("6fa6b689-4a64-492c-a72e-b18e6596f400"),
                 Value = BitConverter.GetBytes(rootUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupInviteRequestUpdate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupInviteRequestUpdate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = rootUserGroup.Id
             },
             new()
@@ -1880,7 +1888,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region InviteUserRead
 
             new()
@@ -1978,9 +1986,9 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region AddUser
-            
+
             new()
             {
                 Id = new Guid("fe1e12f9-5516-44c0-a053-b52b150a5bb7"),
@@ -2552,7 +2560,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #region Create->AutoMapper Permissions
-            
+
             new()
             {
                 Id = new Guid("d83c4f1a-7337-476a-aebc-96413a78c29d"),
@@ -2637,7 +2645,7 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOwner).Id,
                 EntityId = bannedUserGroup.Id
             },
-            
+
             #endregion
 
             #endregion
@@ -2703,9 +2711,9 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOthers).Id,
                 EntityId = bannedUserGroup.Id
             },
-            
+
             #region Update->AutoMapper Permissions
-            
+
             new()
             {
                 Id = new Guid("4618bee3-15fd-4ea6-8f01-c499f6831100"),
@@ -2790,7 +2798,7 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOwner).Id,
                 EntityId = bannedUserGroup.Id
             },
-            
+
             #endregion
 
             #endregion
@@ -2827,7 +2835,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region Join
 
             new()
@@ -2889,7 +2897,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroup
 
             new()
@@ -2897,7 +2905,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("c8760a60-c49a-4c7e-8e2f-240850e8cc5b"),
                 Value = BitConverter.GetBytes(bannedUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestCreate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupTransferRequestCreate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = bannedUserGroup.Id
             },
             new()
@@ -2920,7 +2930,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroupManage
 
             new()
@@ -2928,7 +2938,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("b1389790-0bbf-4c8a-8f2e-1935f8637e78"),
                 Value = BitConverter.GetBytes(bannedUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestUpdate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupTransferRequestUpdate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = bannedUserGroup.Id
             },
             new()
@@ -2951,7 +2963,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroupRead
 
             new()
@@ -2959,7 +2971,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("700e733f-f9a5-44e3-9c18-59936b671a35"),
                 Value = BitConverter.GetBytes(bannedUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = bannedUserGroup.Id
             },
             new()
@@ -2990,7 +3004,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("53d12d63-bba6-4945-b2f6-4e2570a95ba4"),
                 Value = BitConverter.GetBytes(bannedUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupInviteRequestCreate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupInviteRequestCreate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = bannedUserGroup.Id
             },
             new()
@@ -3039,7 +3055,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("929341ff-1f59-404a-b999-79659c431e74"),
                 Value = BitConverter.GetBytes(bannedUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupInviteRequestUpdate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupInviteRequestUpdate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = bannedUserGroup.Id
             },
             new()
@@ -3080,7 +3098,7 @@ public sealed class AppDbContext : DbContext
             // },
 
             #endregion
-            
+
             #region InviteUserRead
 
             new()
@@ -3178,9 +3196,9 @@ public sealed class AppDbContext : DbContext
             // },
 
             #endregion
-            
+
             #region AddUser
-            
+
             new()
             {
                 Id = new Guid("1cf93b09-57d5-4a58-8413-2d06c06d8184"),
@@ -3586,7 +3604,7 @@ public sealed class AppDbContext : DbContext
         var memberUserGroupPermissionValues = new List<PermissionValue>
         {
             #region Any
-            
+
             //TODO: Update. allow edit permission values of themselves (in ranges allowed by Min-Max Grant)
 
             #region Create
@@ -3754,7 +3772,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #region Create->AutoMapper Permissions
-            
+
             new()
             {
                 Id = new Guid("87b2487e-d303-4d8d-a377-eeaefd439d1b"),
@@ -3839,7 +3857,7 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOwner).Id,
                 EntityId = memberUserGroup.Id
             },
-            
+
             #endregion
 
             #endregion
@@ -3905,9 +3923,9 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOthers).Id,
                 EntityId = memberUserGroup.Id
             },
-            
+
             #region Update->AutoMapper Permissions
-            
+
             new()
             {
                 Id = new Guid("0cdf267f-32fb-4a13-8fad-494f830a7144"),
@@ -3992,7 +4010,7 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOwner).Id,
                 EntityId = memberUserGroup.Id
             },
-            
+
             #endregion
 
             #endregion
@@ -4029,7 +4047,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region Join
 
             new()
@@ -4091,7 +4109,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroup
 
             new()
@@ -4099,7 +4117,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("09c3147c-b704-426e-814b-151c96930b0a"),
                 Value = BitConverter.GetBytes(memberUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestCreate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupTransferRequestCreate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = memberUserGroup.Id
             },
             new()
@@ -4122,7 +4142,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroupManage
 
             new()
@@ -4130,7 +4150,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("b731b32e-3228-42fb-a20a-e8bb1bc6fa5b"),
                 Value = BitConverter.GetBytes(memberUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestUpdate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupTransferRequestUpdate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = memberUserGroup.Id
             },
             new()
@@ -4153,7 +4175,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroupRead
 
             new()
@@ -4161,7 +4183,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("22d966ae-cad7-481c-ad0b-6a7ec119ef1a"),
                 Value = BitConverter.GetBytes(memberUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupTransferRequestRead &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = memberUserGroup.Id
             },
             new()
@@ -4192,7 +4216,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("aabebbbb-7349-4d07-bb72-995c81713136"),
                 Value = BitConverter.GetBytes(memberUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupInviteRequestCreate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupInviteRequestCreate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = memberUserGroup.Id
             },
             new()
@@ -4241,7 +4267,9 @@ public sealed class AppDbContext : DbContext
                 Id = new Guid("239b39b2-fa63-4588-b89d-473375f0413b"),
                 Value = BitConverter.GetBytes(memberUserGroupPower),
                 PermissionId = permissions.Single(_ =>
-                    _.Alias == Consts.PermissionAlias.UserGroupInviteRequestUpdate && _.Type == PermissionType.Value).Id,
+                        _.Alias == Consts.PermissionAlias.UserGroupInviteRequestUpdate &&
+                        _.Type == PermissionType.Value)
+                    .Id,
                 EntityId = memberUserGroup.Id
             },
             new()
@@ -4282,7 +4310,7 @@ public sealed class AppDbContext : DbContext
             // },
 
             #endregion
-            
+
             #region InviteUserRead
 
             new()
@@ -4380,9 +4408,9 @@ public sealed class AppDbContext : DbContext
             // },
 
             #endregion
-            
+
             #region AddUser
-            
+
             // new()
             // {
             //     Id = new Guid("96988811-0772-479d-9172-c37ec590d75d"),
@@ -4936,7 +4964,7 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOthers).Id,
                 EntityId = guestUserGroup.Id
             },
-            
+
             #region Update->AutoMapper Permissions
 
             new()
@@ -4993,7 +5021,7 @@ public sealed class AppDbContext : DbContext
                     _.Type == PermissionType.ValueNeededOwner).Id,
                 EntityId = guestUserGroup.Id
             },
-            
+
             #endregion
 
             #endregion
@@ -5020,7 +5048,7 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region Join
 
             new()
@@ -5082,9 +5110,9 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroup
-            
+
             new()
             {
                 Id = new Guid("82f04979-b39f-4b66-9dae-51e966521cf0"),
@@ -5105,9 +5133,9 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroupManage
-            
+
             new()
             {
                 Id = new Guid("bb70e907-9031-446e-a600-15302944fc60"),
@@ -5128,9 +5156,9 @@ public sealed class AppDbContext : DbContext
             },
 
             #endregion
-            
+
             #region TransferUserGroupRead
-            
+
             new()
             {
                 Id = new Guid("73e95b87-7189-4154-931c-d883ae4629d4"),
@@ -5153,7 +5181,7 @@ public sealed class AppDbContext : DbContext
             #endregion
 
             #region InviteUser
-            
+
             new()
             {
                 Id = new Guid("b8b66876-ce4b-4198-8a3c-a27056fc7e18"),
@@ -5194,7 +5222,7 @@ public sealed class AppDbContext : DbContext
             #endregion
 
             #region InviteUserManage
-            
+
             new()
             {
                 Id = new Guid("470f4604-f1a6-474d-ab29-b1273913d0cd"),
@@ -5233,9 +5261,9 @@ public sealed class AppDbContext : DbContext
             // },
 
             #endregion
-            
+
             #region InviteUserManage
-            
+
             new()
             {
                 Id = new Guid("41fa7806-c9cd-4480-9d8c-d11668a559ad"),
@@ -5276,7 +5304,7 @@ public sealed class AppDbContext : DbContext
             #endregion
 
             #region KickUser
-            
+
             new()
             {
                 Id = new Guid("e180042f-08a6-429e-8c41-bb1e59f99bd8"),
@@ -5315,9 +5343,9 @@ public sealed class AppDbContext : DbContext
             // },
 
             #endregion
-            
+
             #region AddUser
-            
+
             // new()
             // {
             //     Id = new Guid("2ea2ea21-e85e-43d5-bc1d-69a4cae1b8af"),
@@ -5563,24 +5591,16 @@ public sealed class AppDbContext : DbContext
         var userGroupEntityDiscriminatorHash = typeof(UserGroup).EntityAqnHash();
 
         foreach (var permissionValue in rootUserGroupPermissionValues)
-        {
             permissionValue.EntityDiscriminator = userGroupEntityDiscriminatorHash;
-        }
-        
+
         foreach (var permissionValue in bannedUserGroupPermissionValues)
-        {
             permissionValue.EntityDiscriminator = userGroupEntityDiscriminatorHash;
-        }
-        
+
         foreach (var permissionValue in memberUserGroupPermissionValues)
-        {
             permissionValue.EntityDiscriminator = userGroupEntityDiscriminatorHash;
-        }
-        
+
         foreach (var permissionValue in guestUserGroupPermissionValues)
-        {
             permissionValue.EntityDiscriminator = userGroupEntityDiscriminatorHash;
-        }
 
         appDbContextSeedLists.PermissionValues.AddRange(rootUserGroupPermissionValues);
         appDbContextSeedLists.PermissionValues.AddRange(bannedUserGroupPermissionValues);

@@ -37,7 +37,7 @@ public class AutoMapperProfile : Profile
 
         CreateMap<PermissionValueCreateDto, PermissionValue>(MemberList.None);
         CreateMap<PermissionValueUpdateDto, PermissionValue>(MemberList.None);
-        
+
         CreateMap<UserGroupCreateDto, UserGroup>(MemberList.None)
             .ForMember(_ => _.UserId, opt => opt.MapFrom(__ => __.TargetUserId))
             .ForMember(_ => _.Alias, opt =>
@@ -81,7 +81,7 @@ public class AutoMapperProfile : Profile
         #region From DOMAIN to DTO
 
         CreateMap<Permission, PermissionReadCollectionItemResultDto>(MemberList.None);
-        
+
         CreateMap<PermissionValue, PermissionValueCreateResultDto>(MemberList.None);
         CreateMap<PermissionValue, PermissionValueReadResultDto>(MemberList.None);
         CreateMap<PermissionValue, PermissionValueUpdateResultDto>(MemberList.None);
@@ -111,7 +111,7 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.UpdatedAt, opt => opt.MapFrom(__ => __.UpdatedAt));
 
         #endregion
-        
+
         #endregion
     }
 

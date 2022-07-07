@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BLL.Services.Base;
-using Common.Enums;
 using Common.Models;
 using DAL.Data;
 using DAL.Extensions;
@@ -16,7 +14,8 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
 
-public interface IPermissionValueEntityService : IEntityServiceBase<PermissionValue>, IEntityCollectionServiceBase<PermissionValue>
+public interface IPermissionValueEntityService : IEntityServiceBase<PermissionValue>,
+    IEntityCollectionServiceBase<PermissionValue>
 {
     Task PurgeAsync(Guid entityId, CancellationToken cancellationToken = default);
 
@@ -83,12 +82,12 @@ public class PermissionValueEntityService : IPermissionValueEntityService
 
         return entity;
     }
-    
+
     public async Task PurgeAsync(Guid entityId, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(PurgeAsync), null));
-        
+
         var query = _permissionValueRepository
             .QueryMany(_ => _.EntityId == entityId)
             .OrderBy(_ => _.CreatedAt);
@@ -115,10 +114,13 @@ public class PermissionValueEntityService : IPermissionValueEntityService
         CancellationToken cancellationToken = default
     )
     {
-        var entity = await _permissionValueRepository.SingleOrDefaultAsync(_ => _.PermissionId == permissionId && _.EntityId == entityId);
+        var entity =
+            await _permissionValueRepository.SingleOrDefaultAsync(_ =>
+                _.PermissionId == permissionId && _.EntityId == entityId);
 
         _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetByPermissionIdEntityIdAsync), $"{entity?.GetType().Name} {entity?.Id}"));
+            Localize.Log.Method(GetType(), nameof(GetByPermissionIdEntityIdAsync),
+                $"{entity?.GetType().Name} {entity?.Id}"));
 
         return entity;
     }
@@ -146,8 +148,11 @@ public class PermissionValueEntityService : IPermissionValueEntityService
 
         return (total, await result?.ToArrayAsync(cancellationToken)!);
     }
-    
-    public async Task<IReadOnlyCollection<PermissionValue>> Save(ICollection<PermissionValue> entities, CancellationToken cancellationToken = default)
+
+    public async Task<IReadOnlyCollection<PermissionValue>> Save(
+        ICollection<PermissionValue> entities,
+        CancellationToken cancellationToken = default
+    )
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entities?.GetType().Name}"));
@@ -164,7 +169,7 @@ public class PermissionValueEntityService : IPermissionValueEntityService
             Localize.Log.Method(GetType(), nameof(Delete), $"{entities?.GetType().Name}"));
 
         var entitiesEnumerated = entities as PermissionValue[] ?? entities?.ToArray();
-        
+
         _permissionValueRepository.Delete(entitiesEnumerated);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }

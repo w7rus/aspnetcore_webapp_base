@@ -4,5 +4,4 @@ namespace DTO.Models.User;
 
 public class UserReadCollectionResultDto : PageModelResult<UserReadCollectionItemResultDto>
 {
-    
 }

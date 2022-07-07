@@ -68,7 +68,7 @@ public class UserGroupController : CustomControllerBase
     {
         return ResponseWith(await _userGroupHandler.Read(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [Route(nameof(ReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]

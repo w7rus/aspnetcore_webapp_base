@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
@@ -15,7 +14,7 @@ public class UserGroupUpdateDto
     [Required]
     [MaxLength(1024)]
     public string Description { get; set; }
-    
+
     [Range(long.MinValue, long.MaxValue)]
     public long Priority { get; set; }
 }

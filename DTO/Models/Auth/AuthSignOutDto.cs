@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DTO.Models.Auth;
+﻿namespace DTO.Models.Auth;
 
 public class AuthSignOutDto
 {

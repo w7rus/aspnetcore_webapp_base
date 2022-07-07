@@ -2,7 +2,8 @@
 
 namespace DTO.Models.UserGroupActions;
 
-public class UserGroupActionInviteRequestReadCollectionResultDto : PageModelResult<UserGroupActionInviteRequestReadCollectionItemResultDto>
+public class
+    UserGroupActionInviteRequestReadCollectionResultDto : PageModelResult<
+        UserGroupActionInviteRequestReadCollectionItemResultDto>
 {
-    
 }

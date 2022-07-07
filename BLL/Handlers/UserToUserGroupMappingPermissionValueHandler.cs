@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -123,7 +122,8 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserToUserGroupMappingNotFound);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
+            var userGroup =
+                await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -173,7 +173,7 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
             throw;
         }
     }
-    
+
     public async Task<IDtoResultBase> Read(PermissionValueReadDto data, CancellationToken cancellationToken = default)
     {
         _logger.Log(LogLevel.Information, Localize.Log.MethodStart(GetType(), nameof(Read)));
@@ -195,14 +195,15 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
-            
+
             var userToUserGroupMapping =
                 await _userToUserGroupMappingEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
             if (userToUserGroupMapping == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserToUserGroupMappingNotFound);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
+            var userGroup =
+                await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -239,7 +240,7 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
             throw;
         }
     }
-    
+
     public async Task<IDtoResultBase> ReadCollection(
         PermissionValueReadCollectionDto data,
         CancellationToken cancellationToken = default
@@ -271,9 +272,10 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
                         EntityRightTableName = _userGroupRepository.GetTableName(),
                         EntityRightGroupsTableName = null,
                         EntityRightEntityToEntityMappingsTableName = null,
-                        
+
                         //public."PermissionValue"[EntityId] is a UserToUserGroupMappingId, so to get UserGroupId SELECT public."UserToUserGroupMapping"[EntityRightId] FROM public."UserToUserGroupMapping" WHERE public."UserToUserGroupMapping"[Id] = public."PermissionValue"[EntityId] 
-                        EntityRightIdRawSql = $"(SELECT \"EntityRightId\" FROM public.\"{_userToUserGroupMappingRepository.GetTableName()})\" WHERE \"Id\" = \"EntityId\" LIMIT 1)",
+                        EntityRightIdRawSql =
+                            $"(SELECT \"EntityRightId\" FROM public.\"{_userToUserGroupMappingRepository.GetTableName()})\" WHERE \"Id\" = \"EntityId\" LIMIT 1)",
                         EntityRightPermissionAlias = Consts.PermissionAlias.PermissionValueRead,
                         SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                     }, new FilterExpressionModel
@@ -309,7 +311,7 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
             throw;
         }
     }
-    
+
     public async Task<IDtoResultBase> Update(
         PermissionValueUpdateDto data,
         CancellationToken cancellationToken = default
@@ -334,14 +336,15 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
-            
+
             var userToUserGroupMapping =
                 await _userToUserGroupMappingEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
             if (userToUserGroupMapping == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserToUserGroupMappingNotFound);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
+            var userGroup =
+                await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -384,7 +387,7 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
             throw;
         }
     }
-    
+
     public async Task<IDtoResultBase> Delete(
         PermissionValueDeleteDto data,
         CancellationToken cancellationToken = default
@@ -409,14 +412,15 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
-            
+
             var userToUserGroupMapping =
                 await _userToUserGroupMappingEntityService.GetByIdAsync(permissionValue.EntityId, cancellationToken);
             if (userToUserGroupMapping == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserToUserGroupMappingNotFound);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
+            var userGroup =
+                await _userGroupEntityService.GetByIdAsync(userToUserGroupMapping.EntityRightId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);

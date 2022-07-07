@@ -2,7 +2,6 @@
 using API.AuthHandlers;
 using API.Configuration;
 using BLL.BackgroundServices;
-using BLL.Handlers;
 using BLL.Handlers.App;
 using BLL.Handlers.Auth;
 using BLL.Handlers.File;
@@ -123,14 +122,13 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddDbContext<AppDbContext>(options =>
         {
             options
-                .UseNpgsql(configuration.GetConnectionString("Default") + (env.IsDevelopment() ? ";Include Error Detail=true" : ""),
+                .UseNpgsql(
+                    configuration.GetConnectionString("Default") +
+                    (env.IsDevelopment() ? ";Include Error Detail=true" : ""),
                     _ => _.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery))
                 .UseLazyLoadingProxies();
 
-            if (env.IsDevelopment())
-            {
-                options.EnableSensitiveDataLogging().EnableDetailedErrors();
-            }
+            if (env.IsDevelopment()) options.EnableSensitiveDataLogging().EnableDetailedErrors();
         });
 
         return serviceCollection;

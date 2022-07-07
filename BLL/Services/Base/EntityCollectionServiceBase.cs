@@ -9,8 +9,13 @@ namespace BLL.Services.Base;
 
 public interface IEntityCollectionServiceBase<TEntity> where TEntity : EntityBase<Guid>
 {
-    Task<IReadOnlyCollection<TEntity>> Save(ICollection<TEntity> entities, CancellationToken cancellationToken = default);
+    Task<IReadOnlyCollection<TEntity>> Save(
+        ICollection<TEntity> entities,
+        CancellationToken cancellationToken = default
+    );
+
     Task Delete(ICollection<TEntity> entities, CancellationToken cancellationToken = default);
+
     Task<(int total, IReadOnlyCollection<TEntity> entities)> GetFiltered(
         FilterExpressionModel filterExpressionModel,
         FilterSortModel filterSortModel,

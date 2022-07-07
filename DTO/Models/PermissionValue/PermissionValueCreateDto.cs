@@ -7,6 +7,7 @@ public class PermissionValueCreateDto
 {
     [Required]
     public byte[] Value { get; set; }
+
     public Guid PermissionId { get; set; }
     public Guid EntityId { get; set; }
 }

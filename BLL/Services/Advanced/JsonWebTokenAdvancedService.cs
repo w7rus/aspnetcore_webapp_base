@@ -20,7 +20,10 @@ public interface IJsonWebTokenAdvancedService
     /// <param name="throwIfNotProvided"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<JsonWebToken> GetFromHttpContext(bool throwIfNotProvided = true, CancellationToken cancellationToken = default);
+    Task<JsonWebToken> GetFromHttpContext(
+        bool throwIfNotProvided = true,
+        CancellationToken cancellationToken = default
+    );
 }
 
 public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
@@ -42,7 +45,10 @@ public class JsonWebTokenAdvancedService : IJsonWebTokenAdvancedService
 
     #region Methods
 
-    public async Task<JsonWebToken> GetFromHttpContext(bool throwIfNotProvided = true, CancellationToken cancellationToken = default)
+    public async Task<JsonWebToken> GetFromHttpContext(
+        bool throwIfNotProvided = true,
+        CancellationToken cancellationToken = default
+    )
     {
         if (!Guid.TryParse(_httpContext.User.Claims.SingleOrDefault(_ => _.Type == ClaimKey.JsonWebTokenId)?.Value,
                 out var jsonWebTokenId))

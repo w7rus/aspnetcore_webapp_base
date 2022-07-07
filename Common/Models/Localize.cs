@@ -92,9 +92,9 @@ public static class Localize
         public static string UserGroupNotFound => "UserGroupNotFound";
 
         #endregion
-        
+
         #region UserToUserGroupMapping
-        
+
         public static string UserToUserGroupMappingNotFound => "UserToUserGroupMappingNotFound";
         public static string UserToUserGroupMappingAlreadyExists => "UserToUserGroupMappingAlreadyExists";
         public static string UserToUserGroupMappingDeleteNotAllowed => "UserToUserGroupMappingDeleteNotAllowed";
@@ -105,15 +105,21 @@ public static class Localize
         #region UserGroupTransferRequest
 
         public static string UserGroupTransferRequestNotFound => "UserGroupTransferRequestNotFound";
-        public static string UserGroupTransferRequestSelectedChoiceNotAllowed => "UserGroupTransferRequestSelectedChoiceNotAllowed";
+
+        public static string UserGroupTransferRequestSelectedChoiceNotAllowed =>
+            "UserGroupTransferRequestSelectedChoiceNotAllowed";
+
         public static string UserGroupTransferSameUserNotAllowed => "UserGroupTransferSameUserNotAllowed";
 
         #endregion
-        
+
         #region UserGroupInviteRequest
 
         public static string UserGroupInviteRequestNotFound => "UserGroupInviteRequestNotFound";
-        public static string UserGroupInviteRequestSelectedChoiceNotAllowed => "UserGroupInviteRequestSelectedChoiceNotAllowed";
+
+        public static string UserGroupInviteRequestSelectedChoiceNotAllowed =>
+            "UserGroupInviteRequestSelectedChoiceNotAllowed";
+
         public static string UserGroupInviteRequestSameUserNotAllowed => "UserGroupInviteRequestSameUserNotAllowed";
 
         #endregion

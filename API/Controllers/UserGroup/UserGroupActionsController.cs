@@ -42,7 +42,7 @@ public class UserGroupActionsController : CustomControllerBase
     #endregion
 
     #region Methods
-    
+
     [HttpPost]
     [Route(nameof(UserGroupTransferRequestCreate))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
@@ -66,7 +66,7 @@ public class UserGroupActionsController : CustomControllerBase
     {
         return ResponseWith(await _userGroupActionsHandler.UserGroupTransferRequestUpdate(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [Route(nameof(UserGroupTransferRequestRead))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
@@ -78,7 +78,7 @@ public class UserGroupActionsController : CustomControllerBase
     {
         return ResponseWith(await _userGroupActionsHandler.UserGroupTransferRequestRead(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [Route(nameof(UserGroupTransferRequestReceiverReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
@@ -88,9 +88,10 @@ public class UserGroupActionsController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _userGroupActionsHandler.UserGroupTransferRequestReceiverReadCollection(data, cancellationToken));
+        return ResponseWith(
+            await _userGroupActionsHandler.UserGroupTransferRequestReceiverReadCollection(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [Route(nameof(UserGroupTransferRequestSenderReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
@@ -100,7 +101,8 @@ public class UserGroupActionsController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _userGroupActionsHandler.UserGroupTransferRequestSenderReadCollection(data, cancellationToken));
+        return ResponseWith(
+            await _userGroupActionsHandler.UserGroupTransferRequestSenderReadCollection(data, cancellationToken));
     }
 
     [HttpPost]
@@ -138,7 +140,7 @@ public class UserGroupActionsController : CustomControllerBase
     {
         return ResponseWith(await _userGroupActionsHandler.UserGroupInviteRequestRead(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [Route(nameof(UserGroupInviteRequestReceiverReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
@@ -148,9 +150,10 @@ public class UserGroupActionsController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _userGroupActionsHandler.UserGroupInviteRequestReceiverReadCollection(data, cancellationToken));
+        return ResponseWith(
+            await _userGroupActionsHandler.UserGroupInviteRequestReceiverReadCollection(data, cancellationToken));
     }
-    
+
     [HttpGet]
     [Route(nameof(UserGroupInviteRequestSenderReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
@@ -160,7 +163,8 @@ public class UserGroupActionsController : CustomControllerBase
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _userGroupActionsHandler.UserGroupInviteRequestSenderReadCollection(data, cancellationToken));
+        return ResponseWith(
+            await _userGroupActionsHandler.UserGroupInviteRequestSenderReadCollection(data, cancellationToken));
     }
 
     [HttpPost]
@@ -174,7 +178,7 @@ public class UserGroupActionsController : CustomControllerBase
     {
         return ResponseWith(await _userGroupActionsHandler.UserGroupAddUser(data, cancellationToken));
     }
-    
+
     [HttpPost]
     [Route(nameof(UserGroupDeleteUser))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]

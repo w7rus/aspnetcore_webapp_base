@@ -1,6 +1,5 @@
 ﻿using System;
 using Domain.Enums;
-using DTO.Models.Base;
 
 namespace DTO.Models.File;
 

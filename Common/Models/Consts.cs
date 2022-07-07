@@ -1,5 +1,4 @@
 ﻿using System;
-using Common.Enums;
 
 namespace Common.Models;
 
@@ -18,17 +17,19 @@ public static class Consts
     public const string AutoMapperModelAuthorizeDataKey = "AutoMapperModelAuthorizeData";
     public const string NpgSqlEntityFrameworkCorePostgreSQLProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
     public const string DomainNamespace = "Domain.Entities";
+    public const string RootUserGroupId = "55119e40-f094-4560-877f-42d18ff197db";
     public static readonly Guid RootUserId = new("ce374862-f799-4519-9fa8-a8dcf1b9e8ab");
     public static readonly Guid PublicUserId = new("8a278c1c-f27d-46ae-b9cd-99ac2e6ab141");
     public static readonly Guid GroupMemberUserId = new("85f276b1-07b9-4a61-945e-4598241bd47f");
-    public const string RootUserGroupId = "55119e40-f094-4560-877f-42d18ff197db";
 
     public class PermissionAlias
     {
         //User,UserGroup PermissionValue
         public const string PermissionValueCreate = "PermissionValueCreate";
         public const string PermissionValueRead = "PermissionValueRead";
+
         public const string PermissionValueUpdate = "PermissionValueUpdate";
+
         //TODO: g_any_a_update_o_permissionvalue_o_mingrant_l_automapper
         //TODO: g_any_a_update_o_permissionvalue_o_maxgrant_l_automapper
         //TODO: g_any_a_update_o_permissionvalue_a_skipgrant
@@ -63,13 +64,16 @@ public static class Consts
         public const string UserUpdate = "UserUpdate";
         public const string UserDelete = "UserDelete";
         public const string UserProfileRead = "UserProfileRead";
+
         public const string UserProfileUpdate = "UserProfileUpdate";
+
         // public const string g_userprofile_a_update_o_userprofile_o_avatar_l_maxfilesize = "g_userprofile_a_update_o_userprofile.o_avatar_l_maxfilesize";
         public const string FileCreate = "FileCreate";
         public const string FileCreate_Agerating = "FileCreate_Agerating";
         public const string FileRead = "FileRead";
         public const string FileUpdate = "FileUpdate";
         public const string FileUpdate_Agerating = "FileUpdate_Agerating";
+
         public const string FileDelete = "FileDelete";
         //TODO: g_file_a_transferownership_o_file
     }
@@ -233,7 +237,7 @@ AS $BODY$
     END;
 $BODY$;
 ";
-        
+
         public const string CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermission = $@"
 CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission""(
     IN entitylefttablename text DEFAULT NULL::text,

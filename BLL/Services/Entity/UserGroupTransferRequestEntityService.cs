@@ -14,20 +14,21 @@ using Microsoft.Extensions.Logging;
 
 namespace BLL.Services.Entity;
 
-public interface IUserGroupTransferRequestEntityService : IEntityServiceBase<UserGroupTransferRequest>, IEntityCollectionServiceBase<UserGroupTransferRequest>
+public interface IUserGroupTransferRequestEntityService : IEntityServiceBase<UserGroupTransferRequest>,
+    IEntityCollectionServiceBase<UserGroupTransferRequest>
 {
     Task<IReadOnlyCollection<UserGroupTransferRequest>> GetByUserGroupIdAsync(
         Guid userGroupId,
         PageModel pageModel,
         CancellationToken cancellationToken = default
     );
-    
+
     Task<IReadOnlyCollection<UserGroupTransferRequest>> GetBySrcUserIdAsync(
         Guid srcUserId,
         PageModel pageModel,
         CancellationToken cancellationToken = default
     );
-    
+
     Task<IReadOnlyCollection<UserGroupTransferRequest>> GetByDestUserIdAsync(
         Guid destUserId,
         PageModel pageModel,
@@ -52,6 +53,59 @@ public class UserGroupTransferRequestEntityService : IUserGroupTransferRequestEn
 
     #endregion
 
+    public async Task<IReadOnlyCollection<UserGroupTransferRequest>> Save(
+        ICollection<UserGroupTransferRequest> entities,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Save), $"{entities?.GetType().Name}"));
+
+        _userGroupTransferRequestRepository.Save(entities);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+
+        return entities as IReadOnlyCollection<UserGroupTransferRequest>;
+    }
+
+    public async Task Delete(
+        ICollection<UserGroupTransferRequest> entities,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(Delete), $"{entities?.GetType().Name}"));
+
+        var entitiesEnumerated = entities as UserGroupTransferRequest[] ?? entities?.ToArray();
+
+        _userGroupTransferRequestRepository.Delete(entitiesEnumerated);
+        await _appDbContextAction.CommitAsync(cancellationToken);
+    }
+
+    public async Task<(int total, IReadOnlyCollection<UserGroupTransferRequest> entities)> GetFiltered(
+        FilterExpressionModel filterExpressionModel,
+        FilterSortModel filterSortModel,
+        PageModel pageModel,
+        AuthorizeModel authorizeModel,
+        FilterExpressionModel systemFilterExpressionModel = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var result =
+            _userGroupTransferRequestRepository.GetFilteredSorted(filterExpressionModel, filterSortModel,
+                authorizeModel,
+                systemFilterExpressionModel);
+
+        var total = result.Count();
+
+        result = result.GetPage(pageModel);
+
+        _logger.Log(LogLevel.Information,
+            Localize.Log.Method(GetType(), nameof(GetFiltered),
+                $"{result?.GetType().Name} {result?.Count()}"));
+
+        return (total, await result?.ToArrayAsync(cancellationToken)!);
+    }
+
     #region Fields
 
     private readonly ILogger<UserGroupTransferRequestEntityService> _logger;
@@ -62,7 +116,10 @@ public class UserGroupTransferRequestEntityService : IUserGroupTransferRequestEn
 
     #region Methods
 
-    public async Task<UserGroupTransferRequest> Save(UserGroupTransferRequest entity, CancellationToken cancellationToken = default)
+    public async Task<UserGroupTransferRequest> Save(
+        UserGroupTransferRequest entity,
+        CancellationToken cancellationToken = default
+    )
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entity?.GetType().Name} {entity?.Id}"));
@@ -91,8 +148,12 @@ public class UserGroupTransferRequestEntityService : IUserGroupTransferRequestEn
 
         return entity;
     }
-    
-    public async Task<IReadOnlyCollection<UserGroupTransferRequest>> GetByUserGroupIdAsync(Guid userGroupId, PageModel pageModel, CancellationToken cancellationToken = default)
+
+    public async Task<IReadOnlyCollection<UserGroupTransferRequest>> GetByUserGroupIdAsync(
+        Guid userGroupId,
+        PageModel pageModel,
+        CancellationToken cancellationToken = default
+    )
     {
         var result = await _userGroupTransferRequestRepository
             .QueryMany(_ => _.UserGroupId == userGroupId)
@@ -107,7 +168,11 @@ public class UserGroupTransferRequestEntityService : IUserGroupTransferRequestEn
         return result;
     }
 
-    public async Task<IReadOnlyCollection<UserGroupTransferRequest>> GetBySrcUserIdAsync(Guid srcUserId, PageModel pageModel, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<UserGroupTransferRequest>> GetBySrcUserIdAsync(
+        Guid srcUserId,
+        PageModel pageModel,
+        CancellationToken cancellationToken = default
+    )
     {
         var result = await _userGroupTransferRequestRepository
             .QueryMany(_ => _.SrcUserId == srcUserId)
@@ -122,7 +187,11 @@ public class UserGroupTransferRequestEntityService : IUserGroupTransferRequestEn
         return result;
     }
 
-    public async Task<IReadOnlyCollection<UserGroupTransferRequest>> GetByDestUserIdAsync(Guid destUserId, PageModel pageModel, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<UserGroupTransferRequest>> GetByDestUserIdAsync(
+        Guid destUserId,
+        PageModel pageModel,
+        CancellationToken cancellationToken = default
+    )
     {
         var result = await _userGroupTransferRequestRepository
             .QueryMany(_ => _.DestUserId == destUserId)
@@ -138,50 +207,4 @@ public class UserGroupTransferRequestEntityService : IUserGroupTransferRequestEn
     }
 
     #endregion
-
-    public async Task<IReadOnlyCollection<UserGroupTransferRequest>> Save(ICollection<UserGroupTransferRequest> entities, CancellationToken cancellationToken = default)
-    {
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Save), $"{entities?.GetType().Name}"));
-
-        _userGroupTransferRequestRepository.Save(entities);
-        await _appDbContextAction.CommitAsync(cancellationToken);
-
-        return entities as IReadOnlyCollection<UserGroupTransferRequest>;
-    }
-
-    public async Task Delete(ICollection<UserGroupTransferRequest> entities, CancellationToken cancellationToken = default)
-    {
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(Delete), $"{entities?.GetType().Name}"));
-
-        var entitiesEnumerated = entities as UserGroupTransferRequest[] ?? entities?.ToArray();
-        
-        _userGroupTransferRequestRepository.Delete(entitiesEnumerated);
-        await _appDbContextAction.CommitAsync(cancellationToken);
-    }
-
-    public async Task<(int total, IReadOnlyCollection<UserGroupTransferRequest> entities)> GetFiltered(
-        FilterExpressionModel filterExpressionModel,
-        FilterSortModel filterSortModel,
-        PageModel pageModel,
-        AuthorizeModel authorizeModel,
-        FilterExpressionModel systemFilterExpressionModel = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var result =
-            _userGroupTransferRequestRepository.GetFilteredSorted(filterExpressionModel, filterSortModel, authorizeModel,
-                systemFilterExpressionModel);
-
-        var total = result.Count();
-
-        result = result.GetPage(pageModel);
-
-        _logger.Log(LogLevel.Information,
-            Localize.Log.Method(GetType(), nameof(GetFiltered),
-                $"{result?.GetType().Name} {result?.Count()}"));
-
-        return (total, await result?.ToArrayAsync(cancellationToken)!);
-    }
 }

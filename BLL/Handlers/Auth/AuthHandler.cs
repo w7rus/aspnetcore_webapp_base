@@ -398,7 +398,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _refreshTokenEntityService.Delete(refreshToken, cancellationToken);
 
-            var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
+            var jsonWebToken =
+                await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (jsonWebToken == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Auth,
                     Localize.Error.JsonWebTokenNotFound);
@@ -527,7 +528,8 @@ public class AuthHandler : HandlerBase, IAuthHandler
 
             await _refreshTokenEntityService.Delete(refreshToken, cancellationToken);
 
-            var jsonWebToken = await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
+            var jsonWebToken =
+                await _jsonWebTokenAdvancedService.GetFromHttpContext(cancellationToken: cancellationToken);
             if (jsonWebToken == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Auth,
                     Localize.Error.JsonWebTokenNotFound);

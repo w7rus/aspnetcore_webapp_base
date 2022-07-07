@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
         <Reference Include="Microsoft.Extensions.Hosting, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
             <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.2\Microsoft.Extensions.Hosting.dll</HintPath>
         </Reference>
@@ -19,16 +19,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
-        <PackageReference Include="Serilog" Version="2.11.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
-        <PackageReference Include="StackExchange.Redis" Version="2.6.45" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0"/>
+        <PackageReference Include="Serilog" Version="2.11.0"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1"/>
+        <PackageReference Include="StackExchange.Redis" Version="2.6.45"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\API\API.csproj" />
-        <ProjectReference Include="..\BLL\BLL.csproj" />
+        <ProjectReference Include="..\API\API.csproj"/>
+        <ProjectReference Include="..\BLL\BLL.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

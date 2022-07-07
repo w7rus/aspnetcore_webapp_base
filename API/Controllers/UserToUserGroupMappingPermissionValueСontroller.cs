@@ -1,17 +1,16 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using API.Controllers.Base;
 using BLL.Handlers;
 using BLL.Services.Advanced;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Common.Models;
 using DTO.Models.Generic;
 using DTO.Models.PermissionValue;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers;
@@ -43,7 +42,7 @@ public class UserToUserGroupMappingPermissionValueController : CustomControllerB
     #endregion
 
     #region Methods
-    
+
     [HttpPost]
     [Route(nameof(Create))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
@@ -79,7 +78,8 @@ public class UserToUserGroupMappingPermissionValueController : CustomControllerB
         CancellationToken cancellationToken = default
     )
     {
-        return ResponseWith(await _userToUserGroupMappingPermissionValueHandler.ReadCollection(data, cancellationToken));
+        return ResponseWith(
+            await _userToUserGroupMappingPermissionValueHandler.ReadCollection(data, cancellationToken));
     }
 
     [HttpPut]

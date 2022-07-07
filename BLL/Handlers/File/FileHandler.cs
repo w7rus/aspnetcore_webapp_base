@@ -119,7 +119,7 @@ public class FileHandler : HandlerBase, IFileHandler
             if (user == null)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
-            
+
             var userOwner = await _userEntityService.GetByIdAsync(data.TargetUserId, cancellationToken);
             if (userOwner == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.HttpContext,
@@ -422,7 +422,7 @@ public class FileHandler : HandlerBase, IFileHandler
             throw;
         }
     }
-    
+
     //TODO: Transfer & ManageTransfer
 
     #endregion

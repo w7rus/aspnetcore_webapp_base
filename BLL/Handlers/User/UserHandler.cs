@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BLL.Handlers.Base;
@@ -24,14 +25,6 @@ public interface IUserHandler
 
 public class UserHandler : HandlerBase, IUserHandler
 {
-    #region Fields
-
-    private readonly ILogger<HandlerBase> _logger;
-    private readonly IAppDbContextAction _appDbContextAction;
-    private readonly IMapper _mapper;
-
-    #endregion
-
     #region Ctor
 
     public UserHandler(ILogger<HandlerBase> logger, IAppDbContextAction appDbContextAction, IMapper mapper)
@@ -43,11 +36,19 @@ public class UserHandler : HandlerBase, IUserHandler
 
     #endregion
 
+    #region Fields
+
+    private readonly ILogger<HandlerBase> _logger;
+    private readonly IAppDbContextAction _appDbContextAction;
+    private readonly IMapper _mapper;
+
+    #endregion
+
     #region Methods
 
     public async Task<IDtoResultBase> Read(UserReadDto data, CancellationToken cancellationToken = default)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public async Task<IDtoResultBase> ReadCollection(
@@ -55,17 +56,17 @@ public class UserHandler : HandlerBase, IUserHandler
         CancellationToken cancellationToken = default
     )
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public async Task<IDtoResultBase> Update(UserUpdateDto data, CancellationToken cancellationToken = default)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public async Task<IDtoResultBase> Delete(UserDeleteDto data, CancellationToken cancellationToken = default)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     #endregion

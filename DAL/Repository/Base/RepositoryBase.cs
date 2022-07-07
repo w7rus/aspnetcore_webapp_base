@@ -314,7 +314,7 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
                 "to_timestamp(" + value.ToString("yyyy-MM-dd HH:mm:ss zzz") +
                 "\'YYYY-MM-DD HH24:MI:SS TZH:TZM\')"));
         }
-        
+
         void AddMatchParameterGuid(
             MemberInfo property,
             FilterMatchOperation filterMatchOperation,
@@ -351,9 +351,9 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
         }
 
         var sqlParameterCounter = 0;
-        
+
         //System Match
-        
+
         if (systemFilterExpressionModel != null && systemFilterExpressionModel.Items.Any())
         {
             rawSql += " WHERE ";
@@ -556,7 +556,9 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
 
         if (filterExpressionModel != null && filterExpressionModel.Items.Any())
         {
-            rawSql += systemFilterExpressionModel != null && systemFilterExpressionModel.Items.Any() ? " AND " : " WHERE ";
+            rawSql += systemFilterExpressionModel != null && systemFilterExpressionModel.Items.Any()
+                ? " AND "
+                : " WHERE ";
 
             var stack = new Stack<FilterExpressionModelItemStackItem>();
             stack.Push(new FilterExpressionModelItemStackItem
@@ -756,13 +758,16 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
 
         if (authorizeModel != null)
         {
-            rawSql += (filterExpressionModel != null && filterExpressionModel.Items.Any() || systemFilterExpressionModel != null && systemFilterExpressionModel.Items.Any()) ? " AND " : " WHERE ";
+            rawSql += (filterExpressionModel != null && filterExpressionModel.Items.Any()) ||
+                      (systemFilterExpressionModel != null && systemFilterExpressionModel.Items.Any())
+                ? " AND "
+                : " WHERE ";
 
             rawSql += authorizeModel.GetRawSqlExpression();
         }
 
         //Sort
-        
+
         filterSortModel ??= new FilterSortModel
         {
             SortRules = new[]
@@ -809,12 +814,12 @@ public abstract class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, T
 
         return query;
     }
-    
+
     public TResult Min<TResult>(Expression<Func<TEntity, TResult>> predicate)
     {
         return DbSet.Min(predicate);
     }
-    
+
     public TResult Max<TResult>(Expression<Func<TEntity, TResult>> predicate)
     {
         return DbSet.Max(predicate);

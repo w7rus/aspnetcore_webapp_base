@@ -16,7 +16,8 @@ public class AuthorizeModel
     public Guid? EntityRightId { get; set; }
 
     /// <summary>
-    ///     Define field of Repository Table to be used that is of which .GetFiltered() is called ex. $"\"EntityId\"" or $"\"Id\""
+    ///     Define field of Repository Table to be used that is of which .GetFiltered() is called ex. $"\"EntityId\"" or
+    ///     $"\"Id\""
     /// </summary>
     public string EntityRightIdRawSql { get; set; }
 

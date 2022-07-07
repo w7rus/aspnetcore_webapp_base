@@ -1,5 +1,4 @@
 ﻿using System;
-using DTO.Models.Base;
 
 namespace DTO.Models.PermissionValue;
 

@@ -12,7 +12,7 @@ public class UserGroupCreateDto
     [Required]
     [MaxLength(1024)]
     public string Description { get; set; }
-    
+
     public long Priority { get; set; }
     public Guid TargetUserId { get; set; }
 }

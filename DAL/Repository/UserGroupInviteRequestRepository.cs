@@ -9,7 +9,8 @@ public interface IUserGroupInviteRequestRepository : IRepositoryBase<UserGroupIn
 {
 }
 
-public class UserGroupInviteRequestRepository : RepositoryBase<UserGroupInviteRequest, Guid>, IUserGroupInviteRequestRepository
+public class UserGroupInviteRequestRepository : RepositoryBase<UserGroupInviteRequest, Guid>,
+    IUserGroupInviteRequestRepository
 {
     public UserGroupInviteRequestRepository(AppDbContext appDbContext) : base(appDbContext)
     {

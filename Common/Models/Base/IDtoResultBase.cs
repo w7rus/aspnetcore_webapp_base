@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Common.Models.Base;
+﻿namespace Common.Models.Base;
 
 public interface IDtoResultBase : IWarningModelResult, IErrorModelResult
 {

@@ -110,7 +110,10 @@ public class UserGroupEntityService : IUserGroupEntityService
         return result != null;
     }
 
-    public async Task<IReadOnlyCollection<UserGroup>> Save(ICollection<UserGroup> entities, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<UserGroup>> Save(
+        ICollection<UserGroup> entities,
+        CancellationToken cancellationToken = default
+    )
     {
         _logger.Log(LogLevel.Information,
             Localize.Log.Method(GetType(), nameof(Save), $"{entities?.GetType().Name}"));
@@ -127,7 +130,7 @@ public class UserGroupEntityService : IUserGroupEntityService
             Localize.Log.Method(GetType(), nameof(Delete), $"{entities?.GetType().Name}"));
 
         var entitiesEnumerated = entities as UserGroup[] ?? entities?.ToArray();
-        
+
         _userGroupRepository.Delete(entitiesEnumerated);
         await _appDbContextAction.CommitAsync(cancellationToken);
     }

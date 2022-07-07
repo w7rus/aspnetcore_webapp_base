@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DAL.Repository;
 using DAL.Repository.Base;
 using Domain.Entities;
 using Moq;
@@ -26,7 +25,7 @@ public class AuthHandlerTests
                 DisableSignInUntil = null,
                 LastSignIn = default,
                 LastActivity = default,
-                LastIpAddress = null,
+                LastIpAddress = null
             }
         };
 
