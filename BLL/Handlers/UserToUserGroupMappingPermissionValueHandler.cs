@@ -271,7 +271,9 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
                         EntityRightTableName = _userGroupRepository.GetTableName(),
                         EntityRightGroupsTableName = null,
                         EntityRightEntityToEntityMappingsTableName = null,
-                        EntityRightIdRawSql = $"(SELECT \"EntityRightId\" FROM {_userToUserGroupMappingRepository.GetTableName()}) WHERE \"Id\" = \"EntityId\" LIMIT 1)", // EntityId = UserToUserGroupMappingId
+                        
+                        //public."PermissionValue"[EntityId] is a UserToUserGroupMappingId, so to get UserGroupId SELECT public."UserToUserGroupMapping"[EntityRightId] FROM public."UserToUserGroupMapping" WHERE public."UserToUserGroupMapping"[Id] = public."PermissionValue"[EntityId] 
+                        EntityRightIdRawSql = $"(SELECT \"EntityRightId\" FROM public.\"{_userToUserGroupMappingRepository.GetTableName()})\" WHERE \"Id\" = \"EntityId\" LIMIT 1)",
                         EntityRightPermissionAlias = Consts.PermissionAlias.PermissionValueRead,
                         SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"UserId\""
                     }, new FilterExpressionModel

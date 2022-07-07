@@ -21,6 +21,7 @@ public static class Consts
     public static readonly Guid RootUserId = new("ce374862-f799-4519-9fa8-a8dcf1b9e8ab");
     public static readonly Guid PublicUserId = new("8a278c1c-f27d-46ae-b9cd-99ac2e6ab141");
     public static readonly Guid GroupMemberUserId = new("85f276b1-07b9-4a61-945e-4598241bd47f");
+    public const string RootUserGroupId = "55119e40-f094-4560-877f-42d18ff197db";
 
     public class PermissionAlias
     {
@@ -50,12 +51,12 @@ public static class Consts
         public const string UserGroupTransferRequestRead = "UserGroupTransferRequestRead";
         public const string UserGroupTransferRequestUpdate = "UserGroupTransferRequestUpdate";
         public const string UserGroupInviteRequestCreate = "UserGroupInviteRequestCreate";
-        public const string UserGroupInviteRequestRead = "UserGroupInviteRequestRead"; //TODO:
+        public const string UserGroupInviteRequestRead = "UserGroupInviteRequestRead";
         public const string UserGroupInviteRequestUpdate = "UserGroupInviteRequestUpdate";
         public const string UserGroupKickUser = "UserGroupKickUser";
         public const string UserGroupAddUser = "UserGroupAddUser";
         public const string UserGroupMemberInviteRequestCreate = "UserGroupMemberInviteRequestCreate";
-        public const string UserGroupMemberInviteRequestRead = "UserGroupMemberInviteRequestRead"; //TODO:
+        public const string UserGroupMemberInviteRequestRead = "UserGroupMemberInviteRequestRead";
         public const string UserGroupMemberInviteRequestUpdate = "UserGroupMemberInviteRequestUpdate";
         public const string UserGroupMemberKickUser = "UserGroupMemberKickUser";
         public const string UserRead = "UserRead";
@@ -232,9 +233,8 @@ AS $BODY$
     END;
 $BODY$;
 ";
-
-        //TODO: Authorize RootUser without any checks
-        public const string CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermission = @"
+        
+        public const string CreateOrReplaceFunctionAuthorizeEntityPermissionToEntityPermission = $@"
 CREATE OR REPLACE FUNCTION public.""AuthorizeEntityPermissionToEntityPermission""(
     IN entitylefttablename text DEFAULT NULL::text,
     IN entityleftgroupstablename text DEFAULT  NULL::text,
@@ -259,6 +259,7 @@ AS $BODY$
     DECLARE
         FResult boolean := false;
         PermissionTypeValueNeededOwner boolean := false;
+        EntityIsRoot boolean := false;
         EntityLeft record := null;
         EntityLeftPermission record := null;
         EntityRight record := null;
@@ -272,11 +273,16 @@ AS $BODY$
         EXECUTE format('SELECT * FROM public.""%s"" WHERE ""Id"" = cast($1 as uuid)', EntityLeftTableName) INTO EntityLeft USING EntityLeftUuid;
         EXECUTE format('SELECT * FROM public.""%s"" WHERE ""Id"" = cast($1 as uuid)', EntityRightTableName) INTO EntityRight USING EntityRightUuid;
 
-        IF EntityLeft IS NULL  THEN
+        IF EntityLeft IS NULL THEN
             RAISE EXCEPTION '├[AuthorizeEntityPermissionToEntityPermission]: EntityLeft IS NULL!';
         END IF;
         IF EntityRight IS NULL THEN
             RAISE EXCEPTION '├[AuthorizeEntityPermissionToEntityPermission]: EntityRight IS NULL!';
+        END IF;
+        
+        EXECUTE format('SELECT count(*) > 0 FROM public.""EntityToEntityMappingBase<User, UserGroup>"" WHERE ""EntityRightId"" = cast($1 as uuid) AND ""EntityLeftId"" = $2') INTO EntityIsRoot USING '{RootUserGroupId}', EntityLeft.""Id"";
+        IF EntityIsRoot THEN
+            RETURN true;
         END IF;
         
         IF UseCache THEN
