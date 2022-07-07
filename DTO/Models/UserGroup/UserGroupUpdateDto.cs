@@ -4,9 +4,9 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupUpdateDto : IEntityBaseDto
+public class UserGroupUpdateDto
 {
-    public Guid Id { get; set; }
+    public Guid UserGroupId { get; set; }
 
     [Required]
     [MaxLength(32)]
@@ -16,5 +16,6 @@ public class UserGroupUpdateDto : IEntityBaseDto
     [MaxLength(1024)]
     public string Description { get; set; }
     
+    [Range(long.MinValue, long.MaxValue)]
     public long Priority { get; set; }
 }

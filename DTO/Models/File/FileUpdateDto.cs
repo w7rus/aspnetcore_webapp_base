@@ -4,8 +4,8 @@ using DTO.Models.Base;
 
 namespace DTO.Models.File;
 
-public class FileUpdateDto : IEntityBaseDto
+public class FileUpdateDto
 {
-    public Guid Id { get; set; }
+    public Guid FileId { get; set; }
     public AgeRating AgeRating { get; set; }
 }

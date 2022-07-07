@@ -3,7 +3,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.PermissionValue;
 
-public class PermissionValueReadDto : IEntityBaseDto
+public class PermissionValueReadDto
 {
-    public Guid Id { get; set; }
+    public Guid PermissionValueId { get; set; }
 }

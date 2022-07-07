@@ -174,7 +174,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(data.UserGroupId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -246,7 +246,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(data.UserGroupId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -393,7 +393,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userGroupTransferRequest =
-                await _userGroupTransferRequestEntityService.GetByIdAsync(data.Id, cancellationToken);
+                await _userGroupTransferRequestEntityService.GetByIdAsync(data.UserGroupTransferRequestId, cancellationToken);
             if (userGroupTransferRequest == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupTransferRequestNotFound);
@@ -603,7 +603,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userGroupTransferRequest =
-                await _userGroupTransferRequestEntityService.GetByIdAsync(data.Id, cancellationToken);
+                await _userGroupTransferRequestEntityService.GetByIdAsync(data.UserGroupTransferRequestId, cancellationToken);
             if (userGroupTransferRequest == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupTransferRequestNotFound);
@@ -682,7 +682,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
             (int total, IReadOnlyCollection<UserGroupTransferRequest> entities) userGroupTransferRequests;
 
             //Action is taken by receiver of UserGroupTransferRequest
-            if (user.Id == data.UserId)
+            if (user.Id == data.TargetUserId)
             {
                 //TODO: + against User (user that receives request)
                 userGroupTransferRequests = await _userGroupTransferRequestEntityService.GetFiltered(
@@ -696,7 +696,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                             {
                                 ExpressionLogicalOperation = ExpressionLogicalOperation.None,
                                 Key = "DestUserId",
-                                Value = data.UserId.ToByteArray(),
+                                Value = data.TargetUserId.ToByteArray(),
                                 FilterMatchOperation = FilterMatchOperation.Equal
                             }
                         }
@@ -730,7 +730,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                             {
                                 ExpressionLogicalOperation = ExpressionLogicalOperation.None,
                                 Key = "DestUserId",
-                                Value = data.UserId.ToByteArray(),
+                                Value = data.TargetUserId.ToByteArray(),
                                 FilterMatchOperation = FilterMatchOperation.Equal
                             }
                         }
@@ -806,7 +806,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                         {
                             ExpressionLogicalOperation = ExpressionLogicalOperation.None,
                             Key = "SrcUserId",
-                            Value = data.UserId.ToByteArray(),
+                            Value = data.TargetUserId.ToByteArray(),
                             FilterMatchOperation = FilterMatchOperation.Equal
                         }
                     }
@@ -989,7 +989,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userGroupInviteRequest =
-                await _userGroupInviteRequestEntityService.GetByIdAsync(data.Id, cancellationToken);
+                await _userGroupInviteRequestEntityService.GetByIdAsync(data.UserGroupInviteRequestId, cancellationToken);
             if (userGroupInviteRequest == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupInviteRequestNotFound);
@@ -1220,7 +1220,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var userGroupInviteRequest =
-                await _userGroupInviteRequestEntityService.GetByIdAsync(data.Id, cancellationToken);
+                await _userGroupInviteRequestEntityService.GetByIdAsync(data.UserGroupInviteRequestId, cancellationToken);
             if (userGroupInviteRequest == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupInviteRequestNotFound);
@@ -1591,7 +1591,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(data.UserGroupId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -1673,7 +1673,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(data.UserGroupId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);

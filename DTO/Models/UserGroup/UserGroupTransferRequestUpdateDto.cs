@@ -4,8 +4,8 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupTransferRequestUpdateDto : IEntityBaseDto
+public class UserGroupTransferRequestUpdateDto
 {
-    public Guid Id { get; set; }
+    public Guid UserGroupTransferRequestId { get; set; }
     public Choice Choice { get; set; }
 }

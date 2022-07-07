@@ -3,7 +3,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupJoinUserDto : IEntityBaseDto
+public class UserGroupJoinUserDto
 {
-    public Guid Id { get; set; }
+    public Guid UserGroupId { get; set; }
 }

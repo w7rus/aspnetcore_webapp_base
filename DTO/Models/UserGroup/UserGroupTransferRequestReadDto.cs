@@ -4,7 +4,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupTransferRequestReadDto : IEntityBaseDto
+public class UserGroupTransferRequestReadDto
 {
-    public Guid Id { get; set; }
+    public Guid UserGroupTransferRequestId { get; set; }
 }

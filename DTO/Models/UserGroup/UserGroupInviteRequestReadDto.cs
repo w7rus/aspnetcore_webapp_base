@@ -3,7 +3,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupInviteRequestReadDto : IEntityBaseDto
+public class UserGroupInviteRequestReadDto
 {
-    public Guid Id { get; set; }
+    public Guid UserGroupInviteRequestId { get; set; }
 }

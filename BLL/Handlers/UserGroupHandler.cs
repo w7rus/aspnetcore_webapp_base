@@ -120,8 +120,8 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            var userOwner = await _userEntityService.GetByIdAsync(data.UserId, cancellationToken);
-            if (userOwner == null)
+            var userTarget = await _userEntityService.GetByIdAsync(data.TargetUserId, cancellationToken);
+            if (userTarget == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserNotFound);
 
@@ -137,7 +137,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                 EntityRightEntityToEntityMappingsTableName =
                     _userToUserGroupMappingRepository.GetTableName(),
-                EntityRightId = userOwner.Id,
+                EntityRightId = userTarget.Id,
                 EntityRightPermissionAlias = Consts.PermissionAlias.UserGroupCreate,
                 SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
             });
@@ -166,7 +166,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
-                            EntityRightId = userOwner.Id,
+                            EntityRightId = userTarget.Id,
                             EntityRightPermissionAlias =
                                 Consts.PermissionAlias.UserGroupCreate_Alias,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
@@ -187,7 +187,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
-                            EntityRightId = userOwner.Id,
+                            EntityRightId = userTarget.Id,
                             EntityRightPermissionAlias =
                                 Consts.PermissionAlias.UserGroupCreate_Description,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
@@ -208,7 +208,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                             EntityRightGroupsTableName = _userGroupRepository.GetTableName(),
                             EntityRightEntityToEntityMappingsTableName =
                                 _userToUserGroupMappingRepository.GetTableName(),
-                            EntityRightId = userOwner.Id,
+                            EntityRightId = userTarget.Id,
                             EntityRightPermissionAlias =
                                 Consts.PermissionAlias.UserGroupCreate_Priority,
                             SqlExpressionPermissionTypeValueNeededOwner = "T1.\"Id\" = T2.\"Id\""
@@ -974,7 +974,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(data.UserGroupId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -1085,7 +1085,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(data.UserGroupId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
@@ -1232,7 +1232,7 @@ public class UserGroupHandler : HandlerBase, IUserGroupHandler
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.HttpContext,
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
-            var userGroup = await _userGroupEntityService.GetByIdAsync(data.Id, cancellationToken);
+            var userGroup = await _userGroupEntityService.GetByIdAsync(data.UserGroupId, cancellationToken);
             if (userGroup == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);

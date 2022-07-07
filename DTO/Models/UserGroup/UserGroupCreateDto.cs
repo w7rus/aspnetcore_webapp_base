@@ -14,5 +14,5 @@ public class UserGroupCreateDto
     public string Description { get; set; }
     
     public long Priority { get; set; }
-    public Guid UserId { get; set; }
+    public Guid TargetUserId { get; set; }
 }

@@ -3,8 +3,8 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupDeleteUserDto : IEntityBaseDto
+public class UserGroupDeleteUserDto
 {
-    public Guid Id { get; set; }
+    public Guid UserGroupId { get; set; }
     public Guid UserId { get; set; }
 }

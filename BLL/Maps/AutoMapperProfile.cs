@@ -26,7 +26,7 @@ public class AutoMapperProfile : Profile
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>
                     AutoMapperAuthorizeUserPermission(context, options.DestinationMember.Name));
             })
-            .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId));
+            .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.TargetUserId));
         CreateMap<FileUpdateDto, File>(MemberList.None)
             .ForMember(_ => _.AgeRating, options =>
             {
@@ -42,7 +42,7 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.Value, options => options.MapFrom(__ => __.Value));
         
         CreateMap<UserGroupCreateDto, UserGroup>(MemberList.None)
-            .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.UserId))
+            .ForMember(_ => _.UserId, options => options.MapFrom(__ => __.TargetUserId))
             .ForMember(_ => _.Alias, options =>
             {
                 options.Condition((objFrom, objTo, objMemberFrom, objMemberTo, context) =>

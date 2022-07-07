@@ -184,7 +184,7 @@ public class UserPermissionValueHandler : HandlerBase, IUserPermissionValueHandl
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValue =
-                await _permissionValueEntityService.GetByIdAsync(data.Id, cancellationToken);
+                await _permissionValueEntityService.GetByIdAsync(data.PermissionValueId, cancellationToken);
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
@@ -315,7 +315,7 @@ public class UserPermissionValueHandler : HandlerBase, IUserPermissionValueHandl
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValue =
-                await _permissionValueEntityService.GetByIdAsync(data.Id, cancellationToken);
+                await _permissionValueEntityService.GetByIdAsync(data.PermissionValueId, cancellationToken);
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);
@@ -384,7 +384,7 @@ public class UserPermissionValueHandler : HandlerBase, IUserPermissionValueHandl
                     Localize.Error.UserNotFoundOrHttpContextMissingClaims);
 
             var permissionValue =
-                await _permissionValueEntityService.GetByIdAsync(data.Id, cancellationToken);
+                await _permissionValueEntityService.GetByIdAsync(data.PermissionValueId, cancellationToken);
             if (permissionValue == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.PermissionValueNotFound);

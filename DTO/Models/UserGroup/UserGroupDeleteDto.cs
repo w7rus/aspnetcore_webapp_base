@@ -3,7 +3,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupDeleteDto : IEntityBaseDto
+public class UserGroupDeleteDto
 {
-    public Guid Id { get; set; }
+    public Guid UserGroupId { get; set; }
 }

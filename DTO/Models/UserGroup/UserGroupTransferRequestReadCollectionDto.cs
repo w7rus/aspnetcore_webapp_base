@@ -9,5 +9,5 @@ public class UserGroupTransferRequestReadCollectionDto : IEntityCollectionBaseDt
     public PageModel PageModel { get; set; }
     public FilterExpressionModel FilterExpressionModel { get; set; }
     public FilterSortModel FilterSortModel { get; set; }
-    public Guid UserId { get; set; }
+    public Guid TargetUserId { get; set; }
 }

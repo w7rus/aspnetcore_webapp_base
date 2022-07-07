@@ -6,7 +6,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.UserGroup;
 
-public class UserGroupReadDto : IEntityBaseDto
+public class UserGroupReadDto
 {
-    public Guid Id { get; set; }
+    public Guid UserGroupId { get; set; }
 }

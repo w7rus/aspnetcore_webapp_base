@@ -3,7 +3,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.File;
 
-public class FileReadDto : IEntityBaseDto
+public class FileReadDto
 {
-    public Guid Id { get; set; }
+    public Guid FileId { get; set; }
 }
