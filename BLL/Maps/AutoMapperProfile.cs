@@ -9,6 +9,7 @@ using DTO.Models.File;
 using DTO.Models.Permission;
 using DTO.Models.PermissionValue;
 using DTO.Models.UserGroup;
+using DTO.Models.UserGroupActions;
 
 namespace BLL.Maps;
 
@@ -70,9 +71,9 @@ public class AutoMapperProfile : Profile
                 opt.Condition((_, _, _, _, context) =>
                     AutoMapperAuthorizeUserPermission(context, opt.DestinationMember.Name));
             });
-        CreateMap<UserGroupTransferRequestCreateDto, UserGroupTransferRequest>(MemberList.None)
+        CreateMap<UserGroupActionTransferRequestCreateDto, UserGroupTransferRequest>(MemberList.None)
             .ForMember(_ => _.DestUserId, opt => opt.MapFrom(__ => __.TargetUserId));
-        CreateMap<UserGroupInviteRequestCreateDto, UserGroupInviteRequest>(MemberList.None)
+        CreateMap<UserGroupActionInviteRequestCreateDto, UserGroupInviteRequest>(MemberList.None)
             .ForMember(_ => _.DestUserId, opt => opt.MapFrom(__ => __.TargetUserId));
 
         #endregion
@@ -94,13 +95,13 @@ public class AutoMapperProfile : Profile
         CreateMap<UserGroup, UserGroupUpdateResultDto>(MemberList.None);
         CreateMap<UserGroup, UserGroupReadCollectionItemResultDto>(MemberList.None);
 
-        CreateMap<UserGroupTransferRequest, UserGroupTransferRequestCreateResultDto>(MemberList.None);
-        CreateMap<UserGroupInviteRequest, UserGroupInviteRequestReadResultDto>(MemberList.None);
-        CreateMap<UserGroupInviteRequest, UserGroupInviteRequestReadCollectionItemResultDto>(MemberList.None);
+        CreateMap<UserGroupTransferRequest, UserGroupActionTransferRequestCreateResultDto>(MemberList.None);
+        CreateMap<UserGroupInviteRequest, UserGroupActionInviteRequestReadResultDto>(MemberList.None);
+        CreateMap<UserGroupInviteRequest, UserGroupActionInviteRequestReadCollectionItemResultDto>(MemberList.None);
 
-        CreateMap<UserGroupInviteRequest, UserGroupInviteRequestCreateResultDto>(MemberList.None);
-        CreateMap<UserGroupTransferRequest, UserGroupTransferRequestReadResultDto>(MemberList.None);
-        CreateMap<UserGroupTransferRequest, UserGroupTransferRequestReadCollectionItemResultDto>(MemberList.None);
+        CreateMap<UserGroupInviteRequest, UserGroupActionInviteRequestCreateResultDto>(MemberList.None);
+        CreateMap<UserGroupTransferRequest, UserGroupActionTransferRequestReadResultDto>(MemberList.None);
+        CreateMap<UserGroupTransferRequest, UserGroupActionTransferRequestReadCollectionItemResultDto>(MemberList.None);
 
         #region EntityBase
 

@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using API.Controllers;
+using API.Controllers.Auth;
 using API.Extensions;
 using API.Middleware;
 using Common.Enums;
