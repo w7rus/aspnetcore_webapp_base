@@ -74,7 +74,7 @@ public class UserPermissionValueController : CustomControllerBase
     [SwaggerOperation(Summary = "Reads PermissionValues",
         Description = "Reads PermissionValues")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(typeof(PermissionValueReadFSPCollectionResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PermissionValueReadCollectionResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> ReadCollection(
         [Required] [FromQuery] PermissionValueReadCollectionDto data,
         CancellationToken cancellationToken = default

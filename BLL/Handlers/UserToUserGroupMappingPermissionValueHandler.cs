@@ -293,11 +293,11 @@ public class UserToUserGroupMappingPermissionValueHandler : HandlerBase, IUserTo
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(ReadCollection)));
 
-            return new PermissionValueReadFSPCollectionResultDto
+            return new PermissionValueReadCollectionResultDto
             {
                 Total = permissionValues.total,
                 Items = permissionValues.entities.Select(_ =>
-                    _mapper.ProjectTo<PermissionValueReadFSPCollectionItemResultDto>(new[] {_}.AsQueryable()).Single())
+                    _mapper.ProjectTo<PermissionValueReadCollectionItemResultDto>(new[] {_}.AsQueryable()).Single())
             };
         }
         catch (Exception)

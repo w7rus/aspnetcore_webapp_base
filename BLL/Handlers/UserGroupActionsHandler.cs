@@ -323,7 +323,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
-            var userTarget = await _userEntityService.GetByIdAsync(data.UserId, cancellationToken);
+            var userTarget = await _userEntityService.GetByIdAsync(data.TargetUserId, cancellationToken);
             if (userTarget == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.HttpContext,
                     Localize.Error.UserNotFound);
@@ -348,7 +348,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status403Forbidden, ErrorType.Permission,
                     Localize.Error.PermissionInsufficientPermissions);
 
-            if (user.Id == data.UserId)
+            if (user.Id == data.TargetUserId)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
                     Localize.Error.UserGroupTransferSameUserNotAllowed);
 
@@ -857,7 +857,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.Generic,
                     Localize.Error.UserGroupNotFound);
 
-            var userTarget = await _userEntityService.GetByIdAsync(data.UserId, cancellationToken);
+            var userTarget = await _userEntityService.GetByIdAsync(data.TargetUserId, cancellationToken);
             if (userTarget == null)
                 throw new HttpResponseException(StatusCodes.Status404NotFound, ErrorType.HttpContext,
                     Localize.Error.UserNotFound);
@@ -933,7 +933,7 @@ public class UserGroupActionsHandler : HandlerBase, IUserGroupActionsHandler
                         Localize.Error.PermissionInsufficientPermissions);
             }
 
-            if (user.Id == data.UserId)
+            if (user.Id == data.TargetUserId)
                 throw new HttpResponseException(StatusCodes.Status400BadRequest, ErrorType.Generic,
                     Localize.Error.UserGroupInviteRequestSameUserNotAllowed);
 

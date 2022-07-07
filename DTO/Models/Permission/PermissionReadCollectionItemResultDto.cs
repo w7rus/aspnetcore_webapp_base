@@ -4,7 +4,7 @@ using DTO.Models.Base;
 
 namespace DTO.Models.Permission;
 
-public class PermissionReadFSPCollectionItemResultDto : IEntityBaseResultDto<Guid>
+public class PermissionReadCollectionItemResultDto : IEntityBaseResultDto<Guid>
 {
     public string Alias { get; set; }
     public PermissionCompareMode CompareMode { get; set; }

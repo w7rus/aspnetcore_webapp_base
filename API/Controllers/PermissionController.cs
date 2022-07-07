@@ -58,7 +58,7 @@ public class PermissionController : CustomControllerBase
     [HttpGet]
     [Route(nameof(ReadCollection))]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.JsonWebToken)]
-    [ProducesResponseType(typeof(PermissionReadFSPCollectionResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PermissionReadCollectionResultDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> ReadCollection(
         [Required] [FromQuery] PermissionReadCollectionDto data,
         CancellationToken cancellationToken = default

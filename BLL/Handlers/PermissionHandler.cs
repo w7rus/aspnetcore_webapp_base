@@ -107,11 +107,11 @@ public class PermissionHandler : HandlerBase, IPermissionHandler
 
             _logger.Log(LogLevel.Information, Localize.Log.MethodEnd(GetType(), nameof(Read)));
 
-            return new PermissionReadFSPCollectionResultDto
+            return new PermissionReadCollectionResultDto
             {
                 Total = permissions.total,
                 Items = permissions.entities.Select(_ =>
-                    _mapper.ProjectTo<PermissionReadFSPCollectionItemResultDto>(new[] {_}.AsQueryable()).Single())
+                    _mapper.ProjectTo<PermissionReadCollectionItemResultDto>(new[] {_}.AsQueryable()).Single())
             };
         }
         catch (Exception)
