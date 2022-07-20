@@ -30,6 +30,9 @@ public interface IUserActionsHandler
         UserActionLeaveUserGroupDto data,
         CancellationToken cancellationToken = default
     );
+    
+    //TODO: UserActionUserGroupsReadCollection
+    //TODO: UserActionUpdatePassword
 }
 
 public class UserActionsHandler : HandlerBase, IUserActionsHandler
